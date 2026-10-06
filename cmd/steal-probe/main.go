@@ -4,7 +4,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"flag"
 	"fmt"
 	"os"
@@ -13,8 +12,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/cilium/ebpf"
-
+	"hids/internal/bpflog"
 	"hids/internal/buildinfo"
 	"hids/internal/hostinfo"
 	"hids/internal/procstat"
@@ -81,10 +79,10 @@ func run() error {
 
 	snap, vmwErr, err := stealbpf.Load(*noVMW)
 	if vmwErr != nil {
-		reportBPFError("khong nap duoc ban doc vmw_steal_time, chuyen sang ban chi co runqueues", vmwErr)
+		bpflog.Report(logPath, "khong nap duoc ban doc vmw_steal_time, chuyen sang ban chi co runqueues", vmwErr)
 	}
 	if err != nil {
-		reportBPFError("khong nap duoc chuong trinh BPF", err)
+		bpflog.Report(logPath, "khong nap duoc chuong trinh BPF", err)
 		return fmt.Errorf("nap BPF that bai, chi tiet o %s", logPath)
 	}
 	defer snap.Close()
@@ -196,32 +194,6 @@ func sampleOnce(w *stealcsv.Writer, snap *stealbpf.Snapshotter, reader *procstat
 
 	// Day xuong dia sau moi chu ky de du lieu khong mat khi dung giua chung.
 	return w.Flush()
-}
-
-// reportBPFError in nguyen van loi verifier/libbpf ra stderr va ghi them vao out/steal-probe.log.
-func reportBPFError(context string, err error) {
-	text := formatBPFError(err)
-	fmt.Fprintf(os.Stderr, "%s:\n%s\n", context, text)
-
-	if mkErr := os.MkdirAll(filepath.Dir(logPath), 0o755); mkErr != nil {
-		fmt.Fprintf(os.Stderr, "khong tao duoc thu muc log: %v\n", mkErr)
-		return
-	}
-	f, openErr := os.OpenFile(logPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o644)
-	if openErr != nil {
-		fmt.Fprintf(os.Stderr, "khong mo duoc %s: %v\n", logPath, openErr)
-		return
-	}
-	defer f.Close()
-	fmt.Fprintf(f, "=== %s %s ===\n%s\n", time.Now().Format(time.RFC3339), context, text)
-}
-
-func formatBPFError(err error) string {
-	var ve *ebpf.VerifierError
-	if errors.As(err, &ve) {
-		return fmt.Sprintf("%+v", ve)
-	}
-	return err.Error()
 }
 
 func durationText(d time.Duration) string {

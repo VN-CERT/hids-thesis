@@ -27,15 +27,16 @@ Cập nhật lần cuối: 2026-10-06 22:35 (giờ máy)
 | M1: toàn bộ (`bpf/vmlinux.h`, `hids_steal_snap`, `steal-probe`, `steal-summary`, `scripts/g1.sh`, tự kiểm) | `14c2ee1` (tag `m1`) |
 | Quy tắc quy trình `.cursor/rules/workflow.mdc`, `docs/STATE.md`, `reports/`, `out/jobs/` | `e10bb50`, `dfc863b` |
 | Người dùng chạy G1 600 giây có thao tác vCenter | dữ liệu `validation/g1-20261006/` |
+| Áp dụng phản hồi kiến trúc sư cho M1, lưu `validation/g1-20261006/`, chốt bảng flags | `5e0fea8` |
+| M2: `hids_sys_enter`, `hids-collect`, `rec-stat`, `tools/sysinj.c`, `scripts/g7.sh` | (commit kế tiếp) |
 
 ## Bước đang làm
-M2 — xem mục Bước tiếp theo.
+M2 — đã viết xong mã và thử nghiệm tay, đang chạy tự kiểm và viết báo cáo R002.
 
 ## Bước tiếp theo
-1. Viết `bpf/sys_enter.bpf.c` (`hids_sys_enter`), lọc pid/cgroup, task storage, ring buffer, đếm mất và seq per-CPU.
-2. Viết `bin/hids-collect`, `bin/rec-stat`, `tools/sysinj.c`, `scripts/g7.sh`.
-3. Tự kiểm: `make build` sạch, chạy G7a với N=10000, kiểm tra kernel sạch sau khi thoát.
-4. Viết báo cáo R002.
+1. Chạy tự kiểm G7a với N=10000 trên cây sạch, kiểm tra kernel sạch sau khi thoát.
+2. Viết báo cáo R002.
+3. Người dùng chạy `scripts/g7.sh a|b|c` với N=1000000.
 
 ## Việc đang chạy
 Không có.
