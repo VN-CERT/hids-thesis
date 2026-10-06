@@ -1,0 +1,47 @@
+---
+description: Quy trình làm việc, lưu trạng thái, báo cáo
+alwaysApply: true
+---
+# Người dùng
+Người dùng không đọc code và không quyết định kỹ thuật. Mọi quyết định kỹ thuật do kiến trúc sư (bên ngoài) đưa ra thông qua báo cáo. Không hỏi người dùng câu hỏi kỹ thuật.
+
+# Bắt đầu mỗi phiên (kể cả khi phiên trước bị ngắt)
+1. Đọc .cursor/rules/*, docs/STATE.md, và báo cáo mới nhất trong reports/.
+2. Kiểm tra mọi việc trong mục "Việc đang chạy" của STATE.md (systemctl status, file trạng thái, log).
+3. Tiếp tục đúng bước đang dở. Không làm lại bước đã ghi là xong. Không bắt đầu nhiệm vụ mới khi nhiệm vụ cũ chưa có báo cáo.
+
+# Lưu trạng thái: docs/STATE.md
+Cập nhật và commit sau MỖI bước nhỏ (build xong, chạy thử xong, sửa xong một lỗi), không chờ đến cuối nhiệm vụ. Các mục bắt buộc:
+- Mốc hiện tại và mục tiêu
+- Các bước đã xong (kèm commit hash)
+- Bước đang làm
+- Bước tiếp theo
+- Việc đang chạy: tên, lệnh, giờ bắt đầu, dự kiến xong, đường dẫn log, đường dẫn file trạng thái
+- Vướng mắc / chờ kiến trúc sư quyết định
+
+# Việc chạy lâu (trên khoảng 2 phút hoặc nhiều ngày)
+- Luôn chạy tách khỏi phiên: systemd-run --unit=hids-<tên> --collect ..., để không chết khi mất SSH hay mất phiên Cursor.
+- Mỗi việc ghi tiến độ vào out/jobs/<tên>.status (giờ bắt đầu, tiến độ x/y, giờ cập nhật cuối, trạng thái: running/done/failed, mã thoát) và log vào out/jobs/<tên>.log.
+- Ghi việc vào mục "Việc đang chạy" của STATE.md ngay khi khởi động.
+- Khi được hỏi hoặc khi bắt đầu phiên mới: nếu chưa xong thì báo đúng định dạng "CHƯA XONG: <tên> — tiến độ x/y — dự kiến xong <giờ> — log <đường dẫn>". Không đoán là đã xong; phải kiểm tra thật.
+
+# Báo cáo đánh số: reports/
+- Mỗi nhiệm vụ hoàn thành, mỗi lần dừng vì vướng, hoặc mỗi lần được yêu cầu: viết một báo cáo mới reports/R<số 3 chữ số>-<mốc>-<tóm tắt ngắn>.md. Số tăng dần (R001, R002, ...), không bao giờ ghi đè báo cáo cũ.
+- Cập nhật reports/INDEX.md: một dòng cho mỗi báo cáo (số, ngày giờ, mốc, tóm tắt một câu, trạng thái).
+- Sau khi viết xong, in toàn bộ nội dung báo cáo ra chat để người dùng copy.
+- Mẫu báo cáo (tiếng Việt, câu đơn giản):
+  1. Số báo cáo, ngày giờ, mốc, git commit
+  2. Mục tiêu
+  3. Đã làm gì
+  4. Lệnh build, lệnh chạy (để người dùng chạy lại được)
+  5. Kết quả: dán NGUYÊN VĂN output của các lệnh kiểm, không tóm tắt số liệu
+  6. File dữ liệu đã tạo (đường dẫn đầy đủ)
+  7. Quyết định đã tự đưa ra và lý do
+  8. Cần kiến trúc sư quyết định (nếu có)
+  9. Việc người dùng cần làm tay (nếu có), viết thành từng bước cụ thể
+  10. Lỗi còn tồn tại, việc tiếp theo đề xuất
+
+# Khi gặp chỗ chưa rõ
+- Lựa chọn nhỏ, không trái quy tắc, đảo ngược được (tên biến, cấu trúc file, cách in output, tham số mặc định): tự chọn phương án đơn giản và an toàn nhất, ghi vào mục 7 của báo cáo, làm tiếp.
+- Lựa chọn ảnh hưởng tới phép đo, nguồn tham chiếu, đặc tả bản ghi, hoặc cần đổi quy tắc: KHÔNG tự quyết. Dừng phần đó, làm tiếp phần không phụ thuộc, ghi câu hỏi vào mục 8 kèm các phương án và hệ quả, rồi viết báo cáo.
+- Chỉ yêu cầu người dùng làm những việc chỉ người dùng làm được (thao tác trên vCenter, xác nhận chạy việc ảnh hưởng dịch vụ). Viết thành chỉ dẫn từng bước, không hỏi ý kiến.
