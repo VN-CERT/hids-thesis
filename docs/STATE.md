@@ -41,9 +41,12 @@ Không có bước kỹ thuật nào đang dở. Báo cáo M2 là `reports/R002-
 3. Chờ kiến trúc sư quyết định về trường CPU trong bản ghi, rồi bắt đầu M3.
 
 ## Việc đang chạy
-Không có.
-
-(Định dạng khi có việc: tên | lệnh | giờ bắt đầu | dự kiến xong | log `out/jobs/<tên>.log` | trạng thái `out/jobs/<tên>.status`)
+- **g7** — bốn phép đo G7a, G7b, G7b-nho, G7c.
+  - Lệnh: `systemd-run --unit=hids-g7 --collect --working-directory=/root/hids /bin/bash out/jobs/g7-driver.sh`
+  - Giờ bắt đầu: 2026-10-06 23:19
+  - Dự kiến xong: khoảng 23:30
+  - Log: `out/jobs/g7.log`, kết quả từng phần: `out/g7a-ketqua.txt`, `out/g7b-ketqua.txt`, `out/g7b-nho-ketqua.txt`, `out/g7c-ketqua.txt`
+  - Trạng thái: `out/jobs/g7.status`
 
 ## Ghi nhận cho M3 (CHƯA làm bây giờ)
 - Khi khởi động, collector tự so `vmw_ns` với `rq_steal_ns` trên từng CPU trong vài giây đầu. Lệch quá ngưỡng thì **từ chối chạy (fail-closed)** và báo lỗi rõ ràng.
