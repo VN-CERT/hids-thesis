@@ -267,8 +267,9 @@ part_c() {
 	(
 		for ((i = 0; i < 100000; i++)); do
 			docker exec caddy ls / >/dev/null 2>&1 || break
+			echo "$i" >>"$prefix-load.log"
 		done
-	) >"$prefix-load.log" 2>&1 &
+	) >/dev/null 2>&1 &
 	local load_pid=$!
 
 	t0=$(python3 -c 'import time;print(time.monotonic_ns())')
@@ -285,7 +286,9 @@ part_c() {
 	echo "truoc perf: $t0"
 	echo "sau perf  : $t1"
 	echo "do dai    : $(((t1 - t0) / 1000000)) ms"
-	echo "so lan docker exec da chay: $(grep -c . "$prefix-load.log" 2>/dev/null || echo 0)"
+	echo "ghi chu   : cua so nay rong hon cua so cua perf vi perf mat mot chut thoi gian"
+	echo "            de gan va go bo dem; perf tu bao thoi gian cua no o duoi."
+	echo "so lan 'docker exec caddy ls /' da chay: $(wc -l <"$prefix-load.log" 2>/dev/null || echo 0)"
 	echo
 	echo "--- perf stat (nguyen van) ---"
 	cat "$prefix-perf.txt"
