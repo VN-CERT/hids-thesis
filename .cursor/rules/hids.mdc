@@ -1,0 +1,30 @@
+---
+description: Quy tắc bắt buộc của dự án HIDS
+alwaysApply: true
+---
+# Dự án
+Collector eBPF đo khoảng thời gian giữa hai syscall liên tiếp của từng thread (Δt) và phân rã Δt thành 5 thành phần: cpu, steal (hypervisor VMware lấy mất), irq, rq (chờ runqueue), vol (ngủ/chờ tự nguyện). Dữ liệu dùng cho nghiên cứu: độ đúng của phép đo quan trọng hơn tốc độ làm.
+
+# Môi trường cố định
+- Ubuntu 24.04, kernel 6.8.x (máy chính 6.8.0-142), VM VMware, stealclock đã bật. Chỉ hỗ trợ kernel 6.8; không viết nhánh tương thích kernel khác.
+- BPF viết bằng C, CO-RE, vmlinux.h sinh từ /sys/kernel/btf/vmlinux bằng bpftool. Ưu tiên tp_btf/tracepoint. Không dùng kprobe/fentry vào hàm nội bộ kernel nếu chưa được duyệt.
+- User space: Go, github.com/cilium/ebpf + bpf2go. Không cgo.
+- Repo /root/hids: bpf/ (mã BPF), cmd/<tên>/ (mỗi binary một thư mục), internal/, scripts/ (bash), out/ (dữ liệu, thêm vào .gitignore). Binary build ra bin/. Có Makefile: make build.
+
+# Cấm
+- Không đưa ML hay logic phát hiện vào kernel. BPF chỉ đo, cộng dồn, ghi ra.
+- Không pin chương trình/map vào /sys/fs/bpf. Dừng tiến trình phải gỡ sạch mọi thứ khỏi kernel.
+- Tên mọi chương trình BPF bắt đầu bằng hids_.
+- Không sửa cấu hình kernel, không cài module kernel, không reboot, không đổi sysctl, trừ khi nhiệm vụ ghi rõ.
+- Không đoán hằng số, đơn vị hay offset. Thiếu dữ liệu thì dừng và báo lỗi rõ ràng.
+- Không đổi đặc tả bản ghi bên dưới nếu chưa được duyệt.
+
+# Kiểm chứng
+- Mọi công cụ kiểm in giá trị đo được CẠNH giá trị tham chiếu, ghi rõ nguồn tham chiếu (/proc/stat, /proc/<tid>/schedstat, perf, bcc...). Không in PASS/FAIL, không tự kết luận đạt.
+- Giá trị tham chiếu luôn đọc từ kernel hoặc công cụ có sẵn, không tính bằng code của dự án.
+- Lỗi verifier/libbpf phải in nguyên văn ra stderr và ghi vào out/<tên>.log.
+- Kết thúc mỗi nhiệm vụ: báo cáo ngắn gồm việc đã làm, lệnh build, lệnh chạy, phương án đã dùng (nếu có dự phòng), lỗi còn tồn tại. Commit và gắn tag git theo mốc (m1, m2, ...).
+
+# Đặc tả bản ghi syscall (dùng từ M2; cố định 48 byte, little-endian)
+ts_enter u64 ns (bpf_ktime_get_ns tại sys_enter) | cgroup_id u64 | tid u32 | seq u32 (tăng dần theo CPU) | syscall_nr u16 | flags u16 | cpu_ns u32 | steal_ns u32 | irq_ns u32 | rq_ns u32 | vol_us u32
+Các thành phần thuộc khoảng từ sys_enter trước đó của cùng tid tới sys_enter hiện tại; mỗi thành phần được đo độc lập (không suy ra từ Δt trừ các phần khác).
