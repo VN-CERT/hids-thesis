@@ -3,9 +3,10 @@
 Cập nhật lần cuối: 2026-10-06 23:32 (giờ máy)
 
 ## Mốc hiện tại và mục tiêu
-- Mốc: M2.1 — làm theo phản hồi của kiến trúc sư cho R002, và chạy bốn phép đo G7.
-- Đã xong toàn bộ. **Đang dừng chờ kiến trúc sư**, không bắt đầu M3.
-- Mốc kế tiếp: M3 — đo thật năm thành phần của Δt.
+- Mốc: **M3 mục A–E** (người dùng thu hẹp phạm vi phiên này). Chỉ làm A, B, C, D, E.
+- Mục F (`tools/wl.c`), G (`bin/rec-check`), H (`scripts/g3.sh`), I, J để phiên sau. **Chưa viết, chưa chạy.**
+- Điều kiện kết thúc phiên: build sạch, cây git sạch, chạy thử `hids-collect` 30 giây không lỗi, viết R004, không gắn tag `m3` (chỉ `m3-ae`).
+- Phần phản hồi của kiến trúc sư cho R003 (G7d, file `.periodic` + dòng LOSS, ghi nhận GĐ4): đã xong, đã commit.
 
 ## Kết quả G1 (kiến trúc sư kết luận: ĐẠT)
 - Dữ liệu: `validation/g1-20261006/` (giữ lâu dài, không nằm trong `.gitignore`).
@@ -52,13 +53,15 @@ Cập nhật lần cuối: 2026-10-06 23:32 (giờ máy)
 | Báo cáo R003 | (commit này) |
 
 ## Bước đang làm
-Không có. Đã viết xong R003 và dừng theo yêu cầu.
+M3 mục B và C: mở rộng trạng thái theo thread trong task storage, thêm bộ cộng dồn irq per-CPU, gắn `sched_switch`/`sched_wakeup`/`sched_wakeup_new` và 13 cặp tracepoint irq.
 
 ## Bước tiếp theo
-Chờ kiến trúc sư trả lời hai câu hỏi ở mục 8 của R003, rồi mới bắt đầu M3.
+1. M3 mục E: kiểm tra fail-closed lúc khởi động và các dòng header mới.
+2. `make clean && make build` sạch, chạy thử `hids-collect` 30 giây.
+3. Viết R004, cập nhật INDEX, commit, gắn tag `m3-ae`, dừng.
 
 ## Việc đang chạy
-Không có. Việc `hids-g7` đã xong lúc 23:21:06, mã thoát 0; việc `hids-g7c` (chạy lại phần c) xong lúc 23:23:40, mã thoát 0.
+Không có. Việc `hids-g7` xong lúc 23:21:06 (mã thoát 0), `hids-g7c` xong lúc 23:23:40 (mã thoát 0), `hids-g7d` xong lúc 23:43:25 (mã thoát 0).
 
 (Định dạng khi có việc: tên | lệnh | giờ bắt đầu | dự kiến xong | log `out/jobs/<tên>.log` | trạng thái `out/jobs/<tên>.status`)
 
