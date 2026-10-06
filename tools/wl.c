@@ -6,22 +6,20 @@
  *   read 2 (go2)  -> chay kich ban R vong -> getppid() danh dau ket thuc
  *   read 3 (go3)  -> thoat
  *
- * Che do:
- *   cpu X_us R       — dot CPU cho CLOCK_THREAD_CPUTIME_ID tang X us, moi vong getppid
- *   sleep Y_us R     — nanosleep Y us, moi vong getppid
- *   mixed X_us Y_us R
- *   io R             — pwrite 4 KiB + fdatasync file tam trong out/
+ * Truoc read lan 1: hieu chinh so vong lap / us bang CLOCK_MONOTONIC (~200 ms).
+ * Che do cpu X: dot CPU bang X * he_so vong, KHONG syscall trong vong dot.
  */
 #define _GNU_SOURCE
 #include <errno.h>
 #include <fcntl.h>
-#include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
 #include <sys/syscall.h>
+
+static double loops_per_us;
 
 static int wait_go(void)
 {
@@ -42,36 +40,51 @@ static void marker_getppid(void)
 	syscall(SYS_getppid);
 }
 
-static uint64_t thread_cputime_ns(void)
+static void spin_once(void)
 {
-	struct timespec ts;
+	asm volatile("" ::: "memory");
+}
 
-	if (clock_gettime(CLOCK_THREAD_CPUTIME_ID, &ts) != 0) {
-		perror("clock_gettime CLOCK_THREAD_CPUTIME_ID");
+static void calibrate_loops_per_us(void)
+{
+	struct timespec t0, t1;
+	unsigned long long n = 0;
+	uint64_t elapsed_us;
+
+	if (clock_gettime(CLOCK_MONOTONIC, &t0) != 0) {
+		perror("clock_gettime CLOCK_MONOTONIC");
 		_exit(1);
 	}
-	return (uint64_t)ts.tv_sec * 1000000000ULL + (uint64_t)ts.tv_nsec;
+	for (;;) {
+		spin_once();
+		n++;
+		if (clock_gettime(CLOCK_MONOTONIC, &t1) != 0) {
+			perror("clock_gettime CLOCK_MONOTONIC");
+			_exit(1);
+		}
+		elapsed_us = (uint64_t)(t1.tv_sec - t0.tv_sec) * 1000000ULL +
+			     (uint64_t)(t1.tv_nsec - t0.tv_nsec) / 1000ULL;
+		if (elapsed_us >= 200000ULL)
+			break;
+	}
+	loops_per_us = (double)n / (double)elapsed_us;
+	fprintf(stderr, "wl: loops_per_us=%.6f (%llu vong trong %llu us)\n",
+		loops_per_us, n, (unsigned long long)elapsed_us);
 }
 
 static void burn_cpu_us(unsigned long target_us)
 {
-	uint64_t start, now, target_ns;
-	unsigned spin;
+	unsigned long long i, n;
 
-	target_ns = (uint64_t)target_us * 1000ULL;
-	start = thread_cputime_ns();
-	spin = 0;
-	for (;;) {
-		/* Dot CPU that; chi goi clock_gettime thua de tranh hang trieu
-		 * sys_enter clock_gettime (nr 228) lam day collector. */
-		asm volatile("" ::: "memory");
-		if (++spin < 262144)
-			continue;
-		spin = 0;
-		now = thread_cputime_ns();
-		if (now - start >= target_ns)
-			break;
+	if (loops_per_us <= 0.0) {
+		fprintf(stderr, "wl: chua hieu chinh loops_per_us\n");
+		_exit(1);
 	}
+	n = (unsigned long long)(target_us * loops_per_us);
+	if (n == 0)
+		n = 1;
+	for (i = 0; i < n; i++)
+		spin_once();
 }
 
 static void do_sleep_us(unsigned long us)
@@ -92,7 +105,7 @@ static void do_sleep_us(unsigned long us)
 static void do_io_once(const char *path)
 {
 	char buf[4096];
-	int fd, i;
+	int fd;
 
 	memset(buf, 0x5a, sizeof(buf));
 	fd = open(path, O_CREAT | O_RDWR | O_TRUNC, 0600);
@@ -111,8 +124,6 @@ static void do_io_once(const char *path)
 		_exit(1);
 	}
 	close(fd);
-	for (i = 0; i < 4096; i++)
-		(void)i;
 }
 
 static unsigned long parse_ul(const char *s, const char *name)
@@ -169,6 +180,8 @@ int main(int argc, char **argv)
 
 	printf("%d\n", getpid());
 	fflush(stdout);
+
+	calibrate_loops_per_us();
 
 	wait_go();
 	marker_getuid();

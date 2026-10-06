@@ -1,3 +1,29 @@
 === G-real: cgroup qdrant 120s ===
 cgroup: /sys/fs/cgroup/system.slice/docker-319c38ff33aa4827288f68ca1236600174cf278175fd7d5d68657d48e2a6366f.scope
 so tien trinh trong cgroup luc bat dau: 2
+--- log collector (cuoi) ---
+  hids_irq_local_timer_exit                0
+  hids_irq_reschedule_entry                0
+  hids_irq_reschedule_exit                 0
+  hids_irq_softirq_entry                   0
+  hids_irq_softirq_exit                    0
+  hids_irq_spurious_apic_entry             0
+  hids_irq_spurious_apic_exit              0
+  hids_irq_thermal_apic_entry              0
+  hids_irq_thermal_apic_exit               0
+  hids_irq_threshold_apic_entry            0
+  hids_irq_threshold_apic_exit             0
+  hids_irq_x86_platform_ipi_entry          0
+  hids_irq_x86_platform_ipi_exit           0
+  hids_sched_switch                        0
+  hids_sched_wakeup                        0
+  hids_sched_wakeup_new                    0
+  hids_sys_enter                           0
+thoi gian chay: 120.012 s | CPU collector: user 0.291 s, sys 0.373 s (getrusage RUSAGE_SELF)
+kich thuoc file: 1354993 byte
+du lieu: out/g3-greal-004213.bin | thong ke: out/g3-greal-004213.bin.stats | theo doi: out/g3-greal-004213.bin.periodic
+--- bang doi chieu (tong thread song suot cua so) ---
+thanh_phan           collector       tham_chieu      nguon
+cpu+steal+irq        275175586       0               Tong Delta schedstat field1
+rq                   78849323        0               Tong Delta schedstat field2
+vol                  2753849117000   ?               sum_sleep_runtime: chua tong hop

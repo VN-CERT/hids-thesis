@@ -3,26 +3,26 @@
 Tracing hard irq event time... Hit Ctrl-C to end.
 
 HARDIRQ                    TOTAL_usecs
-vmw_vmci                            23
-ens33-rxtx-2                        40
-ens33-rxtx-1                        52
-ens33-rxtx-0                        58
-ens33-rxtx-4                        92
-vmw_pvscsi                         156
-ahci[0000:02:02.0]                 167
-ens33-rxtx-3                       275
-ens33-rxtx-7                       347
-ens33-rxtx-6                      1232
+ens33-rxtx-0                        15
+vmw_vmci                            32
+ens33-rxtx-2                        39
+ens33-rxtx-1                        58
+ens33-rxtx-4                        94
+vmw_pvscsi                         119
+ahci[0000:02:02.0]                 168
+ens33-rxtx-3                       266
+ens33-rxtx-7                       380
+ens33-rxtx-6                      1098
 --- softirqs-bpfcc (nguyen van) ---
 Tracing soft irq event time... Hit Ctrl-C to end.
 
 SOFTIRQ          TOTAL_usecs
-tasklet                  213
-block                    679
-timer                  10195
-rcu                    26689
-net_rx                 27620
-sched                  47775
+tasklet                  203
+block                    633
+timer                   9893
+net_rx                 26144
+rcu                    28336
+sched                  53589
 --- log collector (cuoi) ---
   hids_irq_irq_handler_entry               0
   hids_irq_irq_handler_exit                0
@@ -46,12 +46,12 @@ sched                  47775
   hids_sched_wakeup                        0
   hids_sched_wakeup_new                    0
   hids_sys_enter                           0
-thoi gian chay: 30.056 s | CPU collector: user 0.147 s, sys 0.109 s (getrusage RUSAGE_SELF)
+thoi gian chay: 30.050 s | CPU collector: user 0.145 s, sys 0.116 s (getrusage RUSAGE_SELF)
 kich thuoc file: 947 byte
-du lieu: out/g3-girq-003526.bin | thong ke: out/g3-girq-003526.bin.stats | theo doi: out/g3-girq-003526.bin.periodic
+du lieu: out/g3-girq-004417.bin | thong ke: out/g3-girq-004417.bin.stats | theo doi: out/g3-girq-004417.bin.periodic
 --- bang doi chieu irq ---
 loai                 collector       tham_chieu      nguon
-hard                 2665249         TOTAL_usecs     hardirqs-bpfcc TOTAL
-soft_raw             (ns):           TOTAL_usecs     softirqs-bpfcc TOTAL
-soft_excl            118372012       —             collector (bcc khong tach)
-vector               595117318       —             collector only
+hard (ns)            2498630         2269 (us)       hardirqs-bpfcc tong cot usecs
+soft_raw (ns)        121435659       118798 (us)     softirqs-bpfcc tong cot usecs
+soft_excl            121110394       —             collector (bcc khong tach)
+vector               592984451       —             collector only

@@ -1,9 +1,9 @@
 === G7d (binary hien tai) ===
 === G7d: loc theo cgroup CHA, tien trinh nam trong cgroup CON, N=1000000 ===
-cgroup cha=/sys/fs/cgroup/hids-test inode=21784
-cgroup con=/sys/fs/cgroup/hids-test/con inode=21863
-sysinj pid=499712
-$ cat /proc/499712/cgroup
+cgroup cha=/sys/fs/cgroup/hids-test inode=22309
+cgroup con=/sys/fs/cgroup/hids-test/con inode=22388
+sysinj pid=529548
+$ cat /proc/529548/cgroup
 0::/hids-test/con
 collector da gan tracepoint (READY), loc theo cgroup CHA
 perf da gan
@@ -12,24 +12,24 @@ da xoa cgroup tam
 
 --- perf stat (nguyen van) ---
 
- Performance counter stats for process id '499712':
+ Performance counter stats for process id '529548':
 
          1,000,001      raw_syscalls:sys_enter                                                
 
-       3.003154496 seconds time elapsed
+       3.003137215 seconds time elapsed
 
 --- log collector (nguyen van) ---
-CANH BAO: binary build tu cay lam viec con thay doi chua commit (git_commit=e93f01b-dirty).
+CANH BAO: binary build tu cay lam viec con thay doi chua commit (git_commit=c3d371b-dirty).
 CANH BAO: du lieu ghi ra khong tai lap duoc tu git. Commit truoc khi do that.
 stealclock: bat (24/24 dong "vmware-stealtime" trong dmesg)
 doi chieu vmw_steal_time voi rq->prev_steal_time trong 3s...
-doi chieu xong: lech lon nhat 32133 ns tren 24 CPU, nguong max(2000000 ns, 1%)
-ghi vao out/g7d-20261007-003600.bin
-loc pid: khong co | loc cgroup: /sys/fs/cgroup/hids-test (id=21784) | ring buffer: 64 MiB
+doi chieu xong: lech lon nhat 9047 ns tren 24 CPU, nguong max(2000000 ns, 1%)
+ghi vao out/g7d-20261007-004451.bin
+loc pid: khong co | loc cgroup: /sys/fs/cgroup/hids-test (id=22309) | ring buffer: 64 MiB
 READY
 ban ghi doc duoc: 1000001 | so lan dinh ghi: 1000001 | mat: 0
-irq cong don (ns): hard 216463 | soft 22151598 | vector 453853130 | tong 476221191
-soft_raw cong don (ns): 22220684 (ke ca hard/vector long ben trong, de so voi softirqs-bpfcc)
+irq cong don (ns): hard 193639 | soft 23025930 | vector 446984466 | tong 470204035
+soft_raw cong don (ns): 23067077 (ke ca hard/vector long ben trong, de so voi softirqs-bpfcc)
 irq bat thuong: 0 khoang, 0 ns | loai con dang hoat dong: 0
 recursion_misses (bpf_prog_info), tong 0 tren 30 chuong trinh:
   hids_irq_call_function_entry             0
@@ -62,30 +62,30 @@ recursion_misses (bpf_prog_info), tong 0 tren 30 chuong trinh:
   hids_sched_wakeup                        0
   hids_sched_wakeup_new                    0
   hids_sys_enter                           0
-thoi gian chay: 4.978 s | CPU collector: user 0.347 s, sys 0.388 s (getrusage RUSAGE_SELF)
+thoi gian chay: 4.933 s | CPU collector: user 0.355 s, sys 0.368 s (getrusage RUSAGE_SELF)
 kich thuoc file: 48001034 byte
-du lieu: out/g7d-20261007-003600.bin | thong ke: out/g7d-20261007-003600.bin.stats | theo doi: out/g7d-20261007-003600.bin.periodic
+du lieu: out/g7d-20261007-004451.bin | thong ke: out/g7d-20261007-004451.bin.stats | theo doi: out/g7d-20261007-004451.bin.periodic
 
 --- bang ket qua ---
 N theo thiet ke:                              1000000
-perf raw_syscalls:sys_enter (-p 499712):      1000001
+perf raw_syscalls:sys_enter (-p 529548):      1000001
 so ban ghi collector:                         1000001
 so ban ghi nr=110:                            1000000
 hieu (perf - ban ghi):                        0
 
 --- thoi gian va dung luong ---
-kich thuoc out/g7d-20261007-003600.bin: 48001034 byte
+kich thuoc out/g7d-20261007-004451.bin: 48001034 byte
 
 --- rec-stat day du (nguyen van) ---
-file: out/g7d-20261007-003600.bin
+file: out/g7d-20261007-004451.bin
 # hids-collect
 # uname_r: 6.8.0-142-generic
 # nr_cpus: 24
 # nr_cpus_possible: 24
-# git_commit: e93f01b-dirty
+# git_commit: c3d371b-dirty
 # record_size: 48
 # filter_pid: khong co
-# filter_cgroup: /sys/fs/cgroup/hids-test (id=21784)
+# filter_cgroup: /sys/fs/cgroup/hids-test (id=22309)
 # ringbuf_bytes: 67108864
 # stealclock: bat (24/24 dong "vmware-stealtime" trong dmesg)
 # steal_mode: vmw_steal_time
@@ -99,26 +99,26 @@ file: out/g7d-20261007-003600.bin
 # CONFIG_SCHEDSTATS: y
 # CONFIG_SCHED_INFO: y
 # irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
-# start_mono_ns: 20185031622548
-# start_wall: 2026-10-07T00:36:04.73673425+07:00
+# start_mono_ns: 20715917669473
+# start_wall: 2026-10-07T00:44:55.62278175+07:00
 # duration: khong gioi han
 
 tong so ban ghi trong file : 1000001
 so ban ghi sau khi loc     : 1000001
 bo loc                     : khong co
-ts_enter nho nhat / lon nhat: 20187064722774 / 20187999969429 (ns, CLOCK_MONOTONIC)
+ts_enter nho nhat / lon nhat: 20717952239959 / 20718840697913 (ns, CLOCK_MONOTONIC)
 ban ghi co co FIRST        : 1
 ban ghi co co GAP_BEFORE   : 0
 ban ghi co syscall_nr=110  : 1000000
 
 so ban ghi theo tgid (1 tien trinh)
     tgid  ban_ghi   nr=110  FIRST  GAP_BEFORE      nguon_tgid
-  499712  1000001  1000000      1           0  ? (suy tu tid)
+  529548  1000001  1000000      1           0  ? (suy tu tid)
     TONG  1000001  1000000      1           0                
 
 so ban ghi theo tid (1 thread, in 1 dong dau)
      tid  tgid  ban_ghi   nr=110
-  499712     ?  1000001  1000000
+  529548     ?  1000001  1000000
 
 top 2 syscall_nr (tong cong 2 gia tri khac nhau)
   syscall_nr  ban_ghi
@@ -127,7 +127,7 @@ top 2 syscall_nr (tong cong 2 gia tri khac nhau)
 
 theo tung CPU (cpu lay tu bit8..15 cua flags; seq_cuoi va mat lay tu .stats)
    cpu  ban_ghi  seq_min  seq_max  lo_hong  seq_thieu  seq_cuoi  mat
-    17  1000001        1  1000001        0          0   1000001    0
+     4  1000001        1  1000001        0          0   1000001    0
   TONG  1000001                          0          0   1000001    0
 
 y nghia cac cot:
@@ -153,10 +153,10 @@ doi chieu seq (toan cuc)
 # uname_r: 6.8.0-142-generic
 # nr_cpus: 24
 # nr_cpus_possible: 24
-# git_commit: e93f01b-dirty
+# git_commit: c3d371b-dirty
 # record_size: 48
 # filter_pid: khong co
-# filter_cgroup: /sys/fs/cgroup/hids-test (id=21784)
+# filter_cgroup: /sys/fs/cgroup/hids-test (id=22309)
 # ringbuf_bytes: 67108864
 # stealclock: bat (24/24 dong "vmware-stealtime" trong dmesg)
 # steal_mode: vmw_steal_time
@@ -170,13 +170,13 @@ doi chieu seq (toan cuc)
 # CONFIG_SCHEDSTATS: y
 # CONFIG_SCHED_INFO: y
 # irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
-# start_mono_ns: 20185031622548
-# start_wall: 2026-10-07T00:36:04.73673425+07:00
+# start_mono_ns: 20715917669473
+# start_wall: 2026-10-07T00:44:55.62278175+07:00
 # duration: khong gioi han
 # moi dong cach nhau 10s
 mono_ns,wall,dinh_ghi_delta,mat_delta,dinh_ghi_tong,mat_tong,irq_hard_delta_ns,irq_soft_delta_ns,irq_vec_delta_ns,soft_raw_delta_ns,irq_hard_tong_ns,irq_soft_tong_ns,irq_vec_tong_ns,soft_raw_tong_ns
-20185034775949,2026-10-07T00:36:04.739887592+07:00,0,0,0,0,0,67053,2405544,67306,0,67053,2405544,67306
-20190009488714,2026-10-07T00:36:09.714600458+07:00,1000001,0,1000001,0,216463,22084545,451447586,22153378,216463,22151598,453853130,22220684
+20715920273680,2026-10-07T00:44:55.625385267+07:00,0,0,0,0,0,95923,2678854,95923,0,95923,2678854,95923
+20720851054723,2026-10-07T00:45:00.556166589+07:00,1000001,0,1000001,0,193639,22930007,444305612,22971154,193639,23025930,446984466,23067077
 
 --- kiem tra kernel sau khi collector thoat ---
 $ bpftool prog list | grep -ci hids
@@ -188,4 +188,4 @@ $ bpftool map list | grep -ciE 'hids_|ringbuf'
 $ ls -A /sys/fs/bpf | wc -l
 0
 
-du lieu: out/g7d-20261007-003600.bin | thong ke: out/g7d-20261007-003600.bin.stats
+du lieu: out/g7d-20261007-004451.bin | thong ke: out/g7d-20261007-004451.bin.stats

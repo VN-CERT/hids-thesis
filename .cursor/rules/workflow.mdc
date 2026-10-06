@@ -30,6 +30,7 @@ Cập nhật và commit sau MỖI bước nhỏ (build xong, chạy thử xong, 
 - Commit file nhiệm vụ cùng bước đầu tiên của nhiệm vụ đó.
 
 # Báo cáo đánh số: reports/
+- Báo cáo và tài liệu dài viết bằng **công cụ sửa file** (Write/StrReplace trong editor), **KHÔNG** viết bằng heredoc shell không quote (backtick trong nội dung sẽ bị shell thực thi). Nếu bắt buộc dùng heredoc thì phải dùng `<<'EOF'` (có nháy đơn). Viết xong **đọc lại** báo cáo; nếu thấy chỗ trống hoặc output lạ thì sửa trước khi in ra chat.
 - Mỗi nhiệm vụ hoàn thành, mỗi lần dừng vì vướng, hoặc mỗi lần được yêu cầu: viết một báo cáo mới reports/R<số 3 chữ số>-<mốc>-<tóm tắt ngắn>.md. Số tăng dần (R001, R002, ...), không bao giờ ghi đè báo cáo cũ.
 - Cập nhật reports/INDEX.md: một dòng cho mỗi báo cáo (số, ngày giờ, mốc, tóm tắt một câu, trạng thái).
 - Sau khi viết xong, in toàn bộ nội dung báo cáo ra chat để người dùng copy.

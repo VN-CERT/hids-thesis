@@ -9,7 +9,8 @@ RECCHK=./bin/rec-check
 WL=./bin/wl
 G7=./scripts/g7.sh
 G3WIN=./scripts/g3_window.py
-OUTROOT=validation/g3-$(date +%Y%m%d)
+GREAL_AGG=./scripts/g3_greal_agg.py
+OUTROOT=validation/g3-$(date +%Y%m%d)-v2
 SCHEDSTAT_SYS=/proc/sys/kernel/sched_schedstats
 WL_CPU=20
 GETUID_NR=102
@@ -20,14 +21,46 @@ die() {
 	exit 1
 }
 
+require_clean_git() {
+	local st path
+	while read -r st path _; do
+		[[ -z $st ]] && continue
+		if [[ $path != out/* ]]; then
+			die "cay git khong sach (thay doi ngoai out/): $st $path — commit truoc khi chay g3"
+		fi
+	done < <(git status --porcelain 2>/dev/null | awk '{print $1, $2}')
+}
+
+monotonic_ns() {
+	python3 -c 'import time; print(time.clock_gettime_ns(time.CLOCK_MONOTONIC))'
+}
+
 check_common() {
 	[[ $EUID -eq 0 ]] || die "can chay bang root"
-	for f in "$COLLECT" "$RECCHK" "$WL" "$G3WIN" "$G7"; do
+	require_clean_git
+	for f in "$COLLECT" "$RECCHK" "$WL" "$G3WIN" "$GREAL_AGG" "$G7"; do
 		[[ -e $f ]] || die "khong thay $f (make build?)"
 	done
 	command -v taskset >/dev/null || die "khong co taskset"
 	command -v stress-ng >/dev/null || die "khong co stress-ng"
+	command -v bpftrace >/dev/null || die "khong co bpftrace"
+	command -v runqlat-bpfcc >/dev/null || die "khong co runqlat-bpfcc"
 	mkdir -p out "$OUTROOT"
+}
+
+wait_bpftrace_attach() {
+	local log=$1 i
+	for ((i = 0; i < 600; i++)); do
+		grep -q Attaching "$log" 2>/dev/null && return 0
+		sleep 0.05
+	done
+	die "bpftrace khong in Attaching, xem $log"
+}
+
+parse_bpftrace_log() {
+	local log=$1
+	BT_RQ_NS=$(grep '@rq_sau_wakeup_ns' "$log" | tail -1 | awk '{print $NF}')
+	BT_SO_LAN=$(grep '@so_lan' "$log" | tail -1 | awk '{print $NF}')
 }
 
 schedstats_save() {
@@ -147,6 +180,18 @@ run_scenario() {
 	echo "--- moc A /proc/$tid/sched ---" | tee -a "$ketqua"
 	echo "$a_sched" | tee -a "$ketqua"
 
+	local bt_pid=0 rqlat_pid=0 BTLOG RQLATLOG BT_RQ_NS BT_SO_LAN
+	if [[ $name == S2 || $name == S3 || $name == S5 ]]; then
+		BTLOG="$prefix-bpftrace.log"
+		RQLATLOG="$prefix-runqlat.log"
+		bpftrace -e 'tracepoint:sched:sched_wakeup /args->pid == $1 && @w == 0/ { @w = nsecs; } tracepoint:sched:sched_switch /args->next_pid == $1 && @w != 0/ { @rq_sau_wakeup_ns = sum(nsecs - @w); @so_lan = count(); @w = 0; }' "$tid" >"$BTLOG" 2>&1 &
+		bt_pid=$!
+		wait_bpftrace_attach "$BTLOG"
+		runqlat-bpfcc -p "$tid" >"$RQLATLOG" 2>&1 &
+		rqlat_pid=$!
+		echo "bpftrace pid=$bt_pid, runqlat pid=$rqlat_pid" | tee -a "$ketqua"
+	fi
+
 	printf '.' >&9
 	wait_wl_on_read "$wl_pid"
 	local b_stat b_sched b_wait_ms b_sleep_ms b_block_ms
@@ -159,6 +204,19 @@ run_scenario() {
 	echo "$b_stat" | tee -a "$ketqua"
 	echo "--- moc B /proc/$tid/sched ---" | tee -a "$ketqua"
 	echo "$b_sched" | tee -a "$ketqua"
+
+	if [[ $bt_pid -ne 0 ]]; then
+		kill -INT "$bt_pid" 2>/dev/null
+		wait "$bt_pid" 2>/dev/null || true
+		[[ $rqlat_pid -ne 0 ]] && kill "$rqlat_pid" 2>/dev/null && wait "$rqlat_pid" 2>/dev/null || true
+		parse_bpftrace_log "$BTLOG"
+		cp "$BTLOG" "$OUTROOT/${name}.bpftrace.log" 2>/dev/null || true
+		cp "$RQLATLOG" "$OUTROOT/${name}.runqlat.log" 2>/dev/null || true
+		echo "--- bpftrace (nguyen van, xem file ${name}.bpftrace.log) ---" | tee -a "$ketqua"
+		tail -20 "$BTLOG" | tee -a "$ketqua"
+		echo "--- runqlat-bpfcc (histogram, xem file ${name}.runqlat.log) ---" | tee -a "$ketqua"
+		tail -15 "$RQLATLOG" | tee -a "$ketqua"
+	fi
 
 	kill -INT "$cpid" 2>/dev/null
 	wait "$cpid" 2>/dev/null
@@ -200,14 +258,17 @@ with open(path,'rb') as f:
 PY
 )
 
-	local a_exec a_delay b_exec b_delay
+	local a_exec a_delay a_pcount b_exec b_delay b_pcount
 	a_exec=$(echo "$a_stat" | awk '{print $1}')
 	a_delay=$(echo "$a_stat" | awk '{print $2}')
+	a_pcount=$(echo "$a_stat" | awk '{print $3}')
 	b_exec=$(echo "$b_stat" | awk '{print $1}')
 	b_delay=$(echo "$b_stat" | awk '{print $2}')
-	local d_exec d_delay
+	b_pcount=$(echo "$b_stat" | awk '{print $3}')
+	local d_exec d_delay d_pcount
 	d_exec=$((b_exec - a_exec))
 	d_delay=$((b_delay - a_delay))
+	d_pcount=$((b_pcount - a_pcount))
 
 	local d_wait d_sleep d_block
 	if [[ -n $a_wait_ms && -n $b_wait_ms ]]; then
@@ -231,6 +292,14 @@ PY
 	if [[ -n ${d_block:-} ]]; then
 		printf '%-20s %-15s %-15s %s\n' "vol (D_SLEEP)" "${coll_vol_ds:-?}" "${d_block:-?}" "Delta sum_block_runtime" | tee -a "$ketqua"
 	fi
+	if [[ $name == S2 || $name == S3 || $name == S5 ]]; then
+		local coll_tot kern_tot
+		coll_tot=$((coll_csi + coll_rq + coll_vol))
+		kern_tot=$((d_exec + d_delay + d_sleep + ${d_block:-0}))
+		printf '%-20s %-15s %-15s %s\n' "rq" "${coll_rq:-?}" "${BT_RQ_NS:-?}" "bpftrace @rq_sau_wakeup_ns (cot 3: ${d_delay:-?} run_delay)" | tee -a "$ketqua"
+		printf '%-20s %-15s %-15s %s\n' "so_lan_wakeup" "—" "${BT_SO_LAN:-?}" "bpftrace @so_lan (cot 3: ${d_pcount:-?} Delta pcount)" | tee -a "$ketqua"
+		printf '%-20s %-15s %-15s %s\n' "tong 5 thanh phan" "${coll_tot:-?}" "${kern_tot:-?}" "collector | kernel (exec+run_delay+sleep+block)" | tee -a "$ketqua"
+	fi
 
 	echo "--- log collector (cuoi) ---" | tee -a "$ketqua"
 	tail -30 "$prefix-collect.log" | tee -a "$ketqua"
@@ -242,84 +311,101 @@ PY
 
 part_g_real() {
 	local ketqua="$OUTROOT/G-real-ketqua.txt"
-	local cid cg bin prefix
+	local refs="$OUTROOT/G-real-sched-refs.txt"
+	local cid cg bin prefix threads_file t0 t1
 	cid=$(docker ps --filter 'name=qdrant' --format '{{.ID}}' | head -1)
 	[[ -n $cid ]] || die "khong tim container qdrant"
 	cg=$(docker inspect -f '{{.Id}}' "$cid")
 	cg="/sys/fs/cgroup/system.slice/docker-${cg}.scope"
 	[[ -d $cg ]] || cg=$(find /sys/fs/cgroup -name "*${cid:0:12}*" -type d 2>/dev/null | head -1)
 	[[ -d $cg ]] || die "khong tim cgroup cho qdrant"
+	[[ -r $cg/cgroup.threads ]] || die "khong doc $cg/cgroup.threads"
 
 	prefix=out/g3-greal-$(date +%H%M%S)
 	bin="$prefix.bin"
 	echo "=== G-real: cgroup qdrant 120s ===" | tee "$ketqua"
 	echo "cgroup: $cg" | tee -a "$ketqua"
 
-	mapfile -t pids < <(cat "$cg/cgroup.procs" 2>/dev/null)
-	echo "so tien trinh trong cgroup luc bat dau: ${#pids[@]}" | tee -a "$ketqua"
+	sort -n "$cg/cgroup.threads" >"$prefix-threads-start.txt"
+	t0=$(monotonic_ns)
+	echo "mono_ns_bat_dau: $t0" | tee -a "$ketqua"
 
-	declare -A a_exec a_delay
-	for p in "${pids[@]}"; do
-		[[ -r /proc/$p/schedstat ]] || continue
-		read -r e d _ < <(read_schedstat "$p")
-		a_exec[$p]=$e
-		a_delay[$p]=$d
-	done
+	{
+		echo "=== moc A mono_ns=$t0 ==="
+		while read -r tid; do
+			[[ -z $tid ]] && continue
+			echo "--- tid $tid schedstat A ---"
+			read_schedstat "$tid" || echo "?"
+			echo "--- tid $tid sched A ---"
+			read_sched_fields "$tid"
+		done <"$prefix-threads-start.txt"
+	} >"$refs"
 
 	"$COLLECT" -cgroup "$cg" -duration 120s -out "$bin" 2>"$prefix-collect.log" &
 	local cpid=$!
 	wait_ready "$prefix-collect.log"
 	wait "$cpid"
 
-	mapfile -t pids2 < <(cat "$cg/cgroup.procs" 2>/dev/null)
-	declare -A b_exec b_delay
-	for p in "${pids2[@]}"; do
-		[[ -r /proc/$p/schedstat ]] || continue
-		read -r e d _ < <(read_schedstat "$p")
-		b_exec[$p]=$e
-		b_delay[$p]=$d
-	done
+	sort -n "$cg/cgroup.threads" >"$prefix-threads-end.txt"
+	t1=$(monotonic_ns)
+	echo "mono_ns_ket_thuc: $t1" | tee -a "$ketqua"
 
-	local total_ref_exec=0 total_ref_delay=0
-	for p in "${!a_exec[@]}"; do
-		[[ -n ${b_exec[$p]:-} ]] || continue
-		total_ref_exec=$((total_ref_exec + b_exec[$p] - a_exec[$p]))
-		total_ref_delay=$((total_ref_delay + b_delay[$p] - a_delay[$p]))
-	done
+	comm -12 "$prefix-threads-start.txt" "$prefix-threads-end.txt" >"$prefix-threads-kept.txt"
+	mapfile -t kept <"$prefix-threads-kept.txt"
+	echo "so thread giu (co trong cgroup.threads dau va cuoi): ${#kept[@]}" | tee -a "$ketqua"
+
+	{
+		echo "=== moc B mono_ns=$t1 ==="
+		while read -r tid; do
+			[[ -z $tid ]] && continue
+			echo "--- tid $tid schedstat B ---"
+			read_schedstat "$tid" || echo "?"
+			echo "--- tid $tid sched B ---"
+			read_sched_fields "$tid"
+		done <"$prefix-threads-kept.txt"
+	} >>"$refs"
+
+	local total_ref_exec=0 total_ref_delay=0 total_ref_sleep=0
+	while read -r tid; do
+		[[ -z $tid ]] && continue
+		local ae ad ap be bd bp
+		ae=$(grep -A1 "^--- tid $tid schedstat A ---" "$refs" | tail -1 | awk '{print $1}')
+		ad=$(grep -A1 "^--- tid $tid schedstat A ---" "$refs" | tail -1 | awk '{print $2}')
+		be=$(grep -A1 "^--- tid $tid schedstat B ---" "$refs" | tail -1 | awk '{print $1}')
+		bd=$(grep -A1 "^--- tid $tid schedstat B ---" "$refs" | tail -1 | awk '{print $2}')
+		[[ -n $ae && -n $be ]] || continue
+		total_ref_exec=$((total_ref_exec + be - ae))
+		total_ref_delay=$((total_ref_delay + bd - ad))
+	done <"$prefix-threads-kept.txt"
+
+	threads_file=$(IFS=,; echo "${kept[*]}")
+	local agg
+	agg=$(python3 "$GREAL_AGG" "$bin" "$threads_file" "$t0" "$t1")
+	echo "$agg" | tee -a "$ketqua"
+
+	local coll_csi coll_rq coll_vol coll_all
+	coll_csi=$(echo "$agg" | awk '/collector_cpu_steal_irq_ns/{print $2}')
+	coll_rq=$(echo "$agg" | awk '/collector_rq_ns/{print $2}')
+	coll_vol=$(echo "$agg" | awk '/collector_vol_ns/{print $2}')
+	coll_all=$(echo "$agg" | awk '/collector_tong_5_ns/{print $2}')
+
+	echo "--- bang tong G-real ---" | tee -a "$ketqua"
+	printf '%-22s %-18s %-18s %s\n' "thanh_phan" "collector" "tham_chieu" "nguon" | tee -a "$ketqua"
+	printf '%-22s %-18s %-18s %s\n' "cpu+steal+irq" "${coll_csi:-?}" "${total_ref_exec:-?}" "Tong Delta schedstat field1" | tee -a "$ketqua"
+	printf '%-22s %-18s %-18s %s\n' "rq" "${coll_rq:-?}" "${total_ref_delay:-?}" "Tong Delta schedstat field2" | tee -a "$ketqua"
+	printf '%-22s %-18s %-18s %s\n' "vol" "${coll_vol:-?}" "?" "Tong Delta sum_sleep_runtime: xem $refs" | tee -a "$ketqua"
+	printf '%-22s %-18s %-18s %s\n' "tong 3+rq+vol" "${coll_all:-?}" "$((total_ref_exec + total_ref_delay))" "collector | schedstat exec+run_delay" | tee -a "$ketqua"
+
+	echo "--- top 10 thread (cpu+steal+irq collector) ---" | tee -a "$ketqua"
+	echo "$agg" | sed -n '/^top10_tid/,$p' | tee -a "$ketqua"
 
 	echo "--- log collector (cuoi) ---" | tee -a "$ketqua"
-	tail -20 "$prefix-collect.log" | tee -a "$ketqua"
-
-	local coll_csi coll_rq coll_vol
-	coll_csi=$(python3 - "$bin" <<'PY'
-import struct,sys
-path=sys.argv[1]
-cpu=steal=irq=rq=vol=0
-with open(path,'rb') as f:
-    while f.readline().strip()!=b'#END': pass
-    while True:
-        b=f.read(48)
-        if len(b)<48: break
-        cpu+=struct.unpack_from('<I',b,28)[0]
-        steal+=struct.unpack_from('<I',b,32)[0]
-        irq+=struct.unpack_from('<I',b,36)[0]
-        rq+=struct.unpack_from('<I',b,40)[0]
-        vol+=struct.unpack_from('<I',b,44)[0]*1000
-print(cpu+steal+irq,rq,vol)
-PY
-)
-	coll_rq=$(echo "$coll_csi" | awk '{print $2}')
-	coll_vol=$(echo "$coll_csi" | awk '{print $3}')
-	coll_csi=$(echo "$coll_csi" | awk '{print $1}')
-
-	echo "--- bang doi chieu (tong thread song suot cua so) ---" | tee -a "$ketqua"
-	printf '%-20s %-15s %-15s %s\n' "thanh_phan" "collector" "tham_chieu" "nguon" | tee -a "$ketqua"
-	printf '%-20s %-15s %-15s %s\n' "cpu+steal+irq" "$coll_csi" "$total_ref_exec" "Tong Delta schedstat field1" | tee -a "$ketqua"
-	printf '%-20s %-15s %-15s %s\n' "rq" "$coll_rq" "$total_ref_delay" "Tong Delta schedstat field2" | tee -a "$ketqua"
-	printf '%-20s %-15s %-15s %s\n' "vol" "$coll_vol" "?" "sum_sleep_runtime: chua tong hop" | tee -a "$ketqua"
+	tail -15 "$prefix-collect.log" | tee -a "$ketqua"
+	echo "chi tiet sched: $refs" | tee -a "$ketqua"
 
 	cp "$bin.periodic" "$OUTROOT/G-real.bin.periodic" 2>/dev/null || true
 	cp "$bin.stats" "$OUTROOT/G-real.bin.stats" 2>/dev/null || true
+	cp "$refs" "$OUTROOT/G-real-sched-refs.txt" 2>/dev/null || true
 }
 
 part_g_irq() {

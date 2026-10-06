@@ -4,7 +4,7 @@
 # nr_cpus_possible: 24
 # git_commit: c3d371b-dirty
 # record_size: 48
-# filter_pid: 510934
+# filter_pid: 524136
 # filter_cgroup: khong co
 # ringbuf_bytes: 67108864
 # stealclock: bat (24/24 dong "vmware-stealtime" trong dmesg)
@@ -19,12 +19,12 @@
 # CONFIG_SCHEDSTATS: y
 # CONFIG_SCHED_INFO: y
 # irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
-# start_mono_ns: 20351980319850
-# start_wall: 2026-10-07T00:38:51.685432089+07:00
+# start_mono_ns: 20553511892185
+# start_wall: 2026-10-07T00:42:13.217004526+07:00
 # duration: khong gioi han
-# end_mono_ns: 20352390280679
-# end_wall: 2026-10-07T00:38:52.095394872+07:00
-# bin: out/g3-S5-003847.bin
+# end_mono_ns: 20553899317404
+# end_wall: 2026-10-07T00:42:13.604432391+07:00
+# bin: out/g3-S5-004209.bin
 # ban_ghi_sai_kich_thuoc: 0
 # so_ban_ghi_doc_duoc: 1505
 cpu,seq_cuoi,mat

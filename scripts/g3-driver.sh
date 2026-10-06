@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -uo pipefail
 cd /root/hids
-make build >>/dev/null 2>&1 || true
 STATUS=out/jobs/g3-driver.status
 LOG=out/jobs/g3-driver.log
 mkdir -p out/jobs

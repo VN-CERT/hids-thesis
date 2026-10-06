@@ -32,8 +32,19 @@ die() {
 	exit 1
 }
 
+require_clean_git() {
+	local st path
+	while read -r st path _; do
+		[[ -z $st ]] && continue
+		if [[ $path != out/* ]]; then
+			die "cay git khong sach (thay doi ngoai out/): $st $path — commit truoc khi chay g7"
+		fi
+	done < <(git status --porcelain 2>/dev/null | awk '{print $1, $2}')
+}
+
 check_common() {
 	[[ $EUID -eq 0 ]] || die "can chay bang root"
+	require_clean_git
 	for f in "$COLLECT" "$RECSTAT" "$SYSINJ"; do
 		[[ -x $f ]] || die "khong thay $f, chay 'make build' truoc"
 	done
