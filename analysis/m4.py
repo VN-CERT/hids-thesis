@@ -10,8 +10,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-# nanosleep=35 (khoang dot), getppid=110 (khoang ngu)
-BURN_NR = 35
+# getppid=110 (khoang ngu). Khoang dot: nanosleep (35 arm) hoac clock_nanosleep (230 x86_64).
+BURN_NRS = {35, 230}
 SLEEP_NR = 110
 COLS = ["dt_ns", "cpu_ns", "steal_ns", "irq_ns", "rq_ns", "vol_ns"]
 STAT_COLS = ["n", "median_us", "p90_us", "p99_us"] + [
@@ -37,7 +37,7 @@ def load_csv(path: Path) -> pd.DataFrame:
 def classify(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
     df["kind"] = np.where(
-        df["syscall_nr"] == BURN_NR,
+        df["syscall_nr"].isin(BURN_NRS),
         "burn",
         np.where(df["syscall_nr"] == SLEEP_NR, "sleep", "other"),
     )
@@ -89,12 +89,15 @@ def boxplot_exp(outdir: Path, exp: str, by_level: dict[str, pd.DataFrame]) -> No
     labels = []
     for lv in levels:
         burn = by_level[lv]
-        burn = burn[burn["syscall_nr"] == BURN_NR]
+        burn = burn[burn["syscall_nr"].isin(BURN_NRS)]
         if burn.empty:
             continue
         labels.append(str(lv))
         dt_data.append((burn["dt_ns"].dropna() / 1000.0).values)
         cpu_data.append((burn["cpu_ns"].dropna() / 1000.0).values)
+    if not dt_data:
+        plt.close(fig)
+        return
     axes[0].boxplot(dt_data, labels=labels)
     axes[0].set_title(f"{exp} dt burn (us)")
     axes[0].set_xlabel("muc")

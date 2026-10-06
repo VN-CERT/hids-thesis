@@ -47,17 +47,15 @@ read_burn_loops() {
 }
 
 calibrate_mem() {
-	local fifo wl_pid
-	fifo=$(mktemp -u)
-	mkfifo "$fifo" || die "mkfifo"
 	echo "m4: hieu chinh mem tren CPU $WL_CPU..." >&2
-	taskset -c "$WL_CPU" "$WL" mem 1 <"$fifo" >out/m4-cal-mem.log 2>&1 &
-	wl_pid=$!
-	sleep 5
-	grep -q mem_steps "$LOOPS_FILE" || die "mem hieu chinh that bai"
+	taskset -c "$WL_CPU" "$WL" mem 1 >/dev/null 2>out/m4-cal-mem.log &
+	local wl_pid=$!
+	sleep 8
 	kill "$wl_pid" 2>/dev/null
 	wait "$wl_pid" 2>/dev/null
-	rm -f "$fifo"
+	local ms
+	ms=$(awk '/^mem_steps/{print $2}' "$LOOPS_FILE")
+	[[ -n $ms && $ms -gt 0 ]] || die "mem hieu chinh that bai, xem out/m4-cal-mem.log"
 }
 
 calibrate_wl() {
@@ -154,11 +152,12 @@ e1() {
 }
 
 e3_connect_prog() {
-	python3 - <<'PY'
-import socket, time
+	"${M4_PYTHON[@]}" - <<'PY'
+import os, socket, time
+os.getppid()
 time.sleep(300)
 s = socket.socket()
-s.connect(("127.0.0.1", int(__import__("os").environ["M4_E3_PORT"])))
+s.connect(("127.0.0.1", int(os.environ["M4_E3_PORT"])))
 s.close()
 PY
 }

@@ -167,13 +167,16 @@ static unsigned long long read_mem_steps_file(void)
 static void write_m4_loops(unsigned long long mem_steps)
 {
 	FILE *f = fopen(M4_LOOPS_FILE, "w");
+	unsigned long long keep_mem = mem_steps;
 
 	if (!f) {
 		perror("fopen m4-loops");
 		_exit(1);
 	}
+	if (keep_mem == 0)
+		keep_mem = read_mem_steps_file();
 	fprintf(f, "burn_loops %llu\n", fixed_loops_10ms);
-	fprintf(f, "mem_steps %llu\n", mem_steps);
+	fprintf(f, "mem_steps %llu\n", keep_mem);
 	fclose(f);
 }
 
@@ -328,6 +331,38 @@ int main(int argc, char **argv)
 			write_m4_loops(read_mem_steps_file());
 	}
 
+	/* Hieu chinh mem truoc khi cho (calibrate_mem trong m4.sh khong can fifo). */
+	if (strcmp(mode, "mem") == 0) {
+		unsigned char *buf;
+		unsigned long long mem_steps, burn_file;
+		size_t mem_sz = 64UL * 1024 * 1024;
+
+		burn_file = read_loops_file_field("burn_loops");
+		if (burn_file > 0 && loops_arg == 0) {
+			fixed_loops_10ms = burn_file;
+			use_fixed_loops = 1;
+			loops_per_us = (double)fixed_loops_10ms / 10000.0;
+		}
+		buf = malloc(mem_sz);
+		if (!buf) {
+			perror("malloc");
+			_exit(1);
+		}
+		memset(buf, 0, mem_sz);
+		if (loops_arg > 0) {
+			mem_steps = read_mem_steps_file();
+			if (mem_steps == 0) {
+				fprintf(stderr, "wl: mem can mem_steps trong %s\n", M4_LOOPS_FILE);
+				_exit(1);
+			}
+		} else {
+			mem_steps = calibrate_mem_steps(buf, mem_sz);
+			write_m4_loops(mem_steps);
+			fprintf(stderr, "wl: mem_steps=%llu\n", mem_steps);
+		}
+		free(buf);
+	}
+
 	wait_go();
 	marker_getuid();
 
@@ -350,32 +385,20 @@ int main(int argc, char **argv)
 		}
 	} else if (strcmp(mode, "mem") == 0) {
 		unsigned char *buf;
-		unsigned long long mem_steps, burn_file;
+		unsigned long long mem_steps;
 		size_t mem_sz = 64UL * 1024 * 1024;
 
-		burn_file = read_loops_file_field("burn_loops");
-		if (burn_file > 0 && loops_arg == 0) {
-			fixed_loops_10ms = burn_file;
-			use_fixed_loops = 1;
-			loops_per_us = (double)fixed_loops_10ms / 10000.0;
+		mem_steps = read_mem_steps_file();
+		if (mem_steps == 0) {
+			fprintf(stderr, "wl: mem can mem_steps trong %s\n", M4_LOOPS_FILE);
+			_exit(1);
 		}
-
 		buf = malloc(mem_sz);
 		if (!buf) {
 			perror("malloc");
 			_exit(1);
 		}
 		memset(buf, 0, mem_sz);
-		if (loops_arg > 0) {
-			mem_steps = read_mem_steps_file();
-			if (mem_steps == 0) {
-				fprintf(stderr, "wl: mem can mem_steps trong %s\n", M4_LOOPS_FILE);
-				_exit(1);
-			}
-		} else {
-			mem_steps = calibrate_mem_steps(buf, mem_sz);
-			write_m4_loops(mem_steps);
-		}
 		for (r = 0; r < rounds; r++) {
 			mem_work(buf, mem_sz, mem_steps);
 			do_sleep_us(10000);
