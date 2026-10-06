@@ -28,3 +28,6 @@ Collector eBPF đo khoảng thời gian giữa hai syscall liên tiếp của t�
 # Đặc tả bản ghi syscall (dùng từ M2; cố định 48 byte, little-endian)
 ts_enter u64 ns (bpf_ktime_get_ns tại sys_enter) | cgroup_id u64 | tid u32 | seq u32 (tăng dần theo CPU) | syscall_nr u16 | flags u16 | cpu_ns u32 | steal_ns u32 | irq_ns u32 | rq_ns u32 | vol_us u32
 Các thành phần thuộc khoảng từ sys_enter trước đó của cùng tid tới sys_enter hiện tại; mỗi thành phần được đo độc lập (không suy ra từ Δt trừ các phần khác).
+
+# Bảng flags (kiến trúc sư chốt, cố định từ M2)
+bit0 FIRST (bản ghi đầu tiên của thread kể từ khi collector chạy) | bit1 GAP_BEFORE | bit2 D_SLEEP (M3) | bit3 MIGRATED (M3) | bit4 OVERFLOW (M3) | bit5 STEAL_FALLBACK (M3) | các bit còn lại = 0

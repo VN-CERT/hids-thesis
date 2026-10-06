@@ -47,6 +47,7 @@ func run() error {
 	if os.Geteuid() != 0 {
 		return fmt.Errorf("can chay bang root (nap chuong trinh BPF va doc ksym kernel)")
 	}
+	buildinfo.WarnIfDirty(os.Stderr)
 
 	release, err := hostinfo.KernelRelease()
 	if err != nil {
