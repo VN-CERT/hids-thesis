@@ -1,6 +1,6 @@
 # Trạng thái dự án HIDS
 
-Cập nhật lần cuối: 2026-10-07 00:05 (giờ máy)
+Cập nhật lần cuối: 2026-10-07 00:10 (giờ máy)
 
 ## Mốc hiện tại và mục tiêu
 - Mốc: **M3 mục A–E** (người dùng thu hẹp phạm vi phiên này). Chỉ làm A, B, C, D, E.
@@ -53,18 +53,20 @@ Cập nhật lần cuối: 2026-10-07 00:05 (giờ máy)
 | Báo cáo R003 | `cc610ea` |
 | M3 mục A: định nghĩa 5 thành phần vào `hids.mdc` | `cc610ea` |
 | M3 mục D: bảng flags thêm bit6 CLAMPED | `cc610ea` |
-| M3 mục B: trạng thái theo thread, máy trạng thái ON-CPU/OFF-CPU | (commit này) |
-| M3 mục C: bộ cộng dồn irq per-CPU, 13 cặp tracepoint | (commit này) |
-| M3 mục E: kiểm tra fail-closed lúc khởi động, header mới | (commit này) |
-| Sửa thứ tự gắn/gỡ cặp tracepoint irq (lỗi irq vector 660 giây) | (commit này) |
+| M3 mục B: trạng thái theo thread, máy trạng thái ON-CPU/OFF-CPU | `b8e75d1` |
+| M3 mục C: bộ cộng dồn irq per-CPU, 13 cặp tracepoint | `b8e75d1` |
+| M3 mục E: kiểm tra fail-closed lúc khởi động, header mới | `b8e75d1` |
+| Sửa thứ tự gắn/gỡ cặp tracepoint irq (lỗi irq vector 660 giây) | `b8e75d1` |
 | Chạy thử 30 giây, lưu `validation/m3ae-20261006/` | (commit này) |
+| Báo cáo R004, tag `m3-ae` | (commit này) |
 
 ## Bước đang làm
-Viết báo cáo R004 cho M3 mục A–E.
+Không có. Phiên đã kết thúc theo đúng điều kiện người dùng đặt ra.
 
 ## Bước tiếp theo
-1. Cập nhật `reports/INDEX.md`, commit, gắn tag `m3-ae`.
-2. **DỪNG.** Chờ kiến trúc sư duyệt R004 trước khi làm mục F–J của M3.
+1. **DỪNG.** Chờ kiến trúc sư duyệt R004, trước hết là mục 8.2 (đua đọc-sửa-ghi trên độ sâu irq), vì nó có thể làm phải viết lại mục C của M3.
+2. Phiên sau: mục F (`tools/wl.c`), G (`bin/rec-check`), H (`scripts/g3.sh`), I, J của M3. **Hiện chưa viết dòng nào, chưa chạy.**
+3. Chỉ gắn tag `m3` sau khi mục H đã chạy xong.
 
 ## Kết quả chạy thử M3 mục A–E (2026-10-06, `validation/m3ae-20261006/`)
 - Verifier nạp được toàn bộ: 1 chương trình `tp_btf/sys_enter`, 3 chương trình sched, 26 chương trình irq (13 cặp).

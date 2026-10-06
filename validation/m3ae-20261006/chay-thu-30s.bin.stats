@@ -2,9 +2,9 @@
 # uname_r: 6.8.0-142-generic
 # nr_cpus: 24
 # nr_cpus_possible: 24
-# git_commit: cc610ea-dirty
+# git_commit: b8e75d1
 # record_size: 48
-# filter_pid: 439070
+# filter_pid: 444102
 # filter_cgroup: khong co
 # ringbuf_bytes: 67108864
 # stealclock: bat (24/24 dong "vmware-stealtime" trong dmesg)
@@ -15,24 +15,24 @@
 # config_hz: 1000
 # kernel.sched_schedstats: 0
 # irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
-# start_mono_ns: 18106173818095
-# start_wall: 2026-10-07T00:01:25.878930416+07:00
+# start_mono_ns: 18272472840328
+# start_wall: 2026-10-07T00:04:12.177952525+07:00
 # duration: 30s
-# end_mono_ns: 18136192237687
-# end_wall: 2026-10-07T00:01:55.897355254+07:00
+# end_mono_ns: 18302489445529
+# end_wall: 2026-10-07T00:04:42.19455972+07:00
 # bin: out/m3-thu.bin
 # ban_ghi_sai_kich_thuoc: 0
 # so_ban_ghi_doc_duoc: 5958
 cpu,seq_cuoi,mat
-0,4,0
+0,0,0
 1,0,0
 2,0,0
 3,0,0
 4,0,0
-5,5954,0
+5,0,0
 6,0,0
-7,0,0
-8,0,0
+7,3924,0
+8,2034,0
 9,0,0
 10,0,0
 11,0,0
