@@ -11,19 +11,24 @@ GIT_DIRTY = $(shell test -z "$$(git status --porcelain 2>/dev/null)" || echo -di
 GIT_COMMIT = $(GIT_REV)$(GIT_DIRTY)
 LDFLAGS = -X hids/internal/buildinfo.Commit=$(GIT_COMMIT)
 
-BINARIES := bin/steal-probe bin/steal-summary bin/hids-collect bin/rec-stat bin/sysinj
+BINARIES := bin/steal-probe bin/steal-summary bin/hids-collect bin/rec-stat bin/rec-check bin/wl bin/sysinj
 
 .PHONY: build generate vmlinux clean
 
-build: generate bin/sysinj
+build: generate bin/sysinj bin/wl
 	@mkdir -p bin
 	$(GO) build -ldflags "$(LDFLAGS)" -o bin/steal-probe ./cmd/steal-probe
 	$(GO) build -ldflags "$(LDFLAGS)" -o bin/steal-summary ./cmd/steal-summary
 	$(GO) build -ldflags "$(LDFLAGS)" -o bin/hids-collect ./cmd/hids-collect
 	$(GO) build -ldflags "$(LDFLAGS)" -o bin/rec-stat ./cmd/rec-stat
+	$(GO) build -ldflags "$(LDFLAGS)" -o bin/rec-check ./cmd/rec-check
 
 # Cong cu kiem thu viet bang C, khong thuoc phan Go.
 bin/sysinj: tools/sysinj.c
+	@mkdir -p bin
+	$(CC) -O2 -Wall -Wextra -o $@ $<
+
+bin/wl: tools/wl.c
 	@mkdir -p bin
 	$(CC) -O2 -Wall -Wextra -o $@ $<
 

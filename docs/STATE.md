@@ -1,9 +1,11 @@
 # Trạng thái dự án HIDS
 
-Cập nhật lần cuối: 2026-10-07 00:25 (giờ máy)
+Cập nhật lần cuối: 2026-10-07 00:35 (giờ máy)
 
 ## Mốc hiện tại và mục tiêu
-- Mốc: **M3 PHẦN 1** (nguyên văn nhiệm vụ: `docs/tasks/M3-phan2.md`). PHẦN 1 = mục 8.2 + 8.3 trong phản hồi của kiến trúc sư cho R004.
+- Mốc: **M3 PHẦN 2** (mục F–J, nguyên văn: `docs/tasks/M3-phan2.md`).
+- Đang làm: `tools/wl.c`, `bin/rec-check`, `scripts/g3.sh`, tự chạy G3, lưu `validation/g3-20261007/`, tag `m3`, báo cáo R005.
+- PHẦN 1: đã xong (`6b4a050`).
 - PHẦN 1 gồm: viết lại mục C (bộ cộng dồn irq per-CPU) theo phương án (c), in `recursion_misses` của từng chương trình BPF, thêm cột `soft_raw_delta_ns` vào `.periodic`, thêm 4 dòng header `CONFIG_*`.
 - Điều kiện kết thúc PHẦN 1: build sạch, chạy lại phép chạy thử 30 giây của R004 và phép soi chéo tự nhất quán, commit, in `XONG PHẦN 1` rồi **CHỜ** người dùng đổi model và bảo làm tiếp.
 - **PHẦN 2 = M3 mục F–J.** Chưa bắt đầu. KHÔNG làm cho tới khi người dùng bảo làm tiếp.
@@ -68,7 +70,7 @@ Cập nhật lần cuối: 2026-10-07 00:25 (giờ máy)
 | PHẦN 1: chạy lại lần hai với binary từ cây git sạch | `6b4a050` |
 
 ## Bước đang làm
-Không có. PHẦN 1 đã xong và đã commit. Đang **CHỜ** người dùng đổi model và bảo làm PHẦN 2.
+M3 PHẦN 2: viết `tools/wl.c`, `cmd/rec-check`, `scripts/g3.sh`.
 
 ## Bước tiếp theo
 1. **DỪNG, chờ người dùng.** Không bắt đầu PHẦN 2 khi chưa được bảo.

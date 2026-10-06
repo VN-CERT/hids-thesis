@@ -25,7 +25,8 @@ const (
 	FlagMigrated      uint16 = 1 << 3 // M3
 	FlagOverflow      uint16 = 1 << 4 // M3
 	FlagStealFallback uint16 = 1 << 5 // M3
-	// bit6..7 = 0, bit8..15 = so CPU luc sys_enter.
+	FlagClamped       uint16 = 1 << 6 // M3
+	// bit7 = 0, bit8..15 = so CPU luc sys_enter.
 	FlagCPUShift        = 8
 	FlagCPUMask  uint16 = 0xff << FlagCPUShift
 )
