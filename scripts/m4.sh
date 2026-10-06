@@ -7,6 +7,7 @@ cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
 WL=./bin/wl
 COLLECT=./bin/hids-collect
 EXPORT=./bin/rec-export
+E3BIN=./bin/m4_e3
 M4PY=./analysis/m4.py
 # Tranh numpy 2.x trong /usr/local lam hong pandas he thong.
 M4_PYTHON=(env PYTHONNOUSERSITE=1 PYTHONPATH=/usr/lib/python3/dist-packages /usr/bin/python3)
@@ -151,24 +152,11 @@ e1() {
 	printf '%s\n' "${manifest[@]}"
 }
 
-e3_connect_prog() {
-	"${M4_PYTHON[@]}" - <<'PY'
-import os, socket, time
-os.getppid()
-time.sleep(300)
-s = socket.socket()
-s.connect(("127.0.0.1", int(os.environ["M4_E3_PORT"])))
-s.close()
-PY
-}
-
 e3_once() {
 	local tag=$1 stress_n=$2
 	local port listener prefix bin csv
 	port=$((19000 + RANDOM % 1000))
-	export M4_E3_PORT=$port
-	listener=$(mktemp)
-	python3 -c "import socket;s=socket.socket();s.bind(('127.0.0.1',$port));s.listen(1);s.accept()" &
+	python3 -c "import socket;s=socket.socket();s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1);s.bind(('127.0.0.1',$port));s.listen(1);s.accept();s.close()" &
 	local lip=$!
 	local stress_pids=()
 	for ((i = 0; i < stress_n; i++)); do
@@ -178,12 +166,18 @@ e3_once() {
 	sleep 1
 	prefix="out/m4-e3-${tag}-$(date +%H%M%S)"
 	bin="$prefix.bin"
-	e3_connect_prog &
+	local fifo="$prefix.fifo"
+	mkfifo "$fifo"
+	exec 8<>"$fifo"
+	"$E3BIN" "$port" <"$fifo" &
 	local wp=$!
-	"$COLLECT" -pid "$wp" -duration 330s -out "$bin" 2>"$prefix-collect.log" &
+	"$COLLECT" -pid "$wp" -duration 400s -out "$bin" 2>"$prefix-collect.log" &
 	local cpid=$!
 	wait_ready "$prefix-collect.log"
+	printf '.' >&8
 	wait "$wp"
+	exec 8>&-
+	rm -f "$fifo"
 	wait "$cpid"
 	kill "$lip" 2>/dev/null
 	wait "$lip" 2>/dev/null
@@ -263,7 +257,7 @@ EOF
 
 main() {
 	[[ $EUID -eq 0 ]] || die "can root"
-	for f in "$WL" "$COLLECT" "$EXPORT"; do
+	for f in "$WL" "$COLLECT" "$EXPORT" "$E3BIN"; do
 		[[ -x $f ]] || die "khong co $f (make build?)"
 	done
 	[[ -f $M4PY ]] || die "khong co $M4PY"

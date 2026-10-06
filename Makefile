@@ -12,7 +12,7 @@ GIT_DIRTY = $(shell git status --porcelain 2>/dev/null | awk '$$2 !~ /^out\// &&
 GIT_COMMIT = $(GIT_REV)$(GIT_DIRTY)
 LDFLAGS = -X hids/internal/buildinfo.Commit=$(GIT_COMMIT)
 
-BINARIES := bin/steal-probe bin/steal-summary bin/hids-collect bin/rec-stat bin/rec-check bin/rec-export bin/wl bin/sysinj
+BINARIES := bin/steal-probe bin/steal-summary bin/hids-collect bin/rec-stat bin/rec-check bin/rec-export bin/wl bin/m4_e3 bin/sysinj
 
 .PHONY: build generate vmlinux clean
 
@@ -31,6 +31,10 @@ bin/sysinj: tools/sysinj.c
 	$(CC) -O2 -Wall -Wextra -o $@ $<
 
 bin/wl: tools/wl.c
+	@mkdir -p bin
+	$(CC) -O2 -Wall -Wextra -o $@ $<
+
+bin/m4_e3: tools/m4_e3.c
 	@mkdir -p bin
 	$(CC) -O2 -Wall -Wextra -o $@ $<
 
