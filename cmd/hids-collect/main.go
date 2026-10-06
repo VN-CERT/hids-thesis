@@ -190,6 +190,16 @@ func run() error {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
+	periodicPath := outPath + recfmt.PeriodicSuffix
+	pw, err := recfmt.NewPeriodicWriter(periodicPath, header)
+	if err != nil {
+		return err
+	}
+	defer pw.Close()
+	stopPeriodic := make(chan struct{})
+	periodicDone := make(chan struct{})
+	go watchLoss(coll, pw, stopPeriodic, periodicDone)
+
 	var timer <-chan time.Time
 	if *duration > 0 {
 		t := time.NewTimer(*duration)
@@ -251,6 +261,9 @@ func run() error {
 		return err
 	}
 
+	close(stopPeriodic)
+	<-periodicDone
+
 	stats, err := coll.Stats()
 	if err != nil {
 		return err
@@ -290,9 +303,74 @@ func run() error {
 	if fi, err := os.Stat(outPath); err == nil {
 		fmt.Fprintf(os.Stderr, "kich thuoc file: %d byte\n", fi.Size())
 	}
-	fmt.Fprintf(os.Stderr, "du lieu: %s | thong ke: %s\n", outPath, statsPath)
+	fmt.Fprintf(os.Stderr, "du lieu: %s | thong ke: %s | theo doi: %s\n", outPath, statsPath, periodicPath)
 
 	return nil
+}
+
+// watchLoss ghi mot dong vao file .periodic sau moi recfmt.PeriodicInterval.
+// Khi co ban ghi mat trong khoang vua qua, no in mot dong LOSS ra stderr va
+// ghi vao log. Collector KHONG dung thu thap vi mat ban ghi: so ban ghi mat la
+// du lieu can giu, khong phai ly do de im lang hay bo cuoc.
+func watchLoss(coll *syscallbpf.Collector, pw *recfmt.PeriodicWriter, stop <-chan struct{}, done chan<- struct{}) {
+	defer close(done)
+
+	ticker := time.NewTicker(recfmt.PeriodicInterval)
+	defer ticker.Stop()
+
+	var prevAttempts, prevDrops uint64
+	sample := func() {
+		stats, err := coll.Stats()
+		if err != nil {
+			bpflog.Note(os.Stderr, logPath, fmt.Sprintf("khong doc duoc bo dem tu kernel: %v", err))
+			return
+		}
+		var attempts, drops uint64
+		for _, c := range stats {
+			attempts += uint64(c.SeqLast)
+			drops += c.Drops
+		}
+		mono, err := monotonicNs()
+		if err != nil {
+			bpflog.Note(os.Stderr, logPath, fmt.Sprintf("khong doc duoc CLOCK_MONOTONIC: %v", err))
+			return
+		}
+		dAttempts := attempts - prevAttempts
+		dDrops := drops - prevDrops
+		prevAttempts, prevDrops = attempts, drops
+
+		if werr := pw.Write(recfmt.PeriodicSample{
+			MonoNs:        mono,
+			Wall:          time.Now(),
+			AttemptsDelta: dAttempts,
+			DropsDelta:    dDrops,
+			AttemptsTotal: attempts,
+			DropsTotal:    drops,
+		}); werr != nil {
+			bpflog.Note(os.Stderr, logPath, fmt.Sprintf("khong ghi duoc file .periodic: %v", werr))
+		}
+
+		if dDrops > 0 {
+			pct := 0.0
+			if dAttempts > 0 {
+				pct = float64(dDrops) / float64(dAttempts) * 100
+			}
+			bpflog.Note(os.Stderr, logPath, fmt.Sprintf(
+				"LOSS mono_ns=%d mat=%d dinh_ghi=%d ti_le=%.3f%% mat_tong=%d dinh_ghi_tong=%d (ring buffer day, van thu thap tiep)",
+				mono, dDrops, dAttempts, pct, drops, attempts))
+		}
+	}
+
+	sample() // dong moc, cac delta deu bang 0
+	for {
+		select {
+		case <-stop:
+			sample()
+			return
+		case <-ticker.C:
+			sample()
+		}
+	}
 }
 
 // cgroupID tra ve id cgroup v2, chinh la so inode cua thu muc cgroup.

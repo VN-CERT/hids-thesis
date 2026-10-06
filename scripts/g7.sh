@@ -5,6 +5,7 @@
 #   g7.sh b [N]        24 sysinj song song + stress-ng --cpu 24, ring buffer 64 MiB
 #   g7.sh b-nho [N]    giong b nhung ring buffer 1 MiB, de ep ring buffer day
 #   g7.sh c            loc theo cgroup cua container caddy
+#   g7.sh d [N]        loc theo cgroup CHA, sysinj nam trong cgroup CON
 #
 # Trinh tu cua phan a/b/b-nho duoc thiet ke de perf va collector dem dung cung
 # mot tap su kien:
@@ -314,6 +315,98 @@ part_c() {
 	echo "du lieu: $bin | thong ke: $bin.stats"
 }
 
+# part_d: loc theo cgroup CHA trong khi tien trinh nam o cgroup CON, de kiem
+# tra duong duyet to tien bang mot so luong syscall biet truoc.
+part_d() {
+	local n=$1
+	local ts bin prefix fifo cg_cha cg_con
+	ts=$(date +%Y%m%d-%H%M%S)
+	prefix="out/g7d-$ts"
+	bin="$prefix.bin"
+	fifo="$prefix.fifo"
+	cg_cha=/sys/fs/cgroup/hids-test
+	cg_con=$cg_cha/con
+
+	echo "=== G7d: loc theo cgroup CHA, tien trinh nam trong cgroup CON, N=$n ==="
+
+	rmdir "$cg_con" "$cg_cha" 2>/dev/null
+	mkdir -p "$cg_con" || die "khong tao duoc cgroup tam $cg_con"
+	echo "cgroup cha=$cg_cha inode=$(stat -c %i "$cg_cha")"
+	echo "cgroup con=$cg_con inode=$(stat -c %i "$cg_con")"
+
+	mkfifo "$fifo" || die "khong tao duoc fifo $fifo"
+	exec 9<>"$fifo"
+
+	"$SYSINJ" -n "$n" <"$fifo" >"$prefix-sysinj.log" 2>&1 &
+	local pid=$!
+	sleep 0.5
+	echo "sysinj pid=$pid"
+
+	echo "$pid" >"$cg_con/cgroup.procs" || die "khong chuyen duoc $pid vao $cg_con"
+	echo "\$ cat /proc/$pid/cgroup"
+	cat "/proc/$pid/cgroup"
+
+	"$COLLECT" -cgroup "$cg_cha" -out "$bin" 2>"$prefix-collect.log" &
+	local collect_pid=$!
+	wait_ready "$prefix-collect.log"
+	echo "collector da gan tracepoint (READY), loc theo cgroup CHA"
+
+	perf stat -e raw_syscalls:sys_enter -p "$pid" 2>"$prefix-perf.txt" &
+	local perf_pid=$!
+	wait_perf "$perf_pid" || echo "g7: CANH BAO: perf chua mo perf_event fd" >&2
+	echo "perf da gan"
+
+	sleep 2
+	printf ' ' >&9
+	exec 9>&-
+
+	wait "$pid"
+	sleep 2
+	kill -INT "$collect_pid" 2>/dev/null
+	wait "$collect_pid"
+	wait "$perf_pid" 2>/dev/null
+	rm -f "$fifo"
+
+	echo "\$ rmdir $cg_con $cg_cha"
+	rmdir "$cg_con" "$cg_cha" && echo "da xoa cgroup tam"
+
+	"$RECSTAT" -nr "$GETPPID_NR" "$bin" >"$prefix-recstat.txt" 2>&1
+
+	echo
+	echo "--- perf stat (nguyen van) ---"
+	cat "$prefix-perf.txt"
+	echo "--- log collector (nguyen van) ---"
+	cat "$prefix-collect.log"
+
+	echo
+	echo "--- bang ket qua ---"
+	local pc rc nc
+	pc=$(perf_count "$prefix-perf.txt")
+	rc=$(recstat_field "$prefix-recstat.txt" "tong so ban ghi trong file")
+	nc=$(recstat_field "$prefix-recstat.txt" "ban ghi co syscall_nr=$GETPPID_NR")
+	printf '%-45s %s\n' "N theo thiet ke:" "$n"
+	printf '%-45s %s\n' "perf raw_syscalls:sys_enter (-p $pid):" "${pc:-?}"
+	printf '%-45s %s\n' "so ban ghi collector:" "${rc:-?}"
+	printf '%-45s %s\n' "so ban ghi nr=$GETPPID_NR:" "${nc:-?}"
+	printf '%-45s %s\n' "hieu (perf - ban ghi):" "$((${pc:-0} - ${rc:-0}))"
+
+	echo
+	echo "--- thoi gian va dung luong ---"
+	echo "kich thuoc $bin: $(stat -c %s "$bin") byte"
+
+	echo
+	echo "--- rec-stat day du (nguyen van) ---"
+	cat "$prefix-recstat.txt"
+	echo
+	echo "--- file theo doi dinh ky ---"
+	cat "$bin.periodic"
+
+	echo
+	check_kernel_clean
+	echo
+	echo "du lieu: $bin | thong ke: $bin.stats"
+}
+
 main() {
 	local part=${1:-}
 	local n=${2:-1000000}
@@ -324,8 +417,9 @@ main() {
 	b) run_injection g7b 24 "$n" 64 1 ;;
 	b-nho) run_injection g7b-nho 24 "$n" 1 1 ;;
 	c) part_c ;;
+	d) part_d "$n" ;;
 	*)
-		echo "cach dung: $0 <a|b|b-nho|c> [N]" >&2
+		echo "cach dung: $0 <a|b|b-nho|c|d> [N]" >&2
 		exit 2
 		;;
 	esac

@@ -62,6 +62,10 @@ Không có. Việc `hids-g7` đã xong lúc 23:21:06, mã thoát 0; việc `hids
 
 (Định dạng khi có việc: tên | lệnh | giờ bắt đầu | dự kiến xong | log `out/jobs/<tên>.log` | trạng thái `out/jobs/<tên>.status`)
 
+## Ghi nhận cho GĐ4 (CHƯA làm bây giờ)
+- **Tấn công làm mù collector.** Kẻ tấn công có thể bơm thật nhiều syscall để ring buffer đầy, làm collector mất bản ghi và không nhìn thấy hành vi thật. Vì vậy số liệu mất bản ghi không phải chỉ là chỉ số sức khoẻ: nó là **tín hiệu phát hiện**. Giai đoạn 4 phải coi một đợt mất bản ghi bất thường là dấu hiệu đáng ngờ, không phải nhiễu cần bỏ qua.
+- Chính sách hiện tại của collector (kiến trúc sư chốt ở R003): **không bao giờ im lặng, không bao giờ tự dừng**. Mỗi 10 giây ghi một dòng vào `<out>.bin.periodic` (số lần định ghi và số mất, cả delta lẫn cộng dồn, cộng tổng irq theo loại từ M3); khi delta mất > 0 thì in dòng `LOSS ...` ra stderr và ghi vào log rồi chạy tiếp. Không dừng thu thập vì mất bản ghi.
+
 ## Ghi nhận cho M3 (CHƯA làm bây giờ)
 - Khi khởi động, collector tự so `vmw_ns` với `rq_steal_ns` trên từng CPU trong vài giây đầu. Lệch quá ngưỡng thì **từ chối chạy (fail-closed)** và báo lỗi rõ ràng.
 
