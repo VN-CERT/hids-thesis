@@ -4,34 +4,80 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"sort"
+	"strings"
 
 	"github.com/cilium/ebpf"
 	"github.com/cilium/ebpf/link"
 	"github.com/cilium/ebpf/ringbuf"
 	"github.com/cilium/ebpf/rlimit"
 
+	"hids/internal/percpuksym"
 	"hids/internal/recfmt"
 )
 
 // DefaultRingbufMB la kich thuoc ring buffer mac dinh.
 const DefaultRingbufMB = 64
 
+// perCPUKsyms la cac bien per-CPU cua kernel ma chuong trinh BPF doc.
+var perCPUKsyms = []string{"vmw_steal_time", "runqueues"}
+
+// mainProgram la chuong trinh phat ban ghi.
+const mainProgram = "hids_sys_enter"
+
+// schedPrograms la cac chuong trinh dung cho ranh gioi ON-CPU / OFF-CPU.
+var schedPrograms = []string{"hids_sched_switch", "hids_sched_wakeup", "hids_sched_wakeup_new"}
+
+// irqProgramPrefix la tien to ten cac chuong trinh do irq.
+const irqProgramPrefix = "hids_irq_"
+
 // Config la cau hinh nap vao kernel truoc khi nap chuong trinh.
 type Config struct {
-	SelfTGID     uint32   // tgid cua chinh collector, luon bi bo qua
-	TGIDs        []uint32 // tap PID dich
-	CgroupIDs    []uint64 // tap cgroup dich (so inode thu muc cgroup v2)
-	RingbufBytes uint32   // kich thuoc ring buffer, phai la luy thua cua 2
+	SelfTGID      uint32   // tgid cua chinh collector, luon bi bo qua
+	TGIDs         []uint32 // tap PID dich
+	CgroupIDs     []uint64 // tap cgroup dich (so inode thu muc cgroup v2)
+	RingbufBytes  uint32   // kich thuoc ring buffer, phai la luy thua cua 2
+	TSCKHz        uint64   // tan so TSC, de quy chu ky steal ra ns trong BPF
+	StealFallback bool     // dung rq->prev_steal_time thay vi vmw_steal_time
+	StealOff      bool     // khong do steal (khong co stealclock)
 }
 
-// Collector giu chuong trinh BPF da nap, link va bo doc ring buffer.
+// IRQStat la so lieu irq cua mot CPU.
+type IRQStat struct {
+	CPU     int
+	TotalNs uint64
+	HardNs  uint64
+	SoftNs  uint64
+	VecNs   uint64
+	OddNs   uint64 // tong khoang irq bi loai vi qua dai, phai bang 0
+	OddCnt  uint32 // so khoang bi loai, phai bang 0
+	Depth   uint32
+}
+
+// irqState trung bo cuc voi struct hids_irqstate trong BPF.
+type irqState struct {
+	StartNs uint64
+	TotalNs uint64
+	HardNs  uint64
+	SoftNs  uint64
+	VecNs   uint64
+	OddNs   uint64
+	OddCnt  uint32
+	Depth   uint32
+	Kind    uint32
+	_       uint32 // dem cho du 8 byte, trung voi can le cua struct trong BPF
+}
+
+// Collector giu chuong trinh BPF da nap, cac link va bo doc ring buffer.
 type Collector struct {
-	coll   *ebpf.Collection
-	lnk    link.Link
-	reader *ringbuf.Reader
+	coll     *ebpf.Collection
+	links    []link.Link
+	mainLink link.Link
+	reader   *ringbuf.Reader
+	irqTPs   []string
 }
 
-// Load nap chuong trinh, nap cau hinh loc vao map va gan vao tp_btf/sys_enter.
+// Load nap chuong trinh, nap cau hinh loc vao map va gan vao cac tracepoint.
 func Load(cfg Config) (*Collector, error) {
 	if cfg.RingbufBytes == 0 {
 		cfg.RingbufBytes = DefaultRingbufMB * 1024 * 1024
@@ -41,6 +87,9 @@ func Load(cfg Config) (*Collector, error) {
 	}
 	if len(cfg.TGIDs) == 0 && len(cfg.CgroupIDs) == 0 {
 		return nil, errors.New("khong co bo loc nao: can it nhat mot -pid hoac mot -cgroup")
+	}
+	if !cfg.StealOff && !cfg.StealFallback && cfg.TSCKHz == 0 {
+		return nil, errors.New("thieu tan so TSC: khong quy doi duoc chu ky steal ra ns")
 	}
 
 	if err := rlimit.RemoveMemlock(); err != nil {
@@ -52,16 +101,33 @@ func Load(cfg Config) (*Collector, error) {
 		return nil, err
 	}
 
-	spec.Maps["hids_events"].MaxEntries = cfg.RingbufBytes
-	if err := spec.Variables["hids_self_tgid"].Set(cfg.SelfTGID); err != nil {
-		return nil, fmt.Errorf("dat hids_self_tgid: %w", err)
+	// Ham doc ksym la __always_inline nen duoc nhung vao nhieu chuong trinh;
+	// phai va tat ca.
+	if err := percpuksym.PatchCollection(spec, perCPUKsyms); err != nil {
+		return nil, err
 	}
+
+	spec.Maps["hids_events"].MaxEntries = cfg.RingbufBytes
+
 	filterCgroup := uint8(0)
 	if len(cfg.CgroupIDs) > 0 {
 		filterCgroup = 1
 	}
-	if err := spec.Variables["hids_filter_cgroup"].Set(filterCgroup); err != nil {
-		return nil, fmt.Errorf("dat hids_filter_cgroup: %w", err)
+	vars := map[string]any{
+		"hids_self_tgid":      cfg.SelfTGID,
+		"hids_filter_cgroup":  filterCgroup,
+		"hids_tsc_khz":        cfg.TSCKHz,
+		"hids_steal_fallback": boolToU8(cfg.StealFallback),
+		"hids_steal_off":      boolToU8(cfg.StealOff),
+	}
+	for name, val := range vars {
+		v := spec.Variables[name]
+		if v == nil {
+			return nil, fmt.Errorf("khong tim thay bien %s trong ELF", name)
+		}
+		if err := v.Set(val); err != nil {
+			return nil, fmt.Errorf("dat %s: %w", name, err)
+		}
 	}
 
 	coll, err := ebpf.NewCollectionWithOptions(spec, ebpf.CollectionOptions{
@@ -72,9 +138,10 @@ func Load(cfg Config) (*Collector, error) {
 	}
 
 	c := &Collector{coll: coll}
+	ok := false
 	defer func() {
-		if c.coll != nil && c.lnk == nil {
-			coll.Close()
+		if !ok {
+			c.Close()
 		}
 	}()
 
@@ -96,14 +163,101 @@ func Load(cfg Config) (*Collector, error) {
 	}
 	c.reader = reader
 
-	lnk, err := link.AttachTracing(link.TracingOptions{Program: coll.Programs["hids_sys_enter"]})
-	if err != nil {
-		reader.Close()
-		return nil, fmt.Errorf("gan hids_sys_enter vao tp_btf/sys_enter: %w", err)
+	// Gan cac chuong trinh phu TRUOC chuong trinh chinh: khi hids_sys_enter
+	// bat dau tao trang thai thread thi may trang thai da san sang.
+	//
+	// Thu tu trong moi cap irq quan trong: phai gan *_exit TRUOC *_entry.
+	// Neu gan entry truoc, mot irq roi vao dung khe giua hai lan gan se duoc
+	// ghi entry (do sau 0 -> 1, dat moc) nhung khong co exit de ha do sau,
+	// nen CPU do ket o do sau 1 voi mot moc cu; lan exit sau do cong ca
+	// khoang thoi gian tu luc gan vao bo cong don irq. Detach lam nguoc lai
+	// (xem Detach): go entry truoc, con exit de dong not irq dang chay.
+	entries, exits := irqProgramNames(coll)
+	for _, name := range exits {
+		if err := c.attach(name); err != nil {
+			return nil, err
+		}
+		c.irqTPs = append(c.irqTPs, strings.TrimPrefix(name, irqProgramPrefix))
 	}
-	c.lnk = lnk
+	for _, name := range entries {
+		if err := c.attach(name); err != nil {
+			return nil, err
+		}
+	}
+	for _, name := range schedPrograms {
+		if err := c.attach(name); err != nil {
+			return nil, err
+		}
+	}
 
+	prog := coll.Programs[mainProgram]
+	if prog == nil {
+		return nil, fmt.Errorf("khong tim thay chuong trinh %s", mainProgram)
+	}
+	lnk, err := link.AttachTracing(link.TracingOptions{Program: prog})
+	if err != nil {
+		return nil, fmt.Errorf("gan %s: %w", mainProgram, err)
+	}
+	c.mainLink = lnk
+
+	ok = true
 	return c, nil
+}
+
+func boolToU8(b bool) uint8 {
+	if b {
+		return 1
+	}
+	return 0
+}
+
+// irqProgramNames tra ve ten cac chuong trinh do irq, tach thanh nhom entry va
+// nhom exit, moi nhom sap xep de thu tu gan va danh sach ghi vao header luon
+// on dinh.
+func irqProgramNames(coll *ebpf.Collection) (entries, exits []string) {
+	for name := range coll.Programs {
+		if !strings.HasPrefix(name, irqProgramPrefix) {
+			continue
+		}
+		switch {
+		case strings.HasSuffix(name, "_entry"):
+			entries = append(entries, name)
+		case strings.HasSuffix(name, "_exit"):
+			exits = append(exits, name)
+		}
+	}
+	sort.Strings(entries)
+	sort.Strings(exits)
+	return entries, exits
+}
+
+func (c *Collector) attach(name string) error {
+	prog := c.coll.Programs[name]
+	if prog == nil {
+		return fmt.Errorf("khong tim thay chuong trinh %s", name)
+	}
+	lnk, err := link.AttachTracing(link.TracingOptions{Program: prog})
+	if err != nil {
+		return fmt.Errorf("gan %s: %w", name, err)
+	}
+	c.links = append(c.links, lnk)
+	return nil
+}
+
+// IRQTracepoints tra ve ten cac tracepoint irq da gan (khong co tien to
+// hids_irq_, moi ten la mot cap *_entry/*_exit).
+func (c *Collector) IRQTracepoints() []string {
+	seen := map[string]bool{}
+	var out []string
+	for _, n := range c.irqTPs {
+		base := strings.TrimSuffix(strings.TrimSuffix(n, "_entry"), "_exit")
+		if !seen[base] {
+			seen[base] = true
+			out = append(out, base)
+		}
+	}
+	sort.Strings(out)
+	return out
 }
 
 // ReadInto doc mot ban ghi tu ring buffer vao rec.
@@ -113,13 +267,24 @@ func (c *Collector) ReadInto(rec *ringbuf.Record) error {
 
 // Detach go chuong trinh khoi tracepoint de khong con ban ghi moi sinh ra.
 // Cac ban ghi con trong ring buffer van doc tiep duoc.
+//
+// Go theo thu tu NGUOC voi luc gan, nen trong moi cap irq thi *_entry duoc go
+// truoc *_exit: irq dang chay van co exit de ha do sau ve 0.
 func (c *Collector) Detach() error {
-	if c.lnk == nil {
-		return nil
+	var firstErr error
+	if c.mainLink != nil {
+		if err := c.mainLink.Close(); err != nil {
+			firstErr = err
+		}
+		c.mainLink = nil
 	}
-	err := c.lnk.Close()
-	c.lnk = nil
-	return err
+	for i := len(c.links) - 1; i >= 0; i-- {
+		if err := c.links[i].Close(); err != nil && firstErr == nil {
+			firstErr = err
+		}
+	}
+	c.links = nil
+	return firstErr
 }
 
 // Flush danh thuc vong doc dang cho: ReadInto tra ve het cac ban ghi dang nam
@@ -157,16 +322,32 @@ func (c *Collector) Stats() ([]recfmt.CPUStat, error) {
 	return out, nil
 }
 
+// IRQStats doc bo cong don irq cua tung CPU tu kernel.
+func (c *Collector) IRQStats() ([]IRQStat, error) {
+	var raw []irqState
+	if err := c.coll.Maps["hids_irq"].Lookup(uint32(0), &raw); err != nil {
+		return nil, fmt.Errorf("doc hids_irq: %w", err)
+	}
+	out := make([]IRQStat, len(raw))
+	for i, r := range raw {
+		out[i] = IRQStat{
+			CPU:     i,
+			TotalNs: r.TotalNs,
+			HardNs:  r.HardNs,
+			SoftNs:  r.SoftNs,
+			VecNs:   r.VecNs,
+			OddNs:   r.OddNs,
+			OddCnt:  r.OddCnt,
+			Depth:   r.Depth,
+		}
+	}
+	return out, nil
+}
+
 // Close go sach moi thu khoi kernel: link, ring buffer, chuong trinh, map.
 // Khong co gi duoc pin nen sau khi dong kernel khong con doi tuong nao.
 func (c *Collector) Close() error {
-	var firstErr error
-	if c.lnk != nil {
-		if err := c.lnk.Close(); err != nil && firstErr == nil {
-			firstErr = err
-		}
-		c.lnk = nil
-	}
+	firstErr := c.Detach()
 	if c.reader != nil {
 		if err := c.reader.Close(); err != nil && !errors.Is(err, os.ErrClosed) && firstErr == nil {
 			firstErr = err

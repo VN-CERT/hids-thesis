@@ -23,6 +23,7 @@ import (
 	"hids/internal/buildinfo"
 	"hids/internal/hostinfo"
 	"hids/internal/recfmt"
+	"hids/internal/stealcheck"
 	"hids/internal/syscallbpf"
 )
 
@@ -67,6 +68,10 @@ func run() error {
 	duration := flag.Duration("duration", 0, "thoi gian thu thap, 0 = den khi nhan SIGINT/SIGTERM")
 	out := flag.String("out", "", "file .bin ket qua, de trong thi tu dat ten out/hids-<YYYYmmdd-HHMMSS>.bin")
 	ringbufMB := flag.Int("ringbuf-mb", syscallbpf.DefaultRingbufMB, "kich thuoc ring buffer tinh bang MiB, phai la luy thua cua 2")
+	allowNoStealclock := flag.Bool("allow-no-stealclock", false,
+		"chay tiep khi so dong \"vmware-stealtime\" trong kernel log khac so CPU; khi do steal = 0")
+	stealFallback := flag.Bool("steal-fallback", false,
+		"dung rq->prev_steal_time thay cho vmw_steal_time; moi ban ghi mang co STEAL_FALLBACK")
 	flag.Parse()
 
 	if os.Geteuid() != 0 {
@@ -102,6 +107,28 @@ func run() error {
 			possibleCPUs, recfmt.MaxCPU)
 	}
 
+	preempt, err := hostinfo.PreemptMode()
+	if err != nil {
+		return err
+	}
+	configHZ, err := hostinfo.ConfigHZ()
+	if err != nil {
+		return err
+	}
+	schedstats, err := hostinfo.SchedSchedstats()
+	if err != nil {
+		return err
+	}
+	tsc, err := hostinfo.TSCKHz()
+	if err != nil {
+		return err
+	}
+
+	stealMode, stealStatus, err := checkSteal(nrCPUs, tsc.KHz, *allowNoStealclock, *stealFallback)
+	if err != nil {
+		return err
+	}
+
 	cgroupIDs := make([]uint64, 0, len(cgroupPaths))
 	cgroupDesc := make([]string, 0, len(cgroupPaths))
 	for _, p := range cgroupPaths {
@@ -125,13 +152,16 @@ func run() error {
 
 	ringbufBytes := uint32(*ringbufMB) * 1024 * 1024
 	coll, err := syscallbpf.Load(syscallbpf.Config{
-		SelfTGID:     uint32(os.Getpid()),
-		TGIDs:        tgids,
-		CgroupIDs:    cgroupIDs,
-		RingbufBytes: ringbufBytes,
+		SelfTGID:      uint32(os.Getpid()),
+		TGIDs:         tgids,
+		CgroupIDs:     cgroupIDs,
+		RingbufBytes:  ringbufBytes,
+		TSCKHz:        tsc.KHz,
+		StealFallback: stealMode == stealModeFallback,
+		StealOff:      stealMode == stealModeOff,
 	})
 	if err != nil {
-		bpflog.Report(logPath, "khong nap duoc chuong trinh hids_sys_enter", err)
+		bpflog.Report(logPath, "khong nap duoc chuong trinh BPF cua collector", err)
 		return fmt.Errorf("nap BPF that bai, chi tiet o %s", logPath)
 	}
 	defer coll.Close()
@@ -168,6 +198,14 @@ func run() error {
 		fmt.Sprintf("filter_pid: %s", filterPID),
 		fmt.Sprintf("filter_cgroup: %s", filterCgroup),
 		fmt.Sprintf("ringbuf_bytes: %d", ringbufBytes),
+		fmt.Sprintf("stealclock: %s", stealStatus),
+		fmt.Sprintf("steal_mode: %s", stealMode),
+		fmt.Sprintf("tsc_khz: %d", tsc.KHz),
+		fmt.Sprintf("tsc_source: %s | %s", tsc.Source, tsc.Line),
+		fmt.Sprintf("preempt: %s", preempt),
+		fmt.Sprintf("config_hz: %d", configHZ),
+		fmt.Sprintf("kernel.sched_schedstats: %d", schedstats),
+		fmt.Sprintf("irq_tracepoints (%d cap): %s", len(coll.IRQTracepoints()), strings.Join(coll.IRQTracepoints(), " ")),
 		fmt.Sprintf("start_mono_ns: %d", startMono),
 		fmt.Sprintf("start_wall: %s", startWall.Format(time.RFC3339Nano)),
 		fmt.Sprintf("duration: %s", durationText(*duration)),
@@ -293,6 +331,25 @@ func run() error {
 	}
 	fmt.Fprintf(os.Stderr, "ban ghi doc duoc: %d | so lan dinh ghi: %d | mat: %d\n", records, attempts, drops)
 
+	if irq, err := coll.IRQStats(); err == nil {
+		var hard, soft, vec, oddNs uint64
+		var oddCnt, stuck uint32
+		for _, c := range irq {
+			hard += c.HardNs
+			soft += c.SoftNs
+			vec += c.VecNs
+			oddNs += c.OddNs
+			oddCnt += c.OddCnt
+			if c.Depth != 0 {
+				stuck++
+			}
+		}
+		fmt.Fprintf(os.Stderr, "irq cong don (ns): hard %d | soft %d | vector %d\n", hard, soft, vec)
+		fmt.Fprintf(os.Stderr, "irq bat thuong: %d khoang, %d ns | CPU con do sau khac 0: %d\n", oddCnt, oddNs, stuck)
+	} else {
+		bpflog.Note(os.Stderr, logPath, fmt.Sprintf("khong doc duoc bo cong don irq luc ket thuc: %v", err))
+	}
+
 	var ru unix.Rusage
 	if err := unix.Getrusage(unix.RUSAGE_SELF, &ru); err == nil {
 		fmt.Fprintf(os.Stderr, "thoi gian chay: %.3f s | CPU collector: user %.3f s, sys %.3f s (getrusage RUSAGE_SELF)\n",
@@ -308,6 +365,71 @@ func run() error {
 	return nil
 }
 
+// Che do do steal, ghi nguyen van vao header.
+const (
+	stealModeVMW      = "vmw_steal_time"
+	stealModeFallback = "rq->prev_steal_time (-steal-fallback)"
+	stealModeOff      = "tat (-allow-no-stealclock)"
+)
+
+// checkSteal lam hai kiem tra fail-closed truoc khi thu thap:
+//
+//  1. so dong "vmware-stealtime" trong kernel log phai bang so CPU;
+//  2. trong stealcheck.SettleTime giay dau, muc tang cua vmw_steal_time phai
+//     khop voi muc tang cua rq->prev_steal_time tren tung CPU.
+//
+// Khong dat thi tu choi chay, tru khi nguoi dung ghi ro co de bo qua. Do steal
+// sai ma khong bao thi toan bo so lieu nghien cuu khong dung duoc.
+func checkSteal(nrCPUs int, tscKHz uint64, allowNoStealclock, forceFallback bool) (mode, status string, err error) {
+	sc, err := stealcheck.CountStealClock(nrCPUs)
+	if err != nil {
+		return "", "", err
+	}
+	status = sc.Status()
+	fmt.Fprintf(os.Stderr, "stealclock: %s\n", status)
+
+	if !sc.OK {
+		if !allowNoStealclock {
+			return "", "", fmt.Errorf(
+				"kernel log co %d dong \"vmware-stealtime\" (nguon: %s) nhung may co %d CPU: "+
+					"stealclock khong bat du tren moi CPU nen khong do duoc steal. "+
+					"Chay lai voi -allow-no-stealclock de thu thap voi steal = 0",
+				sc.Lines, sc.Source, nrCPUs)
+		}
+		fmt.Fprintf(os.Stderr, "CANH BAO: chay voi -allow-no-stealclock, steal = 0 tren moi ban ghi\n")
+		return stealModeOff, status, nil
+	}
+
+	if forceFallback {
+		fmt.Fprintf(os.Stderr, "chay voi -steal-fallback: dung rq->prev_steal_time, moi ban ghi mang co STEAL_FALLBACK\n")
+		return stealModeFallback, status, nil
+	}
+
+	fmt.Fprintf(os.Stderr, "doi chieu vmw_steal_time voi rq->prev_steal_time trong %s...\n", stealcheck.SettleTime)
+	cmp, err := stealcheck.CompareStealPaths(nrCPUs, tscKHz)
+	if err != nil {
+		return "", "", fmt.Errorf("khong doi chieu duoc hai duong do steal: %w", err)
+	}
+	fmt.Fprintf(os.Stderr, "doi chieu xong: lech lon nhat %d ns tren %d CPU, nguong max(%d ns, %.0f%%)\n",
+		cmp.MaxDiff, len(cmp.PerCPU), stealcheck.ToleranceNs, stealcheck.ToleranceRel*100)
+
+	if !cmp.OK() {
+		var b strings.Builder
+		fmt.Fprintf(&b, "vmw_steal_time lech qua nguong so voi rq->prev_steal_time trong %s dau:\n", cmp.Window)
+		fmt.Fprintf(&b, "  %4s %14s %14s %12s %12s\n", "cpu", "vmw_ns", "rq_steal_ns", "lech_ns", "nguong_ns")
+		for _, c := range cmp.PerCPU {
+			if c.OK {
+				continue
+			}
+			fmt.Fprintf(&b, "  %4d %14d %14d %12d %12d\n", c.CPU, c.VmwNs, c.RqNs, c.DiffNs, c.LimitNs)
+		}
+		fmt.Fprintf(&b, "Chay lai voi -steal-fallback de dung rq->prev_steal_time")
+		return "", "", errors.New(b.String())
+	}
+
+	return stealModeVMW, status, nil
+}
+
 // watchLoss ghi mot dong vao file .periodic sau moi recfmt.PeriodicInterval.
 // Khi co ban ghi mat trong khoang vua qua, no in mot dong LOSS ra stderr va
 // ghi vao log. Collector KHONG dung thu thap vi mat ban ghi: so ban ghi mat la
@@ -319,6 +441,7 @@ func watchLoss(coll *syscallbpf.Collector, pw *recfmt.PeriodicWriter, stop <-cha
 	defer ticker.Stop()
 
 	var prevAttempts, prevDrops uint64
+	var prevHard, prevSoft, prevVec uint64
 	sample := func() {
 		stats, err := coll.Stats()
 		if err != nil {
@@ -330,6 +453,17 @@ func watchLoss(coll *syscallbpf.Collector, pw *recfmt.PeriodicWriter, stop <-cha
 			attempts += uint64(c.SeqLast)
 			drops += c.Drops
 		}
+		irq, err := coll.IRQStats()
+		if err != nil {
+			bpflog.Note(os.Stderr, logPath, fmt.Sprintf("khong doc duoc bo cong don irq: %v", err))
+			return
+		}
+		var hard, soft, vec uint64
+		for _, c := range irq {
+			hard += c.HardNs
+			soft += c.SoftNs
+			vec += c.VecNs
+		}
 		mono, err := monotonicNs()
 		if err != nil {
 			bpflog.Note(os.Stderr, logPath, fmt.Sprintf("khong doc duoc CLOCK_MONOTONIC: %v", err))
@@ -337,7 +471,9 @@ func watchLoss(coll *syscallbpf.Collector, pw *recfmt.PeriodicWriter, stop <-cha
 		}
 		dAttempts := attempts - prevAttempts
 		dDrops := drops - prevDrops
+		dHard, dSoft, dVec := hard-prevHard, soft-prevSoft, vec-prevVec
 		prevAttempts, prevDrops = attempts, drops
+		prevHard, prevSoft, prevVec = hard, soft, vec
 
 		if werr := pw.Write(recfmt.PeriodicSample{
 			MonoNs:        mono,
@@ -346,6 +482,12 @@ func watchLoss(coll *syscallbpf.Collector, pw *recfmt.PeriodicWriter, stop <-cha
 			DropsDelta:    dDrops,
 			AttemptsTotal: attempts,
 			DropsTotal:    drops,
+			IrqHardDelta:  dHard,
+			IrqSoftDelta:  dSoft,
+			IrqVecDelta:   dVec,
+			IrqHardTotal:  hard,
+			IrqSoftTotal:  soft,
+			IrqVecTotal:   vec,
 		}); werr != nil {
 			bpflog.Note(os.Stderr, logPath, fmt.Sprintf("khong ghi duoc file .periodic: %v", werr))
 		}

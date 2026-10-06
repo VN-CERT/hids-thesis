@@ -139,6 +139,60 @@ func parseTSCKHz(out []byte) (string, uint64, bool) {
 	return line, khz, found
 }
 
+// PreemptMode doc /sys/kernel/debug/sched/preempt. File nay liet ke cac che do
+// va dat che do dang dung trong ngoac, vi du "none (voluntary) full".
+func PreemptMode() (string, error) {
+	raw, err := os.ReadFile("/sys/kernel/debug/sched/preempt")
+	if err != nil {
+		return "", fmt.Errorf("doc /sys/kernel/debug/sched/preempt: %w", err)
+	}
+	text := strings.TrimSpace(string(raw))
+	for _, f := range strings.Fields(text) {
+		if strings.HasPrefix(f, "(") && strings.HasSuffix(f, ")") {
+			return fmt.Sprintf("%s (nguyen van: %q)", strings.Trim(f, "()"), text), nil
+		}
+	}
+	return fmt.Sprintf("khong xac dinh (nguyen van: %q)", text), nil
+}
+
+// ConfigHZ doc CONFIG_HZ tu /boot/config-<uname -r>.
+func ConfigHZ() (int, error) {
+	release, err := KernelRelease()
+	if err != nil {
+		return 0, err
+	}
+	path := "/boot/config-" + release
+	raw, err := os.ReadFile(path)
+	if err != nil {
+		return 0, fmt.Errorf("doc %s: %w", path, err)
+	}
+	for _, line := range strings.Split(string(raw), "\n") {
+		rest, ok := strings.CutPrefix(line, "CONFIG_HZ=")
+		if !ok {
+			continue
+		}
+		n, err := strconv.Atoi(strings.TrimSpace(rest))
+		if err != nil {
+			return 0, fmt.Errorf("doc %s: CONFIG_HZ=%q khong hop le", path, rest)
+		}
+		return n, nil
+	}
+	return 0, fmt.Errorf("doc %s: khong co dong CONFIG_HZ=", path)
+}
+
+// SchedSchedstats doc kernel.sched_schedstats.
+func SchedSchedstats() (int, error) {
+	raw, err := os.ReadFile("/proc/sys/kernel/sched_schedstats")
+	if err != nil {
+		return 0, fmt.Errorf("doc /proc/sys/kernel/sched_schedstats: %w", err)
+	}
+	n, err := strconv.Atoi(strings.TrimSpace(string(raw)))
+	if err != nil {
+		return 0, fmt.Errorf("doc kernel.sched_schedstats: gia tri %q khong hop le", strings.TrimSpace(string(raw)))
+	}
+	return n, nil
+}
+
 // OnlineCPUs tra ve so CPU online, tinh bang chi so lon nhat trong
 // /sys/devices/system/cpu/online cong mot.
 func OnlineCPUs() (int, error) {

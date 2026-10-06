@@ -1,6 +1,6 @@
 # Trạng thái dự án HIDS
 
-Cập nhật lần cuối: 2026-10-06 23:32 (giờ máy)
+Cập nhật lần cuối: 2026-10-07 00:05 (giờ máy)
 
 ## Mốc hiện tại và mục tiêu
 - Mốc: **M3 mục A–E** (người dùng thu hẹp phạm vi phiên này). Chỉ làm A, B, C, D, E.
@@ -50,15 +50,30 @@ Cập nhật lần cuối: 2026-10-06 23:32 (giờ máy)
 | M2.1: số CPU vào flags, `rec-stat` phân tích seq theo CPU, `sysinj` chờ bằng `read()`, `g7.sh` trình tự mới | `fc26d21` |
 | Sửa chỗ đếm tải nền của G7c | `acbcb92` |
 | Lưu dữ liệu kiểm chứng G7 | `e0b36fd` |
-| Báo cáo R003 | (commit này) |
+| Báo cáo R003 | `cc610ea` |
+| M3 mục A: định nghĩa 5 thành phần vào `hids.mdc` | `cc610ea` |
+| M3 mục D: bảng flags thêm bit6 CLAMPED | `cc610ea` |
+| M3 mục B: trạng thái theo thread, máy trạng thái ON-CPU/OFF-CPU | (commit này) |
+| M3 mục C: bộ cộng dồn irq per-CPU, 13 cặp tracepoint | (commit này) |
+| M3 mục E: kiểm tra fail-closed lúc khởi động, header mới | (commit này) |
+| Sửa thứ tự gắn/gỡ cặp tracepoint irq (lỗi irq vector 660 giây) | (commit này) |
+| Chạy thử 30 giây, lưu `validation/m3ae-20261006/` | (commit này) |
 
 ## Bước đang làm
-M3 mục B và C: mở rộng trạng thái theo thread trong task storage, thêm bộ cộng dồn irq per-CPU, gắn `sched_switch`/`sched_wakeup`/`sched_wakeup_new` và 13 cặp tracepoint irq.
+Viết báo cáo R004 cho M3 mục A–E.
 
 ## Bước tiếp theo
-1. M3 mục E: kiểm tra fail-closed lúc khởi động và các dòng header mới.
-2. `make clean && make build` sạch, chạy thử `hids-collect` 30 giây.
-3. Viết R004, cập nhật INDEX, commit, gắn tag `m3-ae`, dừng.
+1. Cập nhật `reports/INDEX.md`, commit, gắn tag `m3-ae`.
+2. **DỪNG.** Chờ kiến trúc sư duyệt R004 trước khi làm mục F–J của M3.
+
+## Kết quả chạy thử M3 mục A–E (2026-10-06, `validation/m3ae-20261006/`)
+- Verifier nạp được toàn bộ: 1 chương trình `tp_btf/sys_enter`, 3 chương trình sched, 26 chương trình irq (13 cặp).
+- Kiểm tra fail-closed lúc khởi động đều qua: 24/24 dòng `vmware-stealtime`; lệch `vmw_ns` so với `rq->prev_steal_time` lớn nhất 155.385 ns, ngưỡng `max(2.000.000 ns, 1%)`.
+- 30 giây, tải thử 5 ms đốt CPU + 5 ms ngủ: 5.958 bản ghi, mất 0, file `.periodic` có 5 dòng.
+- Tự nhất quán: `|Δt − (cpu+steal+irq+rq+vol)|` lớn nhất 5.853 ns trên 5.957 khoảng; chỉ 1 khoảng lệch > 1.000 ns và đúng khoảng đó mang cờ CLAMPED.
+- Phân rã: cpu 49,61%, vol 50,12%, irq 0,20%, rq 0,06%, steal 0,00% — khớp thiết kế của tải thử.
+- `irq bat thuong: 0 khoang` và `CPU con do sau khac 0: 0`.
+- Sau khi thoát: `bpftool prog/link/map list` không còn dòng `hids_` nào, `/sys/fs/bpf` rỗng.
 
 ## Việc đang chạy
 Không có. Việc `hids-g7` xong lúc 23:21:06 (mã thoát 0), `hids-g7c` xong lúc 23:23:40 (mã thoát 0), `hids-g7d` xong lúc 23:43:25 (mã thoát 0).
@@ -69,9 +84,10 @@ Không có. Việc `hids-g7` xong lúc 23:21:06 (mã thoát 0), `hids-g7c` xong 
 - **Tấn công làm mù collector.** Kẻ tấn công có thể bơm thật nhiều syscall để ring buffer đầy, làm collector mất bản ghi và không nhìn thấy hành vi thật. Vì vậy số liệu mất bản ghi không phải chỉ là chỉ số sức khoẻ: nó là **tín hiệu phát hiện**. Giai đoạn 4 phải coi một đợt mất bản ghi bất thường là dấu hiệu đáng ngờ, không phải nhiễu cần bỏ qua.
 - Chính sách hiện tại của collector (kiến trúc sư chốt ở R003): **không bao giờ im lặng, không bao giờ tự dừng**. Mỗi 10 giây ghi một dòng vào `<out>.bin.periodic` (số lần định ghi và số mất, cả delta lẫn cộng dồn, cộng tổng irq theo loại từ M3); khi delta mất > 0 thì in dòng `LOSS ...` ra stderr và ghi vào log rồi chạy tiếp. Không dừng thu thập vì mất bản ghi.
 
-## Ghi nhận cho M3 (CHƯA làm bây giờ)
-- Khi khởi động, collector tự so `vmw_ns` với `rq_steal_ns` trên từng CPU trong vài giây đầu. Lệch quá ngưỡng thì **từ chối chạy (fail-closed)** và báo lỗi rõ ràng.
+## Ghi nhận cho M3 (đã làm ở mục E)
+- Khi khởi động, collector tự so `vmw_ns` với `rq_steal_ns` trên từng CPU trong 3 giây đầu. Lệch quá `max(2 ms, 1%)` thì **từ chối chạy (fail-closed)** và in bảng từng CPU bị lệch. Cờ `-steal-fallback` để chuyển sang `rq->prev_steal_time`, cờ `-allow-no-stealclock` để chạy với steal = 0.
 
 ## Vướng mắc / chờ kiến trúc sư quyết định
 1. **Biên cửa sổ của G7c.** `perf stat -a -G <cgroup> -- sleep 60` không cho biết hai mốc thời gian nó bắt đầu và kết thúc đếm, nên cửa sổ lọc bản ghi rộng hơn cửa sổ thật của perf 58–79 ms, gây chênh 115 và 770 bản ghi trong hai lần chạy. Ba phương án ở mục 8 của R003. Hiện chấp nhận chênh lệch biên.
-2. **Ngưỡng cảnh báo khi ring buffer đầy.** Chưa có quy định collector phải làm gì khi tỉ lệ bản ghi mất vượt một ngưỡng nào đó. Hiện chỉ ghi số vào `.stats` và in ra stderr lúc kết thúc.
+2. **Đua đọc-sửa-ghi trên độ sâu irq.** `is->depth += 1` trong `irq_in` không nguyên tử; một hardirq lồng vào giữa phép đó có thể làm mất một lần tăng. Hiện chặn hướng nguy hiểm (khoảng irq dài quá `HIDS_IRQ_MAX_NS` = 1 giây thì loại ra và đếm vào `odd_cnt`, in ra lúc kết thúc, phải bằng 0). Hướng còn lại (mất một lần giảm, độ sâu kẹt ở ≥ 1 nên irq bị đếm thiếu) chỉ nhìn thấy qua dòng `CPU con do sau khac 0`. Chưa có cách sửa triệt để; chờ kiến trúc sư quyết có cần không.
+3. **Ngưỡng cảnh báo khi ring buffer đầy.** Chưa có quy định collector phải làm gì khi tỉ lệ bản ghi mất vượt một ngưỡng nào đó. Hiện chỉ ghi số vào `.stats` và in ra stderr lúc kết thúc.

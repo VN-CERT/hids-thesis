@@ -1,0 +1,14 @@
+CANH BAO: binary build tu cay lam viec con thay doi chua commit (git_commit=cc610ea-dirty).
+CANH BAO: du lieu ghi ra khong tai lap duoc tu git. Commit truoc khi do that.
+stealclock: bat (24/24 dong "vmware-stealtime" trong dmesg)
+doi chieu vmw_steal_time voi rq->prev_steal_time trong 3s...
+doi chieu xong: lech lon nhat 155385 ns tren 24 CPU, nguong max(2000000 ns, 1%)
+ghi vao out/m3-thu.bin
+loc pid: 439070 | loc cgroup: khong co | ring buffer: 64 MiB
+READY
+ban ghi doc duoc: 5958 | so lan dinh ghi: 5958 | mat: 0
+irq cong don (ns): hard 1227066 | soft 140208062 | vector 758298240
+irq bat thuong: 0 khoang, 0 ns | CPU con do sau khac 0: 0
+thoi gian chay: 30.018 s | CPU collector: user 0.217 s, sys 0.241 s (getrusage RUSAGE_SELF)
+kich thuoc file: 286798 byte
+du lieu: out/m3-thu.bin | thong ke: out/m3-thu.bin.stats | theo doi: out/m3-thu.bin.periodic

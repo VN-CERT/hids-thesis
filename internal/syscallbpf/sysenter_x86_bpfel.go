@@ -13,25 +13,89 @@ import (
 	"github.com/cilium/ebpf"
 )
 
+type sysEnterHidsIrqstate struct {
+	_       structs.HostLayout
+	StartNs uint64
+	TotalNs uint64
+	HardNs  uint64
+	SoftNs  uint64
+	VecNs   uint64
+	OddNs   uint64
+	OddCnt  uint32
+	Depth   uint32
+	Kind    uint32
+	_       [4]byte
+}
+
 type sysEnterHidsTstate struct {
-	_          structs.HostLayout
-	Seen       uint8
-	GapPending uint8
+	_            structs.HostLayout
+	LastEnterTs  uint64
+	AccCpu       uint64
+	AccSteal     uint64
+	AccIrq       uint64
+	AccRq        uint64
+	AccVol       uint64
+	OnTs         uint64
+	OnStealRaw   uint64
+	OnIrqTotal   uint64
+	OnCpu        uint32
+	_            [4]byte
+	OffTs        uint64
+	WakeTs       uint64
+	OffKind      uint8
+	OnActive     uint8
+	Seen         uint8
+	GapPending   uint8
+	PendingFlags uint16
+	_            [2]byte
 }
 
 // Names of all BPF objects in the ELF.
 //
 // Used for safe lookups in a Collection or CollectionSpec.
 const (
-	sysEnterMapHidsCgroups      = "hids_cgroups"
-	sysEnterMapHidsDrops        = "hids_drops"
-	sysEnterMapHidsEvents       = "hids_events"
-	sysEnterMapHidsPids         = "hids_pids"
-	sysEnterMapHidsSeq          = "hids_seq"
-	sysEnterMapHidsTaskState    = "hids_task_state"
-	sysEnterProgHidsSysEnter    = "hids_sys_enter"
-	sysEnterVarHidsFilterCgroup = "hids_filter_cgroup"
-	sysEnterVarHidsSelfTgid     = "hids_self_tgid"
+	sysEnterMapHidsCgroups                     = "hids_cgroups"
+	sysEnterMapHidsDrops                       = "hids_drops"
+	sysEnterMapHidsEvents                      = "hids_events"
+	sysEnterMapHidsIrq                         = "hids_irq"
+	sysEnterMapHidsPids                        = "hids_pids"
+	sysEnterMapHidsSeq                         = "hids_seq"
+	sysEnterMapHidsTaskState                   = "hids_task_state"
+	sysEnterProgHidsIrqCallFunctionEntry       = "hids_irq_call_function_entry"
+	sysEnterProgHidsIrqCallFunctionExit        = "hids_irq_call_function_exit"
+	sysEnterProgHidsIrqCallFunctionSingleEntry = "hids_irq_call_function_single_entry"
+	sysEnterProgHidsIrqCallFunctionSingleExit  = "hids_irq_call_function_single_exit"
+	sysEnterProgHidsIrqDeferredErrorApicEntry  = "hids_irq_deferred_error_apic_entry"
+	sysEnterProgHidsIrqDeferredErrorApicExit   = "hids_irq_deferred_error_apic_exit"
+	sysEnterProgHidsIrqErrorApicEntry          = "hids_irq_error_apic_entry"
+	sysEnterProgHidsIrqErrorApicExit           = "hids_irq_error_apic_exit"
+	sysEnterProgHidsIrqIrqHandlerEntry         = "hids_irq_irq_handler_entry"
+	sysEnterProgHidsIrqIrqHandlerExit          = "hids_irq_irq_handler_exit"
+	sysEnterProgHidsIrqIrqWorkEntry            = "hids_irq_irq_work_entry"
+	sysEnterProgHidsIrqIrqWorkExit             = "hids_irq_irq_work_exit"
+	sysEnterProgHidsIrqLocalTimerEntry         = "hids_irq_local_timer_entry"
+	sysEnterProgHidsIrqLocalTimerExit          = "hids_irq_local_timer_exit"
+	sysEnterProgHidsIrqRescheduleEntry         = "hids_irq_reschedule_entry"
+	sysEnterProgHidsIrqRescheduleExit          = "hids_irq_reschedule_exit"
+	sysEnterProgHidsIrqSoftirqEntry            = "hids_irq_softirq_entry"
+	sysEnterProgHidsIrqSoftirqExit             = "hids_irq_softirq_exit"
+	sysEnterProgHidsIrqSpuriousApicEntry       = "hids_irq_spurious_apic_entry"
+	sysEnterProgHidsIrqSpuriousApicExit        = "hids_irq_spurious_apic_exit"
+	sysEnterProgHidsIrqThermalApicEntry        = "hids_irq_thermal_apic_entry"
+	sysEnterProgHidsIrqThermalApicExit         = "hids_irq_thermal_apic_exit"
+	sysEnterProgHidsIrqThresholdApicEntry      = "hids_irq_threshold_apic_entry"
+	sysEnterProgHidsIrqThresholdApicExit       = "hids_irq_threshold_apic_exit"
+	sysEnterProgHidsIrqX86PlatformIpiEntry     = "hids_irq_x86_platform_ipi_entry"
+	sysEnterProgHidsIrqX86PlatformIpiExit      = "hids_irq_x86_platform_ipi_exit"
+	sysEnterProgHidsSchedSwitch                = "hids_sched_switch"
+	sysEnterProgHidsSchedWakeup                = "hids_sched_wakeup"
+	sysEnterProgHidsSchedWakeupNew             = "hids_sched_wakeup_new"
+	sysEnterProgHidsSysEnter                   = "hids_sys_enter"
+	sysEnterVarHidsFilterCgroup                = "hids_filter_cgroup"
+	sysEnterVarHidsSelfTgid                    = "hids_self_tgid"
+	sysEnterVarHidsStealFallback               = "hids_steal_fallback"
+	sysEnterVarHidsStealOff                    = "hids_steal_off"
+	sysEnterVarHidsTscKhz                      = "hids_tsc_khz"
 )
 
 // loadSysEnter returns the embedded CollectionSpec for sysEnter.
@@ -76,7 +140,36 @@ type sysEnterSpecs struct {
 //
 // It can be passed ebpf.CollectionSpec.Assign.
 type sysEnterProgramSpecs struct {
-	HidsSysEnter *ebpf.ProgramSpec `ebpf:"hids_sys_enter"`
+	HidsIrqCallFunctionEntry       *ebpf.ProgramSpec `ebpf:"hids_irq_call_function_entry"`
+	HidsIrqCallFunctionExit        *ebpf.ProgramSpec `ebpf:"hids_irq_call_function_exit"`
+	HidsIrqCallFunctionSingleEntry *ebpf.ProgramSpec `ebpf:"hids_irq_call_function_single_entry"`
+	HidsIrqCallFunctionSingleExit  *ebpf.ProgramSpec `ebpf:"hids_irq_call_function_single_exit"`
+	HidsIrqDeferredErrorApicEntry  *ebpf.ProgramSpec `ebpf:"hids_irq_deferred_error_apic_entry"`
+	HidsIrqDeferredErrorApicExit   *ebpf.ProgramSpec `ebpf:"hids_irq_deferred_error_apic_exit"`
+	HidsIrqErrorApicEntry          *ebpf.ProgramSpec `ebpf:"hids_irq_error_apic_entry"`
+	HidsIrqErrorApicExit           *ebpf.ProgramSpec `ebpf:"hids_irq_error_apic_exit"`
+	HidsIrqIrqHandlerEntry         *ebpf.ProgramSpec `ebpf:"hids_irq_irq_handler_entry"`
+	HidsIrqIrqHandlerExit          *ebpf.ProgramSpec `ebpf:"hids_irq_irq_handler_exit"`
+	HidsIrqIrqWorkEntry            *ebpf.ProgramSpec `ebpf:"hids_irq_irq_work_entry"`
+	HidsIrqIrqWorkExit             *ebpf.ProgramSpec `ebpf:"hids_irq_irq_work_exit"`
+	HidsIrqLocalTimerEntry         *ebpf.ProgramSpec `ebpf:"hids_irq_local_timer_entry"`
+	HidsIrqLocalTimerExit          *ebpf.ProgramSpec `ebpf:"hids_irq_local_timer_exit"`
+	HidsIrqRescheduleEntry         *ebpf.ProgramSpec `ebpf:"hids_irq_reschedule_entry"`
+	HidsIrqRescheduleExit          *ebpf.ProgramSpec `ebpf:"hids_irq_reschedule_exit"`
+	HidsIrqSoftirqEntry            *ebpf.ProgramSpec `ebpf:"hids_irq_softirq_entry"`
+	HidsIrqSoftirqExit             *ebpf.ProgramSpec `ebpf:"hids_irq_softirq_exit"`
+	HidsIrqSpuriousApicEntry       *ebpf.ProgramSpec `ebpf:"hids_irq_spurious_apic_entry"`
+	HidsIrqSpuriousApicExit        *ebpf.ProgramSpec `ebpf:"hids_irq_spurious_apic_exit"`
+	HidsIrqThermalApicEntry        *ebpf.ProgramSpec `ebpf:"hids_irq_thermal_apic_entry"`
+	HidsIrqThermalApicExit         *ebpf.ProgramSpec `ebpf:"hids_irq_thermal_apic_exit"`
+	HidsIrqThresholdApicEntry      *ebpf.ProgramSpec `ebpf:"hids_irq_threshold_apic_entry"`
+	HidsIrqThresholdApicExit       *ebpf.ProgramSpec `ebpf:"hids_irq_threshold_apic_exit"`
+	HidsIrqX86PlatformIpiEntry     *ebpf.ProgramSpec `ebpf:"hids_irq_x86_platform_ipi_entry"`
+	HidsIrqX86PlatformIpiExit      *ebpf.ProgramSpec `ebpf:"hids_irq_x86_platform_ipi_exit"`
+	HidsSchedSwitch                *ebpf.ProgramSpec `ebpf:"hids_sched_switch"`
+	HidsSchedWakeup                *ebpf.ProgramSpec `ebpf:"hids_sched_wakeup"`
+	HidsSchedWakeupNew             *ebpf.ProgramSpec `ebpf:"hids_sched_wakeup_new"`
+	HidsSysEnter                   *ebpf.ProgramSpec `ebpf:"hids_sys_enter"`
 }
 
 // sysEnterMapSpecs contains maps before they are loaded into the kernel.
@@ -86,6 +179,7 @@ type sysEnterMapSpecs struct {
 	HidsCgroups   *ebpf.MapSpec `ebpf:"hids_cgroups"`
 	HidsDrops     *ebpf.MapSpec `ebpf:"hids_drops"`
 	HidsEvents    *ebpf.MapSpec `ebpf:"hids_events"`
+	HidsIrq       *ebpf.MapSpec `ebpf:"hids_irq"`
 	HidsPids      *ebpf.MapSpec `ebpf:"hids_pids"`
 	HidsSeq       *ebpf.MapSpec `ebpf:"hids_seq"`
 	HidsTaskState *ebpf.MapSpec `ebpf:"hids_task_state"`
@@ -95,8 +189,11 @@ type sysEnterMapSpecs struct {
 //
 // It can be passed ebpf.CollectionSpec.Assign.
 type sysEnterVariableSpecs struct {
-	HidsFilterCgroup *ebpf.VariableSpec `ebpf:"hids_filter_cgroup"`
-	HidsSelfTgid     *ebpf.VariableSpec `ebpf:"hids_self_tgid"`
+	HidsFilterCgroup  *ebpf.VariableSpec `ebpf:"hids_filter_cgroup"`
+	HidsSelfTgid      *ebpf.VariableSpec `ebpf:"hids_self_tgid"`
+	HidsStealFallback *ebpf.VariableSpec `ebpf:"hids_steal_fallback"`
+	HidsStealOff      *ebpf.VariableSpec `ebpf:"hids_steal_off"`
+	HidsTscKhz        *ebpf.VariableSpec `ebpf:"hids_tsc_khz"`
 }
 
 // sysEnterObjects contains all objects after they have been loaded into the kernel.
@@ -122,6 +219,7 @@ type sysEnterMaps struct {
 	HidsCgroups   *ebpf.Map `ebpf:"hids_cgroups"`
 	HidsDrops     *ebpf.Map `ebpf:"hids_drops"`
 	HidsEvents    *ebpf.Map `ebpf:"hids_events"`
+	HidsIrq       *ebpf.Map `ebpf:"hids_irq"`
 	HidsPids      *ebpf.Map `ebpf:"hids_pids"`
 	HidsSeq       *ebpf.Map `ebpf:"hids_seq"`
 	HidsTaskState *ebpf.Map `ebpf:"hids_task_state"`
@@ -132,6 +230,7 @@ func (m *sysEnterMaps) Close() error {
 		m.HidsCgroups,
 		m.HidsDrops,
 		m.HidsEvents,
+		m.HidsIrq,
 		m.HidsPids,
 		m.HidsSeq,
 		m.HidsTaskState,
@@ -142,19 +241,80 @@ func (m *sysEnterMaps) Close() error {
 //
 // It can be passed to loadSysEnterObjects or ebpf.CollectionSpec.LoadAndAssign.
 type sysEnterVariables struct {
-	HidsFilterCgroup *ebpf.Variable `ebpf:"hids_filter_cgroup"`
-	HidsSelfTgid     *ebpf.Variable `ebpf:"hids_self_tgid"`
+	HidsFilterCgroup  *ebpf.Variable `ebpf:"hids_filter_cgroup"`
+	HidsSelfTgid      *ebpf.Variable `ebpf:"hids_self_tgid"`
+	HidsStealFallback *ebpf.Variable `ebpf:"hids_steal_fallback"`
+	HidsStealOff      *ebpf.Variable `ebpf:"hids_steal_off"`
+	HidsTscKhz        *ebpf.Variable `ebpf:"hids_tsc_khz"`
 }
 
 // sysEnterPrograms contains all programs after they have been loaded into the kernel.
 //
 // It can be passed to loadSysEnterObjects or ebpf.CollectionSpec.LoadAndAssign.
 type sysEnterPrograms struct {
-	HidsSysEnter *ebpf.Program `ebpf:"hids_sys_enter"`
+	HidsIrqCallFunctionEntry       *ebpf.Program `ebpf:"hids_irq_call_function_entry"`
+	HidsIrqCallFunctionExit        *ebpf.Program `ebpf:"hids_irq_call_function_exit"`
+	HidsIrqCallFunctionSingleEntry *ebpf.Program `ebpf:"hids_irq_call_function_single_entry"`
+	HidsIrqCallFunctionSingleExit  *ebpf.Program `ebpf:"hids_irq_call_function_single_exit"`
+	HidsIrqDeferredErrorApicEntry  *ebpf.Program `ebpf:"hids_irq_deferred_error_apic_entry"`
+	HidsIrqDeferredErrorApicExit   *ebpf.Program `ebpf:"hids_irq_deferred_error_apic_exit"`
+	HidsIrqErrorApicEntry          *ebpf.Program `ebpf:"hids_irq_error_apic_entry"`
+	HidsIrqErrorApicExit           *ebpf.Program `ebpf:"hids_irq_error_apic_exit"`
+	HidsIrqIrqHandlerEntry         *ebpf.Program `ebpf:"hids_irq_irq_handler_entry"`
+	HidsIrqIrqHandlerExit          *ebpf.Program `ebpf:"hids_irq_irq_handler_exit"`
+	HidsIrqIrqWorkEntry            *ebpf.Program `ebpf:"hids_irq_irq_work_entry"`
+	HidsIrqIrqWorkExit             *ebpf.Program `ebpf:"hids_irq_irq_work_exit"`
+	HidsIrqLocalTimerEntry         *ebpf.Program `ebpf:"hids_irq_local_timer_entry"`
+	HidsIrqLocalTimerExit          *ebpf.Program `ebpf:"hids_irq_local_timer_exit"`
+	HidsIrqRescheduleEntry         *ebpf.Program `ebpf:"hids_irq_reschedule_entry"`
+	HidsIrqRescheduleExit          *ebpf.Program `ebpf:"hids_irq_reschedule_exit"`
+	HidsIrqSoftirqEntry            *ebpf.Program `ebpf:"hids_irq_softirq_entry"`
+	HidsIrqSoftirqExit             *ebpf.Program `ebpf:"hids_irq_softirq_exit"`
+	HidsIrqSpuriousApicEntry       *ebpf.Program `ebpf:"hids_irq_spurious_apic_entry"`
+	HidsIrqSpuriousApicExit        *ebpf.Program `ebpf:"hids_irq_spurious_apic_exit"`
+	HidsIrqThermalApicEntry        *ebpf.Program `ebpf:"hids_irq_thermal_apic_entry"`
+	HidsIrqThermalApicExit         *ebpf.Program `ebpf:"hids_irq_thermal_apic_exit"`
+	HidsIrqThresholdApicEntry      *ebpf.Program `ebpf:"hids_irq_threshold_apic_entry"`
+	HidsIrqThresholdApicExit       *ebpf.Program `ebpf:"hids_irq_threshold_apic_exit"`
+	HidsIrqX86PlatformIpiEntry     *ebpf.Program `ebpf:"hids_irq_x86_platform_ipi_entry"`
+	HidsIrqX86PlatformIpiExit      *ebpf.Program `ebpf:"hids_irq_x86_platform_ipi_exit"`
+	HidsSchedSwitch                *ebpf.Program `ebpf:"hids_sched_switch"`
+	HidsSchedWakeup                *ebpf.Program `ebpf:"hids_sched_wakeup"`
+	HidsSchedWakeupNew             *ebpf.Program `ebpf:"hids_sched_wakeup_new"`
+	HidsSysEnter                   *ebpf.Program `ebpf:"hids_sys_enter"`
 }
 
 func (p *sysEnterPrograms) Close() error {
 	return _SysEnterClose(
+		p.HidsIrqCallFunctionEntry,
+		p.HidsIrqCallFunctionExit,
+		p.HidsIrqCallFunctionSingleEntry,
+		p.HidsIrqCallFunctionSingleExit,
+		p.HidsIrqDeferredErrorApicEntry,
+		p.HidsIrqDeferredErrorApicExit,
+		p.HidsIrqErrorApicEntry,
+		p.HidsIrqErrorApicExit,
+		p.HidsIrqIrqHandlerEntry,
+		p.HidsIrqIrqHandlerExit,
+		p.HidsIrqIrqWorkEntry,
+		p.HidsIrqIrqWorkExit,
+		p.HidsIrqLocalTimerEntry,
+		p.HidsIrqLocalTimerExit,
+		p.HidsIrqRescheduleEntry,
+		p.HidsIrqRescheduleExit,
+		p.HidsIrqSoftirqEntry,
+		p.HidsIrqSoftirqExit,
+		p.HidsIrqSpuriousApicEntry,
+		p.HidsIrqSpuriousApicExit,
+		p.HidsIrqThermalApicEntry,
+		p.HidsIrqThermalApicExit,
+		p.HidsIrqThresholdApicEntry,
+		p.HidsIrqThresholdApicExit,
+		p.HidsIrqX86PlatformIpiEntry,
+		p.HidsIrqX86PlatformIpiExit,
+		p.HidsSchedSwitch,
+		p.HidsSchedWakeup,
+		p.HidsSchedWakeupNew,
 		p.HidsSysEnter,
 	)
 }

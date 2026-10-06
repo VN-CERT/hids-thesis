@@ -3,12 +3,11 @@ package stealbpf
 import (
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/cilium/ebpf"
-	"github.com/cilium/ebpf/asm"
-	"github.com/cilium/ebpf/btf"
 	"github.com/cilium/ebpf/rlimit"
+
+	"hids/internal/percpuksym"
 )
 
 // MaxCPUs la so CPU toi da chuong trinh BPF doc duoc (bang HIDS_MAX_CPUS trong bpf/steal_snap.bpf.c).
@@ -19,10 +18,6 @@ const (
 	FlagVMW uint32 = 1 << 0
 	FlagRQ  uint32 = 1 << 1
 )
-
-// pseudoBTFID la BPF_PSEUDO_BTF_ID (src_reg = 3 cua lenh ld_imm64).
-// cilium/ebpf khong co hang so nay nen dinh nghia tai day.
-const pseudoBTFID = asm.Register(3)
 
 // Ten cac co che doc, ghi nguyen van vao header CSV.
 const (
@@ -151,7 +146,7 @@ func loadVariant(specFn func() (*ebpf.CollectionSpec, error), ksyms []string, me
 		return nil, errors.New("khong tim thay chuong trinh hids_steal_snap trong ELF")
 	}
 
-	if err := assignPerCPUKsyms(prog, ksyms); err != nil {
+	if err := percpuksym.PatchProgram(prog, ksyms); err != nil {
 		return nil, err
 	}
 
@@ -176,66 +171,4 @@ func loadVariant(specFn func() (*ebpf.CollectionSpec, error), ksyms []string, me
 	}
 
 	return s, nil
-}
-
-// assignPerCPUKsyms thay lenh nap dia chi ksym bang ld_imm64 kieu BPF_PSEUDO_BTF_ID
-// tro toi BTF id that cua bien per-CPU trong vmlinux BTF, de bpf_per_cpu_ptr() nhan
-// duoc con tro co kieu (PTR_TO_BTF_ID | MEM_PERCPU) thay vi mot so nguyen.
-func assignPerCPUKsyms(prog *ebpf.ProgramSpec, names []string) error {
-	kernelBTF, err := btf.LoadKernelSpec()
-	if err != nil {
-		return fmt.Errorf("doc BTF cua kernel: %w", err)
-	}
-
-	ids := make(map[string]btf.TypeID, len(names))
-	for _, name := range names {
-		var v *btf.Var
-		if err := kernelBTF.TypeByName(name, &v); err != nil {
-			return fmt.Errorf("tim BTF VAR %q trong vmlinux: %w", name, err)
-		}
-		id, err := kernelBTF.TypeID(v)
-		if err != nil {
-			return fmt.Errorf("lay BTF id cua %q: %w", name, err)
-		}
-		ids[name] = id
-	}
-
-	patched := make(map[string]int, len(names))
-	iter := prog.Instructions.Iterate()
-	for iter.Next() {
-		ins := iter.Ins
-		if !ins.OpCode.IsDWordLoad() {
-			continue
-		}
-		name := ins.Reference()
-		id, ok := ids[name]
-		if !ok {
-			continue
-		}
-
-		symbol := ins.Symbol()
-		next := asm.Instruction{
-			OpCode:   asm.LoadImmOp(asm.DWord),
-			Dst:      ins.Dst,
-			Src:      pseudoBTFID,
-			Constant: int64(id),
-		}
-		if symbol != "" {
-			next = next.WithSymbol(symbol)
-		}
-		*ins = next
-		patched[name]++
-	}
-
-	var missing []string
-	for _, name := range names {
-		if patched[name] == 0 {
-			missing = append(missing, name)
-		}
-	}
-	if len(missing) > 0 {
-		return fmt.Errorf("khong tim thay lenh nap ksym cho: %s", strings.Join(missing, ", "))
-	}
-
-	return nil
 }

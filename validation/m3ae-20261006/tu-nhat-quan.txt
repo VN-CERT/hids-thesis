@@ -1,0 +1,13 @@
+so ban ghi: 5958
+so khoang so sanh duoc: 5957
+lech |dt - (cpu+steal+irq+rq+vol)| lon nhat: 5853 ns
+so khoang lech > 1000 ns: 1
+tong dt   : 30006538373 ns
+tong cong : 30006563781 ns
+  cpu         14887183516 ns   49.61%
+  steal            232729 ns    0.00%
+  irq            60947036 ns    0.20%
+  rq             19054500 ns    0.06%
+  vol         15039146000 ns   50.12%
+flags: {'FIRST': 1, 'CLAMPED': 1, 'MIGRATED': 2}
+CPU xuat hien (bit8-15): [0, 5]
