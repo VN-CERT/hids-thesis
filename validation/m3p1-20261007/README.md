@@ -18,7 +18,7 @@ syscall) roi ~5 ms ngu (time.sleep) roi mot getppid.
 ## Lenh
     make build
     setsid python3 out/target.py > out/target.pid 2>&1 &
-    sleep 2
+    sleep 8
     ./bin/hids-collect -pid $(cat out/target.pid) -duration 30s -out out/p1-30s.bin
     python3 validation/m3ae-20261006/soicheo.py out/p1-30s.bin
 
@@ -29,7 +29,7 @@ syscall) roi ~5 ms ngu (time.sleep) roi mot getppid.
 - `tu-nhat-quan.txt` — ket qua soi cheo tu nhat quan
 - `soicheo.py` — ban sao script soi cheo dung mot lan (giong ban o m3ae-20261006)
 
-File `out/p1-30s.bin` (286931 byte) khong commit theo quy tac.
+File `out/p1-30s.bin` (286973 byte) khong commit theo quy tac.
 
 ## Soi cheo tu nhat quan
 `soicheo.py` KHONG phai cong cu cua du an va KHONG so voi nguon tham chieu nao
