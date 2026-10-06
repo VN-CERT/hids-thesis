@@ -44,28 +44,32 @@ type Config struct {
 
 // IRQStat la so lieu irq cua mot CPU.
 type IRQStat struct {
-	CPU     int
-	TotalNs uint64
-	HardNs  uint64
-	SoftNs  uint64
-	VecNs   uint64
-	OddNs   uint64 // tong khoang irq bi loai vi qua dai, phai bang 0
-	OddCnt  uint32 // so khoang bi loai, phai bang 0
-	Depth   uint32
+	CPU        int
+	HardNs     uint64
+	VecNs      uint64
+	SoftRawNs  uint64 // ke ca hard/vector long ben trong, de so voi softirqs-bpfcc
+	SoftExclNs uint64 // da tru phan long, day la phan dung cho thanh phan irq
+	OddNs      uint64 // tong khoang irq bi loai vi qua dai, phai bang 0
+	OddCnt     uint32 // so khoang bi loai, phai bang 0
+	Active     int    // so loai con dang hoat dong luc doc, phai bang 0 luc ket thuc
 }
+
+// TotalNs tra ve thanh phan irq cua CPU nay: hard + vector + soft da tru phan long.
+func (s IRQStat) TotalNs() uint64 { return s.HardNs + s.VecNs + s.SoftExclNs }
 
 // irqState trung bo cuc voi struct hids_irqstate trong BPF.
 type irqState struct {
-	StartNs uint64
-	TotalNs uint64
-	HardNs  uint64
-	SoftNs  uint64
-	VecNs   uint64
-	OddNs   uint64
-	OddCnt  uint32
-	Depth   uint32
-	Kind    uint32
-	_       uint32 // dem cho du 8 byte, trung voi can le cua struct trong BPF
+	HardStart  uint64
+	HardNs     uint64
+	VecStart   uint64
+	VecNs      uint64
+	SoftStart  uint64
+	SoftSnap   uint64
+	SoftRawNs  uint64
+	SoftExclNs uint64
+	OddNs      uint64
+	OddCnt     uint32
+	_          uint32
 }
 
 // Collector giu chuong trinh BPF da nap, cac link va bo doc ring buffer.
@@ -330,16 +334,50 @@ func (c *Collector) IRQStats() ([]IRQStat, error) {
 	}
 	out := make([]IRQStat, len(raw))
 	for i, r := range raw {
-		out[i] = IRQStat{
-			CPU:     i,
-			TotalNs: r.TotalNs,
-			HardNs:  r.HardNs,
-			SoftNs:  r.SoftNs,
-			VecNs:   r.VecNs,
-			OddNs:   r.OddNs,
-			OddCnt:  r.OddCnt,
-			Depth:   r.Depth,
+		active := 0
+		for _, start := range []uint64{r.HardStart, r.VecStart, r.SoftStart} {
+			if start != 0 {
+				active++
+			}
 		}
+		out[i] = IRQStat{
+			CPU:        i,
+			HardNs:     r.HardNs,
+			VecNs:      r.VecNs,
+			SoftRawNs:  r.SoftRawNs,
+			SoftExclNs: r.SoftExclNs,
+			OddNs:      r.OddNs,
+			OddCnt:     r.OddCnt,
+			Active:     active,
+		}
+	}
+	return out, nil
+}
+
+// RecursionMiss la so lan kernel tu choi chay lai mot chuong trinh BPF vi no
+// da dang chay tren cung CPU. Phai bang 0; khac 0 nghia la co su kien bi bo qua.
+type RecursionMiss struct {
+	Program string
+	Misses  uint64
+}
+
+// RecursionMisses doc recursion_misses cua TUNG chuong trinh tu bpf_prog_info.
+func (c *Collector) RecursionMisses() ([]RecursionMiss, error) {
+	names := make([]string, 0, len(c.coll.Programs))
+	for name := range c.coll.Programs {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+
+	out := make([]RecursionMiss, 0, len(names))
+	for _, name := range names {
+		// recursion_misses duoc kernel dem khong dieu kien (bpf_prog_inc_misses_counter),
+		// khong can bat bpf_stats_enabled.
+		stats, err := c.coll.Programs[name].Stats()
+		if err != nil {
+			return nil, fmt.Errorf("doc bpf_prog_info cua %s: %w", name, err)
+		}
+		out = append(out, RecursionMiss{Program: name, Misses: stats.RecursionMisses})
 	}
 	return out, nil
 }

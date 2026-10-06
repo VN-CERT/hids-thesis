@@ -1,12 +1,13 @@
 # Trạng thái dự án HIDS
 
-Cập nhật lần cuối: 2026-10-07 00:10 (giờ máy)
+Cập nhật lần cuối: 2026-10-07 00:25 (giờ máy)
 
 ## Mốc hiện tại và mục tiêu
-- Mốc: **M3 mục A–E** (người dùng thu hẹp phạm vi phiên này). Chỉ làm A, B, C, D, E.
-- Mục F (`tools/wl.c`), G (`bin/rec-check`), H (`scripts/g3.sh`), I, J để phiên sau. **Chưa viết, chưa chạy.**
-- Điều kiện kết thúc phiên: build sạch, cây git sạch, chạy thử `hids-collect` 30 giây không lỗi, viết R004, không gắn tag `m3` (chỉ `m3-ae`).
-- Phần phản hồi của kiến trúc sư cho R003 (G7d, file `.periodic` + dòng LOSS, ghi nhận GĐ4): đã xong, đã commit.
+- Mốc: **M3 PHẦN 1** (nguyên văn nhiệm vụ: `docs/tasks/M3-phan2.md`). PHẦN 1 = mục 8.2 + 8.3 trong phản hồi của kiến trúc sư cho R004.
+- PHẦN 1 gồm: viết lại mục C (bộ cộng dồn irq per-CPU) theo phương án (c), in `recursion_misses` của từng chương trình BPF, thêm cột `soft_raw_delta_ns` vào `.periodic`, thêm 4 dòng header `CONFIG_*`.
+- Điều kiện kết thúc PHẦN 1: build sạch, chạy lại phép chạy thử 30 giây của R004 và phép soi chéo tự nhất quán, commit, in `XONG PHẦN 1` rồi **CHỜ** người dùng đổi model và bảo làm tiếp.
+- **PHẦN 2 = M3 mục F–J.** Chưa bắt đầu. KHÔNG làm cho tới khi người dùng bảo làm tiếp.
+- Mốc M3 mục A–E: đã xong (commit `9139688`, tag `m3-ae`, báo cáo R004).
 
 ## Kết quả G1 (kiến trúc sư kết luận: ĐẠT)
 - Dữ liệu: `validation/g1-20261006/` (giữ lâu dài, không nằm trong `.gitignore`).
@@ -57,15 +58,20 @@ Cập nhật lần cuối: 2026-10-07 00:10 (giờ máy)
 | M3 mục C: bộ cộng dồn irq per-CPU, 13 cặp tracepoint | `b8e75d1` |
 | M3 mục E: kiểm tra fail-closed lúc khởi động, header mới | `b8e75d1` |
 | Sửa thứ tự gắn/gỡ cặp tracepoint irq (lỗi irq vector 660 giây) | `b8e75d1` |
-| Chạy thử 30 giây, lưu `validation/m3ae-20261006/` | (commit này) |
-| Báo cáo R004, tag `m3-ae` | (commit này) |
+| Chạy thử 30 giây, lưu `validation/m3ae-20261006/` | `9139688` |
+| Báo cáo R004, tag `m3-ae` | `9139688` |
+| Lưu nguyên văn nhiệm vụ vào `docs/tasks/M3-phan2.md` | (commit này) |
+| PHẦN 1 / 8.2: viết lại mục C theo phương án (c), trạng thái irq riêng từng loại | (commit này) |
+| PHẦN 1 / 8.2: in `recursion_misses` từng chương trình, cột `soft_raw_delta_ns` | (commit này) |
+| PHẦN 1 / 8.3: 4 dòng header `CONFIG_*` đọc từ `/boot/config-$(uname -r)` | (commit này) |
+| PHẦN 1: chạy lại 30 giây + soi chéo, lưu `validation/m3p1-20261007/` | (commit này) |
 
 ## Bước đang làm
-Không có. Phiên đã kết thúc theo đúng điều kiện người dùng đặt ra.
+Không có. PHẦN 1 đã xong và đã commit. Đang **CHỜ** người dùng đổi model và bảo làm PHẦN 2.
 
 ## Bước tiếp theo
-1. **DỪNG.** Chờ kiến trúc sư duyệt R004, trước hết là mục 8.2 (đua đọc-sửa-ghi trên độ sâu irq), vì nó có thể làm phải viết lại mục C của M3.
-2. Phiên sau: mục F (`tools/wl.c`), G (`bin/rec-check`), H (`scripts/g3.sh`), I, J của M3. **Hiện chưa viết dòng nào, chưa chạy.**
+1. **DỪNG, chờ người dùng.** Không bắt đầu PHẦN 2 khi chưa được bảo.
+2. PHẦN 2 = M3 mục F–J (nguyên văn trong `docs/tasks/M3-phan2.md`): `tools/wl.c`, `bin/rec-check`, `scripts/g3.sh` (S1–S5, G-real, G-irq, chạy lại G7d), lưu `validation/g3-<ngày>/`, commit, tag `m3`, viết R005, rồi DỪNG (không làm M4).
 3. Chỉ gắn tag `m3` sau khi mục H đã chạy xong.
 
 ## Kết quả chạy thử M3 mục A–E (2026-10-06, `validation/m3ae-20261006/`)
@@ -89,7 +95,16 @@ Không có. Việc `hids-g7` xong lúc 23:21:06 (mã thoát 0), `hids-g7c` xong 
 ## Ghi nhận cho M3 (đã làm ở mục E)
 - Khi khởi động, collector tự so `vmw_ns` với `rq_steal_ns` trên từng CPU trong 3 giây đầu. Lệch quá `max(2 ms, 1%)` thì **từ chối chạy (fail-closed)** và in bảng từng CPU bị lệch. Cờ `-steal-fallback` để chuyển sang `rq->prev_steal_time`, cờ `-allow-no-stealclock` để chạy với steal = 0.
 
+## Quyết định của kiến trúc sư cho R004 (đã áp dụng ở PHẦN 1)
+- Mọi quyết định tự đưa ra ở mục 7 của R004: **chấp nhận**.
+- 8.1 Ngưỡng so hai đường steal `max(2 ms, 1%)` trong 3 giây: **giữ nguyên**, không đổi.
+- 8.2 Đua trên độ sâu irq: **chọn phương án (c)**. Đã viết lại mục C: bỏ biến độ sâu dùng chung; mỗi CPU giữ trạng thái riêng cho hard, soft, vector (mốc vào, 0 = không hoạt động, và tổng); mỗi trường chỉ do chương trình của đúng loại đó ghi. Soft chụp `hard+vector` lúc vào, trừ phần lồng lúc ra; giữ thêm `soft_raw` chỉ để đối chiếu với `softirqs-bpfcc`. Thành phần irq của thread = hard + vector + soft_excl.
+- 8.3 Header thêm 4 dòng `CONFIG_IRQ_TIME_ACCOUNTING`, `CONFIG_PARAVIRT_TIME_ACCOUNTING`, `CONFIG_SCHEDSTATS`, `CONFIG_SCHED_INFO` đọc từ `/boot/config-$(uname -r)`: **đã thêm**.
+
+## Vướng mắc đã được kiến trúc sư ĐÓNG (R004 mục 8.4)
+1. **Biên cửa sổ của G7c: theo phương án (c).** Đóng, không cần làm gì thêm.
+2. **Đua đọc-sửa-ghi trên độ sâu irq: theo phương án (c).** Đóng. Đã viết lại mục C, không còn biến độ sâu dùng chung.
+3. **Ngưỡng cảnh báo khi mất bản ghi.** Đóng ở tầng collector: collector **luôn in dòng `LOSS`** và **không bao giờ tự dừng**. Ngưỡng "bất thường" thuộc **tầng phát hiện (GĐ3)**: ở đó khoảng nào mang cờ `GAP_BEFORE` bị loại khỏi chấm điểm và cộng vào **"thời gian mù"**; ngưỡng cảnh báo sẽ đặt theo ngân sách báo động của fleet, không đặt trong collector.
+
 ## Vướng mắc / chờ kiến trúc sư quyết định
-1. **Biên cửa sổ của G7c.** `perf stat -a -G <cgroup> -- sleep 60` không cho biết hai mốc thời gian nó bắt đầu và kết thúc đếm, nên cửa sổ lọc bản ghi rộng hơn cửa sổ thật của perf 58–79 ms, gây chênh 115 và 770 bản ghi trong hai lần chạy. Ba phương án ở mục 8 của R003. Hiện chấp nhận chênh lệch biên.
-2. **Đua đọc-sửa-ghi trên độ sâu irq.** `is->depth += 1` trong `irq_in` không nguyên tử; một hardirq lồng vào giữa phép đó có thể làm mất một lần tăng. Hiện chặn hướng nguy hiểm (khoảng irq dài quá `HIDS_IRQ_MAX_NS` = 1 giây thì loại ra và đếm vào `odd_cnt`, in ra lúc kết thúc, phải bằng 0). Hướng còn lại (mất một lần giảm, độ sâu kẹt ở ≥ 1 nên irq bị đếm thiếu) chỉ nhìn thấy qua dòng `CPU con do sau khac 0`. Chưa có cách sửa triệt để; chờ kiến trúc sư quyết có cần không.
-3. **Ngưỡng cảnh báo khi ring buffer đầy.** Chưa có quy định collector phải làm gì khi tỉ lệ bản ghi mất vượt một ngưỡng nào đó. Hiện chỉ ghi số vào `.stats` và in ra stderr lúc kết thúc.
+Không có.

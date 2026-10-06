@@ -60,10 +60,6 @@ char LICENSE[] SEC("license") = "GPL";
 /* Nguong phat hien khoang irq bat thuong, xem irq_out. */
 #define HIDS_IRQ_MAX_NS (1000ull * 1000 * 1000)
 
-#define HIDS_IRQ_HARD 0
-#define HIDS_IRQ_SOFT 1
-#define HIDS_IRQ_VEC  2
-
 #define HIDS_U32_MAX 0xffffffffU
 
 /* Ban ghi 48 byte, little-endian, dung dac ta trong hids.mdc. */
@@ -111,17 +107,37 @@ struct hids_tstate {
 	__u16 pending_flags;
 };
 
-/* Bo cong don irq cua mot CPU (muc C cua M3). */
+/* Bo cong don irq cua mot CPU (muc C cua M3, viet lai theo phuong an (c) cua
+ * kien truc su o R004).
+ *
+ * Khong co bien do sau dung chung nua. Moi loai giu trang thai RIENG, va moi
+ * truong chi do chuong trinh cua dung loai do ghi, nen khong co phep doc-sua-ghi
+ * nao bi mot loai khac chen vao giua.
+ *
+ * Co so: tren mot CPU, hard va vector khong long vao nhau va khong tu long;
+ * soft khong tu long; hard va vector co the long vao trong soft.
+ *
+ * Tranh dem hai lan: luc soft vao, chup (hard_ns + vec_ns). Luc soft ra,
+ * phan long = (hard_ns + vec_ns) hien tai tru anh chup, va
+ * soft_excl_ns += (ra - vao) - phan long.
+ *
+ * Thanh phan irq cua thread = hard_ns + vec_ns + soft_excl_ns.
+ * soft_raw_ns chi dung de doi chieu voi softirqs-bpfcc (bcc tinh ca phan long). */
 struct hids_irqstate {
-	__u64 start_ns; /* moc luc vao o do sau 0 */
-	__u64 total_ns; /* tong thoi gian irq, ba loai cong lai */
+	__u64 hard_start; /* 0 = khong hoat dong */
 	__u64 hard_ns;
-	__u64 soft_ns;
+
+	__u64 vec_start;
 	__u64 vec_ns;
+
+	__u64 soft_start;
+	__u64 soft_snap;     /* (hard_ns + vec_ns) luc soft vao */
+	__u64 soft_raw_ns;   /* tong (ra - vao), ke ca phan long */
+	__u64 soft_excl_ns;  /* soft_raw tru phan long */
+
 	__u64 odd_ns;  /* tong khoang bi loai vi qua dai, xem HIDS_IRQ_MAX_NS */
 	__u32 odd_cnt; /* so khoang bi loai */
-	__u32 depth;
-	__u32 kind; /* loai cua muc ngoai cung dang chay */
+	__u32 pad;
 };
 
 /* Cau hinh do user space nap truoc khi nap chuong trinh. */
@@ -192,18 +208,34 @@ static __always_inline struct hids_irqstate *irq_state(void)
 }
 
 /* irq_total_at tra ve bo cong don irq cua CPU hien tai tinh den thoi diem now,
- * CONG CA phan irq dang chay do. sched_switch co the xay ra ngay trong duong
- * thoat irq (preempt_schedule_irq), khi do phan irq da chay nhung chua duoc
- * cong vao total_ns; neu bo qua thi phan do bi tinh sang cpu. */
+ * CONG CA phan dang do cua tung loai dang hoat dong. sched_switch co the xay ra
+ * ngay trong duong thoat irq (preempt_schedule_irq), khi do phan irq da chay
+ * nhung chua duoc cong vao bo cong don; neu bo qua thi phan do bi tinh sang cpu.
+ *
+ * Voi soft dang do, phan long cung duoc tru theo dung cach nhu luc soft ra. */
 static __always_inline __u64 irq_total_at(struct hids_irqstate *is, __u64 now)
 {
-	__u64 total;
+	__u64 hv, total;
 
 	if (!is)
 		return 0;
-	total = is->total_ns;
-	if (is->depth > 0 && now > is->start_ns)
-		total += now - is->start_ns;
+
+	hv = is->hard_ns + is->vec_ns;
+	if (is->hard_start && now > is->hard_start)
+		hv += now - is->hard_start;
+	if (is->vec_start && now > is->vec_start)
+		hv += now - is->vec_start;
+
+	total = hv + is->soft_excl_ns;
+
+	if (is->soft_start && now > is->soft_start) {
+		__u64 dur = now - is->soft_start;
+		__u64 nested = hv > is->soft_snap ? hv - is->soft_snap : 0;
+
+		if (dur > nested)
+			total += dur - nested;
+	}
+
 	return total;
 }
 
@@ -515,61 +547,108 @@ int BPF_PROG(hids_sched_wakeup_new, struct task_struct *p)
 
 /* ---- Bo cong don irq per-CPU (muc C) ---- */
 
-static __always_inline void irq_in(__u32 kind)
+/* irq_dur tra ve do dai mot khoang irq, hoac 0 neu khoang do bat thuong.
+ *
+ * Chan an toan HIDS_IRQ_MAX_NS KHONG phai hang so vat ly. No bat truong hop
+ * mot moc vao khong co moc ra tuong ung (vi du nap chuong trinh dung giua mot
+ * irq dang chay), khi do mot exit sau nay se dong so voi moc rat cu. Khoang do
+ * bi loai ra va dem lai de bao cao, thay vi cong vao lam sai so lieu. Bo dem
+ * nay phai bang 0; khac 0 la co loi can bao kien truc su. */
+static __always_inline __u64 irq_dur(struct hids_irqstate *is, __u64 start, __u64 now)
 {
-	struct hids_irqstate *is = irq_state();
+	__u64 d;
 
-	if (!is)
-		return;
-	if (is->depth == 0) {
-		is->start_ns = bpf_ktime_get_ns();
-		is->kind = kind;
-	}
-	is->depth += 1;
-}
-
-static __always_inline void irq_out(void)
-{
-	struct hids_irqstate *is = irq_state();
-	__u64 now, d;
-
-	if (!is)
-		return;
-	/* Co the nap chuong trinh giua mot irq dang chay: khi do thay exit ma
-	 * khong co entry. Bo qua, khong tru am. */
-	if (is->depth == 0)
-		return;
-	is->depth -= 1;
-	if (is->depth != 0)
-		return;
-
-	now = bpf_ktime_get_ns();
-	if (now <= is->start_ns)
-		return;
-	d = now - is->start_ns;
-	/* Chan an toan, KHONG phai hang so vat ly: do sau irq la mot phep
-	 * doc-sua-ghi tren map per-CPU, mot hardirq long vao giua phep do co the
-	 * lam mat mot lan tang. Khi do mot exit sau nay se dong so voi moc cu va
-	 * sinh ra khoang rat dai. Loai khoang do ra va dem lai de bao cao, thay
-	 * vi cong vao lam sai so lieu. Bo dem nay phai bang 0; khac 0 la co loi
-	 * can bao kien truc su. */
+	if (now <= start)
+		return 0;
+	d = now - start;
 	if (d > HIDS_IRQ_MAX_NS) {
 		is->odd_ns += d;
 		is->odd_cnt += 1;
+		return 0;
+	}
+	return d;
+}
+
+static __always_inline void irq_hard_in(void)
+{
+	struct hids_irqstate *is = irq_state();
+
+	if (is)
+		is->hard_start = bpf_ktime_get_ns();
+}
+
+static __always_inline void irq_hard_out(void)
+{
+	struct hids_irqstate *is = irq_state();
+	__u64 start;
+
+	if (!is)
 		return;
-	}
-	is->total_ns += d;
-	switch (is->kind) {
-	case HIDS_IRQ_HARD:
-		is->hard_ns += d;
-		break;
-	case HIDS_IRQ_SOFT:
-		is->soft_ns += d;
-		break;
-	default:
-		is->vec_ns += d;
-		break;
-	}
+	start = is->hard_start;
+	/* Co the nap chuong trinh giua mot irq dang chay: thay exit ma khong co
+	 * entry. Bo qua. */
+	if (!start)
+		return;
+	is->hard_start = 0;
+	is->hard_ns += irq_dur(is, start, bpf_ktime_get_ns());
+}
+
+static __always_inline void irq_vec_in(void)
+{
+	struct hids_irqstate *is = irq_state();
+
+	if (is)
+		is->vec_start = bpf_ktime_get_ns();
+}
+
+static __always_inline void irq_vec_out(void)
+{
+	struct hids_irqstate *is = irq_state();
+	__u64 start;
+
+	if (!is)
+		return;
+	start = is->vec_start;
+	if (!start)
+		return;
+	is->vec_start = 0;
+	is->vec_ns += irq_dur(is, start, bpf_ktime_get_ns());
+}
+
+static __always_inline void irq_soft_in(void)
+{
+	struct hids_irqstate *is = irq_state();
+
+	if (!is)
+		return;
+	is->soft_snap = is->hard_ns + is->vec_ns;
+	is->soft_start = bpf_ktime_get_ns();
+}
+
+static __always_inline void irq_soft_out(void)
+{
+	struct hids_irqstate *is = irq_state();
+	__u64 start, d, hv, nested;
+
+	if (!is)
+		return;
+	start = is->soft_start;
+	if (!start)
+		return;
+	is->soft_start = 0;
+
+	d = irq_dur(is, start, bpf_ktime_get_ns());
+	if (!d)
+		return;
+
+	is->soft_raw_ns += d;
+
+	/* Hard va vector long ben trong soft da duoc cong vao hard_ns/vec_ns
+	 * roi, nen phai tru ra de khong dem hai lan. */
+	hv = is->hard_ns + is->vec_ns;
+	nested = hv > is->soft_snap ? hv - is->soft_snap : 0;
+	if (d > nested)
+		is->soft_excl_ns += d - nested;
 }
 
 /* HIDS_IRQ_PAIR sinh hai chuong trinh cho mot cap tracepoint entry va exit. */
@@ -577,30 +656,30 @@ static __always_inline void irq_out(void)
 	SEC("tp_btf/" #tp "_entry")                  \
 	int BPF_PROG(hids_irq_##tp##_entry)          \
 	{                                            \
-		irq_in(kind);                        \
+		irq_##kind##_in();                   \
 		return 0;                            \
 	}                                            \
 	SEC("tp_btf/" #tp "_exit")                   \
 	int BPF_PROG(hids_irq_##tp##_exit)           \
 	{                                            \
-		irq_out();                           \
+		irq_##kind##_out();                  \
 		return 0;                            \
 	}
 
 /* irq: */
-HIDS_IRQ_PAIR(irq_handler, HIDS_IRQ_HARD)
-HIDS_IRQ_PAIR(softirq, HIDS_IRQ_SOFT)
+HIDS_IRQ_PAIR(irq_handler, hard)
+HIDS_IRQ_PAIR(softirq, soft)
 
 /* irq_vectors: moi cap entry/exit co trong
  * /sys/kernel/tracing/events/irq_vectors/ tren kernel 6.8.0-142-generic. */
-HIDS_IRQ_PAIR(local_timer, HIDS_IRQ_VEC)
-HIDS_IRQ_PAIR(reschedule, HIDS_IRQ_VEC)
-HIDS_IRQ_PAIR(call_function, HIDS_IRQ_VEC)
-HIDS_IRQ_PAIR(call_function_single, HIDS_IRQ_VEC)
-HIDS_IRQ_PAIR(irq_work, HIDS_IRQ_VEC)
-HIDS_IRQ_PAIR(x86_platform_ipi, HIDS_IRQ_VEC)
-HIDS_IRQ_PAIR(error_apic, HIDS_IRQ_VEC)
-HIDS_IRQ_PAIR(spurious_apic, HIDS_IRQ_VEC)
-HIDS_IRQ_PAIR(thermal_apic, HIDS_IRQ_VEC)
-HIDS_IRQ_PAIR(threshold_apic, HIDS_IRQ_VEC)
-HIDS_IRQ_PAIR(deferred_error_apic, HIDS_IRQ_VEC)
+HIDS_IRQ_PAIR(local_timer, vec)
+HIDS_IRQ_PAIR(reschedule, vec)
+HIDS_IRQ_PAIR(call_function, vec)
+HIDS_IRQ_PAIR(call_function_single, vec)
+HIDS_IRQ_PAIR(irq_work, vec)
+HIDS_IRQ_PAIR(x86_platform_ipi, vec)
+HIDS_IRQ_PAIR(error_apic, vec)
+HIDS_IRQ_PAIR(spurious_apic, vec)
+HIDS_IRQ_PAIR(thermal_apic, vec)
+HIDS_IRQ_PAIR(threshold_apic, vec)
+HIDS_IRQ_PAIR(deferred_error_apic, vec)

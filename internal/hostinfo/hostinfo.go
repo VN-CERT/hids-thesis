@@ -180,6 +180,32 @@ func ConfigHZ() (int, error) {
 	return 0, fmt.Errorf("doc %s: khong co dong CONFIG_HZ=", path)
 }
 
+// KernelConfig doc gia tri cua mot tuy chon trong /boot/config-<uname -r>.
+// Tra ve nguyen van gia tri (vi du "y", "1995312") neu dong CONFIG_<name>= co
+// mat, hoac "is not set" neu kernel bien dich khong bat tuy chon do.
+func KernelConfig(name string) (string, error) {
+	release, err := KernelRelease()
+	if err != nil {
+		return "", err
+	}
+	path := "/boot/config-" + release
+	raw, err := os.ReadFile(path)
+	if err != nil {
+		return "", fmt.Errorf("doc %s: %w", path, err)
+	}
+	notSet := "# CONFIG_" + name + " is not set"
+	for _, line := range strings.Split(string(raw), "\n") {
+		line = strings.TrimSpace(line)
+		if line == notSet {
+			return "is not set", nil
+		}
+		if rest, ok := strings.CutPrefix(line, "CONFIG_"+name+"="); ok {
+			return strings.TrimSpace(rest), nil
+		}
+	}
+	return "", fmt.Errorf("doc %s: khong co dong nao ve CONFIG_%s", path, name)
+}
+
 // SchedSchedstats doc kernel.sched_schedstats.
 func SchedSchedstats() (int, error) {
 	raw, err := os.ReadFile("/proc/sys/kernel/sched_schedstats")

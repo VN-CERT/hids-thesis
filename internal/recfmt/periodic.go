@@ -26,19 +26,21 @@ type PeriodicSample struct {
 
 	// Tong thoi gian irq cua moi CPU cong lai, theo tung loai.
 	// Bang 0 o M2 vi chua do irq.
-	IrqHardDelta uint64
-	IrqSoftDelta uint64
-	IrqVecDelta  uint64
-	IrqHardTotal uint64
-	IrqSoftTotal uint64
-	IrqVecTotal  uint64
+	IrqHardDelta    uint64
+	IrqSoftDelta    uint64 // soft da tru phan long (soft_excl), phan dung cho thanh phan irq
+	IrqVecDelta     uint64
+	IrqSoftRawDelta uint64 // soft ke ca phan long, de so voi softirqs-bpfcc
+	IrqHardTotal    uint64
+	IrqSoftTotal    uint64
+	IrqVecTotal     uint64
+	IrqSoftRawTotal uint64
 }
 
 var periodicColumns = []string{
 	"mono_ns", "wall",
 	"dinh_ghi_delta", "mat_delta", "dinh_ghi_tong", "mat_tong",
-	"irq_hard_delta_ns", "irq_soft_delta_ns", "irq_vec_delta_ns",
-	"irq_hard_tong_ns", "irq_soft_tong_ns", "irq_vec_tong_ns",
+	"irq_hard_delta_ns", "irq_soft_delta_ns", "irq_vec_delta_ns", "soft_raw_delta_ns",
+	"irq_hard_tong_ns", "irq_soft_tong_ns", "irq_vec_tong_ns", "soft_raw_tong_ns",
 }
 
 // PeriodicWriter ghi file .periodic va day xuong dia sau moi dong, de du lieu
@@ -69,11 +71,11 @@ func NewPeriodicWriter(path string, comments []string) (*PeriodicWriter, error) 
 
 // Write ghi mot dong.
 func (w *PeriodicWriter) Write(s PeriodicSample) error {
-	fmt.Fprintf(w.bw, "%d,%s,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n",
+	fmt.Fprintf(w.bw, "%d,%s,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n",
 		s.MonoNs, s.Wall.Format(time.RFC3339Nano),
 		s.AttemptsDelta, s.DropsDelta, s.AttemptsTotal, s.DropsTotal,
-		s.IrqHardDelta, s.IrqSoftDelta, s.IrqVecDelta,
-		s.IrqHardTotal, s.IrqSoftTotal, s.IrqVecTotal)
+		s.IrqHardDelta, s.IrqSoftDelta, s.IrqVecDelta, s.IrqSoftRawDelta,
+		s.IrqHardTotal, s.IrqSoftTotal, s.IrqVecTotal, s.IrqSoftRawTotal)
 	return w.bw.Flush()
 }
 

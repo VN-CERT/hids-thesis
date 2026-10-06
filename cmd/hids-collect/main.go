@@ -205,11 +205,23 @@ func run() error {
 		fmt.Sprintf("preempt: %s", preempt),
 		fmt.Sprintf("config_hz: %d", configHZ),
 		fmt.Sprintf("kernel.sched_schedstats: %d", schedstats),
+	}
+	// Bon tuy chon nay quyet dinh gia tri tham chieu nao dung duoc khi doi
+	// chieu: khong co IRQ_TIME_ACCOUNTING va PARAVIRT_TIME_ACCOUNTING thi
+	// sum_exec_runtime trong schedstat da gom ca irq va steal.
+	for _, name := range []string{"IRQ_TIME_ACCOUNTING", "PARAVIRT_TIME_ACCOUNTING", "SCHEDSTATS", "SCHED_INFO"} {
+		value, err := hostinfo.KernelConfig(name)
+		if err != nil {
+			return err
+		}
+		header = append(header, fmt.Sprintf("CONFIG_%s: %s", name, value))
+	}
+	header = append(header,
 		fmt.Sprintf("irq_tracepoints (%d cap): %s", len(coll.IRQTracepoints()), strings.Join(coll.IRQTracepoints(), " ")),
 		fmt.Sprintf("start_mono_ns: %d", startMono),
 		fmt.Sprintf("start_wall: %s", startWall.Format(time.RFC3339Nano)),
 		fmt.Sprintf("duration: %s", durationText(*duration)),
-	}
+	)
 	for _, line := range header {
 		if _, err := fmt.Fprintf(bw, "# %s\n", line); err != nil {
 			return err
@@ -332,22 +344,36 @@ func run() error {
 	fmt.Fprintf(os.Stderr, "ban ghi doc duoc: %d | so lan dinh ghi: %d | mat: %d\n", records, attempts, drops)
 
 	if irq, err := coll.IRQStats(); err == nil {
-		var hard, soft, vec, oddNs uint64
-		var oddCnt, stuck uint32
+		var hard, soft, softRaw, vec, oddNs uint64
+		var oddCnt uint32
+		active := 0
 		for _, c := range irq {
 			hard += c.HardNs
-			soft += c.SoftNs
+			soft += c.SoftExclNs
+			softRaw += c.SoftRawNs
 			vec += c.VecNs
 			oddNs += c.OddNs
 			oddCnt += c.OddCnt
-			if c.Depth != 0 {
-				stuck++
-			}
+			active += c.Active
 		}
-		fmt.Fprintf(os.Stderr, "irq cong don (ns): hard %d | soft %d | vector %d\n", hard, soft, vec)
-		fmt.Fprintf(os.Stderr, "irq bat thuong: %d khoang, %d ns | CPU con do sau khac 0: %d\n", oddCnt, oddNs, stuck)
+		fmt.Fprintf(os.Stderr, "irq cong don (ns): hard %d | soft %d | vector %d | tong %d\n", hard, soft, vec, hard+soft+vec)
+		fmt.Fprintf(os.Stderr, "soft_raw cong don (ns): %d (ke ca hard/vector long ben trong, de so voi softirqs-bpfcc)\n", softRaw)
+		fmt.Fprintf(os.Stderr, "irq bat thuong: %d khoang, %d ns | loai con dang hoat dong: %d\n", oddCnt, oddNs, active)
 	} else {
 		bpflog.Note(os.Stderr, logPath, fmt.Sprintf("khong doc duoc bo cong don irq luc ket thuc: %v", err))
+	}
+
+	if misses, err := coll.RecursionMisses(); err == nil {
+		var total uint64
+		for _, m := range misses {
+			total += m.Misses
+		}
+		fmt.Fprintf(os.Stderr, "recursion_misses (bpf_prog_info), tong %d tren %d chuong trinh:\n", total, len(misses))
+		for _, m := range misses {
+			fmt.Fprintf(os.Stderr, "  %-40s %d\n", m.Program, m.Misses)
+		}
+	} else {
+		bpflog.Note(os.Stderr, logPath, fmt.Sprintf("khong doc duoc recursion_misses: %v", err))
 	}
 
 	var ru unix.Rusage
@@ -441,7 +467,7 @@ func watchLoss(coll *syscallbpf.Collector, pw *recfmt.PeriodicWriter, stop <-cha
 	defer ticker.Stop()
 
 	var prevAttempts, prevDrops uint64
-	var prevHard, prevSoft, prevVec uint64
+	var prevHard, prevSoft, prevVec, prevSoftRaw uint64
 	sample := func() {
 		stats, err := coll.Stats()
 		if err != nil {
@@ -458,11 +484,12 @@ func watchLoss(coll *syscallbpf.Collector, pw *recfmt.PeriodicWriter, stop <-cha
 			bpflog.Note(os.Stderr, logPath, fmt.Sprintf("khong doc duoc bo cong don irq: %v", err))
 			return
 		}
-		var hard, soft, vec uint64
+		var hard, soft, vec, softRaw uint64
 		for _, c := range irq {
 			hard += c.HardNs
-			soft += c.SoftNs
+			soft += c.SoftExclNs
 			vec += c.VecNs
+			softRaw += c.SoftRawNs
 		}
 		mono, err := monotonicNs()
 		if err != nil {
@@ -472,22 +499,25 @@ func watchLoss(coll *syscallbpf.Collector, pw *recfmt.PeriodicWriter, stop <-cha
 		dAttempts := attempts - prevAttempts
 		dDrops := drops - prevDrops
 		dHard, dSoft, dVec := hard-prevHard, soft-prevSoft, vec-prevVec
+		dSoftRaw := softRaw - prevSoftRaw
 		prevAttempts, prevDrops = attempts, drops
-		prevHard, prevSoft, prevVec = hard, soft, vec
+		prevHard, prevSoft, prevVec, prevSoftRaw = hard, soft, vec, softRaw
 
 		if werr := pw.Write(recfmt.PeriodicSample{
-			MonoNs:        mono,
-			Wall:          time.Now(),
-			AttemptsDelta: dAttempts,
-			DropsDelta:    dDrops,
-			AttemptsTotal: attempts,
-			DropsTotal:    drops,
-			IrqHardDelta:  dHard,
-			IrqSoftDelta:  dSoft,
-			IrqVecDelta:   dVec,
-			IrqHardTotal:  hard,
-			IrqSoftTotal:  soft,
-			IrqVecTotal:   vec,
+			MonoNs:          mono,
+			Wall:            time.Now(),
+			AttemptsDelta:   dAttempts,
+			DropsDelta:      dDrops,
+			AttemptsTotal:   attempts,
+			DropsTotal:      drops,
+			IrqHardDelta:    dHard,
+			IrqSoftDelta:    dSoft,
+			IrqVecDelta:     dVec,
+			IrqSoftRawDelta: dSoftRaw,
+			IrqHardTotal:    hard,
+			IrqSoftTotal:    soft,
+			IrqVecTotal:     vec,
+			IrqSoftRawTotal: softRaw,
 		}); werr != nil {
 			bpflog.Note(os.Stderr, logPath, fmt.Sprintf("khong ghi duoc file .periodic: %v", werr))
 		}

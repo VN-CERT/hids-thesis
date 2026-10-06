@@ -14,17 +14,18 @@ import (
 )
 
 type sysEnterHidsIrqstate struct {
-	_       structs.HostLayout
-	StartNs uint64
-	TotalNs uint64
-	HardNs  uint64
-	SoftNs  uint64
-	VecNs   uint64
-	OddNs   uint64
-	OddCnt  uint32
-	Depth   uint32
-	Kind    uint32
-	_       [4]byte
+	_          structs.HostLayout
+	HardStart  uint64
+	HardNs     uint64
+	VecStart   uint64
+	VecNs      uint64
+	SoftStart  uint64
+	SoftSnap   uint64
+	SoftRawNs  uint64
+	SoftExclNs uint64
+	OddNs      uint64
+	OddCnt     uint32
+	Pad        uint32
 }
 
 type sysEnterHidsTstate struct {

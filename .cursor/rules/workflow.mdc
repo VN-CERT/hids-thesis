@@ -25,6 +25,10 @@ Cập nhật và commit sau MỖI bước nhỏ (build xong, chạy thử xong, 
 - Ghi việc vào mục "Việc đang chạy" của STATE.md ngay khi khởi động.
 - Khi được hỏi hoặc khi bắt đầu phiên mới: nếu chưa xong thì báo đúng định dạng "CHƯA XONG: <tên> — tiến độ x/y — dự kiến xong <giờ> — log <đường dẫn>". Không đoán là đã xong; phải kiểm tra thật.
 
+# Lưu nhiệm vụ: docs/tasks/
+- Mọi nhiệm vụ người dùng giao đều lưu NGUYÊN VĂN vào docs/tasks/<tên mốc>.md ngay trước khi bắt đầu làm, không tóm tắt, không sửa chữ.
+- Commit file nhiệm vụ cùng bước đầu tiên của nhiệm vụ đó.
+
 # Báo cáo đánh số: reports/
 - Mỗi nhiệm vụ hoàn thành, mỗi lần dừng vì vướng, hoặc mỗi lần được yêu cầu: viết một báo cáo mới reports/R<số 3 chữ số>-<mốc>-<tóm tắt ngắn>.md. Số tăng dần (R001, R002, ...), không bao giờ ghi đè báo cáo cũ.
 - Cập nhật reports/INDEX.md: một dòng cho mỗi báo cáo (số, ngày giờ, mốc, tóm tắt một câu, trạng thái).

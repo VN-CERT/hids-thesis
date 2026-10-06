@@ -50,8 +50,13 @@ bit0 FIRST (bản ghi đầu tiên của thread kể từ khi collector chạy) 
 
 # Bộ cộng dồn irq per-CPU (M3)
 - Gắn entry/exit của irq:irq_handler_*, irq:softirq_*, và mọi cặp *_entry/*_exit có trong /sys/kernel/tracing/events/irq_vectors/. Tên các tracepoint đã gắn phải ghi vào header file .bin.
-- Theo dõi độ sâu lồng nhau per-CPU: vào ở độ sâu 0 thì ghi mốc; ra về độ sâu 0 thì cộng (now − mốc) vào bộ cộng dồn irq của CPU đó.
-- Đếm riêng 3 loại (hardirq, softirq, vector) để báo cáo; tổng ba loại là thành phần irq.
+- Không dùng biến độ sâu dùng chung. Mỗi CPU giữ trạng thái RIÊNG cho từng loại hard, soft, vector: mốc vào (0 = không hoạt động) và tổng. Mỗi trường chỉ do chương trình của đúng loại đó ghi.
+- Cơ sở: trên một CPU, hard và vector không lồng vào nhau và không tự lồng; soft không tự lồng; hard và vector có thể lồng vào trong soft.
+- Tránh đếm hai lần: lúc soft vào, chụp (tổng hard + tổng vector) của CPU. Lúc soft ra: phần lồng = (tổng hard + tổng vector hiện tại) − ảnh chụp; soft_excl += (ra − vào) − phần lồng. Giữ thêm soft_raw += (ra − vào), chỉ dùng để đối chiếu với softirqs-bpfcc.
+- Thành phần irq của thread = hard + vector + soft_excl.
+- Hàm đọc bộ cộng dồn tại một thời điểm cộng thêm phần đang dở của từng loại đang hoạt động (cho trường hợp sched_switch xảy ra trong đường thoát irq). Với soft đang dở, phần lồng cũng trừ theo cùng cách.
+- Giữ bộ phát hiện hỏng dữ liệu (khoảng > 1 giây thì loại ra và đếm) và dòng in số loại còn đang hoạt động lúc kết thúc.
+- Lúc kết thúc, in recursion_misses của TỪNG chương trình BPF (lấy từ bpf_prog_info). Phải bằng 0; khác 0 thì ghi vào báo cáo.
 
 # Chính sách khi mất bản ghi (kiến trúc sư chốt ở R003)
 Không bao giờ im lặng, không bao giờ tự dừng. Collector ghi <out>.bin.periodic mỗi 10 giây một dòng (số lần định ghi và số mất, cả delta lẫn cộng dồn, cộng tổng irq theo loại). Delta mất > 0 thì in dòng "LOSS ..." ra stderr và log rồi chạy tiếp. Không dừng thu thập vì mất bản ghi.
