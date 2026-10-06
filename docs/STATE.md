@@ -1,34 +1,32 @@
 # Trạng thái dự án HIDS
 
-Cập nhật lần cuối: 2026-10-07 01:26 (giờ máy)
+Cập nhật lần cuối: 2026-10-07 01:50 (giờ máy)
 
 ## Mốc hiện tại và mục tiêu
-- **M3.1:** xong. Tag `m3` → commit `d4c55b9`. Báo cáo **R006**; R005 giữ nhưng hỏng định dạng.
-- **M4:** chưa bắt đầu.
+- **M3.2 + M4:** đang chạy (wl, g3 v3, rec-export, m4.sh).
+- Tag `m3` sẽ gắn lại sau G3 v3; tag `m4-ab` sau E1/E3/E4 (E2 chờ người dùng).
 
 ## Bước đang làm
-Không có.
+- Chạy `scripts/g3.sh m32` → `validation/g3-*-v3/`.
+- Chạy `scripts/m4.sh all` → `validation/m4-*`.
 
 ## Bước tiếp theo
-Chờ kiến trúc sư duyệt R006 (G-real, G-irq đơn vị, rq bpftrace vs collector).
+- Báo cáo R007; commit; tag `m4-ab`; retag `m3` trên commit đo v3.
 
-## Các bước M3.1 đã xong
-| Bước | Commit |
+## Ghi nhận kiến trúc sư (từ R006 mục 8)
+- bpftrace `@rq_sau_wakeup_ns` khớp **rq** collector (lệch 0,2–2,4%), **không** khớp `run_delay`. `run_delay` kernel thiếu ~6 µs mỗi wakeup trên CPU rảnh; collector đúng đặc tả.
+- **S5:** tổng kernel = exec + run_delay + sleep (block trong sleep, không cộng thêm). Lệch thật ~1 µs.
+- **G-irq:** lệch 4–9% so với bcc do gắn chung tracepoint; chỉ tham chiếu.
+
+## Các bước đã xong (phiên này)
+| Việc | Ghi chú |
 |---|---|
-| Nhiệm vụ `docs/tasks/M3.1.md`, workflow, INDEX R005 | `a256da9` |
-| Sửa build `wl` | `447d91a` |
-| Makefile dirty + chạy G3 v2 | `d4c55b9` (tag `m3`) |
-| g3/g7 validation path + G7d | `915de8b` |
-| validation v2 + R006 | (commit hiện tại) |
-
-## Kết quả G3 v2 (`validation/g3-20261007-v2/`)
-- S1: **301** bản ghi cửa sổ; header `git_commit: d4c55b9`.
-- G7d: perf 1.000.001 = collector 1.000.001.
-- G-real: **103** thread giữ (`cgroup.threads`).
-- `recursion_misses` = 0.
+| `tools/wl.c` M3.2 + mixed/mem M4 | hiệu chỉnh, tự kiểm 5×10 ms, `-loops` |
+| `scripts/g3.sh` m32, G-real 30s, S5 tổng kernel | OUTROOT v3 mặc định |
+| `cmd/rec-export`, `analysis/m4.py`, `scripts/m4.sh` | |
 
 ## Việc đang chạy
-Không có.
+(xem `out/jobs/` sau khi khởi động systemd)
 
 ## Vướng mắc / chờ kiến trúc sư
-Xem R006 mục 8.
+Không có mới.

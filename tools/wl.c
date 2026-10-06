@@ -1,13 +1,5 @@
 /*
- * wl.c — tai tao don luong cho scripts/g3.sh.
- *
- * Giao thuc: ba lan read() tren stdin (moi lan 1 byte).
- *   read 1 (go1)  -> getuid() danh dau khoi tao
- *   read 2 (go2)  -> chay kich ban R vong -> getppid() danh dau ket thuc
- *   read 3 (go3)  -> thoat
- *
- * Truoc read lan 1: hieu chinh so vong lap / us bang CLOCK_MONOTONIC (~200 ms).
- * Che do cpu X: dot CPU bang X * he_so vong, KHONG syscall trong vong dot.
+ * wl.c — workload don luong cho g3.sh va M4.
  */
 #define _GNU_SOURCE
 #include <errno.h>
@@ -18,8 +10,15 @@
 #include <time.h>
 #include <unistd.h>
 #include <sys/syscall.h>
+#include <sys/random.h>
+
+#define SPIN_CHUNK 1000000ULL
+#define CAL_US     200000ULL
+#define M4_LOOPS_FILE "/root/hids/out/m4-loops.txt"
 
 static double loops_per_us;
+static unsigned long long fixed_loops_10ms;
+static int use_fixed_loops;
 
 static int wait_go(void)
 {
@@ -40,51 +39,130 @@ static void marker_getppid(void)
 	syscall(SYS_getppid);
 }
 
-static void spin_once(void)
+static void spin_loops(unsigned long long n)
 {
-	asm volatile("" ::: "memory");
+	volatile unsigned long long sink = 0;
+	unsigned long long i;
+
+	for (i = 0; i < n; i++) {
+		asm volatile("" ::: "memory");
+		sink++;
+	}
+	(void)sink;
+}
+
+static unsigned long long mono_us(void)
+{
+	struct timespec ts;
+
+	if (clock_gettime(CLOCK_MONOTONIC, &ts) != 0)
+		_exit(1);
+	return (unsigned long long)ts.tv_sec * 1000000ULL +
+	       (unsigned long long)ts.tv_nsec / 1000ULL;
+}
+
+static unsigned long long thread_cpu_us(void)
+{
+	struct timespec ts;
+
+	if (clock_gettime(CLOCK_THREAD_CPUTIME_ID, &ts) != 0)
+		_exit(1);
+	return (unsigned long long)ts.tv_sec * 1000000ULL +
+	       (unsigned long long)ts.tv_nsec / 1000ULL;
 }
 
 static void calibrate_loops_per_us(void)
 {
-	struct timespec t0, t1;
-	unsigned long long n = 0;
-	unsigned long long elapsed_us;
+	unsigned long long t0, t1, total = 0;
 
-	if (clock_gettime(CLOCK_MONOTONIC, &t0) != 0) {
-		perror("clock_gettime CLOCK_MONOTONIC");
-		_exit(1);
-	}
+	t0 = mono_us();
 	for (;;) {
-		spin_once();
-		n++;
-		if (clock_gettime(CLOCK_MONOTONIC, &t1) != 0) {
-			perror("clock_gettime CLOCK_MONOTONIC");
+		spin_loops(SPIN_CHUNK);
+		total += SPIN_CHUNK;
+		if ((total % SPIN_CHUNK) == 0) {
+			t1 = mono_us();
+			if (t1 - t0 >= CAL_US)
+				break;
+		}
+	}
+	t1 = mono_us();
+	loops_per_us = (double)total / (double)(t1 - t0);
+	fixed_loops_10ms = (unsigned long long)(10000.0 * loops_per_us);
+	fprintf(stderr, "wl: loops_per_us=%.6f loops_10ms=%llu (hieu chinh %llu us)\n",
+		loops_per_us, fixed_loops_10ms, (unsigned long long)(t1 - t0));
+}
+
+static void self_test_burn_10ms(void)
+{
+	int i;
+
+	for (i = 0; i < 5; i++) {
+		unsigned long long m0, m1, c0, c1, dm, dc;
+
+		m0 = mono_us();
+		c0 = thread_cpu_us();
+		spin_loops(fixed_loops_10ms);
+		m1 = mono_us();
+		c1 = thread_cpu_us();
+		dm = m1 - m0;
+		dc = c1 - c0;
+		fprintf(stderr, "wl: tu kiem %d/5 mono=%llu us thread_cpu=%llu us\n", i + 1, dm, dc);
+		if (dm < 9500 || dm > 10500) {
+			fprintf(stderr, "wl: LOI tu kiem: mono %llu us lech qua 5%% so voi 10 ms\n", dm);
 			_exit(1);
 		}
-		elapsed_us = (unsigned long long)(t1.tv_sec - t0.tv_sec) * 1000000ULL +
-			     (unsigned long long)(t1.tv_nsec - t0.tv_nsec) / 1000ULL;
-		if (elapsed_us >= 200000ULL)
-			break;
 	}
-	loops_per_us = (double)n / (double)elapsed_us;
-	fprintf(stderr, "wl: loops_per_us=%.6f (%llu vong trong %llu us)\n",
-		loops_per_us, n, (unsigned long long)elapsed_us);
+}
+
+static unsigned long long read_loops_file_field(const char *key)
+{
+	FILE *f = fopen(M4_LOOPS_FILE, "r");
+	unsigned long long val = 0;
+	char line[128];
+	char fmt[64];
+
+	if (!f)
+		return 0;
+	snprintf(fmt, sizeof(fmt), "%s %%llu", key);
+	while (fgets(line, sizeof(line), f)) {
+		unsigned long long v;
+
+		if (sscanf(line, fmt, &v) == 1)
+			val = v;
+	}
+	fclose(f);
+	return val;
+}
+
+static unsigned long long read_mem_steps_file(void)
+{
+	return read_loops_file_field("mem_steps");
+}
+
+static void write_m4_loops(unsigned long long mem_steps)
+{
+	FILE *f = fopen(M4_LOOPS_FILE, "w");
+
+	if (!f) {
+		perror("fopen m4-loops");
+		_exit(1);
+	}
+	fprintf(f, "burn_loops %llu\n", fixed_loops_10ms);
+	fprintf(f, "mem_steps %llu\n", mem_steps);
+	fclose(f);
 }
 
 static void burn_cpu_us(unsigned long target_us)
 {
-	unsigned long long i, n;
+	unsigned long long n;
 
-	if (loops_per_us <= 0.0) {
-		fprintf(stderr, "wl: chua hieu chinh loops_per_us\n");
-		_exit(1);
-	}
-	n = (unsigned long long)(target_us * loops_per_us);
+	if (use_fixed_loops && target_us == 10000)
+		n = fixed_loops_10ms;
+	else
+		n = (unsigned long long)(target_us * loops_per_us);
 	if (n == 0)
 		n = 1;
-	for (i = 0; i < n; i++)
-		spin_once();
+	spin_loops(n);
 }
 
 static void do_sleep_us(unsigned long us)
@@ -102,28 +180,31 @@ static void do_sleep_us(unsigned long us)
 	}
 }
 
-static void do_io_once(const char *path)
+static unsigned long long calibrate_mem_steps(unsigned char *buf, size_t sz)
 {
-	char buf[4096];
-	int fd;
+	unsigned long long t0, t1, steps = 0;
+	unsigned int seed = 1;
 
-	memset(buf, 0x5a, sizeof(buf));
-	fd = open(path, O_CREAT | O_RDWR | O_TRUNC, 0600);
-	if (fd < 0) {
-		perror("open");
-		_exit(1);
+	t0 = mono_us();
+	while (mono_us() - t0 < CAL_US) {
+		size_t off = (size_t)(rand_r(&seed) % (unsigned int)sz);
+		buf[off]++;
+		steps++;
 	}
-	if (pwrite(fd, buf, sizeof(buf), 0) != (ssize_t)sizeof(buf)) {
-		perror("pwrite");
-		close(fd);
-		_exit(1);
+	t1 = mono_us();
+	return steps * 10000ULL / (t1 - t0);
+}
+
+static void mem_work(unsigned char *buf, size_t sz, unsigned long long steps)
+{
+	unsigned int seed = 42;
+	unsigned long long i;
+
+	for (i = 0; i < steps; i++) {
+		size_t off = (size_t)(rand_r(&seed) % (unsigned int)sz);
+		buf[off]++;
+		asm volatile("" ::: "memory");
 	}
-	if (fdatasync(fd) != 0) {
-		perror("fdatasync");
-		close(fd);
-		_exit(1);
-	}
-	close(fd);
 }
 
 static unsigned long parse_ul(const char *s, const char *name)
@@ -140,40 +221,68 @@ static unsigned long parse_ul(const char *s, const char *name)
 	return v;
 }
 
+static void shift_argv(int *argc, char ***argv, int n)
+{
+	*argc -= n;
+	*argv += n;
+}
+
 int main(int argc, char **argv)
 {
-	const char *mode;
+	unsigned long loops_arg = 0;
 	unsigned long x_us = 0, y_us = 0, rounds = 1;
+	const char *mode;
 	char iopath[512];
 	unsigned long r;
 
-	if (argc < 3) {
+	argc--;
+	argv++;
+
+	while (argc > 1 && strcmp(argv[0], "-loops") == 0) {
+		if (argc < 2) {
+			fprintf(stderr, "wl: -loops can so\n");
+			return 1;
+		}
+		loops_arg = parse_ul(argv[1], "loops");
+		shift_argv(&argc, &argv, 2);
+	}
+
+	if (argc < 1) {
 		fprintf(stderr,
-			"usage: wl <cpu X_us R|sleep Y_us R|mixed X_us Y_us R|io R>\n");
+			"usage: wl [-loops N] <cpu X_us R|sleep Y_us R|mixed [X_us Y_us] R|io R|mem R>\n");
 		return 1;
 	}
 
-	mode = argv[1];
+	mode = argv[0];
 	if (strcmp(mode, "cpu") == 0) {
-		if (argc != 4)
-			goto usage;
-		x_us = parse_ul(argv[2], "X_us");
-		rounds = parse_ul(argv[3], "R");
-	} else if (strcmp(mode, "sleep") == 0) {
-		if (argc != 4)
-			goto usage;
-		y_us = parse_ul(argv[2], "Y_us");
-		rounds = parse_ul(argv[3], "R");
-	} else if (strcmp(mode, "mixed") == 0) {
-		if (argc != 5)
-			goto usage;
-		x_us = parse_ul(argv[2], "X_us");
-		y_us = parse_ul(argv[3], "Y_us");
-		rounds = parse_ul(argv[4], "R");
-	} else if (strcmp(mode, "io") == 0) {
 		if (argc != 3)
 			goto usage;
+		x_us = parse_ul(argv[1], "X_us");
 		rounds = parse_ul(argv[2], "R");
+	} else if (strcmp(mode, "sleep") == 0) {
+		if (argc != 3)
+			goto usage;
+		y_us = parse_ul(argv[1], "Y_us");
+		rounds = parse_ul(argv[2], "R");
+	} else if (strcmp(mode, "mixed") == 0) {
+		if (argc == 2) {
+			x_us = 10000;
+			y_us = 10000;
+			rounds = parse_ul(argv[1], "R");
+		} else if (argc == 4) {
+			x_us = parse_ul(argv[1], "X_us");
+			y_us = parse_ul(argv[2], "Y_us");
+			rounds = parse_ul(argv[3], "R");
+		} else
+			goto usage;
+	} else if (strcmp(mode, "io") == 0) {
+		if (argc != 2)
+			goto usage;
+		rounds = parse_ul(argv[1], "R");
+	} else if (strcmp(mode, "mem") == 0) {
+		if (argc != 2)
+			goto usage;
+		rounds = parse_ul(argv[1], "R");
 	} else {
 		goto usage;
 	}
@@ -181,7 +290,18 @@ int main(int argc, char **argv)
 	printf("%d\n", getpid());
 	fflush(stdout);
 
-	calibrate_loops_per_us();
+	if (loops_arg > 0) {
+		fixed_loops_10ms = loops_arg;
+		use_fixed_loops = 1;
+		loops_per_us = (double)fixed_loops_10ms / 10000.0;
+		fprintf(stderr, "wl: dung -loops %lu (bo qua hieu chinh)\n", loops_arg);
+	} else {
+		calibrate_loops_per_us();
+		self_test_burn_10ms();
+		use_fixed_loops = 1;
+		if (strcmp(mode, "mem") != 0)
+			write_m4_loops(read_mem_steps_file());
+	}
 
 	wait_go();
 	marker_getuid();
@@ -203,10 +323,53 @@ int main(int argc, char **argv)
 			do_sleep_us(y_us);
 			marker_getppid();
 		}
+	} else if (strcmp(mode, "mem") == 0) {
+		unsigned char *buf;
+		unsigned long long mem_steps, burn_file;
+		size_t mem_sz = 64UL * 1024 * 1024;
+
+		burn_file = read_loops_file_field("burn_loops");
+		if (burn_file > 0 && loops_arg == 0) {
+			fixed_loops_10ms = burn_file;
+			use_fixed_loops = 1;
+			loops_per_us = (double)fixed_loops_10ms / 10000.0;
+		}
+
+		buf = malloc(mem_sz);
+		if (!buf) {
+			perror("malloc");
+			_exit(1);
+		}
+		memset(buf, 0, mem_sz);
+		if (loops_arg > 0) {
+			mem_steps = read_mem_steps_file();
+			if (mem_steps == 0) {
+				fprintf(stderr, "wl: mem can mem_steps trong %s\n", M4_LOOPS_FILE);
+				_exit(1);
+			}
+		} else {
+			mem_steps = calibrate_mem_steps(buf, mem_sz);
+			write_m4_loops(mem_steps);
+		}
+		for (r = 0; r < rounds; r++) {
+			mem_work(buf, mem_sz, mem_steps);
+			do_sleep_us(10000);
+			marker_getppid();
+		}
+		free(buf);
 	} else {
 		snprintf(iopath, sizeof(iopath), "/root/hids/out/wl-io-%d.tmp", getpid());
 		for (r = 0; r < rounds; r++) {
-			do_io_once(iopath);
+			int fd;
+			char b[4096];
+
+			memset(b, 0x5a, sizeof(b));
+			fd = open(iopath, O_CREAT | O_RDWR | O_TRUNC, 0600);
+			if (fd < 0)
+				_exit(1);
+			pwrite(fd, b, sizeof(b), 0);
+			fdatasync(fd);
+			close(fd);
 			marker_getppid();
 		}
 		unlink(iopath);
@@ -217,6 +380,6 @@ int main(int argc, char **argv)
 
 usage:
 	fprintf(stderr,
-		"usage: wl <cpu X_us R|sleep Y_us R|mixed X_us Y_us R|io R>\n");
+		"usage: wl [-loops N] <cpu|sleep|mixed|io|mem> ...\n");
 	return 1;
 }

@@ -1,0 +1,307 @@
+#!/usr/bin/env bash
+# m4.sh — thi nghiem M4 (E1, E3, E4; e2 chuan bi cho nguoi dung).
+set -uo pipefail
+
+cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
+
+WL=./bin/wl
+COLLECT=./bin/hids-collect
+EXPORT=./bin/rec-export
+M4PY=./analysis/m4.py
+LOOPS_FILE=out/m4-loops.txt
+WL_CPU=20
+DATE=$(date +%Y%m%d)
+OUTROOT="validation/m4-${DATE}"
+M4PY_OUT="$OUTROOT"
+
+die() {
+	echo "m4: $*" >&2
+	exit 1
+}
+
+wait_ready() {
+	local log=$1 i
+	for ((i = 0; i < 3000; i++)); do
+		grep -qx READY "$log" 2>/dev/null && return 0
+		sleep 0.01
+	done
+	die "collector khong READY, xem $log"
+}
+
+wait_wl_read() {
+	local pid=$1 i w
+	for ((i = 0; i < 12000; i++)); do
+		w=$(cat "/proc/$pid/wchan" 2>/dev/null) || return 1
+		[[ $w == pipe_read ]] && return 0
+		kill -0 "$pid" 2>/dev/null || return 1
+		sleep 0.01
+	done
+	die "wl $pid khong cho read()"
+}
+
+read_burn_loops() {
+	[[ -r $LOOPS_FILE ]] || die "khong co $LOOPS_FILE — chay m4 calibrate truoc"
+	awk '/^burn_loops/{print $2}' "$LOOPS_FILE"
+}
+
+calibrate_mem() {
+	local fifo wl_pid
+	fifo=$(mktemp -u)
+	mkfifo "$fifo" || die "mkfifo"
+	echo "m4: hieu chinh mem tren CPU $WL_CPU..." >&2
+	taskset -c "$WL_CPU" "$WL" mem 1 <"$fifo" >out/m4-cal-mem.log 2>&1 &
+	wl_pid=$!
+	sleep 5
+	grep -q mem_steps "$LOOPS_FILE" || die "mem hieu chinh that bai"
+	kill "$wl_pid" 2>/dev/null
+	wait "$wl_pid" 2>/dev/null
+	rm -f "$fifo"
+}
+
+calibrate_wl() {
+	mkdir -p out
+	local fifo wl_pid
+	fifo=$(mktemp -u)
+	mkfifo "$fifo" || die "mkfifo"
+	echo "m4: hieu chinh wl tren CPU $WL_CPU (may ranh)..." >&2
+	taskset -c "$WL_CPU" "$WL" mixed 1 <"$fifo" >out/m4-cal-wl.log 2>&1 &
+	wl_pid=$!
+	sleep 3
+	[[ -s $LOOPS_FILE ]] || die "hieu chinh that bai, xem out/m4-cal-wl.log"
+	kill "$wl_pid" 2>/dev/null
+	wait "$wl_pid" 2>/dev/null
+	rm -f "$fifo"
+	echo "m4: burn_loops=$(read_burn_loops)" >&2
+}
+
+run_wl_mixed() {
+	local loops=$1 rounds=$2
+	local prefix fifo wl_pid cpid bin
+	prefix="out/m4-$(date +%H%M%S)-$$"
+	fifo="$prefix.fifo"
+	bin="$prefix.bin"
+	mkfifo "$fifo"
+	exec 9<>"$fifo"
+	taskset -c "$WL_CPU" "$WL" -loops "$loops" mixed "$rounds" <"$fifo" >"$prefix-wl.log" 2>&1 &
+	wl_pid=$!
+	sleep 0.5
+	"$COLLECT" -pid "$wl_pid" -duration 90s -out "$bin" 2>"$prefix-collect.log" &
+	cpid=$!
+	wait_ready "$prefix-collect.log"
+	printf '.\n' >&9
+	wait_wl_read "$wl_pid"
+	printf '.\n' >&9
+	wait "$wl_pid"
+	printf '.\n' >&9
+	wait "$cpid"
+	exec 9>&-
+	rm -f "$fifo"
+	echo "$bin"
+}
+
+run_wl_mem() {
+	local loops=$1 rounds=$2
+	local prefix fifo wl_pid cpid bin
+	prefix="out/m4-mem-$(date +%H%M%S)-$$"
+	fifo="$prefix.fifo"
+	bin="$prefix.bin"
+	mkfifo "$fifo"
+	exec 9<>"$fifo"
+	taskset -c "$WL_CPU" "$WL" -loops "$loops" mem "$rounds" <"$fifo" >"$prefix-wl.log" 2>&1 &
+	wl_pid=$!
+	sleep 0.5
+	"$COLLECT" -pid "$wl_pid" -duration 90s -out "$bin" 2>"$prefix-collect.log" &
+	cpid=$!
+	wait_ready "$prefix-collect.log"
+	printf '.\n' >&9
+	wait_wl_read "$wl_pid"
+	printf '.\n' >&9
+	wait "$wl_pid"
+	printf '.\n' >&9
+	wait "$cpid"
+	exec 9>&-
+	rm -f "$fifo"
+	echo "$bin"
+}
+
+export_csv() {
+	local bin=$1 csv=$2
+	"$EXPORT" "$bin" >"$csv"
+}
+
+e1() {
+	local loops L csv manifest=() stress_pids=()
+	loops=$(read_burn_loops)
+	mkdir -p "$OUTROOT/E1"
+	for L in 0 1 2 3; do
+		for p in "${stress_pids[@]:-}"; do kill "$p" 2>/dev/null; done
+		stress_pids=()
+		for ((i = 0; i < L; i++)); do
+			stress-ng --cpu 1 --taskset "$WL_CPU" --timeout 120 >/dev/null 2>&1 &
+			stress_pids+=($!)
+		done
+		sleep 1
+		bin=$(run_wl_mixed "$loops" 500)
+		csv="$OUTROOT/E1/L${L}.csv"
+		export_csv "$bin" "$csv"
+		cp "$bin" "$OUTROOT/E1/L${L}.bin"
+		manifest+=("E1:${L}:${csv}")
+	done
+	for p in "${stress_pids[@]:-}"; do kill "$p" 2>/dev/null; done
+	printf '%s\n' "${manifest[@]}"
+}
+
+e3_connect_prog() {
+	python3 - <<'PY'
+import socket, time
+time.sleep(300)
+s = socket.socket()
+s.connect(("127.0.0.1", int(__import__("os").environ["M4_E3_PORT"])))
+s.close()
+PY
+}
+
+e3_once() {
+	local tag=$1 stress_n=$2
+	local port listener prefix bin csv
+	port=$((19000 + RANDOM % 1000))
+	export M4_E3_PORT=$port
+	listener=$(mktemp)
+	python3 -c "import socket;s=socket.socket();s.bind(('127.0.0.1',$port));s.listen(1);s.accept()" &
+	local lip=$!
+	local stress_pids=()
+	for ((i = 0; i < stress_n; i++)); do
+		stress-ng --cpu 1 --taskset "$WL_CPU" --timeout 400 >/dev/null 2>&1 &
+		stress_pids+=($!)
+	done
+	sleep 1
+	prefix="out/m4-e3-${tag}-$(date +%H%M%S)"
+	bin="$prefix.bin"
+	e3_connect_prog &
+	local wp=$!
+	"$COLLECT" -pid "$wp" -duration 330s -out "$bin" 2>"$prefix-collect.log" &
+	local cpid=$!
+	wait_ready "$prefix-collect.log"
+	wait "$wp"
+	wait "$cpid"
+	kill "$lip" 2>/dev/null
+	wait "$lip" 2>/dev/null
+	for p in "${stress_pids[@]}"; do kill "$p" 2>/dev/null; done
+	mkdir -p "$OUTROOT/E3"
+	csv="$OUTROOT/E3/${tag}.csv"
+	export_csv "$bin" "$csv"
+	cp "$bin" "$OUTROOT/E3/${tag}.bin"
+	python3 - <<PY
+import pandas as pd
+df=pd.read_csv("$csv")
+c=df[df["syscall_nr"]==1]  # connect may vary
+if c.empty:
+    c=df.tail(3)
+print("=== E3 $tag ban ghi connect (cuoi) ===")
+for _,r in c.tail(1).iterrows():
+    print(f"dt_ns={r.get('dt_ns')} vol_ns={r.get('vol_ns')} rq_ns={r.get('rq_ns')} cpu_ns={r.get('cpu_ns')}")
+PY
+	echo "E3:${tag}:${csv}"
+}
+
+e3() {
+	e3_once idle 0
+	e3_once stress2 2
+}
+
+e4_workers() {
+	local n=$1 mode=$2
+	local loops csv manifest=() stress_pids=() cpus
+	loops=$(read_burn_loops)
+	mkdir -p "$OUTROOT/E4-${mode}"
+	for ((w = 0; w < n; w++)); do
+		cpus="0-19,21-23"
+		stress-ng --"$mode" 1 --taskset "$cpus" --timeout 120 >/dev/null 2>&1 &
+		stress_pids+=($!)
+	done
+	sleep 2
+	bin=$(run_wl_mem "$loops" 500)
+	csv="$OUTROOT/E4-${mode}/L${n}.csv"
+	export_csv "$bin" "$csv"
+	cp "$bin" "$OUTROOT/E4-${mode}/L${n}.bin"
+	for p in "${stress_pids[@]}"; do kill "$p" 2>/dev/null; done
+	echo "E4-${mode}:${n}:${csv}"
+}
+
+e4() {
+	local manifest=()
+	for n in 0 4 12 22; do
+		manifest+=("$(e4_workers "$n" cache)")
+	done
+	for n in 0 4 12 22; do
+		manifest+=("$(e4_workers "$n" stream)")
+	done
+	printf '%s\n' "${manifest[@]}"
+}
+
+e2_prep() {
+	cat <<'EOF'
+=== E2 (nguoi dung chay tren vCenter) ===
+wl mixed R=500 tren CPU 20.
+Dong thoi: stress-ng --cpu 23 --taskset 0-19,21-23 (timeout du dai).
+Bon muc Limit MHz: Unlimited, 36000, 24000, 12000.
+Truoc moi muc script in:
+  "Tren vCenter: Edit Settings → CPU → Limit = <X> MHz → OK. Xong bam Enter."
+Sau het dat lai Unlimited.
+
+Lenh goi y (sau khi dat limit va bam Enter):
+  LOOPS=$(awk '/^burn_loops/{print $2}' out/m4-loops.txt)
+  taskset -c 20 ./bin/wl -loops "$LOOPS" mixed 500
+  (collector -pid wl & stress-ng ...)
+
+EOF
+}
+
+main() {
+	[[ $EUID -eq 0 ]] || die "can root"
+	for f in "$WL" "$COLLECT" "$EXPORT" "$M4PY"; do
+		[[ -x $f ]] || die "khong co $f (make build?)"
+	done
+	command -v stress-ng >/dev/null || die "stress-ng"
+	mkdir -p out "$OUTROOT"
+
+	case "${1:-all}" in
+	calibrate)
+		calibrate_wl
+		calibrate_mem
+		;;
+	e1)
+		calibrate_wl 2>/dev/null || true
+		mapfile -t m < <(e1)
+		python3 "$M4PY" --outdir "$M4PY_OUT" --summary "$OUTROOT/summary-e1.csv" "${m[@]}"
+		;;
+	e3)
+		mapfile -t m < <(e3)
+		;;
+	e4)
+		calibrate_wl 2>/dev/null || true
+		mapfile -t m < <(e4)
+		python3 "$M4PY" --outdir "$M4PY_OUT" --summary "$OUTROOT/summary-e4-cache.csv" \
+			$(printf '%s\n' "${m[@]}" | grep E4-cache | tr '\n' ' ')
+		python3 "$M4PY" --outdir "$M4PY_OUT" --summary "$OUTROOT/summary-e4-stream.csv" \
+			$(printf '%s\n' "${m[@]}" | grep E4-stream | tr '\n' ' ')
+		;;
+	e2)
+		e2_prep
+		;;
+	all)
+		calibrate_wl
+		calibrate_mem
+		mapfile -t m1 < <(e1)
+		mapfile -t m3 < <(e3)
+		mapfile -t m4 < <(e4)
+		all_manifest=("${m1[@]}" "${m4[@]}")
+		python3 "$M4PY" --outdir "$M4PY_OUT" --summary "$OUTROOT/summary.csv" "${all_manifest[@]}"
+		;;
+	*)
+		die "usage: m4.sh {calibrate|e1|e3|e4|e2|all}"
+		;;
+	esac
+}
+
+main "$@"

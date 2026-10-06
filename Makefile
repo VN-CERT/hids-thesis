@@ -8,11 +8,11 @@ BPFTOOL ?= bpftool
 # 'go generate' tao lai chung.
 GIT_REV = $(shell git rev-parse --short HEAD 2>/dev/null || echo unknown)
 # Chi coi dirty neu co thay doi ngoai out/ va ngoai validation/g3-* (ket qua G3).
-GIT_DIRTY = $(shell git status --porcelain 2>/dev/null | awk '$$2 !~ /^out\// && $$2 !~ /^validation\/g3-/ {found=1} END {if (found) print "-dirty"}')
+GIT_DIRTY = $(shell git status --porcelain 2>/dev/null | awk '$$2 !~ /^out\// && $$2 !~ /^validation\/g3-/ && $$2 !~ /^validation\/m4-/ {found=1} END {if (found) print "-dirty"}')
 GIT_COMMIT = $(GIT_REV)$(GIT_DIRTY)
 LDFLAGS = -X hids/internal/buildinfo.Commit=$(GIT_COMMIT)
 
-BINARIES := bin/steal-probe bin/steal-summary bin/hids-collect bin/rec-stat bin/rec-check bin/wl bin/sysinj
+BINARIES := bin/steal-probe bin/steal-summary bin/hids-collect bin/rec-stat bin/rec-check bin/rec-export bin/wl bin/sysinj
 
 .PHONY: build generate vmlinux clean
 
@@ -23,6 +23,7 @@ build: generate bin/sysinj bin/wl
 	$(GO) build -ldflags "$(LDFLAGS)" -o bin/hids-collect ./cmd/hids-collect
 	$(GO) build -ldflags "$(LDFLAGS)" -o bin/rec-stat ./cmd/rec-stat
 	$(GO) build -ldflags "$(LDFLAGS)" -o bin/rec-check ./cmd/rec-check
+	$(GO) build -ldflags "$(LDFLAGS)" -o bin/rec-export ./cmd/rec-export
 
 # Cong cu kiem thu viet bang C, khong thuoc phan Go.
 bin/sysinj: tools/sysinj.c
