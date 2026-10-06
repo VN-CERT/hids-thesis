@@ -92,25 +92,50 @@ static void calibrate_loops_per_us(void)
 		loops_per_us, fixed_loops_10ms, (unsigned long long)(t1 - t0));
 }
 
+static int mono_in_range(unsigned long long dm)
+{
+	return dm >= 9500 && dm <= 10500;
+}
+
 static void self_test_burn_10ms(void)
 {
-	int i;
+	unsigned long long samples[5];
+	int pass, i;
 
-	for (i = 0; i < 5; i++) {
-		unsigned long long m0, m1, c0, c1, dm, dc;
+	for (pass = 0; pass < 2; pass++) {
+		unsigned long long sum = 0;
 
-		m0 = mono_us();
-		c0 = thread_cpu_us();
-		spin_loops(fixed_loops_10ms);
-		m1 = mono_us();
-		c1 = thread_cpu_us();
-		dm = m1 - m0;
-		dc = c1 - c0;
-		fprintf(stderr, "wl: tu kiem %d/5 mono=%llu us thread_cpu=%llu us\n", i + 1, dm, dc);
-		if (dm < 9500 || dm > 10500) {
-			fprintf(stderr, "wl: LOI tu kiem: mono %llu us lech qua 5%% so voi 10 ms\n", dm);
-			_exit(1);
+		for (i = 0; i < 5; i++) {
+			unsigned long long m0, m1, c0, c1, dm, dc;
+
+			m0 = mono_us();
+			c0 = thread_cpu_us();
+			spin_loops(fixed_loops_10ms);
+			m1 = mono_us();
+			c1 = thread_cpu_us();
+			dm = m1 - m0;
+			dc = c1 - c0;
+			samples[i] = dm;
+			sum += dm;
+			fprintf(stderr, "wl: tu kiem %d/5 mono=%llu us thread_cpu=%llu us\n", i + 1, dm, dc);
 		}
+		if (mono_in_range(samples[0]) && mono_in_range(samples[1]) &&
+		    mono_in_range(samples[2]) && mono_in_range(samples[3]) &&
+		    mono_in_range(samples[4]))
+			return;
+		if (pass == 0 && sum > 0) {
+			unsigned long long avg = sum / 5;
+
+			fixed_loops_10ms = (unsigned long long)((double)fixed_loops_10ms * 10000.0 / (double)avg);
+			if (fixed_loops_10ms == 0)
+				fixed_loops_10ms = 1;
+			loops_per_us = (double)fixed_loops_10ms / 10000.0;
+			fprintf(stderr, "wl: dieu chinh loops_10ms=%llu (trung binh %llu us)\n",
+				fixed_loops_10ms, avg);
+			continue;
+		}
+		fprintf(stderr, "wl: LOI tu kiem: mono lech qua 5%% so voi 10 ms\n");
+		_exit(1);
 	}
 }
 
