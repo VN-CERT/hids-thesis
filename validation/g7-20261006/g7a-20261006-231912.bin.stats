@@ -1,0 +1,42 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: fc26d21
+# record_size: 48
+# filter_pid: 316348
+# filter_cgroup: khong co
+# ringbuf_bytes: 67108864
+# start_mono_ns: 15572865518649
+# start_wall: 2026-10-06T23:19:12.570630428+07:00
+# duration: khong gioi han
+# end_mono_ns: 15577638668623
+# end_wall: 2026-10-06T23:19:17.343796746+07:00
+# bin: out/g7a-20261006-231912.bin
+# ban_ghi_sai_kich_thuoc: 0
+# so_ban_ghi_doc_duoc: 1000001
+cpu,seq_cuoi,mat
+0,0,0
+1,0,0
+2,1000001,0
+3,0,0
+4,0,0
+5,0,0
+6,0,0
+7,0,0
+8,0,0
+9,0,0
+10,0,0
+11,0,0
+12,0,0
+13,0,0
+14,0,0
+15,0,0
+16,0,0
+17,0,0
+18,0,0
+19,0,0
+20,0,0
+21,0,0
+22,0,0
+23,0,0

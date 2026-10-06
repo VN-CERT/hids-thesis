@@ -1,0 +1,42 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: acbcb92
+# record_size: 48
+# filter_pid: khong co
+# filter_cgroup: /sys/fs/cgroup/system.slice/docker-8407f42483f04c0d4ab5b9ccdf67c22d2428dcfe43971384a8fbe31d80fbe489.scope (id=6057)
+# ringbuf_bytes: 67108864
+# start_mono_ns: 15766866608038
+# start_wall: 2026-10-06T23:22:26.571719885+07:00
+# duration: 1m10s
+# end_mono_ns: 15836936639874
+# end_wall: 2026-10-06T23:23:36.641760998+07:00
+# bin: out/g7c-20261006-232226.bin
+# ban_ghi_sai_kich_thuoc: 0
+# so_ban_ghi_doc_duoc: 460545
+cpu,seq_cuoi,mat
+0,24689,0
+1,21384,0
+2,16648,0
+3,17875,0
+4,18482,0
+5,17045,0
+6,20984,0
+7,15921,0
+8,18750,0
+9,21695,0
+10,16476,0
+11,22952,0
+12,21119,0
+13,22456,0
+14,18347,0
+15,22523,0
+16,18879,0
+17,18462,0
+18,17944,0
+19,16024,0
+20,17669,0
+21,17441,0
+22,16926,0
+23,19854,0
