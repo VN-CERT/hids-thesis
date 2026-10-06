@@ -8,6 +8,8 @@ WL=./bin/wl
 COLLECT=./bin/hids-collect
 EXPORT=./bin/rec-export
 M4PY=./analysis/m4.py
+# Tranh numpy 2.x trong /usr/local lam hong pandas he thong.
+M4_PYTHON=(env PYTHONNOUSERSITE=1 PYTHONPATH=/usr/lib/python3/dist-packages /usr/bin/python3)
 LOOPS_FILE=out/m4-loops.txt
 WL_CPU=20
 DATE=$(date +%Y%m%d)
@@ -191,7 +193,7 @@ e3_once() {
 	csv="$OUTROOT/E3/${tag}.csv"
 	export_csv "$bin" "$csv"
 	cp "$bin" "$OUTROOT/E3/${tag}.bin"
-	python3 - <<PY
+	"${M4_PYTHON[@]}" - <<PY
 import pandas as pd
 df=pd.read_csv("$csv")
 # connect x86_64 = 42; lay ban ghi co vol lon nhat (khoang ngu 300s)
@@ -277,7 +279,7 @@ main() {
 	e1)
 		calibrate_wl 2>/dev/null || true
 		mapfile -t m < <(e1)
-		python3 "$M4PY" --outdir "$M4PY_OUT" --summary "$OUTROOT/summary-e1.csv" "${m[@]}"
+		"${M4_PYTHON[@]}" "$M4PY" --outdir "$M4PY_OUT" --summary "$OUTROOT/summary-e1.csv" "${m[@]}"
 		;;
 	e3)
 		mapfile -t m < <(e3)
@@ -285,9 +287,9 @@ main() {
 	e4)
 		calibrate_wl 2>/dev/null || true
 		mapfile -t m < <(e4)
-		python3 "$M4PY" --outdir "$M4PY_OUT" --summary "$OUTROOT/summary-e4-cache.csv" \
+		"${M4_PYTHON[@]}" "$M4PY" --outdir "$M4PY_OUT" --summary "$OUTROOT/summary-e4-cache.csv" \
 			$(printf '%s\n' "${m[@]}" | grep E4-cache | tr '\n' ' ')
-		python3 "$M4PY" --outdir "$M4PY_OUT" --summary "$OUTROOT/summary-e4-stream.csv" \
+		"${M4_PYTHON[@]}" "$M4PY" --outdir "$M4PY_OUT" --summary "$OUTROOT/summary-e4-stream.csv" \
 			$(printf '%s\n' "${m[@]}" | grep E4-stream | tr '\n' ' ')
 		;;
 	e2)
@@ -300,7 +302,7 @@ main() {
 		mapfile -t m3 < <(e3)
 		mapfile -t m4 < <(e4)
 		all_manifest=("${m1[@]}" "${m4[@]}")
-		python3 "$M4PY" --outdir "$M4PY_OUT" --summary "$OUTROOT/summary.csv" "${all_manifest[@]}"
+		"${M4_PYTHON[@]}" "$M4PY" --outdir "$M4PY_OUT" --summary "$OUTROOT/summary.csv" "${all_manifest[@]}"
 		;;
 	*)
 		die "usage: m4.sh {calibrate|e1|e3|e4|e2|all}"
