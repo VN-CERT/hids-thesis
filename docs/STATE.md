@@ -87,7 +87,7 @@ M3 PHẦN 2: viết `tools/wl.c`, `cmd/rec-check`, `scripts/g3.sh`.
 - Sau khi thoát: `bpftool prog/link/map list` không còn dòng `hids_` nào, `/sys/fs/bpf` rỗng.
 
 ## Việc đang chạy
-Không có. Việc `hids-g7` xong lúc 23:21:06 (mã thoát 0), `hids-g7c` xong lúc 23:23:40 (mã thoát 0), `hids-g7d` xong lúc 23:43:25 (mã thoát 0).
+| hids-g3 | `bash /root/hids/scripts/g3-driver.sh` | 2026-10-07 ~00:29 | ~00:36 (G-real 120s) | `out/jobs/g3-driver.log` | `out/jobs/g3-driver.status` |
 
 (Định dạng khi có việc: tên | lệnh | giờ bắt đầu | dự kiến xong | log `out/jobs/<tên>.log` | trạng thái `out/jobs/<tên>.status`)
 

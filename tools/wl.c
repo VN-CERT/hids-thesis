@@ -56,10 +56,18 @@ static uint64_t thread_cputime_ns(void)
 static void burn_cpu_us(unsigned long target_us)
 {
 	uint64_t start, now, target_ns;
+	unsigned spin;
 
 	target_ns = (uint64_t)target_us * 1000ULL;
 	start = thread_cputime_ns();
+	spin = 0;
 	for (;;) {
+		/* Dot CPU that; chi goi clock_gettime thua de tranh hang trieu
+		 * sys_enter clock_gettime (nr 228) lam day collector. */
+		asm volatile("" ::: "memory");
+		if (++spin < 8192)
+			continue;
+		spin = 0;
 		now = thread_cputime_ns();
 		if (now - start >= target_ns)
 			break;

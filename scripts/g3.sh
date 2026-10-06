@@ -44,16 +44,16 @@ schedstats_restore() {
 
 trap schedstats_restore EXIT
 
-wait_state_s() {
-	local pid=$1 i
-	for ((i = 0; i < 6000; i++)); do
-		local st
-		st=$(awk '{print $3}' "/proc/$pid/stat" 2>/dev/null) || return 1
-		[[ $st == S ]] && return 0
+# wl cho o read() tren fifo stdin; nanosleep/io cung co the la S nhung wchan khac.
+wait_wl_on_read() {
+	local pid=$1 i w
+	for ((i = 0; i < 12000; i++)); do
+		w=$(cat "/proc/$pid/wchan" 2>/dev/null) || return 1
+		[[ $w == pipe_read ]] && return 0
 		kill -0 "$pid" 2>/dev/null || return 1
 		sleep 0.01
 	done
-	die "pid $pid khong vao trang thai S sau 60 giay"
+	die "pid $pid khong cho tren read() (wchan=pipe_read) sau 120 giay"
 }
 
 wait_ready() {
@@ -135,7 +135,7 @@ run_scenario() {
 	wait_ready "$prefix-collect.log"
 
 	printf '.' >&9
-	wait_state_s "$wl_pid"
+	wait_wl_on_read "$wl_pid"
 	local a_stat a_sched a_wait_ms a_sleep_ms a_block_ms
 	a_stat=$(read_schedstat "$tid") || a_stat="?"
 	a_sched=$(read_sched_fields "$tid")
@@ -148,7 +148,7 @@ run_scenario() {
 	echo "$a_sched" | tee -a "$ketqua"
 
 	printf '.' >&9
-	wait_state_s "$wl_pid"
+	wait_wl_on_read "$wl_pid"
 	local b_stat b_sched b_wait_ms b_sleep_ms b_block_ms
 	b_stat=$(read_schedstat "$tid") || b_stat="?"
 	b_sched=$(read_sched_fields "$tid")
