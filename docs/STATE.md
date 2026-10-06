@@ -18,7 +18,7 @@ Cập nhật lần cuối: 2026-10-06 22:05 (giờ máy)
 | M1: `scripts/g1.sh` (chưa chạy, dành cho người dùng) | `14c2ee1` |
 | M1: tự kiểm — build sạch, chạy 30 s, `vmw_raw` không giảm, đối chiếu `/proc/stat` | `14c2ee1` |
 | M1: tag `m1` | `14c2ee1` |
-| Thêm quy tắc quy trình `.cursor/rules/workflow.mdc`, dựng `docs/STATE.md` và `reports/` | (commit này) |
+| Thêm quy tắc quy trình `.cursor/rules/workflow.mdc`, dựng `docs/STATE.md`, `reports/`, `out/jobs/` | `e10bb50` |
 
 ## Bước đang làm
 Không có bước kỹ thuật nào đang dở. Vừa dựng xong bộ khung lưu trạng thái và báo cáo; báo cáo M1 là `reports/R001-m1-doc-bo-dem-steal-theo-cpu.md`.
