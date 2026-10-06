@@ -194,12 +194,15 @@ e3_once() {
 	python3 - <<PY
 import pandas as pd
 df=pd.read_csv("$csv")
-c=df[df["syscall_nr"]==1]  # connect may vary
-if c.empty:
-    c=df.tail(3)
-print("=== E3 $tag ban ghi connect (cuoi) ===")
-for _,r in c.tail(1).iterrows():
-    print(f"dt_ns={r.get('dt_ns')} vol_ns={r.get('vol_ns')} rq_ns={r.get('rq_ns')} cpu_ns={r.get('cpu_ns')}")
+# connect x86_64 = 42; lay ban ghi co vol lon nhat (khoang ngu 300s)
+df2=df[df["dt_ns"].notna()].copy()
+if df2.empty:
+    row=df.tail(1)
+else:
+    row=df2.loc[[df2["vol_ns"].idxmax()]]
+print("=== E3 $tag ban ghi connect (vol max) ===")
+for _,r in row.iterrows():
+    print(f"syscall_nr={r.get('syscall_nr')} dt_ns={r.get('dt_ns')} vol_ns={r.get('vol_ns')} rq_ns={r.get('rq_ns')} cpu_ns={r.get('cpu_ns')}")
 PY
 	echo "E3:${tag}:${csv}"
 }
@@ -259,9 +262,10 @@ EOF
 
 main() {
 	[[ $EUID -eq 0 ]] || die "can root"
-	for f in "$WL" "$COLLECT" "$EXPORT" "$M4PY"; do
+	for f in "$WL" "$COLLECT" "$EXPORT"; do
 		[[ -x $f ]] || die "khong co $f (make build?)"
 	done
+	[[ -f $M4PY ]] || die "khong co $M4PY"
 	command -v stress-ng >/dev/null || die "stress-ng"
 	mkdir -p out "$OUTROOT"
 
