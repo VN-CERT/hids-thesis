@@ -1,11 +1,11 @@
 # Trạng thái dự án HIDS
 
-Cập nhật lần cuối: 2026-10-06 22:35 (giờ máy)
+Cập nhật lần cuối: 2026-10-06 22:50 (giờ máy)
 
 ## Mốc hiện tại và mục tiêu
 - Mốc: M2 — bản ghi syscall 48 byte, lọc theo pid/cgroup, ring buffer dùng chung, đếm bản ghi mất.
-- M1 đã xong và được kiểm chứng bằng phép đo G1. Kiến trúc sư kết luận **G1 ĐẠT**.
-- Mục tiêu M2: `hids_sys_enter` (tp_btf/sys_enter) ghi bản ghi 48 byte vào ring buffer; `bin/hids-collect` thu thập; `bin/rec-stat` thống kê; `tools/sysinj.c` và `scripts/g7.sh` để kiểm chứng.
+- Phần việc của máy ở M2 đã xong và đã tự kiểm. Còn chờ người dùng chạy ba phép đo G7 và kiến trúc sư quyết định một việc (xem mục Vướng mắc).
+- Mốc kế tiếp: M3 — đo thật năm thành phần của Δt.
 
 ## Kết quả G1 (kiến trúc sư kết luận: ĐẠT)
 - Dữ liệu: `validation/g1-20261006/` (giữ lâu dài, không nằm trong `.gitignore`).
@@ -16,8 +16,8 @@ Cập nhật lần cuối: 2026-10-06 22:35 (giờ máy)
 1. Chấp nhận cách nạp typed ksym bằng `BPF_PSEUDO_BTF_ID` tự gán (`assignPerCPUKsyms`). Giữ nguyên, dùng tiếp cho M2.
 2. Giữ hai dòng header `user_hz` và `tsc_source`.
 3. Đã đặt `git config --local user.name "hids-bot"`, `user.email "hids-bot@localhost"`.
-4. Mọi binary ghi dữ liệu phải ghi git commit vào header; nếu cây làm việc dirty thì in cảnh báo ra stderr và ghi `dirty` vào header. Đã làm trong `internal/buildinfo` (`WarnIfDirty`).
-5. Báo cáo M1 đổi tên thành `reports/R001-m1-steal-probe.md`. `reports/INDEX.md` và `docs/STATE.md` đã có.
+4. Mọi binary ghi dữ liệu ghi git commit vào header; cây dirty thì in cảnh báo ra stderr và ghi `dirty` vào header (`internal/buildinfo.WarnIfDirty`).
+5. Báo cáo M1 là `reports/R001-m1-steal-probe.md`. `reports/INDEX.md` và `docs/STATE.md` đã có.
 6. Bảng flags đã chốt và ghi vào `.cursor/rules/hids.mdc`.
 
 ## Các bước đã xong
@@ -28,15 +28,17 @@ Cập nhật lần cuối: 2026-10-06 22:35 (giờ máy)
 | Quy tắc quy trình `.cursor/rules/workflow.mdc`, `docs/STATE.md`, `reports/`, `out/jobs/` | `e10bb50`, `dfc863b` |
 | Người dùng chạy G1 600 giây có thao tác vCenter | dữ liệu `validation/g1-20261006/` |
 | Áp dụng phản hồi kiến trúc sư cho M1, lưu `validation/g1-20261006/`, chốt bảng flags | `5e0fea8` |
-| M2: `hids_sys_enter`, `hids-collect`, `rec-stat`, `tools/sysinj.c`, `scripts/g7.sh` | (commit kế tiếp) |
+| M2: `hids_sys_enter`, `hids-collect`, `rec-stat`, `tools/sysinj.c`, `scripts/g7.sh` | `8456905` |
+| Sửa cách tính dấu `dirty` trong Makefile | `5573cf7` |
+| M2: tự kiểm (build sạch, G7a N=10000, lọc cgroup, kernel sạch) và báo cáo R002 | (commit này) |
 
 ## Bước đang làm
-M2 — đã viết xong mã và thử nghiệm tay, đang chạy tự kiểm và viết báo cáo R002.
+Không có bước kỹ thuật nào đang dở. Báo cáo M2 là `reports/R002-m2-ban-ghi-syscall.md`.
 
 ## Bước tiếp theo
-1. Chạy tự kiểm G7a với N=10000 trên cây sạch, kiểm tra kernel sạch sau khi thoát.
-2. Viết báo cáo R002.
-3. Người dùng chạy `scripts/g7.sh a|b|c` với N=1000000.
+1. Người dùng chạy `scripts/g7.sh a`, `b`, `c` (xem mục 9 của R002), gửi lại kết quả.
+2. Phân tích kết quả G7 và viết báo cáo R003.
+3. Chờ kiến trúc sư quyết định về trường CPU trong bản ghi, rồi bắt đầu M3.
 
 ## Việc đang chạy
 Không có.
@@ -47,4 +49,4 @@ Không có.
 - Khi khởi động, collector tự so `vmw_ns` với `rq_steal_ns` trên từng CPU trong vài giây đầu. Lệch quá ngưỡng thì **từ chối chạy (fail-closed)** và báo lỗi rõ ràng.
 
 ## Vướng mắc / chờ kiến trúc sư quyết định
-(Ghi tại mục 8 của báo cáo R002 khi M2 xong.)
+1. **Bản ghi 48 byte không có trường CPU** nên `rec-stat` không tách được bản ghi theo CPU, do đó không in được seq nhỏ nhất/lớn nhất và số lỗ hổng seq của từng CPU. Bốn phương án (nhét CPU vào bit cao của `seq`; dùng bit 8..15 của `flags`; mỗi CPU một ring buffer; giữ nguyên) kèm hệ quả đã ghi ở mục 8 của R002. Hiện chạy theo phương án giữ nguyên: chỉ có bảng `seq_cuoi`/`mat` theo CPU lấy từ file `.stats` và đối chiếu tổng toàn cục.
