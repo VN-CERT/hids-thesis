@@ -42,7 +42,7 @@ def main() -> None:
         print("khong du hai syscall read sau getuid:", len(reads), file=sys.stderr)
         sys.exit(1)
     print(reads[0][0])
-    print(reads[1][0])
+    print(reads[-1][0])
 
 
 if __name__ == "__main__":

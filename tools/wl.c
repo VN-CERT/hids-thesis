@@ -65,7 +65,7 @@ static void burn_cpu_us(unsigned long target_us)
 		/* Dot CPU that; chi goi clock_gettime thua de tranh hang trieu
 		 * sys_enter clock_gettime (nr 228) lam day collector. */
 		asm volatile("" ::: "memory");
-		if (++spin < 8192)
+		if (++spin < 262144)
 			continue;
 		spin = 0;
 		now = thread_cputime_ns();

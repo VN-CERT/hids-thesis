@@ -358,16 +358,16 @@ part_g_irq() {
 	coll_hard=$(grep '^irq cong don' "$prefix-collect.log" | tail -1 | sed -n 's/.*hard \([0-9]*\).*/\1/p')
 	coll_soft=$(grep '^irq cong don' "$prefix-collect.log" | tail -1 | sed -n 's/.*soft \([0-9]*\).*/\1/p')
 	coll_vec=$(grep '^irq cong don' "$prefix-collect.log" | tail -1 | sed -n 's/.*vector \([0-9]*\).*/\1/p')
-	coll_soft_raw=$(grep '^soft_raw cong don' "$prefix-collect.log" | tail -1 | awk '{print $4}')
+	coll_soft_raw=$(grep '^soft_raw cong don' "$prefix-collect.log" | tail -1 | sed -n 's/.*: \([0-9]*\).*/\1/p')
 
 	local bcc_hard bcc_soft
-	bcc_hard=$(awk '/TOTAL/ {gsub(/,/,"",$2); print $2; exit}' "$hard_bcc")
-	bcc_soft=$(awk '/TOTAL/ {gsub(/,/,"",$2); print $2; exit}' "$soft_bcc")
+	bcc_hard=$(awk 'NR > 2 && NF >= 2 && $1 !~ /^(HARDIRQ|Tracing)/ {gsub(/,/, "", $NF); s += $NF + 0} END {printf "%.0f", s}' "$hard_bcc")
+	bcc_soft=$(awk 'NR > 2 && NF >= 2 && $1 !~ /^(SOFTIRQ|Tracing)/ {gsub(/,/, "", $NF); s += $NF + 0} END {printf "%.0f", s}' "$soft_bcc")
 
 	echo "--- bang doi chieu irq ---" | tee -a "$ketqua"
 	printf '%-20s %-15s %-15s %s\n' "loai" "collector" "tham_chieu" "nguon" | tee -a "$ketqua"
-	printf '%-20s %-15s %-15s %s\n' "hard" "${coll_hard:-?}" "${bcc_hard:-?}" "hardirqs-bpfcc TOTAL" | tee -a "$ketqua"
-	printf '%-20s %-15s %-15s %s\n' "soft_raw" "${coll_soft_raw:-?}" "${bcc_soft:-?}" "softirqs-bpfcc TOTAL" | tee -a "$ketqua"
+	printf '%-20s %-15s %-15s %s\n' "hard (ns)" "${coll_hard:-?}" "${bcc_hard:-?} (us)" "hardirqs-bpfcc tong cot usecs" | tee -a "$ketqua"
+	printf '%-20s %-15s %-15s %s\n' "soft_raw (ns)" "${coll_soft_raw:-?}" "${bcc_soft:-?} (us)" "softirqs-bpfcc tong cot usecs" | tee -a "$ketqua"
 	printf '%-20s %-15s %-15s %s\n' "soft_excl" "${coll_soft:-?}" "—" "collector (bcc khong tach)" | tee -a "$ketqua"
 	printf '%-20s %-15s %-15s %s\n' "vector" "${coll_vec:-?}" "—" "collector only" | tee -a "$ketqua"
 
