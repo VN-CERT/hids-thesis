@@ -3,10 +3,13 @@ SHELL := /bin/bash
 GO ?= go
 CC ?= gcc
 BPFTOOL ?= bpftool
-GIT_REV := $(shell git rev-parse --short HEAD 2>/dev/null || echo unknown)
-GIT_DIRTY := $(shell test -z "$$(git status --porcelain 2>/dev/null)" || echo -dirty)
-GIT_COMMIT := $(GIT_REV)$(GIT_DIRTY)
-LDFLAGS := -X hids/internal/buildinfo.Commit=$(GIT_COMMIT)
+# Tinh luc chay recipe chu khong luc doc Makefile: 'make clean' xoa cac file .o
+# dang duoc git theo doi, neu tinh som thi cay se bi coi la dirty cho den khi
+# 'go generate' tao lai chung.
+GIT_REV = $(shell git rev-parse --short HEAD 2>/dev/null || echo unknown)
+GIT_DIRTY = $(shell test -z "$$(git status --porcelain 2>/dev/null)" || echo -dirty)
+GIT_COMMIT = $(GIT_REV)$(GIT_DIRTY)
+LDFLAGS = -X hids/internal/buildinfo.Commit=$(GIT_COMMIT)
 
 BINARIES := bin/steal-probe bin/steal-summary bin/hids-collect bin/rec-stat bin/sysinj
 
@@ -37,4 +40,4 @@ vmlinux:
 
 clean:
 	rm -f $(BINARIES)
-	rm -f internal/stealbpf/*.o
+	rm -f internal/stealbpf/*.o internal/syscallbpf/*.o
