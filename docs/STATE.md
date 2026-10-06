@@ -1,35 +1,34 @@
 # Trạng thái dự án HIDS
 
-Cập nhật lần cuối: 2026-10-07 00:43 (giờ máy)
+Cập nhật lần cuối: 2026-10-07 01:26 (giờ máy)
 
 ## Mốc hiện tại và mục tiêu
-- Mốc **M3 PHẦN 2 (F–J):** đã xong. Tag `m3`, báo cáo R005.
-- **M4:** chưa bắt đầu (cố ý dừng sau R005).
+- **M3.1:** xong. Tag `m3` → commit `d4c55b9`. Báo cáo **R006**; R005 giữ nhưng hỏng định dạng.
+- **M4:** chưa bắt đầu.
 
 ## Bước đang làm
 Không có.
 
 ## Bước tiếp theo
-1. Chờ kiến trúc sư duyệt R005 (G-real, G-irq, wl/`clock_gettime`).
-2. Có thể chạy lại S1–S5 với `wl` spin 262144 và G-irq với parse bcc đã sửa trong `g3.sh`.
+Chờ kiến trúc sư duyệt R006 (G-real, G-irq đơn vị, rq bpftrace vs collector).
 
-## Các bước đã xong (PHẦN 2)
+## Các bước M3.1 đã xong
 | Bước | Commit |
 |---|---|
-| `tools/wl.c`, `bin/rec-check`, `scripts/g3.sh` | `e93f01b` |
-| Sửa g3 wchan + wl clock_gettime | `c3d371b` |
-| Tự chạy G3, `validation/g3-20261007/` | (commit tag `m3`) |
-| Báo cáo R005 | (commit tag `m3`) |
+| Nhiệm vụ `docs/tasks/M3.1.md`, workflow, INDEX R005 | `a256da9` |
+| Sửa build `wl` | `447d91a` |
+| Makefile dirty + chạy G3 v2 | `d4c55b9` (tag `m3`) |
+| g3/g7 validation path + G7d | `915de8b` |
+| validation v2 + R006 | (commit hiện tại) |
+
+## Kết quả G3 v2 (`validation/g3-20261007-v2/`)
+- S1: **301** bản ghi cửa sổ; header `git_commit: d4c55b9`.
+- G7d: perf 1.000.001 = collector 1.000.001.
+- G-real: **103** thread giữ (`cgroup.threads`).
+- `recursion_misses` = 0.
 
 ## Việc đang chạy
-Không có. `hids-g3` đã chạy xong (~00:36); log `out/jobs/g3-driver.log`.
+Không có.
 
-## Kết quả G3 (2026-10-07, `validation/g3-20261007/`)
-- S1–S5: bảng trong `*-ketqua.txt`; S5 có 300 bản ghi `D_SLEEP`.
-- G7d: perf 1.000.001 = collector 1.000.001.
-- `recursion_misses` = 0 trên 30 chương trình BPF.
-- G-real: tham chiếu schedstat tổng = 0 (PID không khớp hai mốc — xem R005 mục 8).
-- G-irq: bảng lần chạy parse lỗi; sửa `g3.sh` sau lần chạy.
-
-## Vướng mắc / chờ kiến trúc sư quyết định
-Xem R005 mục 8 (G-real, G-irq, wl nr 228 trong S1/S3/S4).
+## Vướng mắc / chờ kiến trúc sư
+Xem R006 mục 8.

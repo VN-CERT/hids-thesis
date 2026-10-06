@@ -1,0 +1,56 @@
+=== G-real: cgroup qdrant 120s ===
+cgroup: /sys/fs/cgroup/system.slice/docker-319c38ff33aa4827288f68ca1236600174cf278175fd7d5d68657d48e2a6366f.scope
+mono_ns_bat_dau: 22747277111797
+mono_ns_ket_thuc: 22871012144078
+so thread giu (co trong cgroup.threads dau va cuoi): 103
+collector_cpu_steal_irq_ns 272822658
+collector_rq_ns 76848618
+collector_vol_ns 2842435148000
+collector_tong_5_ns 2842784819276
+collector_ban_ghi 28214
+top10_tid cpu_steal_irq_ns rq_ns vol_ns ban_ghi
+2898 15940130 3322812 119519441000 1225
+2903 13066528 3434127 119518752000 1226
+2907 12947865 3460785 119517159000 1226
+2919 12872422 3401968 119517340000 1226
+2958 12411332 3616488 119903076000 1227
+2959 12399573 3644678 119902369000 1227
+2955 12191195 3574355 119902558000 1227
+2949 12114043 3440209 119902623000 1227
+2927 12032443 3058866 119518267000 1226
+2928 11819183 3331722 119519663000 1226
+--- bang tong G-real ---
+thanh_phan             collector          tham_chieu         nguon
+cpu+steal+irq          272822658          366229189          Tong Delta schedstat field1
+rq                     76848618           700543             Tong Delta schedstat field2
+vol                    2842435148000      ?                  Tong Delta sum_sleep_runtime: xem validation/g3-20261007-v2/G-real-sched-refs.txt
+tong 3+rq+vol          2842784819276      366929732          collector | schedstat exec+run_delay
+--- top 10 thread (cpu+steal+irq collector) ---
+top10_tid cpu_steal_irq_ns rq_ns vol_ns ban_ghi
+2898 15940130 3322812 119519441000 1225
+2903 13066528 3434127 119518752000 1226
+2907 12947865 3460785 119517159000 1226
+2919 12872422 3401968 119517340000 1226
+2958 12411332 3616488 119903076000 1227
+2959 12399573 3644678 119902369000 1227
+2955 12191195 3574355 119902558000 1227
+2949 12114043 3440209 119902623000 1227
+2927 12032443 3058866 119518267000 1226
+2928 11819183 3331722 119519663000 1226
+--- log collector (cuoi) ---
+  hids_irq_spurious_apic_entry             0
+  hids_irq_spurious_apic_exit              0
+  hids_irq_thermal_apic_entry              0
+  hids_irq_thermal_apic_exit               0
+  hids_irq_threshold_apic_entry            0
+  hids_irq_threshold_apic_exit             0
+  hids_irq_x86_platform_ipi_entry          0
+  hids_irq_x86_platform_ipi_exit           0
+  hids_sched_switch                        0
+  hids_sched_wakeup                        0
+  hids_sched_wakeup_new                    0
+  hids_sys_enter                           0
+thoi gian chay: 120.012 s | CPU collector: user 0.304 s, sys 0.345 s (getrusage RUSAGE_SELF)
+kich thuoc file: 1355323 byte
+du lieu: out/g3-greal-011846.bin | thong ke: out/g3-greal-011846.bin.stats | theo doi: out/g3-greal-011846.bin.periodic
+chi tiet sched: validation/g3-20261007-v2/G-real-sched-refs.txt
