@@ -1,7 +1,9 @@
 // sysinj: cong cu kiem thu, bom mot so luong syscall biet truoc.
 //
-// Don luong. In PID ra, cho toi khi file /tmp/hids-go ton tai, goi dung N lan
-// syscall(SYS_getppid), ngu 1 giay roi thoat.
+// Don luong. In PID ra, roi chan tai DUNG MOT lenh read() tren stdin. Khong
+// vong lap kiem tra file, khong sleep: trong luc cho, tien trinh khong goi
+// them syscall nao, nen tong so syscall do duoc khop tuyet doi voi perf.
+// Nhan duoc du lieu thi goi dung N lan syscall(SYS_getppid) roi thoat ngay.
 //
 // Bien dich: gcc -O2 -Wall -Wextra -o bin/sysinj tools/sysinj.c
 
@@ -12,20 +14,20 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/syscall.h>
-#include <time.h>
 #include <unistd.h>
-
-#define GO_FILE "/tmp/hids-go"
 
 static void usage(const char *prog)
 {
 	fprintf(stderr, "cach dung: %s [-n so_lan]\n", prog);
 	fprintf(stderr, "  -n  so lan goi syscall(SYS_getppid), mac dinh 1000000\n");
+	fprintf(stderr, "Tien trinh cho tin hieu bat dau bang mot lenh read() tren stdin.\n");
 }
 
 int main(int argc, char **argv)
 {
 	long n = 1000000;
+	char buf[1];
+	ssize_t r;
 	int opt;
 
 	while ((opt = getopt(argc, argv, "n:h")) != -1) {
@@ -53,16 +55,16 @@ int main(int argc, char **argv)
 	printf("sysinj pid=%d n=%ld\n", (int)getpid(), n);
 	fflush(stdout);
 
-	/* Cho tin hieu bat dau tu file, de nguoi goi kip gan collector va perf. */
-	while (access(GO_FILE, F_OK) != 0) {
-		struct timespec ts = { .tv_sec = 0, .tv_nsec = 1000000 }; /* 1 ms */
-
-		nanosleep(&ts, NULL);
+	/* Mot lenh read() duy nhat. Tu day den khi nguoi goi ghi vao stdin,
+	 * tien trinh khong sinh them su kien sys_enter nao. */
+	r = read(STDIN_FILENO, buf, sizeof(buf));
+	if (r < 0) {
+		fprintf(stderr, "sysinj: read stdin: %s\n", strerror(errno));
+		return 1;
 	}
 
 	for (long i = 0; i < n; i++)
 		syscall(SYS_getppid);
 
-	sleep(1);
 	return 0;
 }

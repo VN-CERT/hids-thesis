@@ -1,9 +1,20 @@
 #!/usr/bin/env bash
 # g7.sh: kiem chung collector M2 bang so dem cua perf.
 #
-#   g7.sh a [N]   mot sysinj, mac dinh N=1000000
-#   g7.sh b [N]   24 sysinj song song + stress-ng --cpu 24
-#   g7.sh c       loc theo cgroup cua container caddy
+#   g7.sh a [N]        mot sysinj, mac dinh N=1000000, ring buffer 64 MiB
+#   g7.sh b [N]        24 sysinj song song + stress-ng --cpu 24, ring buffer 64 MiB
+#   g7.sh b-nho [N]    giong b nhung ring buffer 1 MiB, de ep ring buffer day
+#   g7.sh c            loc theo cgroup cua container caddy
+#
+# Trinh tu cua phan a/b/b-nho duoc thiet ke de perf va collector dem dung cung
+# mot tap su kien:
+#   1. chay sysinj, stdin noi vao mot FIFO; sysinj in PID roi chan tai mot lenh
+#      read() duy nhat, tu luc do khong sinh them syscall nao;
+#   2. chay hids-collect, cho toi khi no in dong READY (tracepoint da gan);
+#   3. chay perf stat -p cho tung PID, cho toi khi perf da mo perf_event fd;
+#   4. cho 2 giay;
+#   5. ghi vao FIFO de sysinj bat dau;
+#   6. cho sysinj thoat, cho them 2 giay, dung collector.
 #
 # Moi phan in nguyen van output cua perf.
 set -uo pipefail
@@ -13,7 +24,6 @@ cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
 COLLECT=./bin/hids-collect
 RECSTAT=./bin/rec-stat
 SYSINJ=./bin/sysinj
-GO_FILE=/tmp/hids-go
 GETPPID_NR=110
 
 die() {
@@ -30,146 +40,208 @@ check_common() {
 	mkdir -p out
 }
 
-stop_collector() {
-	local pid=$1
-	kill -INT "$pid" 2>/dev/null
-	wait "$pid"
-}
-
-part_a() {
-	local n=$1
-	local ts bin
-	ts=$(date +%Y%m%d-%H%M%S)
-	bin="out/g7a-$ts.bin"
-
-	echo "=== G7a: mot sysinj, N=$n ==="
-	rm -f "$GO_FILE"
-
-	"$SYSINJ" -n "$n" >"out/g7a-$ts-sysinj.log" 2>&1 &
-	local sysinj_pid=$!
-	echo "sysinj pid=$sysinj_pid"
-
-	"$COLLECT" -pid "$sysinj_pid" -out "$bin" 2>"out/g7a-$ts-collect.log" &
-	local collect_pid=$!
-
-	perf stat -e raw_syscalls:sys_enter -p "$sysinj_pid" 2>"out/g7a-$ts-perf-all.txt" &
-	local perf_all=$!
-	perf stat -e raw_syscalls:sys_enter --filter "id == $GETPPID_NR" -p "$sysinj_pid" 2>"out/g7a-$ts-perf-getppid.txt" &
-	local perf_gp=$!
-
-	sleep 2
-	touch "$GO_FILE"
-	wait "$sysinj_pid"
-	sleep 2
-	stop_collector "$collect_pid"
-	wait "$perf_all" "$perf_gp" 2>/dev/null
-
-	echo
-	echo "--- N theo thiet ke: $n"
-	echo
-	echo "--- perf stat, tat ca syscall (nguyen van) ---"
-	cat "out/g7a-$ts-perf-all.txt"
-	echo "--- perf stat, rieng getppid id == $GETPPID_NR (nguyen van) ---"
-	cat "out/g7a-$ts-perf-getppid.txt"
-	echo "--- log collector ---"
-	cat "out/g7a-$ts-collect.log"
-	echo
-	echo "--- rec-stat ---"
-	"$RECSTAT" -nr "$GETPPID_NR" "$bin"
-	echo
-	echo "du lieu: $bin"
-}
-
-part_b() {
-	local n=$1
-	local ts bin
-	ts=$(date +%Y%m%d-%H%M%S)
-	bin="out/g7b-$ts.bin"
-
-	echo "=== G7b: 24 sysinj song song, moi cai N=$n, co stress-ng --cpu 24 ==="
-	command -v stress-ng >/dev/null || die "khong co stress-ng"
-	rm -f "$GO_FILE"
-
-	local -a sysinj_pids=()
-	local i
-	for ((i = 0; i < 24; i++)); do
-		"$SYSINJ" -n "$n" >"out/g7b-$ts-sysinj-$i.log" 2>&1 &
-		sysinj_pids+=($!)
+# wait_ready cho toi khi file log cua collector co dong READY.
+wait_ready() {
+	local log=$1 i
+	for ((i = 0; i < 3000; i++)); do
+		grep -qx READY "$log" 2>/dev/null && return 0
+		sleep 0.01
 	done
-	echo "sysinj pids: ${sysinj_pids[*]}"
+	die "collector khong in READY sau 30 giay, xem $log"
+}
 
+# wait_perf cho toi khi tien trinh perf da mo perf_event fd, tuc la da gan xong.
+wait_perf() {
+	local pid=$1 i
+	for ((i = 0; i < 3000; i++)); do
+		if ls -l "/proc/$pid/fd" 2>/dev/null | grep -q 'perf_event'; then
+			return 0
+		fi
+		kill -0 "$pid" 2>/dev/null || return 1
+		sleep 0.01
+	done
+	return 1
+}
+
+perf_count() {
+	awk '/raw_syscalls:sys_enter/ {gsub(/,/, "", $1); print $1; exit}' "$1"
+}
+
+recstat_field() {
+	awk -F: -v k="$2" 'index($0, k) == 1 {gsub(/[ \t]/, "", $2); print $2; exit}' "$1"
+}
+
+check_kernel_clean() {
+	echo "--- kiem tra kernel sau khi collector thoat ---"
+	echo "\$ bpftool prog list | grep -ci hids"
+	bpftool prog list | grep -ci hids
+	echo "\$ bpftool link list | grep -ci hids"
+	bpftool link list | grep -ci hids
+	echo "\$ bpftool map list | grep -ciE 'hids_|ringbuf'"
+	bpftool map list | grep -ciE 'hids_|ringbuf'
+	echo "\$ ls -A /sys/fs/bpf | wc -l"
+	ls -A /sys/fs/bpf | wc -l
+}
+
+# run_injection <nhan> <so_tien_trinh> <N> <ringbuf_mb> <stress: 0|1>
+run_injection() {
+	local label=$1 nproc=$2 n=$3 ringmb=$4 use_stress=$5
+	local ts bin fifo prefix i p
+	ts=$(date +%Y%m%d-%H%M%S)
+	prefix="out/$label-$ts"
+	bin="$prefix.bin"
+	fifo="$prefix.fifo"
+
+	echo "=== $label: $nproc sysinj, moi cai N=$n, ring buffer $ringmb MiB, stress-ng=$use_stress ==="
+	[[ $use_stress -eq 1 ]] && { command -v stress-ng >/dev/null || die "khong co stress-ng"; }
+
+	mkfifo "$fifo" || die "khong tao duoc fifo $fifo"
+	# Mo FIFO o che do doc-ghi de sysinj mo duoc ngay, va de script giu dau ghi.
+	exec 9<>"$fifo"
+
+	# 1. sysinj: in PID roi chan tai read() tren stdin.
+	local -a pids=()
+	for ((i = 0; i < nproc; i++)); do
+		"$SYSINJ" -n "$n" <"$fifo" >"$prefix-sysinj-$i.log" 2>&1 &
+		pids+=($!)
+	done
+	echo "sysinj pids: ${pids[*]}"
+	sleep 0.5
+
+	# 2. collector, cho toi khi gan xong tracepoint.
 	local -a pid_args=()
-	local p
-	for p in "${sysinj_pids[@]}"; do
-		pid_args+=(-pid "$p")
-	done
-	"$COLLECT" "${pid_args[@]}" -out "$bin" 2>"out/g7b-$ts-collect.log" &
+	for p in "${pids[@]}"; do pid_args+=(-pid "$p"); done
+	"$COLLECT" "${pid_args[@]}" -ringbuf-mb "$ringmb" -out "$bin" 2>"$prefix-collect.log" &
 	local collect_pid=$!
+	wait_ready "$prefix-collect.log"
+	echo "collector da gan tracepoint (READY)"
 
+	# 3. mot perf cho moi PID, dem tat ca syscall.
 	local -a perf_pids=()
-	for p in "${sysinj_pids[@]}"; do
-		perf stat -e raw_syscalls:sys_enter -p "$p" 2>"out/g7b-$ts-perf-$p.txt" &
+	for p in "${pids[@]}"; do
+		perf stat -e raw_syscalls:sys_enter -p "$p" 2>"$prefix-perf-$p.txt" &
 		perf_pids+=($!)
 	done
-
-	sleep 2
-	stress-ng --cpu 24 --timeout 3600s >"out/g7b-$ts-stress.log" 2>&1 &
-	local stress_pid=$!
-	touch "$GO_FILE"
-
-	for p in "${sysinj_pids[@]}"; do
-		wait "$p"
-	done
-	kill -INT "$stress_pid" 2>/dev/null
-	wait "$stress_pid" 2>/dev/null
-
-	sleep 2
-	stop_collector "$collect_pid"
 	for p in "${perf_pids[@]}"; do
-		wait "$p" 2>/dev/null
+		wait_perf "$p" || echo "g7: CANH BAO: perf $p chua mo perf_event fd" >&2
 	done
+	echo "perf da gan cho ${#perf_pids[@]} tien trinh"
+
+	# 4. cho 2 giay.
+	sleep 2
+
+	local stress_pid=""
+	if [[ $use_stress -eq 1 ]]; then
+		stress-ng --cpu 24 --timeout 3600s >"$prefix-stress.log" 2>&1 &
+		stress_pid=$!
+		sleep 1
+	fi
+
+	# 5. mo khoa: ghi mot byte cho moi sysinj roi dong dau ghi (ai chua nhan
+	#    duoc byte thi nhan EOF).
+	local start_s end_s
+	start_s=$(date +%s.%N)
+	printf '%*s' "$nproc" '' >&9
+	exec 9>&-
+
+	# 6. cho sysinj thoat.
+	for p in "${pids[@]}"; do wait "$p"; done
+	end_s=$(date +%s.%N)
+
+	if [[ -n $stress_pid ]]; then
+		kill -INT "$stress_pid" 2>/dev/null
+		wait "$stress_pid" 2>/dev/null
+	fi
+
+	sleep 2
+	kill -INT "$collect_pid" 2>/dev/null
+	wait "$collect_pid"
+	for p in "${perf_pids[@]}"; do wait "$p" 2>/dev/null; done
+	rm -f "$fifo"
+
+	"$RECSTAT" -nr "$GETPPID_NR" "$bin" >"$prefix-recstat.txt" 2>&1
 
 	echo
 	echo "--- perf stat cua tung sysinj (nguyen van) ---"
-	for p in "${sysinj_pids[@]}"; do
+	for p in "${pids[@]}"; do
 		echo "### pid $p"
-		cat "out/g7b-$ts-perf-$p.txt"
+		cat "$prefix-perf-$p.txt"
 	done
 
-	echo "--- log collector ---"
-	cat "out/g7b-$ts-collect.log"
+	echo "--- log collector (nguyen van) ---"
+	cat "$prefix-collect.log"
 
 	echo
 	echo "--- bang theo tung PID ---"
-	printf '%10s %14s %14s\n' "pid" "perf_sys_enter" "ban_ghi"
-	local total_perf=0 total_rec=0
-	for p in "${sysinj_pids[@]}"; do
-		local pc rc
-		pc=$(awk '/raw_syscalls:sys_enter/ {gsub(/,/, "", $1); print $1; exit}' "out/g7b-$ts-perf-$p.txt")
-		rc=$("$RECSTAT" -tgid "$p" "$bin" | awk -F: '/^so ban ghi sau khi loc/ {gsub(/ /, "", $2); print $2; exit}')
-		printf '%10s %14s %14s\n' "$p" "${pc:-?}" "${rc:-?}"
-		[[ ${pc:-} =~ ^[0-9]+$ ]] && total_perf=$((total_perf + pc))
-		[[ ${rc:-} =~ ^[0-9]+$ ]] && total_rec=$((total_rec + rc))
+	# Doc bang "so ban ghi theo tgid" trong output rec-stat: mot lan quet file.
+	declare -A REC NR GAP
+	local tgid rec nrc first gapc rest
+	while read -r tgid rec nrc first gapc rest; do
+		REC[$tgid]=$rec
+		NR[$tgid]=$nrc
+		GAP[$tgid]=$gapc
+	done < <(awk '/^so ban ghi theo tgid/ {f=1; next} f && /^$/ {f=0} f && $1 ~ /^[0-9]+$/ {print}' "$prefix-recstat.txt")
+
+	printf '%10s %12s %14s %14s %12s %14s %12s\n' \
+		"pid" "N_thiet_ke" "perf_sys_enter" "ban_ghi" "ban_ghi_110" "perf-ban_ghi" "GAP_BEFORE"
+	local t_n=0 t_perf=0 t_rec=0 t_nr=0 t_gap=0 t_diff=0
+	for p in "${pids[@]}"; do
+		local pc rc nc gc d
+		pc=$(perf_count "$prefix-perf-$p.txt")
+		rc=${REC[$p]:-0}
+		nc=${NR[$p]:-0}
+		gc=${GAP[$p]:-0}
+		if [[ ${pc:-} =~ ^[0-9]+$ ]]; then
+			d=$((pc - rc))
+			t_perf=$((t_perf + pc))
+			t_diff=$((t_diff + d))
+		else
+			pc=${pc:-?}
+			d="?"
+		fi
+		printf '%10s %12s %14s %14s %12s %14s %12s\n' "$p" "$n" "$pc" "$rc" "$nc" "$d" "$gc"
+		t_n=$((t_n + n))
+		t_rec=$((t_rec + rc))
+		t_nr=$((t_nr + nc))
+		t_gap=$((t_gap + gc))
 	done
-
-	local drops
-	drops=$("$RECSTAT" "$bin" | awk -F: '/tong bo dem mat/ {gsub(/ /, "", $2); print $2; exit}')
-	drops=${drops:-0}
-	printf '%10s %14s %14s   (ban ghi + mat = %s, mat = %s)\n' "TONG" "$total_perf" "$total_rec" \
-		"$((total_rec + drops))" "$drops"
-	echo "ghi chu: bo dem mat la so toan cuc theo CPU, khong tach duoc theo PID."
+	printf '%10s %12s %14s %14s %12s %14s %12s\n' \
+		"TONG" "$t_n" "$t_perf" "$t_rec" "$t_nr" "$t_diff" "$t_gap"
 
 	echo
-	echo "--- rec-stat toan bo ---"
-	"$RECSTAT" -nr "$GETPPID_NR" "$bin"
+	echo "--- doi chieu toan cuc ---"
+	local g_att g_read g_drop g_miss
+	g_att=$(recstat_field "$prefix-recstat.txt" "  so lan dinh ghi")
+	g_read=$(recstat_field "$prefix-recstat.txt" "  so ban ghi collector doc duoc")
+	g_drop=$(recstat_field "$prefix-recstat.txt" "  tong bo dem mat")
+	g_miss=$(recstat_field "$prefix-recstat.txt" "  tong so seq bi thieu")
+	printf '%-45s %s\n' "tong lan dinh ghi (tong seq theo CPU):" "${g_att:-?}"
+	printf '%-45s %s\n' "tong ban ghi doc duoc:" "${g_read:-?}"
+	printf '%-45s %s\n' "tong bo dem mat:" "${g_drop:-?}"
+	printf '%-45s %s\n' "tong so seq bi thieu theo CPU:" "${g_miss:-?}"
+	printf '%-45s %s\n' "tong (perf - ban ghi):" "$t_diff"
+
 	echo
-	echo "du lieu: $bin"
+	echo "--- thoi gian va dung luong ---"
+	echo "thoi gian bom syscall: $(awk -v a="$start_s" -v b="$end_s" 'BEGIN {printf "%.3f", b - a}') s"
+	echo "kich thuoc $bin: $(stat -c %s "$bin") byte"
+	echo "kich thuoc $bin.stats: $(stat -c %s "$bin.stats") byte"
+
+	echo
+	echo "--- rec-stat day du (nguyen van) ---"
+	cat "$prefix-recstat.txt"
+
+	echo
+	check_kernel_clean
+	echo
+	echo "du lieu: $bin | thong ke: $bin.stats"
 }
 
 part_c() {
-	local ts bin cid cg rel t0 t1
+	local ts bin prefix cid cg rel t0 t1
 	ts=$(date +%Y%m%d-%H%M%S)
-	bin="out/g7c-$ts.bin"
+	prefix="out/g7c-$ts"
+	bin="$prefix.bin"
 
 	echo "=== G7c: loc theo cgroup cua container caddy ==="
 	command -v docker >/dev/null || die "khong co docker"
@@ -184,30 +256,59 @@ part_c() {
 	echo "cgroup tuong doi=$rel"
 	echo "inode=$(stat -c %i "$cg")"
 
-	"$COLLECT" -cgroup "$cg" -duration 70s -out "$bin" 2>"out/g7c-$ts-collect.log" &
+	"$COLLECT" -cgroup "$cg" -duration 70s -out "$bin" 2>"$prefix-collect.log" &
 	local collect_pid=$!
+	wait_ready "$prefix-collect.log"
+	echo "collector da gan tracepoint (READY)"
 	sleep 2
 
+	# Tai nen trong cua so do: container caddy luc ranh gan nhu khong goi
+	# syscall nao, nen phai tu tao viec cho no lam.
+	(
+		for ((i = 0; i < 100000; i++)); do
+			docker exec caddy ls / >/dev/null 2>&1 || break
+		done
+	) >"$prefix-load.log" 2>&1 &
+	local load_pid=$!
+
 	t0=$(python3 -c 'import time;print(time.monotonic_ns())')
-	perf stat -a -e raw_syscalls:sys_enter -G "$rel" -- sleep 60 2>"out/g7c-$ts-perf.txt"
+	perf stat -a -e raw_syscalls:sys_enter -G "$rel" -- sleep 60 2>"$prefix-perf.txt"
 	t1=$(python3 -c 'import time;print(time.monotonic_ns())')
 
+	kill "$load_pid" 2>/dev/null
+	pkill -f 'docker exec caddy' 2>/dev/null
+	wait "$load_pid" 2>/dev/null
 	wait "$collect_pid"
 
 	echo
 	echo "--- cua so do (CLOCK_MONOTONIC ns) ---"
 	echo "truoc perf: $t0"
 	echo "sau perf  : $t1"
+	echo "do dai    : $(((t1 - t0) / 1000000)) ms"
+	echo "so lan docker exec da chay: $(grep -c . "$prefix-load.log" 2>/dev/null || echo 0)"
 	echo
 	echo "--- perf stat (nguyen van) ---"
-	cat "out/g7c-$ts-perf.txt"
-	echo "--- log collector ---"
-	cat "out/g7c-$ts-collect.log"
+	cat "$prefix-perf.txt"
+	echo "--- log collector (nguyen van) ---"
+	cat "$prefix-collect.log"
 	echo
-	echo "--- rec-stat trong cua so tren ---"
-	"$RECSTAT" -from-mono "$t0" -to-mono "$t1" "$bin"
+	echo "--- thoi gian va dung luong ---"
+	echo "kich thuoc $bin: $(stat -c %s "$bin") byte"
+	echo "kich thuoc $bin.stats: $(stat -c %s "$bin.stats") byte"
 	echo
-	echo "du lieu: $bin"
+	echo "--- rec-stat trong cua so tren (nguyen van) ---"
+	"$RECSTAT" -nr "$GETPPID_NR" -from-mono "$t0" -to-mono "$t1" "$bin" | tee "$prefix-recstat.txt"
+	echo
+	echo "--- doi chieu ---"
+	local pc rc
+	pc=$(perf_count "$prefix-perf.txt")
+	rc=$(recstat_field "$prefix-recstat.txt" "so ban ghi sau khi loc")
+	printf '%-45s %s\n' "perf raw_syscalls:sys_enter (-G $rel):" "${pc:-?}"
+	printf '%-45s %s\n' "ban ghi collector trong cua so:" "${rc:-?}"
+	echo
+	check_kernel_clean
+	echo
+	echo "du lieu: $bin | thong ke: $bin.stats"
 }
 
 main() {
@@ -216,11 +317,12 @@ main() {
 
 	check_common
 	case "$part" in
-	a) part_a "$n" ;;
-	b) part_b "$n" ;;
+	a) run_injection g7a 1 "$n" 64 0 ;;
+	b) run_injection g7b 24 "$n" 64 1 ;;
+	b-nho) run_injection g7b-nho 24 "$n" 1 1 ;;
 	c) part_c ;;
 	*)
-		echo "cach dung: $0 <a|b|c> [N]" >&2
+		echo "cach dung: $0 <a|b|b-nho|c> [N]" >&2
 		exit 2
 		;;
 	esac

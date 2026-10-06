@@ -25,7 +25,13 @@ const (
 	FlagMigrated      uint16 = 1 << 3 // M3
 	FlagOverflow      uint16 = 1 << 4 // M3
 	FlagStealFallback uint16 = 1 << 5 // M3
+	// bit6..7 = 0, bit8..15 = so CPU luc sys_enter.
+	FlagCPUShift        = 8
+	FlagCPUMask  uint16 = 0xff << FlagCPUShift
 )
+
+// MaxCPU la so CPU lon nhat ma 8 bit trong flags bieu dien duoc.
+const MaxCPU = 256
 
 // Record la mot ban ghi syscall da giai ma.
 type Record struct {
@@ -40,6 +46,11 @@ type Record struct {
 	IrqNs     uint32
 	RqNs      uint32
 	VolUs     uint32
+}
+
+// CPU tra ve so CPU luc sys_enter, lay tu bit8..15 cua flags.
+func (r Record) CPU() int {
+	return int(r.Flags&FlagCPUMask) >> FlagCPUShift
 }
 
 // Decode doc mot ban ghi tu dung RecordSize byte.

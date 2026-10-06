@@ -91,6 +91,16 @@ func run() error {
 	if err != nil {
 		return err
 	}
+	possibleCPUs, err := hostinfo.PossibleCPUs()
+	if err != nil {
+		return err
+	}
+	// So CPU nam o bit8..15 cua flags nen chi bieu dien duoc 0..255.
+	if possibleCPUs > recfmt.MaxCPU {
+		return fmt.Errorf("may co %d CPU possible, vuot qua %d: truong flags chi danh 8 bit cho so CPU, "+
+			"khong ghi duoc dung. Can kien truc su doi dac ta ban ghi truoc khi chay tren may nay",
+			possibleCPUs, recfmt.MaxCPU)
+	}
 
 	cgroupIDs := make([]uint64, 0, len(cgroupPaths))
 	cgroupDesc := make([]string, 0, len(cgroupPaths))
@@ -152,6 +162,7 @@ func run() error {
 		"hids-collect",
 		fmt.Sprintf("uname_r: %s", release),
 		fmt.Sprintf("nr_cpus: %d", nrCPUs),
+		fmt.Sprintf("nr_cpus_possible: %d", possibleCPUs),
 		fmt.Sprintf("git_commit: %s", buildinfo.GitCommit()),
 		fmt.Sprintf("record_size: %d", recfmt.RecordSize),
 		fmt.Sprintf("filter_pid: %s", filterPID),
@@ -172,6 +183,9 @@ func run() error {
 
 	fmt.Fprintf(os.Stderr, "ghi vao %s\n", outPath)
 	fmt.Fprintf(os.Stderr, "loc pid: %s | loc cgroup: %s | ring buffer: %d MiB\n", filterPID, filterCgroup, *ringbufMB)
+	// Tracepoint da gan xong tu luc Load(); tu day moi sys_enter deu duoc dem.
+	// Script do dung dong nay de biet khi nao bat dau duoc.
+	fmt.Fprintln(os.Stderr, "READY")
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
@@ -265,6 +279,17 @@ func run() error {
 		drops += c.Drops
 	}
 	fmt.Fprintf(os.Stderr, "ban ghi doc duoc: %d | so lan dinh ghi: %d | mat: %d\n", records, attempts, drops)
+
+	var ru unix.Rusage
+	if err := unix.Getrusage(unix.RUSAGE_SELF, &ru); err == nil {
+		fmt.Fprintf(os.Stderr, "thoi gian chay: %.3f s | CPU collector: user %.3f s, sys %.3f s (getrusage RUSAGE_SELF)\n",
+			float64(endMono-startMono)/1e9,
+			float64(ru.Utime.Sec)+float64(ru.Utime.Usec)/1e6,
+			float64(ru.Stime.Sec)+float64(ru.Stime.Usec)/1e6)
+	}
+	if fi, err := os.Stat(outPath); err == nil {
+		fmt.Fprintf(os.Stderr, "kich thuoc file: %d byte\n", fi.Size())
+	}
 	fmt.Fprintf(os.Stderr, "du lieu: %s | thong ke: %s\n", outPath, statsPath)
 
 	return nil

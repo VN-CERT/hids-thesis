@@ -23,6 +23,10 @@ char LICENSE[] SEC("license") = "GPL";
 #define HIDS_F_FIRST      (1U << 0)
 #define HIDS_F_GAP_BEFORE (1U << 1)
 
+/* bit8..15 chua so CPU luc sys_enter. User space tu choi chay neu may co hon
+ * 256 CPU possible, nen 8 bit luon du. */
+#define HIDS_F_CPU_SHIFT 8
+
 /* Ban ghi 48 byte, little-endian, dung dac ta trong hids.mdc. */
 struct hids_rec {
 	__u64 ts_enter;
@@ -136,6 +140,7 @@ int BPF_PROG(hids_sys_enter, struct pt_regs *regs, long id)
 	}
 
 	ts = bpf_ktime_get_ns();
+	flags |= (__u16)((bpf_get_smp_processor_id() & 0xff) << HIDS_F_CPU_SHIFT);
 
 	seqp = bpf_map_lookup_elem(&hids_seq, &key0);
 	if (!seqp)

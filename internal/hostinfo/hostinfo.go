@@ -142,9 +142,19 @@ func parseTSCKHz(out []byte) (string, uint64, bool) {
 // OnlineCPUs tra ve so CPU online, tinh bang chi so lon nhat trong
 // /sys/devices/system/cpu/online cong mot.
 func OnlineCPUs() (int, error) {
-	raw, err := os.ReadFile("/sys/devices/system/cpu/online")
+	return cpuCount("/sys/devices/system/cpu/online")
+}
+
+// PossibleCPUs tra ve so CPU possible. Day la so luong ban sao ma kernel cap
+// cho map PERCPU, va la can tren cua gia tri bpf_get_smp_processor_id().
+func PossibleCPUs() (int, error) {
+	return cpuCount("/sys/devices/system/cpu/possible")
+}
+
+func cpuCount(path string) (int, error) {
+	raw, err := os.ReadFile(path)
 	if err != nil {
-		return 0, fmt.Errorf("doc /sys/devices/system/cpu/online: %w", err)
+		return 0, fmt.Errorf("doc %s: %w", path, err)
 	}
 	max := -1
 	for _, part := range strings.Split(strings.TrimSpace(string(raw)), ",") {
@@ -158,14 +168,14 @@ func OnlineCPUs() (int, error) {
 		}
 		n, err := strconv.Atoi(strings.TrimSpace(end))
 		if err != nil {
-			return 0, fmt.Errorf("doc /sys/devices/system/cpu/online: gia tri %q khong hop le", part)
+			return 0, fmt.Errorf("doc %s: gia tri %q khong hop le", path, part)
 		}
 		if n > max {
 			max = n
 		}
 	}
 	if max < 0 {
-		return 0, fmt.Errorf("doc /sys/devices/system/cpu/online: khong co CPU nao")
+		return 0, fmt.Errorf("doc %s: khong co CPU nao", path)
 	}
 	return max + 1, nil
 }
