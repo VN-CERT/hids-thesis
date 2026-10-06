@@ -25,10 +25,8 @@ require_clean_git() {
 	local st path
 	while read -r st path _; do
 		[[ -z $st ]] && continue
-		if [[ $path == out/* || $path == validation/g3-* ]]; then
-			continue
-		fi
-		if [[ $path == validation/g3-*/* ]]; then
+		path="${path%/}"
+		if [[ $path == out/* || $path == validation/g3* ]]; then
 			continue
 		fi
 		die "cay git khong sach (thay doi ngoai out/ va validation/g3-*): $st $path — commit truoc khi chay g3"

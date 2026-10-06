@@ -36,9 +36,11 @@ require_clean_git() {
 	local st path
 	while read -r st path _; do
 		[[ -z $st ]] && continue
-		if [[ $path != out/* ]]; then
-			die "cay git khong sach (thay doi ngoai out/): $st $path — commit truoc khi chay g7"
+		path="${path%/}"
+		if [[ $path == out/* || $path == validation/g3* ]]; then
+			continue
 		fi
+		die "cay git khong sach (thay doi ngoai out/ va validation/g3-*): $st $path — commit truoc khi chay g7"
 	done < <(git status --porcelain 2>/dev/null | awk '{print $1, $2}')
 }
 
