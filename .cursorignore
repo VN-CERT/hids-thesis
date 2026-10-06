@@ -1,0 +1,6 @@
+bpf/vmlinux.h
+out/
+bin/
+internal/**/*.o
+validation/**/*.csv
+validation/**/*-ketqua*.txt

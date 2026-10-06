@@ -29,5 +29,29 @@ Collector eBPF đo khoảng thời gian giữa hai syscall liên tiếp của t�
 ts_enter u64 ns (bpf_ktime_get_ns tại sys_enter) | cgroup_id u64 | tid u32 | seq u32 (tăng dần theo CPU) | syscall_nr u16 | flags u16 | cpu_ns u32 | steal_ns u32 | irq_ns u32 | rq_ns u32 | vol_us u32
 Các thành phần thuộc khoảng từ sys_enter trước đó của cùng tid tới sys_enter hiện tại; mỗi thành phần được đo độc lập (không suy ra từ Δt trừ các phần khác).
 
-# Bảng flags (kiến trúc sư chốt, cố định từ M2)
-bit0 FIRST (bản ghi đầu tiên của thread kể từ khi collector chạy) | bit1 GAP_BEFORE | bit2 D_SLEEP (M3) | bit3 MIGRATED (M3) | bit4 OVERFLOW (M3) | bit5 STEAL_FALLBACK (M3) | bit6–7 = 0 | bit8–15 = số CPU lúc sys_enter (bpf_get_smp_processor_id() & 0xff)
+# Bảng flags (kiến trúc sư chốt, cố định từ M3)
+bit0 FIRST (bản ghi đầu tiên của thread kể từ khi collector chạy) | bit1 GAP_BEFORE | bit2 D_SLEEP | bit3 MIGRATED | bit4 OVERFLOW | bit5 STEAL_FALLBACK | bit6 CLAMPED | bit7 = 0 | bit8–15 = số CPU lúc sys_enter (bpf_get_smp_processor_id() & 0xff)
+
+# Định nghĩa 5 thành phần của Δt (kiến trúc sư chốt ở M3, cố định)
+- Một khoảng = từ sys_enter trước của cùng thread tới sys_enter hiện tại. Bản ghi phát ra tại sys_enter hiện tại mang các thành phần của khoảng đó.
+- Trong khoảng, thread luân phiên các đoạn ON-CPU và OFF-CPU; ranh giới là sched_switch.
+- Đoạn ON-CPU luôn nằm trọn trên một CPU. Độ dài đồng hồ của đoạn = cpu + steal + irq.
+  - steal = mức tăng của vmw_steal_time trên CPU đó trong đoạn, quy ra ns ngay trong BPF bằng phép chia u64: chu_kỳ × 1e6 / tsc_khz.
+  - irq = mức tăng của bộ cộng dồn irq per-CPU (xem dưới) trong đoạn.
+  - cpu = độ dài đoạn − steal − irq. Nếu ra âm thì đặt 0 và bật cờ CLAMPED.
+- Đoạn OFF-CPU bắt đầu tại sched_switch mà thread là prev:
+  - Nếu preempt == true HOẶC prev_state == 0 (TASK_RUNNING): cả đoạn, tới lúc được chạy lại, là rq.
+  - Ngược lại (thread đi ngủ): từ lúc switch ra tới sched_wakeup (hoặc sched_wakeup_new) là vol; từ wakeup tới lúc được chạy lại là rq. Nếu prev_state có bit TASK_UNINTERRUPTIBLE (0x2) thì bật cờ D_SLEEP cho khoảng.
+  - prev_state là giá trị gốc nhận qua tp_btf/sched_switch, không phải giá trị đã mã hoá để in của tracepoint thường.
+- Steal xảy ra khi thread đang OFF-CPU không tính vào steal của thread. Đây là giới hạn đã ghi nhận của định nghĩa.
+- Nếu thread được switch vào trên CPU khác CPU của đoạn ON-CPU trước: bật cờ MIGRATED.
+- Khi bpf_ringbuf_reserve thất bại: không xoá bộ cộng dồn, giữ nguyên ts của sys_enter trước. Bản ghi thành công kế tiếp mang thành phần của toàn bộ khoảng gộp, kèm cờ GAP_BEFORE, nên Δt tính từ hai bản ghi liên tiếp vẫn khớp với tổng thành phần.
+- Ghi ra bản ghi: cpu/steal/irq/rq là u32 ns; vol_us = (vol_ns + 500)/1000. Tràn thì bão hoà ở giá trị lớn nhất và bật OVERFLOW.
+
+# Bộ cộng dồn irq per-CPU (M3)
+- Gắn entry/exit của irq:irq_handler_*, irq:softirq_*, và mọi cặp *_entry/*_exit có trong /sys/kernel/tracing/events/irq_vectors/. Tên các tracepoint đã gắn phải ghi vào header file .bin.
+- Theo dõi độ sâu lồng nhau per-CPU: vào ở độ sâu 0 thì ghi mốc; ra về độ sâu 0 thì cộng (now − mốc) vào bộ cộng dồn irq của CPU đó.
+- Đếm riêng 3 loại (hardirq, softirq, vector) để báo cáo; tổng ba loại là thành phần irq.
+
+# Chính sách khi mất bản ghi (kiến trúc sư chốt ở R003)
+Không bao giờ im lặng, không bao giờ tự dừng. Collector ghi <out>.bin.periodic mỗi 10 giây một dòng (số lần định ghi và số mất, cả delta lẫn cộng dồn, cộng tổng irq theo loại). Delta mất > 0 thì in dòng "LOSS ..." ra stderr và log rồi chạy tiếp. Không dừng thu thập vì mất bản ghi.

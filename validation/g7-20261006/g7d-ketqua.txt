@@ -1,0 +1,127 @@
+=== G7d: loc theo cgroup CHA, tien trinh nam trong cgroup CON, N=1000000 ===
+cgroup cha=/sys/fs/cgroup/hids-test inode=17841
+cgroup con=/sys/fs/cgroup/hids-test/con inode=17920
+sysinj pid=407754
+$ cat /proc/407754/cgroup
+0::/hids-test/con
+collector da gan tracepoint (READY), loc theo cgroup CHA
+perf da gan
+$ rmdir /sys/fs/cgroup/hids-test/con /sys/fs/cgroup/hids-test
+da xoa cgroup tam
+
+--- perf stat (nguyen van) ---
+
+ Performance counter stats for process id '407754':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+       3.003158499 seconds time elapsed
+
+--- log collector (nguyen van) ---
+ghi vao out/g7d-20261006-234314.bin
+loc pid: khong co | loc cgroup: /sys/fs/cgroup/hids-test (id=17841) | ring buffer: 64 MiB
+READY
+ban ghi doc duoc: 1000001 | so lan dinh ghi: 1000001 | mat: 0
+thoi gian chay: 4.898 s | CPU collector: user 0.225 s, sys 0.260 s (getrusage RUSAGE_SELF)
+kich thuoc file: 48000385 byte
+du lieu: out/g7d-20261006-234314.bin | thong ke: out/g7d-20261006-234314.bin.stats | theo doi: out/g7d-20261006-234314.bin.periodic
+
+--- bang ket qua ---
+N theo thiet ke:                              1000000
+perf raw_syscalls:sys_enter (-p 407754):      1000001
+so ban ghi collector:                         1000001
+so ban ghi nr=110:                            1000000
+hieu (perf - ban ghi):                        0
+
+--- thoi gian va dung luong ---
+kich thuoc out/g7d-20261006-234314.bin: 48000385 byte
+
+--- rec-stat day du (nguyen van) ---
+file: out/g7d-20261006-234314.bin
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 1dfc2d3
+# record_size: 48
+# filter_pid: khong co
+# filter_cgroup: /sys/fs/cgroup/hids-test (id=17841)
+# ringbuf_bytes: 67108864
+# start_mono_ns: 17015501659895
+# start_wall: 2026-10-06T23:43:15.206771565+07:00
+# duration: khong gioi han
+
+tong so ban ghi trong file : 1000001
+so ban ghi sau khi loc     : 1000001
+bo loc                     : khong co
+ts_enter nho nhat / lon nhat: 17017533223018 / 17018396762094 (ns, CLOCK_MONOTONIC)
+ban ghi co co FIRST        : 1
+ban ghi co co GAP_BEFORE   : 0
+ban ghi co syscall_nr=110  : 1000000
+
+so ban ghi theo tgid (1 tien trinh)
+    tgid  ban_ghi   nr=110  FIRST  GAP_BEFORE      nguon_tgid
+  407754  1000001  1000000      1           0  ? (suy tu tid)
+    TONG  1000001  1000000      1           0                
+
+so ban ghi theo tid (1 thread, in 1 dong dau)
+     tid  tgid  ban_ghi   nr=110
+  407754     ?  1000001  1000000
+
+top 2 syscall_nr (tong cong 2 gia tri khac nhau)
+  syscall_nr  ban_ghi
+         110  1000000
+         231        1
+
+theo tung CPU (cpu lay tu bit8..15 cua flags; seq_cuoi va mat lay tu .stats)
+   cpu  ban_ghi  seq_min  seq_max  lo_hong  seq_thieu  seq_cuoi  mat
+     0  1000001        1  1000001        0          0   1000001    0
+  TONG  1000001                          0          0   1000001    0
+
+y nghia cac cot:
+  ban_ghi   so ban ghi cua CPU do co trong file (tinh tren toan bo file,
+            khong phu thuoc -tgid/-nr/-from-mono/-to-mono)
+  seq_min   seq nho nhat doc duoc; bang 1 neu khong mat ban ghi nao o dau
+  lo_hong   so doan seq lien tuc bi thieu (ke ca doan dau tu 1 den seq_min
+            va doan cuoi tu seq_max den seq_cuoi)
+  seq_thieu tong so seq bi thieu; so nay doi chieu truc tiep voi cot mat
+  seq_cuoi  so lan dinh ghi tren CPU do, doc tu kernel luc collector dung
+  mat       bo dem bpf_ringbuf_reserve that bai, doc tu kernel
+
+doi chieu seq (toan cuc)
+  so lan dinh ghi (tong seq_cuoi cua moi CPU): 1000001
+  so ban ghi collector doc duoc             : 1000001
+  so ban ghi dem duoc trong file            : 1000001
+  tong bo dem mat (ring buffer day)         : 0
+  tong so seq bi thieu theo CPU             : 0
+  dinh ghi - ban ghi trong file             : 0
+
+--- file theo doi dinh ky ---
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 1dfc2d3
+# record_size: 48
+# filter_pid: khong co
+# filter_cgroup: /sys/fs/cgroup/hids-test (id=17841)
+# ringbuf_bytes: 67108864
+# start_mono_ns: 17015501659895
+# start_wall: 2026-10-06T23:43:15.206771565+07:00
+# duration: khong gioi han
+# moi dong cach nhau 10s
+mono_ns,wall,dinh_ghi_delta,mat_delta,dinh_ghi_tong,mat_tong,irq_hard_delta_ns,irq_soft_delta_ns,irq_vec_delta_ns,irq_hard_tong_ns,irq_soft_tong_ns,irq_vec_tong_ns
+17015502163643,2026-10-06T23:43:15.207275241+07:00,0,0,0,0,0,0,0,0,0,0
+17020399789777,2026-10-06T23:43:20.104901483+07:00,1000001,0,1000001,0,0,0,0,0,0,0
+
+--- kiem tra kernel sau khi collector thoat ---
+$ bpftool prog list | grep -ci hids
+0
+$ bpftool link list | grep -ci hids
+0
+$ bpftool map list | grep -ciE 'hids_|ringbuf'
+0
+$ ls -A /sys/fs/bpf | wc -l
+0
+
+du lieu: out/g7d-20261006-234314.bin | thong ke: out/g7d-20261006-234314.bin.stats
