@@ -1,25 +1,25 @@
 === S4: wl cpu 10000 300 (CPU 20) ===
-wl pid=521793 tid=521793
-stress-ng pid=521797
+wl pid=508587 tid=508587
+stress-ng pid=508591
 --- moc A schedstat (sum_exec_runtime run_delay pcount) ---
-1688320 2674831 3
---- moc A /proc/521793/sched ---
-sum_sleep_runtime                            :          3748.558768
+1718845 2621288 3
+--- moc A /proc/508587/sched ---
+sum_sleep_runtime                            :          3774.210805
 sum_block_runtime                            :             0.000000
-wait_sum                                     :             2.674831
+wait_sum                                     :             2.621288
 iowait_sum                                   :             0.000000
 --- moc B schedstat ---
-3011071600 3011862709 953
---- moc B /proc/521793/sched ---
-sum_sleep_runtime                            :          3787.199604
+3010227512 3008599725 952
+--- moc B /proc/508587/sched ---
+sum_sleep_runtime                            :          3812.310587
 sum_block_runtime                            :             0.000000
-wait_sum                                     :          3011.862709
+wait_sum                                     :          3008.599725
 iowait_sum                                   :             0.000000
-cua so ts_enter: (20543402061676, 20549459290083]
+cua so ts_enter: (20341873061570, 20347925663658]
 --- rec-check ---
-so ban ghi trong cua so: 53800
-tid: 521793
-cua so ts_enter: (20543402061676, 20549459290083]
+so ban ghi trong cua so: 53202
+tid: 508587
+cua so ts_enter: (20341873061570, 20347925663658]
 co              so_ban_ghi
 FIRST           0
 GAP_BEFORE      0
@@ -29,14 +29,14 @@ OVERFLOW        0
 STEAL_FALLBACK  0
 CLAMPED         0
 --- tong thanh phan (ns) ---
-cpu 2999878037
+cpu 2999151308
 steal 0
-irq 9589526
-rq 3009117443
-vol 38643000
-cpu+steal+irq 3009467563
+irq 9449403
+rq 3005899252
+vol 38102000
+cpu+steal+irq 3008600711
 --- G5 phan du |tat ca (tru FIRST)| (ns) ---
-so khoang: 53799
+so khoang: 53201
 p50 0
 p99 0
 p99.9 0
@@ -44,7 +44,7 @@ max 0
 so khoang |phan du| > 1000 ns: 0
 so khoang |phan du| > 10000 ns: 0
 --- G5 phan du |khong GAP_BEFORE| (ns) ---
-so khoang: 53799
+so khoang: 53201
 p50 0
 p99 0
 p99.9 0
@@ -55,10 +55,10 @@ so khoang |phan du| > 10000 ns: 0
 so khoang: 0
 --- bang doi chieu ---
 thanh_phan           collector       tham_chieu      nguon
-cpu+steal+irq        3009467563      3009383280      Delta schedstat field1 sum_exec_runtime
-rq                   3009117443      3009187878      Delta schedstat field2 run_delay
-rq (wait_sum)        3009117443      3009190000      Delta wait_sum /proc/sched
-vol                  38643000        38640800        Delta sum_sleep_runtime
+cpu+steal+irq        3008600711      3008508667      Delta schedstat field1 sum_exec_runtime
+rq                   3005899252      3005978437      Delta schedstat field2 run_delay
+rq (wait_sum)        3005899252      3005980000      Delta wait_sum /proc/sched
+vol                  38102000        38099800        Delta sum_sleep_runtime
 vol (D_SLEEP)        0               0               Delta sum_block_runtime
 --- log collector (cuoi) ---
   hids_irq_call_function_single_exit       0
@@ -88,6 +88,6 @@ vol (D_SLEEP)        0               0               Delta sum_block_runtime
   hids_sched_wakeup                        0
   hids_sched_wakeup_new                    0
   hids_sys_enter                           0
-thoi gian chay: 6.105 s | CPU collector: user 0.326 s, sys 0.335 s (getrusage RUSAGE_SELF)
-kich thuoc file: 2583454 byte
-du lieu: out/g3-S4-004159.bin | thong ke: out/g3-S4-004159.bin.stats | theo doi: out/g3-S4-004159.bin.periodic
+thoi gian chay: 6.107 s | CPU collector: user 0.327 s, sys 0.345 s (getrusage RUSAGE_SELF)
+kich thuoc file: 2554750 byte
+du lieu: out/g3-S4-003837.bin | thong ke: out/g3-S4-003837.bin.stats | theo doi: out/g3-S4-003837.bin.periodic

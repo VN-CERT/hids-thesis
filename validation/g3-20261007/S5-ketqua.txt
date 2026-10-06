@@ -1,24 +1,24 @@
 === S5: wl io 300 (CPU 20) ===
-wl pid=524136 tid=524136
+wl pid=510934 tid=510934
 --- moc A schedstat (sum_exec_runtime run_delay pcount) ---
-1609145 4511 3
---- moc A /proc/524136/sched ---
-sum_sleep_runtime                            :          3732.389657
+1520729 0 2
+--- moc A /proc/510934/sched ---
+sum_sleep_runtime                            :          3742.692384
 sum_block_runtime                            :             0.000000
-wait_sum                                     :             0.004511
+wait_sum                                     :             0.000000
 iowait_sum                                   :             0.000000
 --- moc B schedstat ---
-28020167 680705 604
---- moc B /proc/524136/sched ---
-sum_sleep_runtime                            :          4051.788448
-sum_block_runtime                            :           290.915949
-wait_sum                                     :             0.680705
-iowait_sum                                   :           117.610884
-cua so ts_enter: (20553515217472, 20553861699763]
+27144884 2156306 603
+--- moc B /proc/510934/sched ---
+sum_sleep_runtime                            :          4066.858002
+sum_block_runtime                            :           295.922999
+wait_sum                                     :             2.156306
+iowait_sum                                   :           115.555148
+cua so ts_enter: (20351993920108, 20352345862504]
 --- rec-check ---
 so ban ghi trong cua so: 1503
-tid: 524136
-cua so ts_enter: (20553515217472, 20553861699763]
+tid: 510934
+cua so ts_enter: (20351993920108, 20352345862504]
 co              so_ban_ghi
 FIRST           0
 GAP_BEFORE      0
@@ -28,37 +28,37 @@ OVERFLOW        0
 STEAL_FALLBACK  0
 CLAMPED         0
 --- tong thanh phan (ns) ---
-cpu 24842723
-steal 4080
-irq 84857
-rq 2351958
-vol 319203000
-cpu+steal+irq 24931660
+cpu 24073169
+steal 0
+irq 141867
+rq 3609394
+vol 324131000
+cpu+steal+irq 24215036
 --- G5 phan du |tat ca (tru FIRST)| (ns) ---
 so khoang: 1502
 p50 0
-p99 472
-p99.9 491
-max 493
+p99 481
+p99.9 497
+max 499
 so khoang |phan du| > 1000 ns: 0
 so khoang |phan du| > 10000 ns: 0
 --- G5 phan du |khong GAP_BEFORE| (ns) ---
 so khoang: 1502
 p50 0
-p99 472
-p99.9 491
-max 493
+p99 481
+p99.9 497
+max 499
 so khoang |phan du| > 1000 ns: 0
 so khoang |phan du| > 10000 ns: 0
 --- G5 phan du |co GAP_BEFORE| (ns) ---
 so khoang: 0
 --- bang doi chieu ---
 thanh_phan           collector       tham_chieu      nguon
-cpu+steal+irq        24931660        26411022        Delta schedstat field1 sum_exec_runtime
-rq                   2351958         676194          Delta schedstat field2 run_delay
-rq (wait_sum)        2351958         676194          Delta wait_sum /proc/sched
-vol                  319203000       319399000       Delta sum_sleep_runtime
-vol (D_SLEEP)        290719000       290916000       Delta sum_block_runtime
+cpu+steal+irq        24215036        25624155        Delta schedstat field1 sum_exec_runtime
+rq                   3609394         2156306         Delta schedstat field2 run_delay
+rq (wait_sum)        3609394         2156310         Delta wait_sum /proc/sched
+vol                  324131000       324166000       Delta sum_sleep_runtime
+vol (D_SLEEP)        295887000       295923000       Delta sum_block_runtime
 --- log collector (cuoi) ---
   hids_irq_call_function_single_exit       0
   hids_irq_deferred_error_apic_entry       0
@@ -87,6 +87,6 @@ vol (D_SLEEP)        290719000       290916000       Delta sum_block_runtime
   hids_sched_wakeup                        0
   hids_sched_wakeup_new                    0
   hids_sys_enter                           0
-thoi gian chay: 0.387 s | CPU collector: user 0.149 s, sys 0.119 s (getrusage RUSAGE_SELF)
+thoi gian chay: 0.410 s | CPU collector: user 0.141 s, sys 0.124 s (getrusage RUSAGE_SELF)
 kich thuoc file: 73198 byte
-du lieu: out/g3-S5-004209.bin | thong ke: out/g3-S5-004209.bin.stats | theo doi: out/g3-S5-004209.bin.periodic
+du lieu: out/g3-S5-003847.bin | thong ke: out/g3-S5-003847.bin.stats | theo doi: out/g3-S5-003847.bin.periodic

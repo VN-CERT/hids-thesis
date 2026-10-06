@@ -49,7 +49,7 @@ static void calibrate_loops_per_us(void)
 {
 	struct timespec t0, t1;
 	unsigned long long n = 0;
-	uint64_t elapsed_us;
+	unsigned long long elapsed_us;
 
 	if (clock_gettime(CLOCK_MONOTONIC, &t0) != 0) {
 		perror("clock_gettime CLOCK_MONOTONIC");
@@ -62,8 +62,8 @@ static void calibrate_loops_per_us(void)
 			perror("clock_gettime CLOCK_MONOTONIC");
 			_exit(1);
 		}
-		elapsed_us = (uint64_t)(t1.tv_sec - t0.tv_sec) * 1000000ULL +
-			     (uint64_t)(t1.tv_nsec - t0.tv_nsec) / 1000ULL;
+		elapsed_us = (unsigned long long)(t1.tv_sec - t0.tv_sec) * 1000000ULL +
+			     (unsigned long long)(t1.tv_nsec - t0.tv_nsec) / 1000ULL;
 		if (elapsed_us >= 200000ULL)
 			break;
 	}

@@ -4,7 +4,7 @@
 # nr_cpus_possible: 24
 # git_commit: c3d371b-dirty
 # record_size: 48
-# filter_pid: 524136
+# filter_pid: 510934
 # filter_cgroup: khong co
 # ringbuf_bytes: 67108864
 # stealclock: bat (24/24 dong "vmware-stealtime" trong dmesg)
@@ -19,10 +19,10 @@
 # CONFIG_SCHEDSTATS: y
 # CONFIG_SCHED_INFO: y
 # irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
-# start_mono_ns: 20553511892185
-# start_wall: 2026-10-07T00:42:13.217004526+07:00
+# start_mono_ns: 20351980319850
+# start_wall: 2026-10-07T00:38:51.685432089+07:00
 # duration: khong gioi han
 # moi dong cach nhau 10s
 mono_ns,wall,dinh_ghi_delta,mat_delta,dinh_ghi_tong,mat_tong,irq_hard_delta_ns,irq_soft_delta_ns,irq_vec_delta_ns,soft_raw_delta_ns,irq_hard_tong_ns,irq_soft_tong_ns,irq_vec_tong_ns,soft_raw_tong_ns
-20553515024948,2026-10-07T00:42:13.220136595+07:00,0,0,0,0,0,51734,1536409,51734,0,51734,1536409,51734
-20553899278648,2026-10-07T00:42:13.604390391+07:00,1505,0,1505,0,931297,8714891,48167564,8747495,931297,8766625,49703973,8799229
+20351982885491,2026-10-07T00:38:51.687997038+07:00,0,0,0,0,0,38017,1879728,38017,0,38017,1879728,38017
+20352390236785,2026-10-07T00:38:52.095348451+07:00,1505,0,1505,0,860680,9286337,36099529,9304439,860680,9324354,37979257,9342456

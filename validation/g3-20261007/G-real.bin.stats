@@ -2,7 +2,7 @@
 # uname_r: 6.8.0-142-generic
 # nr_cpus: 24
 # nr_cpus_possible: 24
-# git_commit: c3d371b-dirty
+# git_commit: e93f01b-dirty
 # record_size: 48
 # filter_pid: khong co
 # filter_cgroup: /sys/fs/cgroup/system.slice/docker-319c38ff33aa4827288f68ca1236600174cf278175fd7d5d68657d48e2a6366f.scope (id=5899)
@@ -19,36 +19,36 @@
 # CONFIG_SCHEDSTATS: y
 # CONFIG_SCHED_INFO: y
 # irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
-# start_mono_ns: 20557308383750
-# start_wall: 2026-10-07T00:42:17.013495923+07:00
+# start_mono_ns: 20026416745115
+# start_wall: 2026-10-07T00:33:26.121857318+07:00
 # duration: 2m0s
-# end_mono_ns: 20677320513838
-# end_wall: 2026-10-07T00:44:17.025628232+07:00
-# bin: out/g3-greal-004213.bin
+# end_mono_ns: 20146429190674
+# end_wall: 2026-10-07T00:35:26.134304615+07:00
+# bin: out/g3-greal-003322.bin
 # ban_ghi_sai_kich_thuoc: 0
-# so_ban_ghi_doc_duoc: 28207
+# so_ban_ghi_doc_duoc: 28230
 cpu,seq_cuoi,mat
-0,1081,0
-1,2028,0
-2,787,0
-3,1586,0
-4,3075,0
-5,2194,0
+0,1010,0
+1,365,0
+2,1102,0
+3,1469,0
+4,1855,0
+5,559,0
 6,415,0
-7,1725,0
-8,1471,0
-9,0,0
-10,1948,0
-11,917,0
-12,3384,0
-13,2873,0
-14,61,0
-15,0,0
-16,0,0
-17,779,0
-18,0,0
-19,1106,0
-20,0,0
-21,611,0
-22,621,0
-23,1545,0
+7,1180,0
+8,2863,0
+9,1563,0
+10,546,0
+11,1827,0
+12,0,0
+13,0,0
+14,5,0
+15,2217,0
+16,1502,0
+17,714,0
+18,812,0
+19,2971,0
+20,1277,0
+21,1553,0
+22,1617,0
+23,808,0
