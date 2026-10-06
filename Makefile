@@ -7,7 +7,8 @@ BPFTOOL ?= bpftool
 # dang duoc git theo doi, neu tinh som thi cay se bi coi la dirty cho den khi
 # 'go generate' tao lai chung.
 GIT_REV = $(shell git rev-parse --short HEAD 2>/dev/null || echo unknown)
-GIT_DIRTY = $(shell test -z "$$(git status --porcelain 2>/dev/null)" || echo -dirty)
+# Chi coi dirty neu co thay doi ngoai out/ va ngoai validation/g3-* (ket qua G3).
+GIT_DIRTY = $(shell git status --porcelain 2>/dev/null | awk '$$2 !~ /^out\// && $$2 !~ /^validation\/g3-/ {found=1} END {if (found) print "-dirty"}')
 GIT_COMMIT = $(GIT_REV)$(GIT_DIRTY)
 LDFLAGS = -X hids/internal/buildinfo.Commit=$(GIT_COMMIT)
 
