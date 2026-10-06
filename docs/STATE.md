@@ -60,11 +60,12 @@ Cập nhật lần cuối: 2026-10-07 00:25 (giờ máy)
 | Sửa thứ tự gắn/gỡ cặp tracepoint irq (lỗi irq vector 660 giây) | `b8e75d1` |
 | Chạy thử 30 giây, lưu `validation/m3ae-20261006/` | `9139688` |
 | Báo cáo R004, tag `m3-ae` | `9139688` |
-| Lưu nguyên văn nhiệm vụ vào `docs/tasks/M3-phan2.md` | (commit này) |
-| PHẦN 1 / 8.2: viết lại mục C theo phương án (c), trạng thái irq riêng từng loại | (commit này) |
-| PHẦN 1 / 8.2: in `recursion_misses` từng chương trình, cột `soft_raw_delta_ns` | (commit này) |
-| PHẦN 1 / 8.3: 4 dòng header `CONFIG_*` đọc từ `/boot/config-$(uname -r)` | (commit này) |
-| PHẦN 1: chạy lại 30 giây + soi chéo, lưu `validation/m3p1-20261007/` | (commit này) |
+| Lưu nguyên văn nhiệm vụ vào `docs/tasks/M3-phan2.md` | `015c83a` |
+| PHẦN 1 / 8.2: viết lại mục C theo phương án (c), trạng thái irq riêng từng loại | `015c83a` |
+| PHẦN 1 / 8.2: in `recursion_misses` từng chương trình, cột `soft_raw_delta_ns` | `015c83a` |
+| PHẦN 1 / 8.3: 4 dòng header `CONFIG_*` đọc từ `/boot/config-$(uname -r)` | `015c83a` |
+| PHẦN 1: chạy lại 30 giây + soi chéo, lưu `validation/m3p1-20261007/` | `015c83a` |
+| PHẦN 1: chạy lại lần hai với binary từ cây git sạch | `6b4a050` |
 
 ## Bước đang làm
 Không có. PHẦN 1 đã xong và đã commit. Đang **CHỜ** người dùng đổi model và bảo làm PHẦN 2.
