@@ -6,7 +6,6 @@ import (
 	"os"
 	"sort"
 	"strings"
-	"time"
 
 	"github.com/cilium/ebpf"
 	"github.com/cilium/ebpf/link"
@@ -23,8 +22,14 @@ const DefaultRingbufMB = 64
 // perCPUKsyms la cac bien per-CPU cua kernel ma chuong trinh BPF doc.
 var perCPUKsyms = []string{"vmw_steal_time", "runqueues"}
 
-// mainProgram la chuong trinh phat ban ghi.
-const mainProgram = "hids_sys_enter"
+const mainProgramTracepoint = "hids_sys_enter"
+const mainProgramFentry = "hids_sys_enter_fentry"
+
+// SysEnterHookTracepoint / SysEnterHookFentry chon diem gan chuong trinh phat ban ghi.
+const (
+	SysEnterHookTracepoint = "tracepoint"
+	SysEnterHookFentry     = "fentry"
+)
 
 // schedPrograms la cac chuong trinh dung cho ranh gioi ON-CPU / OFF-CPU.
 var schedPrograms = []string{"hids_sched_switch", "hids_sched_wakeup", "hids_sched_wakeup_new"}
@@ -41,6 +46,7 @@ type Config struct {
 	TSCKHz        uint64   // tan so TSC, de quy chu ky steal ra ns trong BPF
 	StealFallback bool     // dung rq->prev_steal_time thay vi vmw_steal_time
 	StealOff      bool     // khong do steal (khong co stealclock)
+	SysEnterHook  string   // tracepoint (mac dinh) hoac fentry (x64_sys_call)
 }
 
 // IRQStat la so lieu irq cua mot CPU.
@@ -78,11 +84,12 @@ type irqState struct {
 
 // Collector giu chuong trinh BPF da nap, cac link va bo doc ring buffer.
 type Collector struct {
-	coll     *ebpf.Collection
-	links    []link.Link
-	mainLink link.Link
-	reader   *ringbuf.Reader
-	irqTPs   []string
+	coll        *ebpf.Collection
+	links       []link.Link
+	mainLink    link.Link
+	mainHook    string
+	reader      *ringbuf.Reader
+	irqTPs      []string
 }
 
 // Load nap chuong trinh, nap cau hinh loc vao map va gan vao cac tracepoint.
@@ -198,15 +205,29 @@ func Load(cfg Config) (*Collector, error) {
 		}
 	}
 
-	prog := coll.Programs[mainProgram]
+	mainName := mainProgramTracepoint
+	switch cfg.SysEnterHook {
+	case "", SysEnterHookTracepoint:
+		mainName = mainProgramTracepoint
+	case SysEnterHookFentry:
+		mainName = mainProgramFentry
+	default:
+		return nil, fmt.Errorf("sys_enter_hook khong hop le: %q (can %q hoac %q)",
+			cfg.SysEnterHook, SysEnterHookTracepoint, SysEnterHookFentry)
+	}
+	prog := coll.Programs[mainName]
 	if prog == nil {
-		return nil, fmt.Errorf("khong tim thay chuong trinh %s", mainProgram)
+		return nil, fmt.Errorf("khong tim thay chuong trinh %s", mainName)
 	}
 	lnk, err := link.AttachTracing(link.TracingOptions{Program: prog})
 	if err != nil {
-		return nil, fmt.Errorf("gan %s: %w", mainProgram, err)
+		return nil, fmt.Errorf("gan %s: %w", mainName, err)
 	}
 	c.mainLink = lnk
+	c.mainHook = cfg.SysEnterHook
+	if c.mainHook == "" {
+		c.mainHook = SysEnterHookTracepoint
+	}
 
 	ok = true
 	return c, nil
@@ -268,36 +289,17 @@ func (c *Collector) IRQTracepoints() []string {
 	return out
 }
 
-// SetReadDeadline dat thoi han cho ReadInto; zero time = cho vo han.
-func (c *Collector) SetReadDeadline(t time.Time) {
-	c.reader.SetDeadline(t)
-}
-
 // ReadInto doc mot ban ghi tu ring buffer vao rec.
 func (c *Collector) ReadInto(rec *ringbuf.Record) error {
 	return c.reader.ReadInto(rec)
 }
 
-// ReadIntoPoll doc mot ban ghi khi dung BPF_RB_NO_WAKEUP: neu ring buffer con
-// byte chua doc thi ReadInto khoa den khi co ban ghi; neu rong thi cho toi
-// deadline (poll).
-func (c *Collector) ReadIntoPoll(rec *ringbuf.Record, poll time.Duration) error {
-	if c.reader.AvailableBytes() > 0 {
-		c.reader.SetDeadline(time.Time{})
-	} else if poll > 0 {
-		c.reader.SetDeadline(time.Now().Add(poll))
-	} else {
-		c.reader.SetDeadline(time.Time{})
+// SysEnterHook tra ve che do gan chinh (tracepoint hoac fentry).
+func (c *Collector) SysEnterHook() string {
+	if c.mainHook == "" {
+		return SysEnterHookTracepoint
 	}
-	err := c.reader.ReadInto(rec)
-	if err == nil {
-		return nil
-	}
-	if errors.Is(err, os.ErrDeadlineExceeded) && c.reader.AvailableBytes() > 0 {
-		c.reader.SetDeadline(time.Time{})
-		return c.reader.ReadInto(rec)
-	}
-	return err
+	return c.mainHook
 }
 
 // ReplaceCgroupFilter thay toan bo key trong hids_cgroups bang tap id moi.

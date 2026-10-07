@@ -28,11 +28,6 @@
 
 char LICENSE[] SEC("license") = "GPL";
 
-/* bpf_ringbuf_* flags; user space doc theo nhịp khi dung BPF_RB_NO_WAKEUP. */
-#ifndef BPF_RB_NO_WAKEUP
-#define BPF_RB_NO_WAKEUP (1ULL)
-#endif
-
 /* Bang flags chot trong .cursor/rules/hids.mdc. */
 #define HIDS_F_FIRST          (1U << 0)
 #define HIDS_F_GAP_BEFORE     (1U << 1)
@@ -417,8 +412,7 @@ static __always_inline __u32 sat32(__u64 v, __u16 *flags)
 	return (__u32)v;
 }
 
-SEC("tp_btf/sys_enter")
-int BPF_PROG(hids_sys_enter, struct pt_regs *regs, long id)
+static __always_inline int hids_on_sys_enter(long id)
 {
 	__u64 pid_tgid = bpf_get_current_pid_tgid();
 	__u32 tgid = pid_tgid >> 32;
@@ -447,12 +441,9 @@ int BPF_PROG(hids_sys_enter, struct pt_regs *regs, long id)
 	if (hids_steal_fallback)
 		flags |= HIDS_F_STEAL_FALLBACK;
 
-	/* Chi o day moi tao task storage. sched_switch va sched_wakeup chi tra. */
 	st = bpf_task_storage_get(&hids_task_state, bpf_get_current_task_btf(), NULL,
 				  BPF_LOCAL_STORAGE_GET_F_CREATE);
 	if (!st) {
-		/* Khong co trang thai thi khong do duoc thanh phan nao; van dem
-		 * lan dinh ghi de so lieu mat mat khong bi lech. */
 		seqp = bpf_map_lookup_elem(&hids_seq, &key0);
 		if (seqp)
 			*seqp += 1;
@@ -460,10 +451,8 @@ int BPF_PROG(hids_sys_enter, struct pt_regs *regs, long id)
 	}
 
 	if (!st->seen) {
-		/* Ban ghi dau tien cua thread: chua co khoang nao truoc do. */
 		flags |= HIDS_F_FIRST;
 	} else {
-		/* Dong doan ON-CPU dang chay tai sys_enter nay. */
 		close_on_cpu(st, ts);
 		flags |= st->pending_flags & HIDS_PENDING_MASK;
 		if (st->gap_pending)
@@ -482,9 +471,6 @@ int BPF_PROG(hids_sys_enter, struct pt_regs *regs, long id)
 		if (drops)
 			*drops += 1;
 		st->gap_pending = 1;
-		/* Giu nguyen acc_* va last_enter_ts: ban ghi thanh cong ke tiep
-		 * mang thanh phan cua toan bo khoang gop. Mo lai doan ON-CPU de
-		 * khong bo sot thoi gian. */
 		if (!st->seen) {
 			st->seen = 1;
 			st->last_enter_ts = ts;
@@ -519,7 +505,6 @@ int BPF_PROG(hids_sys_enter, struct pt_regs *regs, long id)
 
 	bpf_ringbuf_submit(rec, 0);
 
-	/* Bat dau khoang moi. */
 	st->seen = 1;
 	st->gap_pending = 0;
 	st->pending_flags = 0;
@@ -533,6 +518,18 @@ int BPF_PROG(hids_sys_enter, struct pt_regs *regs, long id)
 	open_on_cpu(st, ts, cpu);
 
 	return 0;
+}
+
+SEC("tp_btf/sys_enter")
+int BPF_PROG(hids_sys_enter, struct pt_regs *regs, long id)
+{
+	return hids_on_sys_enter(id);
+}
+
+SEC("fentry/x64_sys_call")
+int BPF_PROG(hids_sys_enter_fentry, struct pt_regs *regs, int nr)
+{
+	return hids_on_sys_enter((long)nr);
 }
 
 SEC("tp_btf/sched_switch")

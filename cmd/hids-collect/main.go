@@ -77,8 +77,8 @@ func run() error {
 		"dung rq->prev_steal_time thay cho vmw_steal_time; moi ban ghi mang co STEAL_FALLBACK")
 	discard := flag.Bool("discard", false,
 		"doc ring buffer nhung khong ghi ban ghi ra file (do overhead ghi dia)")
-	ringbufPollMs := flag.Int("ringbuf-poll-ms", 0,
-		"chu ky doc ring buffer (ms) khi dung BPF_RB_NO_WAKEUP; 0 = cho khoa vo han (mac dinh)")
+	sysEnterHook := flag.String("sys-enter-hook", syscallbpf.SysEnterHookTracepoint,
+		"diem gan sys_enter: tracepoint (mac dinh) hoac fentry (x64_sys_call)")
 	zstdLevel := flag.Int("zstd-level", 2,
 		"muc nen zstd luong (1-3); 0 = khong nen")
 	flag.Parse()
@@ -92,8 +92,9 @@ func run() error {
 	if *ringbufMB <= 0 || *ringbufMB&(*ringbufMB-1) != 0 {
 		return fmt.Errorf("-ringbuf-mb phai la luy thua cua 2, nhan duoc %d", *ringbufMB)
 	}
-	if *ringbufPollMs < 0 {
-		return fmt.Errorf("-ringbuf-poll-ms khong duoc am")
+	if *sysEnterHook != syscallbpf.SysEnterHookTracepoint && *sysEnterHook != syscallbpf.SysEnterHookFentry {
+		return fmt.Errorf("-sys-enter-hook phai la %q hoac %q, nhan %q",
+			syscallbpf.SysEnterHookTracepoint, syscallbpf.SysEnterHookFentry, *sysEnterHook)
 	}
 	if *zstdLevel < 0 || *zstdLevel > 3 {
 		return fmt.Errorf("-zstd-level phai trong 0..3, nhan duoc %d", *zstdLevel)
@@ -179,6 +180,7 @@ func run() error {
 		TSCKHz:        tsc.KHz,
 		StealFallback: stealMode == stealModeFallback,
 		StealOff:      stealMode == stealModeOff,
+		SysEnterHook:  *sysEnterHook,
 	})
 	if err != nil {
 		bpflog.Report(logPath, "khong nap duoc chuong trinh BPF cua collector", err)
@@ -238,7 +240,7 @@ func run() error {
 	header = append(header,
 		fmt.Sprintf("irq_tracepoints (%d cap): %s", len(coll.IRQTracepoints()), strings.Join(coll.IRQTracepoints(), " ")),
 		fmt.Sprintf("discard: %v", *discard),
-		fmt.Sprintf("ringbuf_poll_ms: %d", *ringbufPollMs),
+		fmt.Sprintf("sys_enter_hook: %s", *sysEnterHook),
 		fmt.Sprintf("zstd_level: %d", *zstdLevel),
 		fmt.Sprintf("start_mono_ns: %d", startMono),
 		fmt.Sprintf("start_wall: %s", startWall.Format(time.RFC3339Nano)),
@@ -320,9 +322,8 @@ func run() error {
 	var shortRecords int64
 	var sinceFlush int64
 
-	pollInterval := time.Duration(*ringbufPollMs) * time.Millisecond
 	for {
-		err := coll.ReadIntoPoll(&rec, pollInterval)
+		err := coll.ReadInto(&rec)
 		if err != nil {
 			if errors.Is(err, os.ErrDeadlineExceeded) {
 				continue
