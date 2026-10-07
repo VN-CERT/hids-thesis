@@ -1,27 +1,23 @@
 # Trạng thái dự án HIDS
 
-Cập nhật lần cuối: 2026-10-07 21:35 (giờ máy)
+Cập nhật lần cuối: 2026-10-07 22:15 (giờ máy)
 
 ## Mốc hiện tại và mục tiêu
-- **M5b:** Tối ưu overhead (O1–O3 xong); chẩn đoán bước 1, G7/G3, đo lại M5, R017, tag `m5b`.
+- **M5b:** Xong báo cáo R017, tag `m5b` trên `255ef53`. O4 chưa làm (C2 đạt ngưỡng).
 
 ## Bước đã xong
-- O1 ringbuf NO_WAKEUP + poll 10 ms (`7e9e915`)
-- O3 zstd + recfmt (`dd54480`)
-- M5b task, `-discard`, `m5b_diag.sh`, `m5b.sh` (`8235e7d`, `30e2d4c`)
-- M5 m6a (tag `m5`, R016)
+- M5b O2/O3, sửa đọc ring buffer, ma trận `validation/m5b-20261007/`, G3 v3, G7a/d/b-nho (lượt sau sửa)
+- R017, tag `m5b`
 
 ## Bước đang làm
-Chạy kiểm chứng M5b (diag, G7, G3, ma trận M5).
+Không.
 
 ## Bước tiếp theo
-Hoàn tất `m5b.sh`, viết R017, gắn tag `m5b`. O4 chỉ nếu C2 > 3% sau đo.
+Chạy lại chẩn đoán + T4-R nếu kiến trúc sư yêu cầu; quyết O1/O4.
 
 ## Việc đang chạy
-| Tên | Lệnh | Bắt đầu | Log |
-|-----|------|---------|-----|
-| hids-m5b-diag | `scripts/m5b_diag.sh` | ~21:30 | `out/jobs/m5b-diag.log`, `validation/m5b-20261007/diag/` |
-| hids-g7-m5b | `g7.sh a; g7.sh d; g7.sh b-nho` | ~21:35 | `out/jobs/g7-m5b.log` |
+Không.
 
 ## Vướng mắc / chờ kiến trúc sư
-- O4 (fentry `x64_sys_call`) chưa làm; chờ kết quả C2 sau M5b.
+- O1 `BPF_RB_NO_WAKEUP` + poll: hoãn sau lỗi 100% mất bản ghi.
+- T3/T4-C1 vẫn >10% suy giảm — có thử O4 fentry?

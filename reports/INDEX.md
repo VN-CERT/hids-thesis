@@ -18,3 +18,4 @@
 | [R014](R014-m6a-irq-steal-stealoff.md) | 2026-10-07 16:45 | M6a | irq trừ steal, `steal_off_ns` 56 byte, tự kiểm G7/G3 S1–S5; E2 lần 3 chờ người dùng. | Xong, tag `m6a`. |
 | [R015](R015-e2-lan3-m4py.md) | 2026-10-07 17:05 | E2-l3 | Sửa `m4.py` gộp CSV; tái tạo summary/E2.png; E2-lan2/lan3. | Xong. |
 | [R016](R016-m5-m6a-overhead.md) | 2026-10-07 21:05 | M5 | Overhead C0–C3 T1–T4 m6a; `validation/m5-20261007-m6a/`. | Xong, tag `m5`. |
+| [R017](R017-m5b-overhead-opt.md) | 2026-10-07 22:15 | M5b | O2/O3, sửa C2; O1 NO_WAKEUP hoãn; M5b + G3; tag `m5b`. | Xong (T4-R/chẩn đoán cần chạy lại). |
