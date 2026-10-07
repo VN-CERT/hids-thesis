@@ -475,7 +475,8 @@ t3_r_run() {
 	local tps lat_avg lat_p99 recs drops
 	tps=$(awk '/^tps =/{print $3; exit}' "$dir/pgbench.log")
 	lat_avg=$(awk '/latency average =/{print $4; exit}' "$dir/pgbench.log")
-	lat_p99=$(awk '/^  p99 =/{print $3; exit}' "$dir/pgbench.log")
+	lat_p99=$(awk '/^statement latencies/{f=1;next} f&&/percentile/{getline; print $8; exit}' "$dir/pgbench.log")
+	lat_p99=${lat_p99:-$(awk '/^  p99 =/{print $3; exit}' "$dir/pgbench.log")}
 	recs=$(recstat_count "$dir/collect.bin" 2>/dev/null || echo 0)
 	drops=$(collector_drops "$dir/collect.log")
 	m5_drop_collect_artifacts "$dir"
@@ -509,14 +510,21 @@ t4_r_run() {
 	sleep 0.5
 	coll_pid=$(scope_main_pid "hids-m5b-t4r-$$")
 	wait_ready "$dir/collect.log"
-	taskset -c 16-19 "$hey" -z 60s -qps "${rate%.*}" -c 64 "http://127.0.0.1:18080/f.bin" >"$dir/hey.log" 2>&1 || true
+	local workers=64 qps
+	qps=$(python3 - "$rate" "$workers" <<'PY'
+import sys
+rate, w = float(sys.argv[1]), int(sys.argv[2])
+print(max(1, int(rate / w)))
+PY
+)
+	taskset -c 16-19 "$hey" -z 60s -q "$qps" -c "$workers" "http://127.0.0.1:18080/f.bin" >"$dir/hey.log" 2>&1 || true
 	kill -TERM "$coll_pid" 2>/dev/null || true
 	wait_pid_gone "$coll_pid"
 	usec1=$(scope_usage_usec "$cgroup")
 	local rps p50 p99 recs drops
 	rps=$(awk '/Requests\/sec:/{print $2}' "$dir/hey.log")
-	p50=$(awk '/50% in/{print $3}' "$dir/hey.log")
-	p99=$(awk '/99% in/{print $3}' "$dir/hey.log")
+	p50=$(awk '/Latency distribution/{f=1;next} f&&/50%/{print $2; exit}' "$dir/hey.log")
+	p99=$(awk '/Latency distribution/{f=1;next} f&&/99%/{print $2; exit}' "$dir/hey.log")
 	recs=$(recstat_count "$dir/collect.bin" 2>/dev/null || echo 0)
 	drops=$(collector_drops "$dir/collect.log")
 	m5_drop_collect_artifacts "$dir"
