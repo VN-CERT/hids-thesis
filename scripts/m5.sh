@@ -229,7 +229,7 @@ setup_pg() {
 		docker exec pgtest pg_isready -U postgres >/dev/null 2>&1 && break
 		sleep 1
 	done
-	docker exec pgtest pgbench -i -s 50 -U postgres -d postgres >/dev/null
+	docker exec -u postgres pgtest pgbench -i -s 50 -U postgres -d postgres >/dev/null
 }
 
 setup_nginx() {
@@ -273,7 +273,7 @@ t3_run() {
 		stress-ng --cpu 8 --taskset "$stress_cpus" --timeout 120 >/dev/null 2>&1 &
 		stress_pids+=($!)
 	}
-	taskset -c 16-19 docker exec pgtest pgbench -c 16 -j 4 -T 60 -U postgres -d postgres \
+	taskset -c 16-19 docker exec -u postgres pgtest pgbench -c 16 -j 4 -T 60 -U postgres -d postgres \
 		>"$dir/pgbench.log" 2>&1 || true
 	local tps lat
 	tps=$(awk '/including latency/{f=1} f && /tps =/{print $3; exit}' "$dir/pgbench.log")
