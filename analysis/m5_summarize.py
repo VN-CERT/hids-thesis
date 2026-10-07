@@ -86,7 +86,7 @@ def main() -> None:
         "overhead_pct",
     ]
     all_rows: list[dict] = []
-    for load in ("T1", "T2", "T3", "T4"):
+    for load in ("T1", "T2", "T3", "T4", "T3-R", "T4-R"):
         all_rows.extend(load_rows(root, load))
     w = csv.DictWriter(sys.stdout, fieldnames=fieldnames, lineterminator="\n")
     w.writeheader()
