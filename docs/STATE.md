@@ -19,7 +19,7 @@ Cập nhật lần cuối: 2026-10-07 18:55 (giờ máy)
 - Khi M5 xong: tag `m5`, báo cáo R016.
 
 ## Việc đang chạy
-- **hids-m5-m6a** — `systemd-run --unit=hids-m5-m6a` — bắt đầu sau commit M5 script — dự kiến nhiều giờ — log `out/jobs/m5-m6a.log` — trạng thái `out/jobs/m5-m6a.status`
+- **hids-m5-m6a** — `systemd-run --unit=hids-m5-m6a` — bắt đầu 2026-10-07 18:52 — dự kiến nhiều giờ — log `/root/hids/out/jobs/m5-m6a.log` — trạng thái `/root/hids/out/jobs/m5-m6a.status` — commit `59be160`
 
 ## Vướng mắc / chờ kiến trúc sư
 - Không.
