@@ -343,12 +343,12 @@ e4() {
 	printf '%s\n' "${manifest[@]}"
 }
 
-# Tong jiffies dong `cpu` trong /proc/stat (user nice system idle iowait irq softirq steal).
+# Tat ca cot jiffies cua dong `cpu` (tu user den guest_nice neu co).
 vm_cpu_jiffies() {
-	awk '/^cpu / {print $2,$3,$4,$5,$6,$7,$8,$9}' /proc/stat
+	awk '/^cpu / {for (i=2;i<=NF;i++) printf "%s%s", $i, (i<NF?" ":"\n")}' /proc/stat
 }
 
-# Do 10 giay; in va tra ve % steal / (thoi gian CPU VM, khong tinh idle).
+# Do 10 giay; % steal = delta_steal / tong delta moi cot dong cpu.
 measure_vm_steal_pct_10s() {
 	local a b
 	a=$(vm_cpu_jiffies)
@@ -359,14 +359,16 @@ import sys
 def d(s):
     return [int(x) for x in s.split()]
 a, b = d(sys.argv[1]), d(sys.argv[2])
-da = [b[i] - a[i] for i in range(8)]
-# user nice system idle iowait irq softirq steal
-active = sum(da[i] for i in range(7) if i != 3)
-steal = da[7]
-if active <= 0:
+if len(a) != len(b) or len(a) < 8:
     print("0.000")
     sys.exit(0)
-print(f"{100.0 * steal / active:.3f}")
+da = [b[i] - a[i] for i in range(len(a))]
+total = sum(da)
+steal = da[7]
+if total <= 0:
+    print("0.000")
+    sys.exit(0)
+print(f"{100.0 * steal / total:.3f}")
 PY
 }
 
@@ -523,6 +525,11 @@ main() {
 		[[ -d $OUTROOT/E2 ]] || die "khong co $OUTROOT/E2"
 		rebuild_summary
 		;;
+	m4-close)
+		[[ -d $OUTROOT/E1 && -d $OUTROOT/E2 ]] || die "can E1 va E2 trong $OUTROOT"
+		rebuild_summary
+		"${M4_PYTHON[@]}" "$M4PY" --outdir "$M4PY_OUT" --m4-close
+		;;
 	all)
 		calibrate_wl
 		calibrate_mem
@@ -533,7 +540,7 @@ main() {
 		"${M4_PYTHON[@]}" "$M4PY" --outdir "$M4PY_OUT" --summary "$OUTROOT/summary.csv" "${all_manifest[@]}"
 		;;
 	*)
-		die "usage: m4.sh {calibrate|e1|e3|e4|e2|e2-finish|rebuild-summary|all}"
+		die "usage: m4.sh {calibrate|e1|e3|e4|e2|e2-finish|m4-close|rebuild-summary|all}"
 		;;
 	esac
 }

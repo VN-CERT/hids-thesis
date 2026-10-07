@@ -143,6 +143,111 @@ def print_table(exp: str, level: str, rows: list[dict]) -> None:
         )
 
 
+def load_e2_probe_pcts(outdir: Path, levels: list[str]) -> dict[str, float]:
+    pcts: dict[str, float] = {}
+    for lv in levels:
+        p = outdir / "E2" / f"{lv}.vm_steal_probe_pct"
+        if not p.exists():
+            continue
+        t = p.read_text().strip()
+        if t:
+            try:
+                pcts[lv] = float(t)
+            except ValueError:
+                pass
+    return pcts
+
+
+def boxplot_e2(outdir: Path, by_level: dict[str, pd.DataFrame], probe_pcts: dict[str, float]) -> None:
+    levels = [lv for lv in E2_LEVEL_ORDER if lv in by_level]
+    if not levels:
+        return
+    fig, axes = plt.subplots(1, 3, figsize=(11, 4))
+    metrics = [("dt_ns", "dt (us)"), ("cpu_ns", "cpu (us)"), ("steal_ns", "steal (us)")]
+    for ax, (col, title) in zip(axes, metrics):
+        data = []
+        labels = []
+        for lv in levels:
+            burn = by_level[lv]
+            burn = burn[burn["syscall_nr"].isin(BURN_NRS)]
+            if burn.empty:
+                continue
+            labels.append(str(lv))
+            data.append((burn[col].dropna().astype(float) / 1000.0).values)
+        if not data:
+            continue
+        ax.boxplot(data, labels=labels)
+        ax.set_yscale("log")
+        ax.set_title(title)
+        ax.set_xlabel("CPU limit (MHz)")
+        for i, lv in enumerate(labels):
+            pr = probe_pcts.get(lv, float("nan"))
+            if not np.isnan(pr):
+                ax.text(i + 1, ax.get_ylim()[0], f"probe={pr:.2f}%", ha="center", va="top", fontsize=7)
+    fig.suptitle("E2 burn intervals")
+    fig.tight_layout()
+    fig.savefig(outdir / "E2.png", dpi=120)
+    plt.close(fig)
+
+
+def decomposition_rows(exp: str, by_level: dict[str, pd.DataFrame]) -> list[dict]:
+    levels = sort_levels(list(by_level.keys()))
+    bl = baseline_level_key(by_level, exp)
+    comp_cols = ["cpu_ns", "steal_ns", "irq_ns", "rq_ns", "vol_ns"]
+    rows: list[dict] = []
+    for kind in ("burn", "sleep"):
+        if bl not in by_level:
+            continue
+        base = by_level[bl][by_level[bl]["kind"] == kind]
+        if base.empty:
+            continue
+        base_dt = float(base["dt_ns"].mean())
+        base_parts = {c: float(base[c].mean()) for c in comp_cols}
+        for lv in levels:
+            sub = by_level[lv][by_level[lv]["kind"] == kind]
+            if sub.empty:
+                continue
+            mean_dt = float(sub["dt_ns"].mean())
+            parts = {c: float(sub[c].mean()) for c in comp_cols}
+            d_dt = mean_dt - base_dt
+            d_parts = {c.replace("_ns", ""): parts[c] - base_parts[c] for c in comp_cols}
+            check = sum(d_parts.values()) - d_dt
+            rows.append(
+                {
+                    "experiment": exp,
+                    "kind": kind,
+                    "level": lv,
+                    "delta_dt_mean_ns": d_dt,
+                    "delta_cpu_mean_ns": d_parts["cpu"],
+                    "delta_steal_mean_ns": d_parts["steal"],
+                    "delta_irq_mean_ns": d_parts["irq"],
+                    "delta_rq_mean_ns": d_parts["rq"],
+                    "delta_vol_mean_ns": d_parts["vol"],
+                    "check_sum_ns": check,
+                }
+            )
+    return rows
+
+
+def print_decomposition(exp: str, rows: list[dict]) -> None:
+    sub = [r for r in rows if r["experiment"] == exp]
+    if not sub:
+        return
+    print(f"\n=== Phan ra muc tang — {exp} (ns, so voi muc dau) ===")
+    hdr = (
+        f"{'kind':6} {'level':>10} {'d_dt':>12} {'d_cpu':>10} {'d_steal':>10} "
+        f"{'d_irq':>8} {'d_rq':>10} {'d_vol':>10} {'check':>10}"
+    )
+    print(hdr)
+    for r in sub:
+        print(
+            f"{r['kind']:6} {str(r['level']):>10} {r['delta_dt_mean_ns']:12.0f} "
+            f"{r['delta_cpu_mean_ns']:10.0f} {r['delta_steal_mean_ns']:10.0f} "
+            f"{r['delta_irq_mean_ns']:8.0f} {r['delta_rq_mean_ns']:10.0f} "
+            f"{r['delta_vol_mean_ns']:10.0f} {r['check_sum_ns']:10.0f}"
+        )
+
+
 def boxplot_exp(outdir: Path, exp: str, by_level: dict[str, pd.DataFrame]) -> None:
     levels = sort_levels(list(by_level.keys()))
     fig, axes = plt.subplots(1, 2, figsize=(10, 4))
@@ -193,7 +298,16 @@ def run_experiment(
         rows = level_table(df, level, baseline_medians)
         print_table(exp, level, rows)
         summary_rows.extend(rows)
-    boxplot_exp(outdir, exp, by_level)
+    if exp == "E2":
+        probe = load_e2_probe_pcts(outdir, sort_levels(list(by_level.keys())))
+        for r in summary_rows:
+            if r.get("experiment") == "E2" and r.get("kind") == "burn":
+                pr = probe.get(str(r["level"]))
+                if pr is not None:
+                    r["vm_steal_probe_pct"] = pr
+        boxplot_e2(outdir, by_level, probe)
+    else:
+        boxplot_exp(outdir, exp, by_level)
 
 
 def load_steal_probe(path: Path) -> pd.DataFrame:
@@ -248,6 +362,11 @@ def main() -> None:
     ap.add_argument("--outdir", type=Path)
     ap.add_argument("--summary", type=Path)
     ap.add_argument("--probe-steal-pct", nargs=3, metavar=("CSV", "WALL_START", "WALL_END"))
+    ap.add_argument(
+        "--m4-close",
+        action="store_true",
+        help="ve E2.png dac biet + luu decompose-E1/E2.csv tu thu muc --outdir",
+    )
     ap.add_argument("manifest", nargs="*", help="exp:level:csv ...")
     args = ap.parse_args()
 
@@ -255,6 +374,42 @@ def main() -> None:
         csv_p, w0, w1 = args.probe_steal_pct
         pct = probe_vm_steal_pct(Path(csv_p), w0, w1)
         print(f"{pct:.6f}")
+        return
+
+    if args.m4_close:
+        if not args.outdir:
+            ap.error("--m4-close can --outdir")
+        args.outdir.mkdir(parents=True, exist_ok=True)
+        decomp: list[dict] = []
+        for exp, pattern in (("E1", "E1/L{}.csv"), ("E2", "E2/{}.csv")):
+            paths: dict[str, Path] = {}
+            if exp == "E1":
+                for L in range(4):
+                    p = args.outdir / pattern.format(L)
+                    if p.exists():
+                        paths[str(L)] = p
+            else:
+                for lv in E2_LEVEL_ORDER:
+                    p = args.outdir / pattern.format(lv)
+                    if p.exists():
+                        paths[lv] = p
+            if not paths:
+                continue
+            by_level = {}
+            for level, p in paths.items():
+                df = classify(load_csv(p))
+                df.attrs["experiment"] = exp
+                by_level[level] = df
+            decomp.extend(decomposition_rows(exp, by_level))
+            if exp == "E2":
+                boxplot_e2(args.outdir, by_level, load_e2_probe_pcts(args.outdir, list(paths.keys())))
+        if decomp:
+            ddf = pd.DataFrame(decomp)
+            for exp in ("E1", "E2"):
+                sub = ddf[ddf["experiment"] == exp]
+                if not sub.empty:
+                    sub.to_csv(args.outdir / f"decompose-{exp}.csv", index=False)
+                    print_decomposition(exp, decomp)
         return
 
     if not args.outdir or not args.summary or not args.manifest:
