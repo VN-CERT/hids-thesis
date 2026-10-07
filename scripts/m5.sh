@@ -99,6 +99,15 @@ scope_usage_usec() {
 	[[ -f $cg/cpu.stat ]] && awk '/^usage_usec/{print $2}' "$cg/cpu.stat" || echo 0
 }
 
+m5_drop_collect_artifacts() {
+	local dir=$1
+	local bf="$dir/collect.bin"
+	if [[ -f $bf ]]; then
+		echo "bin_bytes=$(stat -c %s "$bf" 2>/dev/null || echo 0)" >>"$dir/result.txt"
+		rm -f "$dir/collect.bin" "$dir/collect.bin.periodic" "$dir/collect.bin.stats"
+	fi
+}
+
 stress_cpus_complement() {
 	# 8 CPU khong thuoc tap load (danh sach truyen vao)
 	local -a used=("$@")
@@ -198,6 +207,7 @@ collector_user_usec=$coll_usec
 records=$recs
 drops=$drops
 EOF
+	[[ $cond != C0 ]] && m5_drop_collect_artifacts "$dir"
 	echo "T1 $cond run$run: ${ns_per} ns/syscall"
 }
 
@@ -260,6 +270,7 @@ t2_run() {
 	for p in "${stress_pids[@]:-}"; do kill "$p" 2>/dev/null || true; done
 	echo "metric=us_per_iter" >"$dir/result.txt"
 	echo "value=$out" >>"$dir/result.txt"
+	[[ $cond != C0 ]] && m5_drop_collect_artifacts "$dir"
 	echo "T2 $cond run$run: ${out} us/iter"
 }
 
@@ -351,6 +362,7 @@ latency_ms=$lat
 records=$recs
 drops=$drops
 EOF
+	[[ $cond != C0 ]] && m5_drop_collect_artifacts "$dir"
 	echo "T3 $cond run$run: tps=$tps"
 }
 
@@ -407,14 +419,20 @@ p99_ms=$p99
 records=$recs
 drops=$drops
 EOF
+	[[ $cond != C0 ]] && m5_drop_collect_artifacts "$dir"
 	echo "T4 $cond run$run: rps=$rps"
 }
 
 bpf_kernel_cost() {
 	local dir="$OUTROOT/bpf-kernel-T3-C1"
 	mkdir -p "$dir"
+	if [[ -f $OUTROOT/bpf-kernel-cost.txt ]]; then
+		cat "$OUTROOT/bpf-kernel-cost.txt"
+		return 0
+	fi
 	sysctl -w kernel.bpf_stats_enabled=1 >/dev/null
 	t3_run C1 99
+	rm -rf "$OUTROOT/T3/C1/run99"
 	bpftool prog show -j >"$dir/progs.json" 2>/dev/null || echo '[]' >"$dir/progs.json"
 	sysctl -w kernel.bpf_stats_enabled=0 >/dev/null
 	python3 - "$dir" <<'PY'
