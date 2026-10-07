@@ -389,7 +389,7 @@ main() {
 	mkdir -p "$OUTROOT" out
 	mkdir -p "$DECOY_CG"
 
-	docker ps --format '{{.Names}}' | grep -vE '^(pgtest|m5-nginx)$' >"$OUTROOT/docker-stopped.txt" || true
+	docker ps --format '{{.Names}}' 2>/dev/null | grep -vE '^(pgtest|m5-nginx)$' >"$OUTROOT/docker-stopped.txt" || true
 	while read -r n; do
 		[[ -n $n ]] && docker stop "$n" >/dev/null 2>&1 || true
 	done <"$OUTROOT/docker-stopped.txt"
