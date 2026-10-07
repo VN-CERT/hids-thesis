@@ -1,6 +1,6 @@
 # R012 — M4.4: đóng M4 (E2, phân rã, E2.png)
 
-1. **Số báo cáo:** R012 — 2026-10-07 — M4.4 — git commit: *(sau commit, tag `m4`)*
+1. **Số báo cáo:** R012 — 2026-10-07 — M4.4 — git commit: `fa0ae7e`, tag `m4`
 2. **Mục tiêu:** Sửa công thức kiểm steal 10s; hoàn thiện báo cáo E2 và bảng phân rã E1/E2 (không chạy lại E2).
 3. **Đã làm:** `measure_vm_steal_pct_10s` mẫu số = tổng Δ jiffies dòng `cpu`; `m4.py --m4-close` → `E2.png` (3 boxplot log, ghi `vm_steal_probe_pct`); `decompose-E1.csv`, `decompose-E2.csv`; `scripts/m4.sh m4-close`.
 4. **Lệnh:** `sudo bash scripts/m4.sh m4-close`
