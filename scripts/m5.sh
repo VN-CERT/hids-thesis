@@ -8,7 +8,9 @@ COLLECT=./bin/hids-collect
 RECSTAT=./bin/rec-stat
 SYSINJ=./bin/sysinj
 DATE=$(date +%Y%m%d)
-OUTROOT="${M5_OUTROOT:-validation/m5-${DATE}}"
+OUTROOT="${M5_OUTROOT:-validation/m5-${DATE}-m6a}"
+CONTAINERS_RESTORE="${M5_CONTAINERS_RESTORE:-/root/containers-da-dung.txt}"
+STRESS_CPU_METHOD=(--cpu-method int64)
 RUNS=${M5_RUNS:-5}
 REST=${M5_REST:-10}
 N_SYSINJ=${M5_N_SYSINJ:-10000000}
@@ -32,6 +34,22 @@ require_clean_git() {
 		[[ $path == out/* || $path == validation/m5* || $path == validation/m5-* ]] && continue
 		die "cay git khong sach: $st $path"
 	done < <(git status --porcelain 2>/dev/null | awk '{print $1, $2}')
+}
+
+require_from_m6a() {
+	git rev-parse m6a >/dev/null 2>&1 || die "khong co tag m6a"
+	git merge-base --is-ancestor m6a HEAD || die "HEAD khong phai tu tag m6a tro di (can checkout/commit sau m6a)"
+}
+
+restore_production_containers() {
+	[[ -f $CONTAINERS_RESTORE ]] || {
+		echo "m5: khong co $CONTAINERS_RESTORE, bo qua docker start" >&2
+		return 0
+	}
+	while read -r n; do
+		[[ -z $n || $n == \#* ]] && continue
+		docker start "$n" >/dev/null 2>&1 || echo "m5: docker start that bai: $n" >&2
+	done <"$CONTAINERS_RESTORE"
 }
 
 cgroup_path_of_pid() {
@@ -145,7 +163,7 @@ t1_run() {
 
 	if [[ $cond == C3 ]]; then
 		stress_cpus=$(stress_cpus_complement 12)
-		stress-ng --cpu 8 --taskset "$stress_cpus" --timeout 3600 >/dev/null 2>&1 &
+		stress-ng --cpu 8 "${STRESS_CPU_METHOD[@]}" --taskset "$stress_cpus" --timeout 3600 >/dev/null 2>&1 &
 		stress_pids+=($!)
 	fi
 
@@ -217,7 +235,7 @@ t2_run() {
 	esac
 	[[ $cond == C3 ]] && {
 		stress_cpus=$(stress_cpus_complement 12)
-		stress-ng --cpu 8 --taskset "$stress_cpus" --timeout 600 >/dev/null 2>&1 &
+		stress-ng --cpu 8 "${STRESS_CPU_METHOD[@]}" --taskset "$stress_cpus" --timeout 600 >/dev/null 2>&1 &
 		stress_pids+=($!)
 	}
 	wait_pid_gone "$pid"
@@ -302,7 +320,7 @@ t3_run() {
 	esac
 	[[ $cond == C3 ]] && {
 		stress_cpus=$(stress_cpus_complement 12 13 14 15 16 17 18 19)
-		stress-ng --cpu 8 --taskset "$stress_cpus" --timeout 120 >/dev/null 2>&1 &
+		stress-ng --cpu 8 "${STRESS_CPU_METHOD[@]}" --taskset "$stress_cpus" --timeout 120 >/dev/null 2>&1 &
 		stress_pids+=($!)
 	}
 	taskset -c 16-19 docker exec -u postgres pgtest pgbench -c 16 -j 4 -T 60 -U postgres -d postgres \
@@ -357,7 +375,7 @@ t4_run() {
 	esac
 	[[ $cond == C3 ]] && {
 		stress_cpus=$(stress_cpus_complement 12 13 14 15 16 17 18 19)
-		stress-ng --cpu 8 --taskset "$stress_cpus" --timeout 120 >/dev/null 2>&1 &
+		stress-ng --cpu 8 "${STRESS_CPU_METHOD[@]}" --taskset "$stress_cpus" --timeout 120 >/dev/null 2>&1 &
 		stress_pids+=($!)
 	}
 	taskset -c 16-19 wrk -t4 -c64 -d60s "http://127.0.0.1:18080/f.bin" >"$dir/wrk.log" 2>&1 || true
@@ -410,10 +428,18 @@ for name, avg, rc in sorted(rows):
 PY
 }
 
+m5_progress() {
+	local msg=$1
+	local st="${M5_STATUS_FILE:-out/jobs/m5.status}"
+	mkdir -p "$(dirname "$st")"
+	echo "updated=$(date -Iseconds) $msg" >>"$st"
+}
+
 main() {
 	[[ $EUID -eq 0 ]] || die "can root"
-	trap write_m5_summary EXIT
+	trap 'write_m5_summary; restore_production_containers' EXIT
 	require_clean_git
+	require_from_m6a
 	for f in "$COLLECT" "$RECSTAT" "$SYSINJ"; do
 		[[ -x $f ]] || die "thieu $f (make build)"
 	done
@@ -423,15 +449,15 @@ main() {
 	mkdir -p "$OUTROOT" out
 	mkdir -p "$DECOY_CG"
 
-	docker ps --format '{{.Names}}' 2>/dev/null | grep -vE '^(pgtest|m5-nginx)$' >"$OUTROOT/docker-stopped.txt" || true
-	while read -r n; do
-		[[ -n $n ]] && docker stop "$n" >/dev/null 2>&1 || true
-	done <"$OUTROOT/docker-stopped.txt"
+	cp -f "$CONTAINERS_RESTORE" "$OUTROOT/containers-restore.txt" 2>/dev/null || true
+	docker rm -f pgtest m5-nginx 2>/dev/null || true
 
 	setup_pg
 	setup_nginx
 
-	local cond run t
+	local cond run t total=0 done=0
+	total=$((4 * 4 * RUNS))
+	m5_progress "status=running outroot=$OUTROOT total_runs=$total done=0"
 	for t in T1 T2 T3 T4; do
 		for cond in C0 C1 C2 C3; do
 			for ((run = 1; run <= RUNS; run++)); do
@@ -441,19 +467,23 @@ main() {
 				T3) t3_run "$cond" "$run" ;;
 				T4) t4_run "$cond" "$run" ;;
 				esac
+				done=$((done + 1))
+				write_m5_summary
+				m5_progress "status=running $t $cond run$run/$RUNS progress=$done/$total"
 				sleep "$REST"
 			done
 		done
+		write_m5_summary
+		m5_progress "status=running finished_load=$t"
 	done
 
 	bpf_kernel_cost | tee "$OUTROOT/bpf-kernel-cost.txt"
 
 	docker rm -f pgtest m5-nginx 2>/dev/null || true
-	while read -r n; do
-		[[ -n $n ]] && docker start "$n" >/dev/null 2>&1 || true
-	done <"$OUTROOT/docker-stopped.txt"
+	restore_production_containers
 
 	write_m5_summary
+	m5_progress "status=done outroot=$OUTROOT"
 	echo "m5 xong: $OUTROOT (summary: $OUTROOT/summary.csv)"
 }
 
