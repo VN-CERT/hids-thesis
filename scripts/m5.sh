@@ -334,8 +334,8 @@ t3_run() {
 	taskset -c 16-19 docker exec -u postgres pgtest pgbench -c 16 -j 4 -T 60 -U postgres -d postgres \
 		>"$dir/pgbench.log" 2>&1 || true
 	local tps lat
-	tps=$(awk '/including latency/{f=1} f && /tps =/{print $3; exit}' "$dir/pgbench.log")
-	lat=$(awk '/latency average/{print $4; exit}' "$dir/pgbench.log")
+	tps=$(awk '/^tps =/{print $3; exit}' "$dir/pgbench.log")
+	lat=$(awk '/latency average =/{print $4; exit}' "$dir/pgbench.log")
 	local recs=0 drops=0
 	if [[ $cond != C0 ]]; then
 		kill -TERM "$coll_pid" 2>/dev/null || true
