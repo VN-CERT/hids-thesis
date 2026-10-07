@@ -322,12 +322,7 @@ func run() error {
 
 	pollInterval := time.Duration(*ringbufPollMs) * time.Millisecond
 	for {
-		if pollInterval > 0 {
-			coll.SetReadDeadline(time.Now().Add(pollInterval))
-		} else {
-			coll.SetReadDeadline(time.Time{})
-		}
-		err := coll.ReadInto(&rec)
+		err := coll.ReadIntoPoll(&rec, pollInterval)
 		if err != nil {
 			if errors.Is(err, os.ErrDeadlineExceeded) {
 				continue

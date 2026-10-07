@@ -278,6 +278,24 @@ func (c *Collector) ReadInto(rec *ringbuf.Record) error {
 	return c.reader.ReadInto(rec)
 }
 
+// ReadIntoPoll doc mot ban ghi; xu ly cilium/ebpf tra ve ErrDeadlineExceeded
+// mot lan truoc khi doc ban ghi dang cho khi dung BPF_RB_NO_WAKEUP.
+func (c *Collector) ReadIntoPoll(rec *ringbuf.Record, poll time.Duration) error {
+	if poll > 0 {
+		c.reader.SetDeadline(time.Now().Add(poll))
+	} else {
+		c.reader.SetDeadline(time.Time{})
+	}
+	err := c.reader.ReadInto(rec)
+	if err == nil {
+		return nil
+	}
+	if errors.Is(err, os.ErrDeadlineExceeded) {
+		err = c.reader.ReadInto(rec)
+	}
+	return err
+}
+
 // ReplaceCgroupFilter thay toan bo key trong hids_cgroups bang tap id moi.
 func (c *Collector) ReplaceCgroupFilter(ids []uint64) error {
 	m := c.coll.Maps["hids_cgroups"]
