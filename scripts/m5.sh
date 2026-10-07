@@ -101,6 +101,7 @@ run_sysinj_scope() {
 t1_run() {
 	local cond=$1 run=$2
 	local dir="$OUTROOT/T1/${cond}/run${run}"
+	[[ -f $dir/result.txt ]] && return 0
 	mkdir -p "$dir"
 	local fifo unit load_pid cgroup coll_pid coll_log bin stress_pids=() stress_cpus
 	fifo=$(mktemp -u)
@@ -153,13 +154,13 @@ t1_run() {
 
 	local coll_usec=0 recs=0 drops=0 coll_cg=""
 	if [[ $cond != C0 ]]; then
-		kill -TERM "$coll_pid" 2>/dev/null || true
-		wait_pid_gone "$coll_pid"
-		sleep 2
-		coll_cg=$(cgroup_path_of_pid "$(scope_main_pid "hids-m5-coll-${cond}-${run}-$$" 2>/dev/null || echo 0)")
-		[[ -d $coll_cg ]] && coll_usec=$(scope_usage_usec "$coll_cg")
-		[[ -f $dir/collect.bin ]] && recs=$(recstat_count "$dir/collect.bin")
-		drops=$(collector_drops "$dir/collect.log")
+		[[ -n ${coll_pid:-} ]] && kill -TERM "$coll_pid" 2>/dev/null || true
+		[[ -n ${coll_pid:-} ]] && wait_pid_gone "$coll_pid"
+		sleep 1
+		coll_cg=$(cgroup_path_of_pid "$(scope_main_pid "hids-m5-coll-${cond}-${run}-$$" 2>/dev/null || echo 0)" 2>/dev/null || true)
+		[[ -n ${coll_cg:-} && -d $coll_cg ]] && coll_usec=$(scope_usage_usec "$coll_cg")
+		recs=$(awk '/ban ghi doc duoc/{print $4; exit}' "$dir/collect.log" 2>/dev/null)
+		drops=$(awk '/ban ghi doc duoc/{for(i=1;i<=NF;i++) if($i=="mat:") print $(i+1); exit}' "$dir/collect.log" 2>/dev/null)
 	fi
 	for p in "${stress_pids[@]:-}"; do kill "$p" 2>/dev/null || true; done
 
@@ -176,6 +177,7 @@ EOF
 t2_run() {
 	local cond=$1 run=$2
 	local dir="$OUTROOT/T2/${cond}/run${run}"
+	[[ -f $dir/result.txt ]] && return 0
 	mkdir -p "$dir"
 	local unit pid cgroup coll_pid stress_pids=() stress_cpus out
 	unit="hids-m5-t2-${cond}-${run}-$$"
@@ -267,6 +269,7 @@ setup_nginx() {
 t3_run() {
 	local cond=$1 run=$2
 	local dir="$OUTROOT/T3/${cond}/run${run}"
+	[[ -f $dir/result.txt ]] && return 0
 	mkdir -p "$dir"
 	local cgroup coll_pid stress_pids=() stress_cpus
 	cgroup=$(docker_cgroup pgtest)
