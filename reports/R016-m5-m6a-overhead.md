@@ -3,7 +3,7 @@
 1. **Số báo cáo:** R016  
    **Ngày giờ:** 2026-10-07 21:05 (UTC+7)  
    **Mốc:** M5 (m6a)  
-   **Git commit:** `32313e5` (tag `m5`)
+   **Git commit:** `2c75db1` (tag `m5`; script `32313e5`)
 
 2. **Mục tiêu**  
    Đo overhead C0–C3 cho T1–T4 trên mã m6a; lưu `validation/m5-20261007-m6a/`; C3 dùng `stress-ng --cpu-method int64`.
