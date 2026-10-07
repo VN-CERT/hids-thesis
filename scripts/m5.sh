@@ -41,6 +41,15 @@ scope_main_pid() {
 	[[ -n $pid ]] && echo "$pid"
 }
 
+wait_pid_gone() {
+	local pid=$1 i
+	for ((i = 0; i < 600000; i++)); do
+		kill -0 "$pid" 2>/dev/null || return 0
+		sleep 0.1
+	done
+	die "pid $pid khong ket thuc"
+}
+
 wait_ready() {
 	local log=$1 i
 	for ((i = 0; i < 3000; i++)); do
@@ -135,7 +144,7 @@ t1_run() {
 	sleep 1
 	t0=$(date +%s%N)
 	printf '.\n' >&3
-	wait "$load_pid" || true
+	wait_pid_gone "$load_pid"
 	t1=$(date +%s%N)
 	exec 3>&-
 	rm -f "$fifo"
@@ -145,7 +154,7 @@ t1_run() {
 	local coll_usec=0 recs=0 drops=0 coll_cg=""
 	if [[ $cond != C0 ]]; then
 		kill -TERM "$coll_pid" 2>/dev/null || true
-		wait "$coll_pid" 2>/dev/null || true
+		wait_pid_gone "$coll_pid"
 		sleep 2
 		coll_cg=$(cgroup_path_of_pid "$(scope_main_pid "hids-m5-coll-${cond}-${run}-$$" 2>/dev/null || echo 0)")
 		[[ -d $coll_cg ]] && coll_usec=$(scope_usage_usec "$coll_cg")
@@ -202,13 +211,13 @@ t2_run() {
 		stress-ng --cpu 8 --taskset "$stress_cpus" --timeout 600 >/dev/null 2>&1 &
 		stress_pids+=($!)
 	}
-	wait "$pid" 2>/dev/null || true
+	wait_pid_gone "$pid"
 	out=$(grep -i 'Average:' "$dir/bench.log" | tail -1 | awk '{print $2}')
 	[[ -n $out ]] || out=$(awk '/Total time:/{t=$3} END{if(t>0) print t*1e6/1000000}' "$dir/bench.log")
 	local coll_usec=0 recs=0 drops=0
 	if [[ $cond != C0 ]]; then
 		kill -TERM "$coll_pid" 2>/dev/null || true
-		wait "$coll_pid" 2>/dev/null || true
+		wait_pid_gone "$coll_pid"
 		sleep 1
 		recs=$(recstat_count "$dir/collect.bin" 2>/dev/null || echo 0)
 		drops=$(collector_drops "$dir/collect.log")
@@ -285,7 +294,7 @@ t3_run() {
 	local recs=0 drops=0
 	if [[ $cond != C0 ]]; then
 		kill -TERM "$coll_pid" 2>/dev/null || true
-		wait "$coll_pid" 2>/dev/null || true
+		wait_pid_gone "$coll_pid"
 		recs=$(recstat_count "$dir/collect.bin" 2>/dev/null || echo 0)
 		drops=$(collector_drops "$dir/collect.log")
 	fi
@@ -339,7 +348,7 @@ t4_run() {
 	local recs=0 drops=0
 	if [[ $cond != C0 ]]; then
 		kill -TERM "$coll_pid" 2>/dev/null || true
-		wait "$coll_pid" 2>/dev/null || true
+		wait_pid_gone "$coll_pid"
 		recs=$(recstat_count "$dir/collect.bin" 2>/dev/null || echo 0)
 		drops=$(collector_drops "$dir/collect.log")
 	fi
