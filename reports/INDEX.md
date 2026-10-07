@@ -10,3 +10,4 @@
 | [R006](R006-m3.1-g3-v2-wl-bpftrace.md) | 2026-10-07 01:25 | M3.1 | G3 v2: wl hiệu chỉnh, bpftrace S2/S3/S5, G-real `cgroup.threads`, `validation/g3-20261007-v2/`, tag `m3` → `d4c55b9`. | Xong M3.1. Chờ kiến trúc sư G-real / G-irq / rq bpftrace |
 | [R007](R007-m3.2-m4-ab.md) | 2026-10-07 03:50 | M3.2 + M4-ab | G3 v3, E1/E3/E4, `validation/m4-20261007/`, tag `m4-ab`; E2 chờ người dùng. | Xong phần Cursor. Tag `m4` sau E2. |
 | [R008](R008-m4.1-mem-e4.md) | 2026-10-07 13:35 | M4.1 | Sửa hiệu chỉnh `wl mem`, chạy lại E4, `summary.csv` tái tạo. | Xong. |
+| [R009](R009-m4-e2-tag.md) | 2026-10-07 14:05 | M4 | E2 trong `summary.csv`, `E2.png`, tag `m4`. | Xong. |

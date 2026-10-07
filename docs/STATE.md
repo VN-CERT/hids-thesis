@@ -1,26 +1,21 @@
 # Trạng thái dự án HIDS
 
-Cập nhật lần cuối: 2026-10-07 13:35 (giờ máy)
+Cập nhật lần cuối: 2026-10-07 14:05 (giờ máy)
 
 ## Mốc hiện tại và mục tiêu
-- **M4.1:** xong (hiệu chỉnh mem wl, E4 chạy lại, R008).
-- **E2 steal:** chờ người dùng vCenter.
+- **M4:** xong. Tag `m4` trên commit có E2 + `summary.csv` đầy đủ.
 
 ## Bước đang làm
 Không có.
 
 ## Bước tiếp theo
-E2 (`scripts/m4.sh e2`); tag `m4` sau E2.
+Theo kiến trúc sư (mốc sau M4).
 
-## Ghi nhận kiến trúc sư (R006 §8)
-Không đổi.
-
-## Việc đã xong M4.1
-| Việc | Commit / dữ liệu |
+## Việc đã xong
+| Việc | Dữ liệu / báo cáo |
 |---|---|
-| Sửa wl mem + m4.sh rebuild summary | `ed3397b` |
-| E4 mới | `validation/m4-20261007/` (E4-* cập nhật) |
-| R008 | `reports/R008-m4.1-mem-e4.md` |
+| E2 + summary | `validation/m4-20261007/E2/`, `summary.csv`, `E2.png` |
+| R009 | `reports/R009-m4-e2-tag.md` |
 
 ## Việc đang chạy
 Không có.
