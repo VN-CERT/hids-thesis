@@ -13,6 +13,7 @@
 #include <sys/random.h>
 
 #define SPIN_CHUNK 1000000ULL
+#define MEM_STEP_CHUNK 1000000ULL
 #define CAL_US     200000ULL
 #define M4_LOOPS_FILE "/root/hids/out/m4-loops.txt"
 
@@ -175,6 +176,8 @@ static void write_m4_loops(unsigned long long mem_steps)
 	}
 	if (keep_mem == 0)
 		keep_mem = read_mem_steps_file();
+	if (fixed_loops_10ms == 0)
+		fixed_loops_10ms = read_loops_file_field("burn_loops");
 	fprintf(f, "burn_loops %llu\n", fixed_loops_10ms);
 	fprintf(f, "mem_steps %llu\n", keep_mem);
 	fclose(f);
@@ -208,30 +211,84 @@ static void do_sleep_us(unsigned long us)
 	}
 }
 
-static unsigned long long calibrate_mem_steps(unsigned char *buf, size_t sz)
+static void mem_work_with_seed(unsigned char *buf, size_t sz, unsigned long long steps,
+			     unsigned int *seed)
 {
-	unsigned long long t0, t1, steps = 0;
-	unsigned int seed = 1;
+	unsigned long long i;
 
-	t0 = mono_us();
-	while (mono_us() - t0 < CAL_US) {
-		size_t off = (size_t)(rand_r(&seed) % (unsigned int)sz);
+	for (i = 0; i < steps; i++) {
+		size_t off = (size_t)(rand_r(seed) % (unsigned int)sz);
 		buf[off]++;
-		steps++;
+		asm volatile("" ::: "memory");
 	}
-	t1 = mono_us();
-	return steps * 10000ULL / (t1 - t0);
 }
 
 static void mem_work(unsigned char *buf, size_t sz, unsigned long long steps)
 {
 	unsigned int seed = 42;
-	unsigned long long i;
 
-	for (i = 0; i < steps; i++) {
-		size_t off = (size_t)(rand_r(&seed) % (unsigned int)sz);
-		buf[off]++;
-		asm volatile("" ::: "memory");
+	mem_work_with_seed(buf, sz, steps, &seed);
+}
+
+static unsigned long long calibrate_mem_steps(unsigned char *buf, size_t sz)
+{
+	unsigned long long t0, t1, total = 0;
+	unsigned int seed = 42;
+
+	t0 = mono_us();
+	for (;;) {
+		mem_work_with_seed(buf, sz, MEM_STEP_CHUNK, &seed);
+		total += MEM_STEP_CHUNK;
+		t1 = mono_us();
+		if (t1 - t0 >= CAL_US)
+			break;
+	}
+	t1 = mono_us();
+	if (t1 <= t0)
+		return 1;
+	return total * 10000ULL / (t1 - t0);
+}
+
+static void self_test_mem_10ms(unsigned char *buf, size_t sz, unsigned long long *mem_steps)
+{
+	unsigned long long samples[5];
+	int pass, i;
+
+	for (pass = 0; pass < 2; pass++) {
+		unsigned long long sum = 0;
+		unsigned int seed = 42;
+
+		for (i = 0; i < 5; i++) {
+			unsigned long long m0, m1, c0, c1, dm, dc;
+
+			m0 = mono_us();
+			c0 = thread_cpu_us();
+			mem_work_with_seed(buf, sz, *mem_steps, &seed);
+			m1 = mono_us();
+			c1 = thread_cpu_us();
+			dm = m1 - m0;
+			dc = c1 - c0;
+			samples[i] = dm;
+			sum += dm;
+			fprintf(stderr, "wl: tu kiem mem %d/5 mono=%llu us thread_cpu=%llu us\n",
+				i + 1, dm, dc);
+		}
+		if (mono_in_range(samples[0]) && mono_in_range(samples[1]) &&
+		    mono_in_range(samples[2]) && mono_in_range(samples[3]) &&
+		    mono_in_range(samples[4]))
+			return;
+		if (pass == 0 && sum > 0) {
+			unsigned long long avg = sum / 5;
+
+			*mem_steps = (unsigned long long)((double)(*mem_steps) * 10000.0 / (double)avg);
+			if (*mem_steps == 0)
+				*mem_steps = 1;
+			fprintf(stderr, "wl: dieu chinh mem_steps=%llu (trung binh %llu us)\n",
+				*mem_steps, avg);
+			continue;
+		}
+		fprintf(stderr, "wl: LOI tu kiem mem: mono lech qua 5%% so voi 10 ms\n");
+		_exit(1);
 	}
 }
 
@@ -323,12 +380,11 @@ int main(int argc, char **argv)
 		use_fixed_loops = 1;
 		loops_per_us = (double)fixed_loops_10ms / 10000.0;
 		fprintf(stderr, "wl: dung -loops %lu (bo qua hieu chinh)\n", loops_arg);
-	} else {
+	} else if (strcmp(mode, "mem") != 0) {
 		calibrate_loops_per_us();
 		self_test_burn_10ms();
 		use_fixed_loops = 1;
-		if (strcmp(mode, "mem") != 0)
-			write_m4_loops(read_mem_steps_file());
+		write_m4_loops(read_mem_steps_file());
 	}
 
 	/* Hieu chinh mem truoc khi cho (calibrate_mem trong m4.sh khong can fifo). */
@@ -357,6 +413,7 @@ int main(int argc, char **argv)
 			}
 		} else {
 			mem_steps = calibrate_mem_steps(buf, mem_sz);
+			self_test_mem_10ms(buf, mem_sz, &mem_steps);
 			write_m4_loops(mem_steps);
 			fprintf(stderr, "wl: mem_steps=%llu\n", mem_steps);
 		}

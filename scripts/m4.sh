@@ -22,6 +22,71 @@ die() {
 	exit 1
 }
 
+require_clean_git() {
+	local st path
+	while read -r st path _; do
+		[[ -z $st ]] && continue
+		path="${path%/}"
+		if [[ $path == out/* || $path == validation/m4* ]]; then
+			continue
+		fi
+		die "cay git khong sach: $st $path — commit truoc khi chay e4"
+	done < <(git status --porcelain 2>/dev/null | awk '{print $1, $2}')
+}
+
+rebuild_summary() {
+	local manifest=() L n mode
+	for L in 0 1 2 3; do
+		manifest+=("E1:${L}:${OUTROOT}/E1/L${L}.csv")
+	done
+	for mode in cache stream; do
+		for n in 0 4 12 22; do
+			manifest+=("E4-${mode}:${n}:${OUTROOT}/E4-${mode}/L${n}.csv")
+		done
+	done
+	"${M4_PYTHON[@]}" "$M4PY" --outdir "$OUTROOT" --summary "$OUTROOT/summary-part.csv" "${manifest[@]}"
+	"${M4_PYTHON[@]}" - <<PY
+import pandas as pd
+from pathlib import Path
+root = Path("${OUTROOT}")
+s = pd.read_csv(root / "summary-part.csv")
+e3_rows = []
+for tag in ("idle", "stress2"):
+    p = root / "E3" / f"{tag}.csv"
+    if not p.exists():
+        continue
+    df = pd.read_csv(p)
+    if df.empty:
+        continue
+    df2 = df[df["dt_ns"].notna()]
+    if df2.empty:
+        row = df.iloc[-1]
+    else:
+        row = df2.loc[df2["vol_ns"].idxmax()]
+    e3_rows.append({
+        "experiment": f"E3-{tag}",
+        "level": tag,
+        "kind": "connect",
+        "n": 1,
+        "median_us": float(row["dt_ns"]) / 1000.0,
+        "p90_us": float(row["dt_ns"]) / 1000.0,
+        "p99_us": float(row["dt_ns"]) / 1000.0,
+        "dt_median_us": float(row["dt_ns"]) / 1000.0,
+        "cpu_median_us": float(row["cpu_ns"]) / 1000.0,
+        "steal_median_us": float(row["steal_ns"]) / 1000.0,
+        "irq_median_us": float(row["irq_ns"]) / 1000.0,
+        "rq_median_us": float(row["rq_ns"]) / 1000.0,
+        "vol_median_us": float(row["vol_ns"]) / 1000.0,
+        "ratio_dt": float("nan"),
+        "ratio_cpu": float("nan"),
+    })
+if e3_rows:
+    s = pd.concat([s, pd.DataFrame(e3_rows)], ignore_index=True)
+s.to_csv(root / "summary.csv", index=False)
+print(f"luu {root / 'summary.csv'} ({len(s)} dong)")
+PY
+}
+
 wait_ready() {
 	local log=$1 i
 	for ((i = 0; i < 3000; i++)); do
@@ -51,7 +116,7 @@ calibrate_mem() {
 	echo "m4: hieu chinh mem tren CPU $WL_CPU..." >&2
 	taskset -c "$WL_CPU" "$WL" mem 1 >/dev/null 2>out/m4-cal-mem.log &
 	local wl_pid=$!
-	sleep 8
+	sleep 20
 	kill "$wl_pid" 2>/dev/null
 	wait "$wl_pid" 2>/dev/null
 	local ms
@@ -278,12 +343,14 @@ main() {
 		mapfile -t m < <(e3)
 		;;
 	e4)
-		calibrate_wl 2>/dev/null || true
+		require_clean_git
+		calibrate_wl
+		calibrate_mem
 		mapfile -t m < <(e4)
-		"${M4_PYTHON[@]}" "$M4PY" --outdir "$M4PY_OUT" --summary "$OUTROOT/summary-e4-cache.csv" \
-			$(printf '%s\n' "${m[@]}" | grep E4-cache | tr '\n' ' ')
-		"${M4_PYTHON[@]}" "$M4PY" --outdir "$M4PY_OUT" --summary "$OUTROOT/summary-e4-stream.csv" \
-			$(printf '%s\n' "${m[@]}" | grep E4-stream | tr '\n' ' ')
+		rebuild_summary
+		;;
+	rebuild-summary)
+		rebuild_summary
 		;;
 	e2)
 		e2_prep
