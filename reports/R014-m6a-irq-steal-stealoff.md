@@ -3,7 +3,7 @@
 1. **Số báo cáo:** R014  
    **Ngày giờ:** 2026-10-07 16:45 (UTC+7)  
    **Mốc:** M6a  
-   **Git commit:** `3cb729d` (tag `m6a`; mã BPF/công cụ `5121d30`)
+   **Git commit:** `a7ef763` (tag `m6a`; mã BPF/công cụ `5121d30`)
 
 2. **Mục tiêu**  
    Xác nhận lỗi irq/steal chồng trên E2 cũ; sửa đo irq; thêm `steal_off_ns` (56 byte); cập nhật công cụ; tự kiểm G7a/G7d và G3 S1–S5; chuẩn bị E2 lần 3 (không chạy E2).
