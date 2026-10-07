@@ -3,7 +3,7 @@
 Cập nhật lần cuối: 2026-10-07 16:45 (giờ máy)
 
 ## Mốc hiện tại và mục tiêu
-- **M6a:** Xong (tag `m6a`, R014). Chờ người dùng chạy E2 lần 3; sau đó chạy lại M5.
+- **E2 lần 3:** Đã gộp summary / E2.png (R015, `7834904`). E2-lan2 + E2-lan3 tách archive. Tiếp: M5.
 
 ## Bước đã xong (M6a)
 - Dừng M5, archive `validation/m5-20261007-truoc-m6a/`

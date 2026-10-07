@@ -3,7 +3,7 @@
 1. **Số báo cáo:** R015  
    **Ngày giờ:** 2026-10-07 17:05 (UTC+7)  
    **Mốc:** E2 lần 3 (M6a)  
-   **Git commit:** (sau commit nhiệm vụ này)
+   **Git commit:** `7834904`
 
 2. **Mục tiêu**  
    Sửa `analysis/m4.py` để gộp CSV thiếu cột (E1/E3/E4, 48 byte) không KeyError; tái tạo `summary.csv`, phân rã E2, `E2.png` từ dữ liệu E2 lần 3 đã thu; tách archive lần 2/3.
