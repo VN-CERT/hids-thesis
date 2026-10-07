@@ -125,7 +125,8 @@ run_injection() {
 	# 2. collector, cho toi khi gan xong tracepoint.
 	local -a pid_args=()
 	for p in "${pids[@]}"; do pid_args+=(-pid "$p"); done
-	"$COLLECT" "${pid_args[@]}" -ringbuf-mb "$ringmb" -out "$bin" 2>"$prefix-collect.log" &
+	# shellcheck disable=SC2086
+	"$COLLECT" "${pid_args[@]}" -ringbuf-mb "$ringmb" ${HIDS_COLLECT_EXTRA:-} -out "$bin" 2>"$prefix-collect.log" &
 	local collect_pid=$!
 	wait_ready "$prefix-collect.log"
 	echo "collector da gan tracepoint (READY)"

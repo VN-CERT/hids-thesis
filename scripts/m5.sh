@@ -153,7 +153,8 @@ t1_run() {
 	C0) ;;
 	C1|C3)
 		systemd-run --scope --unit="hids-m5-coll-${cond}-${run}-$$" --slice=system.slice \
-			"$COLLECT" -cgroup "$cgroup" -duration 3600s -out "$dir/collect.bin" \
+			# shellcheck disable=SC2086
+			"$COLLECT" ${HIDS_COLLECT_EXTRA:-} -cgroup "$cgroup" -duration 3600s -out "$dir/collect.bin" \
 			>"$dir/collect-scope.log" 2>"$dir/collect.log" &
 		coll_pid=$!
 		sleep 0.5
@@ -163,7 +164,8 @@ t1_run() {
 	C2)
 		mkdir -p "$DECOY_CG"
 		systemd-run --scope --unit="hids-m5-coll-${cond}-${run}-$$" --slice=system.slice \
-			"$COLLECT" -cgroup "$DECOY_CG" -duration 3600s -out "$dir/collect.bin" \
+			# shellcheck disable=SC2086
+			"$COLLECT" ${HIDS_COLLECT_EXTRA:-} -cgroup "$DECOY_CG" -duration 3600s -out "$dir/collect.bin" \
 			>"$dir/collect-scope.log" 2>"$dir/collect.log" &
 		sleep 0.5
 		coll_pid=$(scope_main_pid "hids-m5-coll-${cond}-${run}-$$")
@@ -229,7 +231,8 @@ t2_run() {
 	C0) ;;
 	C1|C3)
 		systemd-run --scope --unit="hids-m5-t2c-${cond}-${run}-$$" --slice=system.slice \
-			"$COLLECT" -cgroup "$cgroup" -duration 600s -out "$dir/collect.bin" \
+			# shellcheck disable=SC2086
+			"$COLLECT" ${HIDS_COLLECT_EXTRA:-} -cgroup "$cgroup" -duration 600s -out "$dir/collect.bin" \
 			2>"$dir/collect.log" &
 		sleep 0.5
 		coll_pid=$(scope_main_pid "hids-m5-t2c-${cond}-${run}-$$")
@@ -238,7 +241,8 @@ t2_run() {
 	C2)
 		mkdir -p "$DECOY_CG"
 		systemd-run --scope --unit="hids-m5-t2c-${cond}-${run}-$$" --slice=system.slice \
-			"$COLLECT" -cgroup "$DECOY_CG" -duration 600s -out "$dir/collect.bin" \
+			# shellcheck disable=SC2086
+			"$COLLECT" ${HIDS_COLLECT_EXTRA:-} -cgroup "$DECOY_CG" -duration 600s -out "$dir/collect.bin" \
 			2>"$dir/collect.log" &
 		sleep 0.5
 		coll_pid=$(scope_main_pid "hids-m5-t2c-${cond}-${run}-$$")
@@ -321,7 +325,8 @@ t3_run() {
 	C0) ;;
 	C1|C3)
 		systemd-run --scope --unit="hids-m5-t3c-${cond}-${run}-$$" --slice=system.slice \
-			"$COLLECT" -cgroup "$cgroup" -duration 120s -out "$dir/collect.bin" \
+			# shellcheck disable=SC2086
+			"$COLLECT" ${HIDS_COLLECT_EXTRA:-} -cgroup "$cgroup" -duration 120s -out "$dir/collect.bin" \
 			2>"$dir/collect.log" &
 		sleep 0.5
 		coll_pid=$(scope_main_pid "hids-m5-t3c-${cond}-${run}-$$")
@@ -330,7 +335,8 @@ t3_run() {
 	C2)
 		mkdir -p "$DECOY_CG"
 		systemd-run --scope --unit="hids-m5-t3c-${cond}-${run}-$$" --slice=system.slice \
-			"$COLLECT" -cgroup "$DECOY_CG" -duration 120s -out "$dir/collect.bin" \
+			# shellcheck disable=SC2086
+			"$COLLECT" ${HIDS_COLLECT_EXTRA:-} -cgroup "$DECOY_CG" -duration 120s -out "$dir/collect.bin" \
 			2>"$dir/collect.log" &
 		sleep 0.5
 		coll_pid=$(scope_main_pid "hids-m5-t3c-${cond}-${run}-$$")
@@ -377,7 +383,8 @@ t4_run() {
 	C0) ;;
 	C1|C3)
 		systemd-run --scope --unit="hids-m5-t4c-${cond}-${run}-$$" --slice=system.slice \
-			"$COLLECT" -cgroup "$cgroup" -duration 120s -out "$dir/collect.bin" \
+			# shellcheck disable=SC2086
+			"$COLLECT" ${HIDS_COLLECT_EXTRA:-} -cgroup "$cgroup" -duration 120s -out "$dir/collect.bin" \
 			2>"$dir/collect.log" &
 		sleep 0.5
 		coll_pid=$(scope_main_pid "hids-m5-t4c-${cond}-${run}-$$")
@@ -386,7 +393,8 @@ t4_run() {
 	C2)
 		mkdir -p "$DECOY_CG"
 		systemd-run --scope --unit="hids-m5-t4c-${cond}-${run}-$$" --slice=system.slice \
-			"$COLLECT" -cgroup "$DECOY_CG" -duration 120s -out "$dir/collect.bin" \
+			# shellcheck disable=SC2086
+			"$COLLECT" ${HIDS_COLLECT_EXTRA:-} -cgroup "$DECOY_CG" -duration 120s -out "$dir/collect.bin" \
 			2>"$dir/collect.log" &
 		sleep 0.5
 		coll_pid=$(scope_main_pid "hids-m5-t4c-${cond}-${run}-$$")
@@ -463,6 +471,9 @@ m5_progress() {
 
 main() {
 	[[ $EUID -eq 0 ]] || die "can root"
+	if [[ -n ${M5C_REGRESS_HOOK:-} ]]; then
+		export HIDS_COLLECT_EXTRA="-sys-enter-hook ${M5C_REGRESS_HOOK}"
+	fi
 	trap 'write_m5_summary; restore_production_containers' EXIT
 	require_clean_git
 	require_from_m6a
@@ -485,7 +496,10 @@ main() {
 	total=$((4 * 4 * RUNS))
 	m5_progress "status=running outroot=$OUTROOT total_runs=$total done=0"
 	for t in T1 T2 T3 T4; do
+		[[ ${M5C_REGRESS_MODE:-} == step2 && $t == T3 ]] && continue
 		for cond in C0 C1 C2 C3; do
+			[[ ${M5C_REGRESS_MODE:-} == step2 && $t == T4 && $cond != C1 ]] && continue
+			[[ ${M5C_REGRESS_MODE:-} == step2 && $cond == C3 ]] && continue
 			for ((run = 1; run <= RUNS; run++)); do
 				case $t in
 				T1) t1_run "$cond" "$run" ;;
