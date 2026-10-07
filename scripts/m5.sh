@@ -22,7 +22,7 @@ require_clean_git() {
 	while read -r st path _; do
 		[[ -z $st ]] && continue
 		path="${path%/}"
-		[[ $path == out/* || $path == validation/m5* ]] && continue
+		[[ $path == out/* || $path == validation/m5* || $path == validation/m5-* ]] && continue
 		die "cay git khong sach: $st $path"
 	done < <(git status --porcelain 2>/dev/null | awk '{print $1, $2}')
 }
@@ -229,7 +229,7 @@ setup_pg() {
 		docker exec pgtest pg_isready -U postgres >/dev/null 2>&1 && break
 		sleep 1
 	done
-	docker exec pgtest pgbench -i -s 50 -U postgres >/dev/null
+	docker exec pgtest pgbench -i -s 50 -U postgres -d postgres >/dev/null
 }
 
 setup_nginx() {
@@ -273,7 +273,7 @@ t3_run() {
 		stress-ng --cpu 8 --taskset "$stress_cpus" --timeout 120 >/dev/null 2>&1 &
 		stress_pids+=($!)
 	}
-	taskset -c 16-19 docker exec pgtest pgbench -c 16 -j 4 -T 60 -U postgres \
+	taskset -c 16-19 docker exec pgtest pgbench -c 16 -j 4 -T 60 -U postgres -d postgres \
 		>"$dir/pgbench.log" 2>&1 || true
 	local tps lat
 	tps=$(awk '/including latency/{f=1} f && /tps =/{print $3; exit}' "$dir/pgbench.log")
