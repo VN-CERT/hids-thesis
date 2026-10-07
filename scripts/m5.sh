@@ -34,9 +34,11 @@ cgroup_path_of_pid() {
 }
 
 scope_main_pid() {
-	local u=$1
+	local u=$1 cg pid
 	[[ $u != *.scope ]] && u="${u}.scope"
-	systemctl show "$u" -p MainPID --value 2>/dev/null
+	cg=$(systemctl show "$u" -p ControlGroup --value 2>/dev/null) || return 1
+	pid=$(head -1 "/sys/fs/cgroup${cg}/cgroup.procs" 2>/dev/null)
+	[[ -n $pid ]] && echo "$pid"
 }
 
 wait_ready() {
