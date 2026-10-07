@@ -165,7 +165,7 @@ run_scenario() {
 		echo "stress-ng pid=$stress_pid" | tee -a "$ketqua"
 	fi
 
-	"$COLLECT" -pid "$wl_pid" -out "$bin" 2>"$prefix-collect.log" &
+	"$COLLECT" -pid "$wl_pid" -zstd-level 0 -out "$bin" 2>"$prefix-collect.log" &
 	cpid=$!
 	wait_ready "$prefix-collect.log"
 
@@ -332,7 +332,7 @@ part_g_real() {
 
 	sort -n "$cg/cgroup.threads" >"$prefix-threads-start.txt"
 
-	"$COLLECT" -cgroup "$cg" -duration 120s -out "$bin" 2>"$prefix-collect.log" &
+	"$COLLECT" -cgroup "$cg" -zstd-level 0 -duration 120s -out "$bin" 2>"$prefix-collect.log" &
 	local cpid=$!
 	wait_ready "$prefix-collect.log"
 	echo "G-real: collector READY, cho 30 giay truoc moc A" | tee -a "$ketqua"
@@ -434,7 +434,7 @@ part_g_irq() {
 
 	sleep 400 &
 	local spid=$!
-	"$COLLECT" -pid "$spid" -duration 30s -out "$bin" 2>"$prefix-collect.log" &
+	"$COLLECT" -pid "$spid" -zstd-level 0 -duration 30s -out "$bin" 2>"$prefix-collect.log" &
 	local cpid=$!
 	wait_ready "$prefix-collect.log"
 
