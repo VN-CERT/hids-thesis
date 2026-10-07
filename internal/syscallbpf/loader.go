@@ -278,10 +278,13 @@ func (c *Collector) ReadInto(rec *ringbuf.Record) error {
 	return c.reader.ReadInto(rec)
 }
 
-// ReadIntoPoll doc mot ban ghi; xu ly cilium/ebpf tra ve ErrDeadlineExceeded
-// mot lan truoc khi doc ban ghi dang cho khi dung BPF_RB_NO_WAKEUP.
+// ReadIntoPoll doc mot ban ghi khi dung BPF_RB_NO_WAKEUP: neu ring buffer con
+// byte chua doc thi ReadInto khoa den khi co ban ghi; neu rong thi cho toi
+// deadline (poll).
 func (c *Collector) ReadIntoPoll(rec *ringbuf.Record, poll time.Duration) error {
-	if poll > 0 {
+	if c.reader.AvailableBytes() > 0 {
+		c.reader.SetDeadline(time.Time{})
+	} else if poll > 0 {
 		c.reader.SetDeadline(time.Now().Add(poll))
 	} else {
 		c.reader.SetDeadline(time.Time{})
@@ -290,8 +293,9 @@ func (c *Collector) ReadIntoPoll(rec *ringbuf.Record, poll time.Duration) error 
 	if err == nil {
 		return nil
 	}
-	if errors.Is(err, os.ErrDeadlineExceeded) {
-		err = c.reader.ReadInto(rec)
+	if errors.Is(err, os.ErrDeadlineExceeded) && c.reader.AvailableBytes() > 0 {
+		c.reader.SetDeadline(time.Time{})
+		return c.reader.ReadInto(rec)
 	}
 	return err
 }

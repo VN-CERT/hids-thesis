@@ -77,8 +77,8 @@ func run() error {
 		"dung rq->prev_steal_time thay cho vmw_steal_time; moi ban ghi mang co STEAL_FALLBACK")
 	discard := flag.Bool("discard", false,
 		"doc ring buffer nhung khong ghi ban ghi ra file (do overhead ghi dia)")
-	ringbufPollMs := flag.Int("ringbuf-poll-ms", 10,
-		"chu ky doc ring buffer (ms); 0 = cho khoa vo han. Dung cung BPF_RB_NO_WAKEUP trong kernel")
+	ringbufPollMs := flag.Int("ringbuf-poll-ms", 0,
+		"chu ky doc ring buffer (ms) khi dung BPF_RB_NO_WAKEUP; 0 = cho khoa vo han (mac dinh)")
 	zstdLevel := flag.Int("zstd-level", 2,
 		"muc nen zstd luong (1-3); 0 = khong nen")
 	flag.Parse()

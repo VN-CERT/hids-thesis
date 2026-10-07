@@ -475,7 +475,7 @@ int BPF_PROG(hids_sys_enter, struct pt_regs *regs, long id)
 		return 0;
 	*seqp += 1;
 
-	rec = bpf_ringbuf_reserve(&hids_events, sizeof(*rec), BPF_RB_NO_WAKEUP);
+	rec = bpf_ringbuf_reserve(&hids_events, sizeof(*rec), 0);
 	if (!rec) {
 		__u64 *drops = bpf_map_lookup_elem(&hids_drops, &key0);
 
@@ -517,7 +517,7 @@ int BPF_PROG(hids_sys_enter, struct pt_regs *regs, long id)
 	rec->reserved = 0;
 	rec->flags = flags;
 
-	bpf_ringbuf_submit(rec, BPF_RB_NO_WAKEUP);
+	bpf_ringbuf_submit(rec, 0);
 
 	/* Bat dau khoang moi. */
 	st->seen = 1;
