@@ -1,6 +1,6 @@
 # Báo cáo R009 — E2 steal, tag m4
 
-1. **Số báo cáo:** R009 | **Ngày giờ:** 2026-10-07 14:05 (UTC+7) | **Mốc:** M4 (hoàn tất) | **Git:** `3693392` (sau commit dữ liệu E2)
+1. **Số báo cáo:** R009 | **Ngày giờ:** 2026-10-07 14:05 (UTC+7) | **Mốc:** M4 (hoàn tất) | **Git:** `2b7ffdb` (tag `m4`)
 
 2. **Mục tiêu**  
    Bổ sung E2 vào `summary.csv`, vẽ `E2.png`, gắn tag `m4`.
