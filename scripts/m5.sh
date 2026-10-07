@@ -31,7 +31,7 @@ require_clean_git() {
 	while read -r st path _; do
 		[[ -z $st ]] && continue
 		path="${path%/}"
-		if [[ $path == out/* || $path == validation/m5* || $path == validation/m5-* || $path == validation/m4* ]]; then
+		if [[ $path == out/* || $path == validation/* ]]; then
 			continue
 		fi
 		die "cay git khong sach: $st $path"
