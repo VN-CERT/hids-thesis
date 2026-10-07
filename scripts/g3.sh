@@ -242,14 +242,16 @@ run_scenario() {
 	coll_vol=$(awk '/^vol /{print $2; exit}' "$ketqua")
 	coll_vol_ds=$(python3 - "$bin" "$tid" "$t_from" "$t_to" <<'PY'
 import struct, sys
+sys.path.insert(0, 'scripts')
+from bin_header import skip_header
 path, tid, t0, t1 = sys.argv[1], int(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4])
 D_SLEEP = 1<<2
 with open(path,'rb') as f:
-    while f.readline().strip()!=b'#END': pass
+    rec_size = skip_header(f)
     s=0
     while True:
-        b=f.read(48)
-        if len(b)<48: break
+        b=f.read(rec_size)
+        if len(b)<rec_size: break
         ts=struct.unpack_from('<Q',b,0)[0]
         if ts<=t0 or ts>t1: continue
         if struct.unpack_from('<I',b,16)[0]!=tid: continue

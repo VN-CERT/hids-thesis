@@ -2,6 +2,11 @@
 """Tim cua so (ts read lan 2, ts read lan 3] cho mot tid trong file .bin."""
 import struct
 import sys
+from pathlib import Path
+
+# scripts/ on sys.path when invoked as python3 scripts/g3_window.py
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from bin_header import skip_header  # noqa: E402
 
 GETUID_NR = 102
 READ_NR = 0
@@ -15,16 +20,11 @@ def main() -> None:
     tid = int(tid_s)
 
     with open(path, "rb") as f:
-        while True:
-            line = f.readline()
-            if not line:
-                sys.exit("khong tim thay #END trong header")
-            if line.strip() == b"#END":
-                break
+        rec_size = skip_header(f)
         recs: list[tuple[int, int]] = []
         while True:
-            b = f.read(48)
-            if len(b) < 48:
+            b = f.read(rec_size)
+            if len(b) < rec_size:
                 break
             ts = struct.unpack_from("<Q", b, 0)[0]
             t = struct.unpack_from("<I", b, 16)[0]

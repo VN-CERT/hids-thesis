@@ -4,23 +4,17 @@ import struct
 import sys
 from pathlib import Path
 
-
-def read_header_end(f):
-    while True:
-        line = f.readline()
-        if not line:
-            raise SystemExit("khong tim thay #END")
-        if line.strip() == b"#END":
-            return
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from bin_header import skip_header
 
 
 def sum_records(path: Path, tids: set[int], t0: int, t1: int) -> dict[int, dict]:
     out = {t: {"cpu": 0, "steal": 0, "irq": 0, "rq": 0, "vol": 0, "n": 0} for t in tids}
     with path.open("rb") as f:
-        read_header_end(f)
+        rec_size = skip_header(f)
         while True:
-            b = f.read(48)
-            if len(b) < 48:
+            b = f.read(rec_size)
+            if len(b) < rec_size:
                 break
             ts = struct.unpack_from("<Q", b, 0)[0]
             if ts <= t0 or ts > t1:
