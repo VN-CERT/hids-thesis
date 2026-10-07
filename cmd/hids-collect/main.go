@@ -8,6 +8,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"os/signal"
 	"path/filepath"
@@ -17,10 +18,12 @@ import (
 	"time"
 
 	"github.com/cilium/ebpf/ringbuf"
+	"github.com/klauspost/compress/zstd"
 	"golang.org/x/sys/unix"
 
 	"hids/internal/bpflog"
 	"hids/internal/buildinfo"
+	"hids/internal/cgroupexpand"
 	"hids/internal/hostinfo"
 	"hids/internal/recfmt"
 	"hids/internal/stealcheck"
@@ -72,6 +75,12 @@ func run() error {
 		"chay tiep khi so dong \"vmware-stealtime\" trong kernel log khac so CPU; khi do steal = 0")
 	stealFallback := flag.Bool("steal-fallback", false,
 		"dung rq->prev_steal_time thay cho vmw_steal_time; moi ban ghi mang co STEAL_FALLBACK")
+	discard := flag.Bool("discard", false,
+		"doc ring buffer nhung khong ghi ban ghi ra file (do overhead ghi dia)")
+	ringbufPollMs := flag.Int("ringbuf-poll-ms", 10,
+		"chu ky doc ring buffer (ms); 0 = cho khoa vo han. Dung cung BPF_RB_NO_WAKEUP trong kernel")
+	zstdLevel := flag.Int("zstd-level", 2,
+		"muc nen zstd luong (1-3); 0 = khong nen")
 	flag.Parse()
 
 	if os.Geteuid() != 0 {
@@ -82,6 +91,12 @@ func run() error {
 	}
 	if *ringbufMB <= 0 || *ringbufMB&(*ringbufMB-1) != 0 {
 		return fmt.Errorf("-ringbuf-mb phai la luy thua cua 2, nhan duoc %d", *ringbufMB)
+	}
+	if *ringbufPollMs < 0 {
+		return fmt.Errorf("-ringbuf-poll-ms khong duoc am")
+	}
+	if *zstdLevel < 0 || *zstdLevel > 3 {
+		return fmt.Errorf("-zstd-level phai trong 0..3, nhan duoc %d", *zstdLevel)
 	}
 	if len(cgroupPaths) == 0 && len(tgids) == 0 {
 		return fmt.Errorf("can it nhat mot -pid hoac mot -cgroup")
@@ -129,15 +144,20 @@ func run() error {
 		return err
 	}
 
-	cgroupIDs := make([]uint64, 0, len(cgroupPaths))
 	cgroupDesc := make([]string, 0, len(cgroupPaths))
 	for _, p := range cgroupPaths {
 		id, err := cgroupID(p)
 		if err != nil {
 			return err
 		}
-		cgroupIDs = append(cgroupIDs, id)
-		cgroupDesc = append(cgroupDesc, fmt.Sprintf("%s (id=%d)", p, id))
+		cgroupDesc = append(cgroupDesc, fmt.Sprintf("%s (goc id=%d)", p, id))
+	}
+	var cgroupIDs []uint64
+	if len(cgroupPaths) > 0 {
+		cgroupIDs, err = cgroupexpand.DescendantIDs(cgroupPaths)
+		if err != nil {
+			return err
+		}
 	}
 
 	outPath := *out
@@ -171,7 +191,6 @@ func run() error {
 		return err
 	}
 	defer f.Close()
-	bw := bufio.NewWriterSize(f, 4*1024*1024)
 
 	startMono, err := monotonicNs()
 	if err != nil {
@@ -218,20 +237,39 @@ func run() error {
 	}
 	header = append(header,
 		fmt.Sprintf("irq_tracepoints (%d cap): %s", len(coll.IRQTracepoints()), strings.Join(coll.IRQTracepoints(), " ")),
+		fmt.Sprintf("discard: %v", *discard),
+		fmt.Sprintf("ringbuf_poll_ms: %d", *ringbufPollMs),
+		fmt.Sprintf("zstd_level: %d", *zstdLevel),
 		fmt.Sprintf("start_mono_ns: %d", startMono),
 		fmt.Sprintf("start_wall: %s", startWall.Format(time.RFC3339Nano)),
 		fmt.Sprintf("duration: %s", durationText(*duration)),
 	)
 	for _, line := range header {
-		if _, err := fmt.Fprintf(bw, "# %s\n", line); err != nil {
+		if _, err := fmt.Fprintf(f, "# %s\n", line); err != nil {
 			return err
 		}
 	}
-	if _, err := fmt.Fprintf(bw, "%s\n", recfmt.EndMarker); err != nil {
+	if _, err := fmt.Fprintf(f, "%s\n", recfmt.EndMarker); err != nil {
 		return err
 	}
 
-	fmt.Fprintf(os.Stderr, "ghi vao %s\n", outPath)
+	var zstdEnc *zstd.Encoder
+	var recordOut io.Writer = f
+	if *zstdLevel > 0 {
+		zstdEnc, err = zstd.NewWriter(f, zstd.WithEncoderLevel(zstd.EncoderLevelFromZstd(*zstdLevel)))
+		if err != nil {
+			return fmt.Errorf("tao bo nen zstd: %w", err)
+		}
+		defer zstdEnc.Close()
+		recordOut = zstdEnc
+	}
+	bw := bufio.NewWriterSize(recordOut, 4*1024*1024)
+
+	if *discard {
+		fmt.Fprintln(os.Stderr, "che do -discard: doc ring buffer, khong ghi ban ghi nhi phan")
+	} else {
+		fmt.Fprintf(os.Stderr, "ghi vao %s\n", outPath)
+	}
 	fmt.Fprintf(os.Stderr, "loc pid: %s | loc cgroup: %s | ring buffer: %d MiB\n", filterPID, filterCgroup, *ringbufMB)
 	// Tracepoint da gan xong tu luc Load(); tu day moi sys_enter deu duoc dem.
 	// Script do dung dong nay de biet khi nao bat dau duoc.
@@ -249,6 +287,11 @@ func run() error {
 	stopPeriodic := make(chan struct{})
 	periodicDone := make(chan struct{})
 	go watchLoss(coll, pw, stopPeriodic, periodicDone)
+
+	stopCgroupRefresh := make(chan struct{})
+	if len(cgroupPaths) > 0 {
+		go refreshCgroupFilter(coll, cgroupPaths, stopCgroupRefresh)
+	}
 
 	var timer <-chan time.Time
 	if *duration > 0 {
@@ -277,9 +320,18 @@ func run() error {
 	var shortRecords int64
 	var sinceFlush int64
 
+	pollInterval := time.Duration(*ringbufPollMs) * time.Millisecond
 	for {
+		if pollInterval > 0 {
+			coll.SetReadDeadline(time.Now().Add(pollInterval))
+		} else {
+			coll.SetReadDeadline(time.Time{})
+		}
 		err := coll.ReadInto(&rec)
 		if err != nil {
+			if errors.Is(err, os.ErrDeadlineExceeded) {
+				continue
+			}
 			if errors.Is(err, ringbuf.ErrFlushed) {
 				// Doc vet cho den khi mot lan flush khong con ban ghi nao.
 				if sinceFlush == 0 {
@@ -300,8 +352,10 @@ func run() error {
 			shortRecords++
 			continue
 		}
-		if _, err := bw.Write(rec.RawSample); err != nil {
-			return err
+		if !*discard {
+			if _, err := bw.Write(rec.RawSample); err != nil {
+				return err
+			}
 		}
 		records++
 		sinceFlush++
@@ -311,6 +365,7 @@ func run() error {
 		return err
 	}
 
+	close(stopCgroupRefresh)
 	close(stopPeriodic)
 	<-periodicDone
 
@@ -546,6 +601,26 @@ func watchLoss(coll *syscallbpf.Collector, pw *recfmt.PeriodicWriter, stop <-cha
 }
 
 // cgroupID tra ve id cgroup v2, chinh la so inode cua thu muc cgroup.
+func refreshCgroupFilter(coll *syscallbpf.Collector, roots []string, stop <-chan struct{}) {
+	ticker := time.NewTicker(time.Second)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-stop:
+			return
+		case <-ticker.C:
+			ids, err := cgroupexpand.DescendantIDs(roots)
+			if err != nil {
+				bpflog.Note(os.Stderr, logPath, fmt.Sprintf("quet cgroup con chau: %v", err))
+				continue
+			}
+			if err := coll.ReplaceCgroupFilter(ids); err != nil {
+				bpflog.Note(os.Stderr, logPath, fmt.Sprintf("cap nhat map cgroup: %v", err))
+			}
+		}
+	}
+}
+
 func cgroupID(path string) (uint64, error) {
 	info, err := os.Stat(path)
 	if err != nil {
