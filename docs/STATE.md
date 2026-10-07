@@ -6,7 +6,7 @@ Cập nhật lần cuối: 2026-10-07 15:00 (giờ máy)
 - **M4.2:** E2 cũ (R009) đã loại; script E2 chờ người dùng vCenter. Chưa thu E2 mới.
 
 ## Bước đã xong (M4.2)
-- `docs/tasks/M4.2.md`, `E2-khong-hop-le/`, `summary.csv` không E2, xóa `E2.png`, xóa tag `m4`, R010 — *(commit sau khi ghi)*
+- `docs/tasks/M4.2.md`, `E2-khong-hop-le/`, `summary.csv` không E2, xóa `E2.png`, xóa tag `m4`, R010 — `9fd117c`
 
 ## Bước đang làm
 Không có (Cursor dừng chờ người dùng chạy E2).
