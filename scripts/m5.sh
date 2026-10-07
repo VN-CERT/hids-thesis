@@ -34,7 +34,9 @@ cgroup_path_of_pid() {
 }
 
 scope_main_pid() {
-	systemctl show "$1" -p MainPID --value 2>/dev/null
+	local u=$1
+	[[ $u != *.scope ]] && u="${u}.scope"
+	systemctl show "$u" -p MainPID --value 2>/dev/null
 }
 
 wait_ready() {
@@ -80,7 +82,7 @@ run_sysinj_scope() {
 		taskset -c 12 "$SYSINJ" -n "$N_SYSINJ" <"$fifo" >"$log" 2>&1 &
 	sleep 0.8
 	local pid
-	pid=$(scope_main_pid "${unit}.scope")
+	pid=$(scope_main_pid "$unit")
 	[[ -n $pid && $pid != 0 ]] || die "khong lay MainPID $unit"
 	echo "$pid"
 }
@@ -107,7 +109,7 @@ t1_run() {
 			>"$dir/collect-scope.log" 2>"$dir/collect.log" &
 		coll_pid=$!
 		sleep 0.5
-		coll_pid=$(scope_main_pid "hids-m5-coll-${cond}-${run}-$$.scope")
+		coll_pid=$(scope_main_pid "hids-m5-coll-${cond}-${run}-$$")
 		wait_ready "$dir/collect.log"
 		;;
 	C2)
@@ -116,7 +118,7 @@ t1_run() {
 			"$COLLECT" -cgroup "$DECOY_CG" -duration 3600s -out "$dir/collect.bin" \
 			>"$dir/collect-scope.log" 2>"$dir/collect.log" &
 		sleep 0.5
-		coll_pid=$(scope_main_pid "hids-m5-coll-${cond}-${run}-$$.scope")
+		coll_pid=$(scope_main_pid "hids-m5-coll-${cond}-${run}-$$")
 		wait_ready "$dir/collect.log"
 		;;
 	*) die "cond $cond";;
@@ -143,7 +145,7 @@ t1_run() {
 		kill -TERM "$coll_pid" 2>/dev/null || true
 		wait "$coll_pid" 2>/dev/null || true
 		sleep 2
-		coll_cg=$(cgroup_path_of_pid "$(scope_main_pid "hids-m5-coll-${cond}-${run}-$$.scope" 2>/dev/null || echo 0)")
+		coll_cg=$(cgroup_path_of_pid "$(scope_main_pid "hids-m5-coll-${cond}-${run}-$$" 2>/dev/null || echo 0)")
 		[[ -d $coll_cg ]] && coll_usec=$(scope_usage_usec "$coll_cg")
 		[[ -f $dir/collect.bin ]] && recs=$(recstat_count "$dir/collect.bin")
 		drops=$(collector_drops "$dir/collect.log")
@@ -170,7 +172,7 @@ t2_run() {
 		bash -c 'exec taskset -c 12 perf bench sched pipe -l 1000000' \
 		>"$dir/bench.log" 2>&1 &
 	sleep 0.8
-	pid=$(scope_main_pid "${unit}.scope")
+	pid=$(scope_main_pid "$unit")
 	cgroup=$(cgroup_path_of_pid "$pid")
 
 	case $cond in
@@ -180,7 +182,7 @@ t2_run() {
 			"$COLLECT" -cgroup "$cgroup" -duration 600s -out "$dir/collect.bin" \
 			2>"$dir/collect.log" &
 		sleep 0.5
-		coll_pid=$(scope_main_pid "hids-m5-t2c-${cond}-${run}-$$.scope")
+		coll_pid=$(scope_main_pid "hids-m5-t2c-${cond}-${run}-$$")
 		wait_ready "$dir/collect.log"
 		;;
 	C2)
@@ -189,7 +191,7 @@ t2_run() {
 			"$COLLECT" -cgroup "$DECOY_CG" -duration 600s -out "$dir/collect.bin" \
 			2>"$dir/collect.log" &
 		sleep 0.5
-		coll_pid=$(scope_main_pid "hids-m5-t2c-${cond}-${run}-$$.scope")
+		coll_pid=$(scope_main_pid "hids-m5-t2c-${cond}-${run}-$$")
 		wait_ready "$dir/collect.log"
 		;;
 	esac
@@ -255,7 +257,7 @@ t3_run() {
 			"$COLLECT" -cgroup "$cgroup" -duration 120s -out "$dir/collect.bin" \
 			2>"$dir/collect.log" &
 		sleep 0.5
-		coll_pid=$(scope_main_pid "hids-m5-t3c-${cond}-${run}-$$.scope")
+		coll_pid=$(scope_main_pid "hids-m5-t3c-${cond}-${run}-$$")
 		wait_ready "$dir/collect.log"
 		;;
 	C2)
@@ -264,7 +266,7 @@ t3_run() {
 			"$COLLECT" -cgroup "$DECOY_CG" -duration 120s -out "$dir/collect.bin" \
 			2>"$dir/collect.log" &
 		sleep 0.5
-		coll_pid=$(scope_main_pid "hids-m5-t3c-${cond}-${run}-$$.scope")
+		coll_pid=$(scope_main_pid "hids-m5-t3c-${cond}-${run}-$$")
 		wait_ready "$dir/collect.log"
 		;;
 	esac
@@ -309,7 +311,7 @@ t4_run() {
 			"$COLLECT" -cgroup "$cgroup" -duration 120s -out "$dir/collect.bin" \
 			2>"$dir/collect.log" &
 		sleep 0.5
-		coll_pid=$(scope_main_pid "hids-m5-t4c-${cond}-${run}-$$.scope")
+		coll_pid=$(scope_main_pid "hids-m5-t4c-${cond}-${run}-$$")
 		wait_ready "$dir/collect.log"
 		;;
 	C2)
@@ -318,7 +320,7 @@ t4_run() {
 			"$COLLECT" -cgroup "$DECOY_CG" -duration 120s -out "$dir/collect.bin" \
 			2>"$dir/collect.log" &
 		sleep 0.5
-		coll_pid=$(scope_main_pid "hids-m5-t4c-${cond}-${run}-$$.scope")
+		coll_pid=$(scope_main_pid "hids-m5-t4c-${cond}-${run}-$$")
 		wait_ready "$dir/collect.log"
 		;;
 	esac
