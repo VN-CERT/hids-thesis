@@ -13,6 +13,21 @@ import pandas as pd
 # getppid=110 (khoang ngu). Khoang dot: nanosleep (35 arm) hoac clock_nanosleep (230 x86_64).
 BURN_NRS = {35, 230}
 SLEEP_NR = 110
+E2_LEVEL_ORDER = ["Unlimited", "36000", "24000", "12000"]
+
+
+def sort_levels(levels: list[str]) -> list[str]:
+    if any(lv in E2_LEVEL_ORDER for lv in levels):
+        return sorted(levels, key=lambda x: E2_LEVEL_ORDER.index(x) if x in E2_LEVEL_ORDER else 999)
+    return sorted(levels, key=lambda x: (str(x).isdigit(), x))
+
+
+def baseline_level_key(by_level: dict[str, pd.DataFrame], exp: str) -> str:
+    if exp == "E2" and "Unlimited" in by_level:
+        return "Unlimited"
+    if "0" in by_level:
+        return "0"
+    return sort_levels(list(by_level.keys()))[0]
 COLS = ["dt_ns", "cpu_ns", "steal_ns", "irq_ns", "rq_ns", "vol_ns"]
 STAT_COLS = ["n", "median_us", "p90_us", "p99_us"] + [
     f"{c.replace('_ns', '')}_median_us" for c in COLS
@@ -82,7 +97,7 @@ def print_table(exp: str, level: str, rows: list[dict]) -> None:
 
 
 def boxplot_exp(outdir: Path, exp: str, by_level: dict[str, pd.DataFrame]) -> None:
-    levels = sorted(by_level.keys(), key=lambda x: (str(x).isdigit(), x))
+    levels = sort_levels(list(by_level.keys()))
     fig, axes = plt.subplots(1, 2, figsize=(10, 4))
     dt_data = []
     cpu_data = []
@@ -117,13 +132,14 @@ def run_experiment(
 ) -> None:
     by_level: dict[str, pd.DataFrame] = {}
     baseline_medians: dict = {}
-    for level in sorted(csv_paths.keys(), key=lambda x: (str(x).isdigit(), x)):
+    for level in sort_levels(list(csv_paths.keys())):
         df = classify(load_csv(csv_paths[level]))
         df.attrs["experiment"] = exp
         by_level[level] = df
-    if "0" in by_level:
+    bl = baseline_level_key(by_level, exp)
+    if bl in by_level:
         for kind in ("burn", "sleep"):
-            sub = by_level["0"][by_level["0"]["kind"] == kind]
+            sub = by_level[bl][by_level[bl]["kind"] == kind]
             baseline_medians[(kind, "dt")] = float(sub["dt_ns"].median() / 1000.0) if len(sub) else float("nan")
             baseline_medians[(kind, "cpu")] = float(sub["cpu_ns"].median() / 1000.0) if len(sub) else float("nan")
     for level, df in by_level.items():

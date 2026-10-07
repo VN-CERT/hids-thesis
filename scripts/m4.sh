@@ -35,9 +35,12 @@ require_clean_git() {
 }
 
 rebuild_summary() {
-	local manifest=() L n mode
+	local manifest=() L n mode lv
 	for L in 0 1 2 3; do
 		manifest+=("E1:${L}:${OUTROOT}/E1/L${L}.csv")
+	done
+	for lv in Unlimited 36000 24000 12000; do
+		[[ -f $OUTROOT/E2/${lv}.csv ]] && manifest+=("E2:${lv}:${OUTROOT}/E2/${lv}.csv")
 	done
 	for mode in cache stream; do
 		for n in 0 4 12 22; do
@@ -302,6 +305,37 @@ e4() {
 	printf '%s\n' "${manifest[@]}"
 }
 
+e2_one_level() {
+	local label=$1 limit_msg=$2
+	local loops bin csv sp
+	if [[ -z ${M4_E2_SKIP_PROMPT:-} ]]; then
+		echo "Tren vCenter: Edit Settings -> CPU -> Limit = ${limit_msg} -> OK. Xong bam Enter." >&2
+		read -r
+	fi
+	stress-ng --cpu 23 --taskset 0-19,21-23 --timeout 120 >/dev/null 2>&1 &
+	sp=$!
+	sleep 2
+	loops=$(read_burn_loops)
+	bin=$(run_wl_mixed "$loops" 500)
+	kill "$sp" 2>/dev/null
+	wait "$sp" 2>/dev/null
+	mkdir -p "$OUTROOT/E2"
+	csv="$OUTROOT/E2/${label}.csv"
+	export_csv "$bin" "$csv"
+	cp "$bin" "$OUTROOT/E2/${label}.bin"
+	echo "E2:${label}:${csv}"
+}
+
+e2_collect() {
+	local manifest=()
+	manifest+=("$(e2_one_level Unlimited Unlimited)")
+	manifest+=("$(e2_one_level 36000 36000 MHz)")
+	manifest+=("$(e2_one_level 24000 24000 MHz)")
+	manifest+=("$(e2_one_level 12000 12000 MHz)")
+	[[ -z ${M4_E2_SKIP_PROMPT:-} ]] && echo "Dat lai Unlimited tren vCenter." >&2
+	printf '%s\n' "${manifest[@]}"
+}
+
 e2_prep() {
 	cat <<'EOF'
 === E2 (nguoi dung chay tren vCenter) ===
@@ -355,6 +389,16 @@ main() {
 	e2)
 		e2_prep
 		;;
+	e2-collect)
+		require_clean_git
+		calibrate_wl 2>/dev/null || true
+		mapfile -t _e2 < <(e2_collect)
+		rebuild_summary
+		;;
+	e2-finish)
+		[[ -d $OUTROOT/E2 ]] || die "khong co $OUTROOT/E2"
+		rebuild_summary
+		;;
 	all)
 		calibrate_wl
 		calibrate_mem
@@ -365,7 +409,7 @@ main() {
 		"${M4_PYTHON[@]}" "$M4PY" --outdir "$M4PY_OUT" --summary "$OUTROOT/summary.csv" "${all_manifest[@]}"
 		;;
 	*)
-		die "usage: m4.sh {calibrate|e1|e3|e4|e2|all}"
+		die "usage: m4.sh {calibrate|e1|e3|e4|e2|e2-collect|e2-finish|rebuild-summary|all}"
 		;;
 	esac
 }
