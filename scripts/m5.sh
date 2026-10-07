@@ -238,11 +238,20 @@ setup_pg() {
 	docker rm -f pgtest 2>/dev/null || true
 	docker run -d --name pgtest --cpuset-cpus 12-15 \
 		-e POSTGRES_PASSWORD=m5test postgres:16-alpine >/dev/null
-	for i in $(seq 1 60); do
-		docker exec pgtest pg_isready -U postgres >/dev/null 2>&1 && break
+	local i ready=0
+	for i in $(seq 1 90); do
+		docker exec pgtest pg_isready -U postgres >/dev/null 2>&1 && ready=1 && break
 		sleep 1
 	done
-	docker exec -u postgres pgtest pgbench -i -s 50 -U postgres -d postgres >/dev/null
+	[[ $ready -eq 1 ]] || die "pgtest khong ready sau 90s"
+	sleep 2
+	for i in $(seq 1 5); do
+		if docker exec -u postgres pgtest pgbench -i -s 50 -U postgres -d postgres >/dev/null 2>&1; then
+			return 0
+		fi
+		sleep 3
+	done
+	die "pgbench -i that bai trong pgtest"
 }
 
 setup_nginx() {
