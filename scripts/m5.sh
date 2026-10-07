@@ -324,6 +324,7 @@ EOF
 t4_run() {
 	local cond=$1 run=$2
 	local dir="$OUTROOT/T4/${cond}/run${run}"
+	[[ -f $dir/result.txt ]] && return 0
 	mkdir -p "$dir"
 	local cgroup coll_pid stress_pids=() stress_cpus
 	cgroup=$(docker_cgroup m5-nginx)
