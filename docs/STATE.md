@@ -1,25 +1,25 @@
 # Trạng thái dự án HIDS
 
-Cập nhật lần cuối: 2026-10-07 18:55 (giờ máy)
+Cập nhật lần cuối: 2026-10-07 21:05 (giờ máy)
 
 ## Mốc hiện tại và mục tiêu
-- **M5 (m6a):** Chạy lại overhead collector; output `validation/m5-20261007-m6a/`.
+- **M5 (m6a):** Xong — `validation/m5-20261007-m6a/`, tag `m5`, R016.
 
 ## Chạy lại cho bài báo
 - **E2:** Bản cuối dùng `stress-ng --cpu-method int64` cho tải nền C3 trong M5. E2 lần 3 dùng phương pháp mặc định của stress-ng, có thể tranh chấp bộ nhớ → cpu trung bình dao động ~1–9%.
 
 ## Bước đã xong
-- E2 lần 3, R015 (`d227f9f`)
-- M6a tag, R014
+- M5 m6a (`32313e5`, tag `m5`, R016)
+- E2 lần 3, M6a, M4
 
 ## Bước đang làm
-- Khởi động `scripts/m5.sh` (m6a, OUTROOT `validation/m5-20261007-m6a`).
+Không.
 
 ## Bước tiếp theo
-- Khi M5 xong: tag `m5`, báo cáo R016.
+Theo chỉ đạo kiến trúc sư.
 
 ## Việc đang chạy
-- **hids-m5-m6a** — `systemd-run --unit=hids-m5-m6a` — bắt đầu 2026-10-07 18:52 — dự kiến nhiều giờ — log `/root/hids/out/jobs/m5-m6a.log` — trạng thái `/root/hids/out/jobs/m5-m6a.status` — commit `59be160`
+Không.
 
 ## Vướng mắc / chờ kiến trúc sư
 - Không.
