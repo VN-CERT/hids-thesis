@@ -59,17 +59,20 @@ func (s IRQStat) TotalNs() uint64 { return s.HardNs + s.VecNs + s.SoftExclNs }
 
 // irqState trung bo cuc voi struct hids_irqstate trong BPF.
 type irqState struct {
-	HardStart  uint64
-	HardNs     uint64
-	VecStart   uint64
-	VecNs      uint64
-	SoftStart  uint64
-	SoftSnap   uint64
-	SoftRawNs  uint64
-	SoftExclNs uint64
-	OddNs      uint64
-	OddCnt     uint32
-	_          uint32
+	HardStart      uint64
+	HardStartSteal uint64
+	HardNs         uint64
+	VecStart       uint64
+	VecStartSteal  uint64
+	VecNs          uint64
+	SoftStart      uint64
+	SoftStartSteal uint64
+	SoftSnap       uint64
+	SoftRawNs      uint64
+	SoftExclNs     uint64
+	OddNs          uint64
+	OddCnt         uint32
+	Pad            uint32
 }
 
 // Collector giu chuong trinh BPF da nap, cac link va bo doc ring buffer.
