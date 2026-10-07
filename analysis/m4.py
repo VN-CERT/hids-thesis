@@ -94,6 +94,23 @@ def steal_off_total_ns(sub: pd.DataFrame) -> float:
     return float(s.sum())
 
 
+def col_mean_ns(sub: pd.DataFrame, col: str) -> float:
+    if col not in sub.columns:
+        return float("nan")
+    s = sub[col].dropna().astype(float)
+    if s.empty:
+        return float("nan")
+    return float(s.mean())
+
+
+def fmt_num(x: float, width: int = 0, prec: int = 2) -> str:
+    if x is None or (isinstance(x, float) and np.isnan(x)):
+        return "n/a"
+    if width:
+        return f"{x:{width}.{prec}f}"
+    return f"{x:.{prec}f}"
+
+
 def load_csv(path: Path) -> pd.DataFrame:
     df = pd.read_csv(path)
     for c in COLS + ["dt_ns"]:
@@ -118,7 +135,10 @@ def level_table(df: pd.DataFrame, level: str, baseline_medians: dict) -> list[di
         sub = df[df["kind"] == kind]
         row = {"experiment": df.attrs.get("experiment", ""), "level": level, "kind": kind}
         row["n"] = len(sub)
-        med_dt, mean_dt, p90_dt, p99_dt = us_stats_full(sub["dt_ns"])
+        if "dt_ns" not in sub.columns:
+            med_dt = mean_dt = p90_dt = p99_dt = float("nan")
+        else:
+            med_dt, mean_dt, p90_dt, p99_dt = us_stats_full(sub["dt_ns"])
         row["median_us"] = med_dt
         row["p90_us"] = p90_dt
         row["p99_us"] = p99_dt
@@ -126,8 +146,15 @@ def level_table(df: pd.DataFrame, level: str, baseline_medians: dict) -> list[di
         row["dt_p90_us"] = p90_dt
         row["dt_p99_us"] = p99_dt
         for c in COLS:
-            med, mean, p90, p99 = us_stats_full(sub[c])
             key = c.replace("_ns", "")
+            if c not in sub.columns:
+                row[f"{key}_median_us"] = float("nan")
+                if key in CORE_METRICS:
+                    row[f"{key}_mean_us"] = float("nan")
+                    row[f"{key}_p90_us"] = float("nan")
+                    row[f"{key}_p99_us"] = float("nan")
+                continue
+            med, mean, p90, p99 = us_stats_full(sub[c])
             row[f"{key}_median_us"] = med
             if key in CORE_METRICS:
                 row[f"{key}_mean_us"] = mean
@@ -136,12 +163,24 @@ def level_table(df: pd.DataFrame, level: str, baseline_medians: dict) -> list[di
         row["steal_gt0_frac"] = steal_gt0_frac(sub)
         row["steal_total_ns"] = steal_total_ns(sub)
         row["steal_off_total_ns"] = steal_off_total_ns(sub)
+        if row["n"] and not np.isnan(row["steal_off_total_ns"]):
+            row["steal_off_mean_us"] = row["steal_off_total_ns"] / row["n"] / 1000.0
+        else:
+            row["steal_off_mean_us"] = float("nan")
+        if "vol_ns" in sub.columns:
+            _, vol_mean, _, _ = us_stats_full(sub["vol_ns"])
+            row["vol_mean_us"] = vol_mean
+        else:
+            row["vol_mean_us"] = float("nan")
         row["clamped_n"] = clamped_count(sub)
         row["vm_steal_probe_pct"] = float("nan")
         base_dt = baseline_medians.get((kind, "dt"), float("nan"))
         base_cpu = baseline_medians.get((kind, "cpu"), float("nan"))
         row["ratio_dt"] = med_dt / base_dt if base_dt and not np.isnan(base_dt) else float("nan")
-        row["ratio_cpu"] = row["cpu_median_us"] / base_cpu if base_cpu and not np.isnan(base_cpu) else float("nan")
+        cpu_med = row.get("cpu_median_us", float("nan"))
+        row["ratio_cpu"] = (
+            cpu_med / base_cpu if base_cpu and not np.isnan(base_cpu) and not np.isnan(cpu_med) else float("nan")
+        )
         rows.append(row)
     return rows
 
@@ -154,11 +193,14 @@ def print_table(exp: str, level: str, rows: list[dict]) -> None:
     )
     print(hdr)
     for r in rows:
-        st_ms = r["steal_total_ns"] / 1e6 if not np.isnan(r["steal_total_ns"]) else float("nan")
+        st_tot = r.get("steal_total_ns", float("nan"))
+        st_ms = st_tot / 1e6 if not np.isnan(st_tot) else float("nan")
         vmp = r.get("vm_steal_probe_pct", float("nan"))
         print(
-            f"{r['kind']:6} {r['n']:6d} {r['median_us']:9.2f} {r['steal_mean_us']:9.2f} {r['steal_p90_us']:9.2f} "
-            f"{r['steal_gt0_frac']:7.3f} {st_ms:10.2f} {vmp:8.3f} {r['ratio_dt']:7.3f}"
+            f"{r['kind']:6} {r['n']:6d} {fmt_num(r['median_us'], 9):>9} "
+            f"{fmt_num(r.get('steal_mean_us'), 9):>9} {fmt_num(r.get('steal_p90_us'), 9):>9} "
+            f"{fmt_num(r['steal_gt0_frac'], 7, 3):>7} {fmt_num(st_ms, 10):>10} "
+            f"{fmt_num(vmp, 8, 3):>8} {fmt_num(r['ratio_dt'], 7, 3):>7}"
         )
 
 
@@ -213,7 +255,7 @@ def decomposition_rows(exp: str, by_level: dict[str, pd.DataFrame]) -> list[dict
     levels = sort_levels(list(by_level.keys()))
     bl = baseline_level_key(by_level, exp)
     dt_cols = ["cpu_ns", "steal_ns", "irq_ns", "rq_ns", "vol_ns"]
-    comp_cols = dt_cols + ["steal_off_ns"]
+    off_col = "steal_off_ns"
     rows: list[dict] = []
     for kind in ("burn", "sleep"):
         if bl not in by_level:
@@ -221,17 +263,24 @@ def decomposition_rows(exp: str, by_level: dict[str, pd.DataFrame]) -> list[dict
         base = by_level[bl][by_level[bl]["kind"] == kind]
         if base.empty:
             continue
-        base_dt = float(base["dt_ns"].mean())
-        base_parts = {c: float(base[c].mean()) for c in comp_cols}
+        base_dt = col_mean_ns(base, "dt_ns")
+        base_parts = {c: col_mean_ns(base, c) for c in dt_cols}
+        base_off = col_mean_ns(base, off_col)
         for lv in levels:
             sub = by_level[lv][by_level[lv]["kind"] == kind]
             if sub.empty:
                 continue
-            mean_dt = float(sub["dt_ns"].mean())
-            parts = {c: float(sub[c].mean()) for c in comp_cols}
+            mean_dt = col_mean_ns(sub, "dt_ns")
+            parts = {c: col_mean_ns(sub, c) for c in dt_cols}
+            off_mean = col_mean_ns(sub, off_col)
             d_dt = mean_dt - base_dt
-            d_parts = {c.replace("_ns", ""): parts[c] - base_parts[c] for c in comp_cols}
-            check = sum(d_parts[c.replace("_ns", "")] for c in dt_cols) - d_dt
+            d_parts = {c.replace("_ns", ""): parts[c] - base_parts[c] for c in dt_cols}
+            d_off = (
+                off_mean - base_off
+                if not (np.isnan(off_mean) or np.isnan(base_off))
+                else float("nan")
+            )
+            check = sum(d_parts[k] for k in ("cpu", "steal", "irq", "rq", "vol")) - d_dt
             rows.append(
                 {
                     "experiment": exp,
@@ -243,7 +292,7 @@ def decomposition_rows(exp: str, by_level: dict[str, pd.DataFrame]) -> list[dict
                     "delta_irq_mean_ns": d_parts["irq"],
                     "delta_rq_mean_ns": d_parts["rq"],
                     "delta_vol_mean_ns": d_parts["vol"],
-                    "delta_steal_off_mean_ns": d_parts.get("steal_off", float("nan")),
+                    "delta_steal_off_mean_ns": d_off,
                     "check_sum_ns": check,
                 }
             )
@@ -262,11 +311,15 @@ def print_decomposition(exp: str, rows: list[dict]) -> None:
     print(hdr)
     for r in sub:
         print(
-            f"{r['kind']:6} {str(r['level']):>10} {r['delta_dt_mean_ns']:12.0f} "
-            f"{r['delta_cpu_mean_ns']:10.0f} {r['delta_steal_mean_ns']:10.0f} "
-            f"{r['delta_irq_mean_ns']:8.0f} {r['delta_rq_mean_ns']:10.0f} "
-            f"{r['delta_vol_mean_ns']:10.0f} {r['delta_steal_off_mean_ns']:10.0f} "
-            f"{r['check_sum_ns']:10.0f}"
+            f"{r['kind']:6} {str(r['level']):>10} "
+            f"{fmt_num(r['delta_dt_mean_ns'], 12, 0):>12} "
+            f"{fmt_num(r['delta_cpu_mean_ns'], 10, 0):>10} "
+            f"{fmt_num(r['delta_steal_mean_ns'], 10, 0):>10} "
+            f"{fmt_num(r['delta_irq_mean_ns'], 8, 0):>8} "
+            f"{fmt_num(r['delta_rq_mean_ns'], 10, 0):>10} "
+            f"{fmt_num(r['delta_vol_mean_ns'], 10, 0):>10} "
+            f"{fmt_num(r['delta_steal_off_mean_ns'], 10, 0):>10} "
+            f"{fmt_num(r['check_sum_ns'], 10, 0):>10}"
         )
 
 

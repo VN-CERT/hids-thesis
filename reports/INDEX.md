@@ -16,3 +16,4 @@
 | [R012](R012-m4-close.md) | 2026-10-07 15:45 | M4.4 | Đóng M4: E2.png, phân rã, sửa mẫu số steal 10s; tag `m4`. | Xong. |
 | [R013](R013-m5-overhead.md) | 2026-10-07 16:10 | M5 | Overhead collector; job `hids-m5-full` đang chạy. | **Dừng trước M6a; chạy lại sau E2** |
 | [R014](R014-m6a-irq-steal-stealoff.md) | 2026-10-07 16:45 | M6a | irq trừ steal, `steal_off_ns` 56 byte, tự kiểm G7/G3 S1–S5; E2 lần 3 chờ người dùng. | Xong, tag `m6a`. |
+| [R015](R015-e2-lan3-m4py.md) | 2026-10-07 17:05 | E2-l3 | Sửa `m4.py` gộp CSV; tái tạo summary/E2.png; E2-lan2/lan3. | Xong. |
