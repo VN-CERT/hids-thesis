@@ -14,4 +14,5 @@
 | [R010](R010-m4.2-e2-invalid-fix.md) | 2026-10-07 15:00 | M4.2 | Loại E2 sai; sửa `m4.sh e2` + workflow; chờ người dùng thu E2 lại. | Xong phần chuẩn bị. |
 | [R011](R011-m4.3-e2-stats-fix.md) | 2026-10-07 15:15 | M4.3 | Sửa E2 + stats; E2-lan1; không chạy E2 lại. | Xong. |
 | [R012](R012-m4-close.md) | 2026-10-07 15:45 | M4.4 | Đóng M4: E2.png, phân rã, sửa mẫu số steal 10s; tag `m4`. | Xong. |
-| [R013](R013-m5-overhead.md) | 2026-10-07 16:10 | M5 | Overhead collector; job `hids-m5-full` đang chạy. | **Chưa xong** |
+| [R013](R013-m5-overhead.md) | 2026-10-07 16:10 | M5 | Overhead collector; job `hids-m5-full` đang chạy. | **Dừng trước M6a; chạy lại sau E2** |
+| [R014](R014-m6a-irq-steal-stealoff.md) | 2026-10-07 16:45 | M6a | irq trừ steal, `steal_off_ns` 56 byte, tự kiểm G7/G3 S1–S5; E2 lần 3 chờ người dùng. | Xong, tag `m6a`. |

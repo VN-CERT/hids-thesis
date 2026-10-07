@@ -1,0 +1,105 @@
+=== S5: wl io 300 (CPU 20) ===
+wl pid=1626957 tid=1626957
+--- moc A schedstat (sum_exec_runtime run_delay pcount) ---
+302012884 19579 5
+--- moc A /proc/1626957/sched ---
+sum_sleep_runtime                            :          3501.504423
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.019579
+iowait_sum                                   :             0.000000
+bpftrace pid=1627573, runqlat pid=1627598
+--- moc B schedstat ---
+324939287 217659 606
+--- moc B /proc/1626957/sched ---
+sum_sleep_runtime                            :          4031.960941
+sum_block_runtime                            :           289.061931
+wait_sum                                     :             0.217659
+iowait_sum                                   :           115.206703
+--- bpftrace (nguyen van, xem file S5.bpftrace.log) ---
+Attaching 2 probes...
+
+
+@rq_sau_wakeup_ns: 2010955
+@so_lan: 601
+@w: 0
+--- runqlat-bpfcc (histogram, xem file S5.runqlat.log) ---
+cua so ts_enter: (77875983862407, 77876537438362]
+--- rec-check ---
+so ban ghi trong cua so: 1503
+tid: 1626957
+cua so ts_enter: (77875983862407, 77876537438362]
+co              so_ban_ghi
+FIRST           0
+GAP_BEFORE      0
+D_SLEEP         300
+MIGRATED        0
+OVERFLOW        0
+STEAL_FALLBACK  0
+CLAMPED         0
+--- tong thanh phan (ns) ---
+cpu 21273707
+steal 0
+irq 66782
+rq 2050128
+vol 530182000
+steal_off 224850
+cpu+steal+irq 21340489
+--- G5 phan du |tat ca (tru FIRST)| (ns) ---
+so khoang: 1502
+p50 0
+p99 480
+p99.9 495
+max 498
+so khoang |phan du| > 1000 ns: 0
+so khoang |phan du| > 10000 ns: 0
+--- G5 phan du |khong GAP_BEFORE| (ns) ---
+so khoang: 1502
+p50 0
+p99 480
+p99.9 495
+max 498
+so khoang |phan du| > 1000 ns: 0
+so khoang |phan du| > 10000 ns: 0
+--- G5 phan du |co GAP_BEFORE| (ns) ---
+so khoang: 0
+--- bang doi chieu ---
+thanh_phan           collector       tham_chieu      nguon
+cpu+steal+irq        21340489        22926403        Delta schedstat field1 sum_exec_runtime
+rq                   2050128         198080          Delta schedstat field2 run_delay
+rq (wait_sum)        2050128         198080          Delta wait_sum /proc/sched
+vol                  530182000       530457000       Delta sum_sleep_runtime
+vol (D_SLEEP)        288785000       289062000       Delta sum_block_runtime
+rq                   2050128         2010955         bpftrace @rq_sau_wakeup_ns (cot 3: 198080 run_delay)
+so_lan_wakeup        —             601             bpftrace @so_lan (cot 3: 601 Delta pcount)
+tong cpu+steal+irq+rq+vol | exec+run_delay+sleep 553572617       553581483       collector | kernel
+--- log collector (cuoi) ---
+  hids_irq_call_function_single_exit       0
+  hids_irq_deferred_error_apic_entry       0
+  hids_irq_deferred_error_apic_exit        0
+  hids_irq_error_apic_entry                0
+  hids_irq_error_apic_exit                 0
+  hids_irq_irq_handler_entry               0
+  hids_irq_irq_handler_exit                0
+  hids_irq_irq_work_entry                  0
+  hids_irq_irq_work_exit                   0
+  hids_irq_local_timer_entry               0
+  hids_irq_local_timer_exit                0
+  hids_irq_reschedule_entry                0
+  hids_irq_reschedule_exit                 0
+  hids_irq_softirq_entry                   0
+  hids_irq_softirq_exit                    0
+  hids_irq_spurious_apic_entry             0
+  hids_irq_spurious_apic_exit              0
+  hids_irq_thermal_apic_entry              0
+  hids_irq_thermal_apic_exit               0
+  hids_irq_threshold_apic_entry            0
+  hids_irq_threshold_apic_exit             0
+  hids_irq_x86_platform_ipi_entry          0
+  hids_irq_x86_platform_ipi_exit           0
+  hids_sched_switch                        0
+  hids_sched_wakeup                        0
+  hids_sched_wakeup_new                    0
+  hids_sys_enter                           0
+thoi gian chay: 0.800 s | CPU collector: user 0.151 s, sys 0.175 s (getrusage RUSAGE_SELF)
+kich thuoc file: 85233 byte
+du lieu: out/g3-S5-163731.bin | thong ke: out/g3-S5-163731.bin.stats | theo doi: out/g3-S5-163731.bin.periodic
