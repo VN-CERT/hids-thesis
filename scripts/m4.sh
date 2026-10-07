@@ -85,6 +85,14 @@ for tag in ("idle", "stress2"):
     })
 if e3_rows:
     s = pd.concat([s, pd.DataFrame(e3_rows)], ignore_index=True)
+s["vm_steal_pct"] = float("nan")
+for lv in ("Unlimited", "36000", "24000", "12000"):
+    sp = root / "E2" / f"{lv}.vm_steal_pct"
+    if not sp.exists():
+        continue
+    pct = float(sp.read_text().strip())
+    m = (s["experiment"] == "E2") & (s["level"].astype(str) == lv)
+    s.loc[m, "vm_steal_pct"] = pct
 s.to_csv(root / "summary.csv", index=False)
 print(f"luu {root / 'summary.csv'} ({len(s)} dong)")
 PY
@@ -305,14 +313,61 @@ e4() {
 	printf '%s\n' "${manifest[@]}"
 }
 
-e2_one_level() {
-	local label=$1 limit_msg=$2
-	local loops bin csv sp
-	if [[ -z ${M4_E2_SKIP_PROMPT:-} ]]; then
-		echo "Tren vCenter: Edit Settings -> CPU -> Limit = ${limit_msg} -> OK. Xong bam Enter." >&2
+# Tong jiffies dong `cpu` trong /proc/stat (user nice system idle iowait irq softirq steal).
+vm_cpu_jiffies() {
+	awk '/^cpu / {print $2,$3,$4,$5,$6,$7,$8,$9}' /proc/stat
+}
+
+# Do 10 giay; in va tra ve % steal / (thoi gian CPU VM, khong tinh idle).
+measure_vm_steal_pct_10s() {
+	local a b
+	a=$(vm_cpu_jiffies)
+	sleep 10
+	b=$(vm_cpu_jiffies)
+	"${M4_PYTHON[@]}" - "$a" "$b" <<'PY'
+import sys
+def d(s):
+    return [int(x) for x in s.split()]
+a, b = d(sys.argv[1]), d(sys.argv[2])
+da = [b[i] - a[i] for i in range(8)]
+# user nice system idle iowait irq softirq steal
+active = sum(da[i] for i in range(7) if i != 3)
+steal = da[7]
+if active <= 0:
+    print("0.000")
+    sys.exit(0)
+print(f"{100.0 * steal / active:.3f}")
+PY
+}
+
+e2_wait_steal_ok() {
+	local label=$1 need_limit=$2 pct
+	while true; do
+		echo "m4 E2 ${label}: do steal VM 10 giay (/proc/stat)..." >&2
+		pct=$(measure_vm_steal_pct_10s)
+		echo "m4 E2 ${label}: vm_steal_pct=${pct}%" >&2
+		if [[ $need_limit -eq 0 ]]; then
+			echo "$pct"
+			return 0
+		fi
+		if awk -v p="$pct" 'BEGIN{exit !(p>=5.0)}'; then
+			echo "$pct"
+			return 0
+		fi
+		echo "CANH BAO: limit chua co hieu luc — kiem tra lai vCenter roi bam Enter" >&2
 		read -r
-	fi
-	stress-ng --cpu 23 --taskset 0-19,21-23 --timeout 120 >/dev/null 2>&1 &
+	done
+}
+
+e2_one_level() {
+	local label=$1 limit_msg=$2 need_limit=$3
+	local loops bin csv sp pct
+	echo "Tren vCenter: Edit Settings -> CPU -> Limit = ${limit_msg} -> OK. Xong bam Enter." >&2
+	read -r
+	pct=$(e2_wait_steal_ok "$label" "$need_limit")
+	mkdir -p out
+	echo "E2 ${label} vm_steal_pct=${pct}%" >>out/m4-e2-steal.log
+	stress-ng --cpu 22 --taskset 0-19,22-23 --timeout 120 >/dev/null 2>&1 &
 	sp=$!
 	sleep 2
 	loops=$(read_burn_loops)
@@ -323,33 +378,32 @@ e2_one_level() {
 	csv="$OUTROOT/E2/${label}.csv"
 	export_csv "$bin" "$csv"
 	cp "$bin" "$OUTROOT/E2/${label}.bin"
+	echo "$pct" >"$OUTROOT/E2/${label}.vm_steal_pct"
 	echo "E2:${label}:${csv}"
 }
 
 e2_collect() {
 	local manifest=()
-	manifest+=("$(e2_one_level Unlimited Unlimited)")
-	manifest+=("$(e2_one_level 36000 36000 MHz)")
-	manifest+=("$(e2_one_level 24000 24000 MHz)")
-	manifest+=("$(e2_one_level 12000 12000 MHz)")
-	[[ -z ${M4_E2_SKIP_PROMPT:-} ]] && echo "Dat lai Unlimited tren vCenter." >&2
+	: >out/m4-e2-steal.log
+	manifest+=("$(e2_one_level Unlimited Unlimited 0)")
+	manifest+=("$(e2_one_level 36000 36000 MHz 1)")
+	manifest+=("$(e2_one_level 24000 24000 MHz 1)")
+	manifest+=("$(e2_one_level 12000 12000 MHz 1)")
+	echo "Dat lai Unlimited tren vCenter." >&2
 	printf '%s\n' "${manifest[@]}"
 }
 
 e2_prep() {
 	cat <<'EOF'
-=== E2 (nguoi dung chay tren vCenter) ===
+=== E2 (nguoi dung: vCenter + Enter) ===
 wl mixed R=500 tren CPU 20.
-Dong thoi: stress-ng --cpu 23 --taskset 0-19,21-23 (timeout du dai).
-Bon muc Limit MHz: Unlimited, 36000, 24000, 12000.
-Truoc moi muc script in:
-  "Tren vCenter: Edit Settings → CPU → Limit = <X> MHz → OK. Xong bam Enter."
-Sau het dat lai Unlimited.
+Dong thoi: stress-ng --cpu 22 --taskset 0-19,22-23 (CPU 21 cho he thong).
+Bon muc Limit: Unlimited, 36000, 24000, 12000 MHz.
+Truoc moi muc: script in huong dan vCenter, CHO Enter.
+Sau Enter: do steal VM 10 giay; muc co limit can vm_steal_pct >= 5% truoc khi thu.
+Khong co cach bo qua Enter.
 
-Lenh goi y (sau khi dat limit va bam Enter):
-  LOOPS=$(awk '/^burn_loops/{print $2}' out/m4-loops.txt)
-  taskset -c 20 ./bin/wl -loops "$LOOPS" mixed 500
-  (collector -pid wl & stress-ng ...)
+Chay: sudo bash scripts/m4.sh e2
 
 EOF
 }
@@ -387,11 +441,9 @@ main() {
 		rebuild_summary
 		;;
 	e2)
-		e2_prep
-		;;
-	e2-collect)
 		require_clean_git
 		calibrate_wl 2>/dev/null || true
+		e2_prep
 		mapfile -t _e2 < <(e2_collect)
 		rebuild_summary
 		;;
@@ -409,7 +461,7 @@ main() {
 		"${M4_PYTHON[@]}" "$M4PY" --outdir "$M4PY_OUT" --summary "$OUTROOT/summary.csv" "${all_manifest[@]}"
 		;;
 	*)
-		die "usage: m4.sh {calibrate|e1|e3|e4|e2|e2-collect|e2-finish|rebuild-summary|all}"
+		die "usage: m4.sh {calibrate|e1|e3|e4|e2|e2-finish|rebuild-summary|all}"
 		;;
 	esac
 }

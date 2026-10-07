@@ -51,6 +51,10 @@ Cập nhật và commit sau MỖI bước nhỏ (build xong, chạy thử xong, 
 - Lựa chọn ảnh hưởng tới phép đo, nguồn tham chiếu, đặc tả bản ghi, hoặc cần đổi quy tắc: KHÔNG tự quyết. Dừng phần đó, làm tiếp phần không phụ thuộc, ghi câu hỏi vào mục 8 kèm các phương án và hệ quả, rồi viết báo cáo.
 - Chỉ yêu cầu người dùng làm những việc chỉ người dùng làm được (thao tác trên vCenter, xác nhận chạy việc ảnh hưởng dịch vụ). Viết thành chỉ dẫn từng bước, không hỏi ý kiến.
 
+# Bước "người dùng làm"
+- Trong nhiệm vụ, script, hoặc báo cáo, mọi bước ghi rõ là **người dùng làm** (hoặc tương đương: thao tác vCenter, bấm Enter xác nhận): Cursor **không** tự thực hiện thay, **không** giả lập, **không** bỏ qua bằng biến môi trường hay cờ.
+- Cursor chỉ chuẩn bị (script, hướng dẫn, kiểm tra tiên quyết), in chỉ dẫn, rồi **DỪNG và chờ** người dùng.
+
 # Tiết kiệm ngữ cảnh
 - Không mở hay đọc toàn bộ bpf/vmlinux.h; chỉ dùng grep -n -A<số dòng> với đúng tên struct cần.
 - Chạy lệnh có output dài thì ghi ra file trong out/, chỉ đọc lại phần cần (head, tail, grep). Không cat file lớn, không bao giờ đọc file .bin.
