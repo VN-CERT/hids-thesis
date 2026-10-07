@@ -8,10 +8,10 @@ COLLECT=./bin/hids-collect
 RECSTAT=./bin/rec-stat
 SYSINJ=./bin/sysinj
 DATE=$(date +%Y%m%d)
-OUTROOT="validation/m5-${DATE}"
-RUNS=5
-REST=10
-N_SYSINJ=10000000
+OUTROOT="${M5_OUTROOT:-validation/m5-${DATE}}"
+RUNS=${M5_RUNS:-5}
+REST=${M5_REST:-10}
+N_SYSINJ=${M5_N_SYSINJ:-10000000}
 DECOY_CG="/sys/fs/cgroup/hids-m5-decoy"
 M5PY=./analysis/m5_summarize.py
 
