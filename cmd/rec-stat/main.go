@@ -68,6 +68,10 @@ func run() error {
 	if err != nil {
 		return fmt.Errorf("%s: %w", path, err)
 	}
+	payload, err := recfmt.RecordPayloadReader(header, br)
+	if err != nil {
+		return fmt.Errorf("%s: %w", path, err)
+	}
 
 	tgidCache := map[uint32]tgidInfo{}
 	byTID := map[uint32]*procCount{}
@@ -79,7 +83,7 @@ func run() error {
 	var total, kept, nrCount, firstCount, gapCount int64
 	var minTs, maxTs uint64
 
-	_, leftover, err := recfmt.ForEach(br, recordSize, func(r recfmt.Record) error {
+	_, leftover, err := recfmt.ForEach(payload, recordSize, func(r recfmt.Record) error {
 		total++
 		// Bang seq theo CPU luon tinh tren TOAN BO ban ghi trong file: seq dem
 		// moi lan dinh ghi, loc bot ban ghi se tao ra lo hong gia.

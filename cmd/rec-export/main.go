@@ -39,6 +39,10 @@ func run() error {
 	if err != nil {
 		return err
 	}
+	payload, err := recfmt.RecordPayloadReader(header, br)
+	if err != nil {
+		return err
+	}
 
 	w := csv.NewWriter(os.Stdout)
 	if err := w.Write([]string{
@@ -49,7 +53,7 @@ func run() error {
 	}
 
 	lastTs := map[uint32]uint64{}
-	_, _, err = recfmt.ForEach(br, recordSize, func(r recfmt.Record) error {
+	_, _, err = recfmt.ForEach(payload, recordSize, func(r recfmt.Record) error {
 		dt := ""
 		if r.Flags&recfmt.FlagFirst == 0 {
 			if prev, ok := lastTs[r.TID]; ok && r.TsEnter > prev {

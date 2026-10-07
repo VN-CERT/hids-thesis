@@ -55,9 +55,13 @@ func run() error {
 	if err != nil {
 		return err
 	}
+	payload, err := recfmt.RecordPayloadReader(header, br)
+	if err != nil {
+		return err
+	}
 
 	var recs []recfmt.Record
-	_, _, err = recfmt.ForEach(br, recordSize, func(r recfmt.Record) error {
+	_, _, err = recfmt.ForEach(payload, recordSize, func(r recfmt.Record) error {
 		if *tid != 0 && r.TID != uint32(*tid) {
 			return nil
 		}
