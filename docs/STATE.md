@@ -9,7 +9,7 @@ Cập nhật lần cuối: 2026-10-07 16:45 (giờ máy)
 - Dừng M5, archive `validation/m5-20261007-truoc-m6a/`
 - Sửa irq trừ steal, bản ghi 56 byte + `steal_off_ns`, công cụ, `m4.py` E2 prep
 - Tự kiểm G7a/G7d, G3 S1–S5 → `validation/g3-20261007-m6a/`
-- Commit `5121d30`, tag `m6a`, báo cáo R014
+- Tag `m6a` (`a7ef763`), báo cáo R014
 
 ## Bước đang làm
 Không (Cursor dừng theo nhiệm vụ M6a).
