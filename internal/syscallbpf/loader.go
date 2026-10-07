@@ -6,6 +6,7 @@ import (
 	"os"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/cilium/ebpf"
 	"github.com/cilium/ebpf/link"
@@ -158,9 +159,9 @@ func Load(cfg Config) (*Collector, error) {
 			return nil, fmt.Errorf("nap tgid %d vao hids_pids: %w", tgid, err)
 		}
 	}
-	for _, id := range cfg.CgroupIDs {
-		if err := coll.Maps["hids_cgroups"].Put(id, one); err != nil {
-			return nil, fmt.Errorf("nap cgroup id %d vao hids_cgroups: %w", id, err)
+	if len(cfg.CgroupIDs) > 0 {
+		if err := c.ReplaceCgroupFilter(cfg.CgroupIDs); err != nil {
+			return nil, err
 		}
 	}
 
@@ -267,9 +268,37 @@ func (c *Collector) IRQTracepoints() []string {
 	return out
 }
 
+// SetReadDeadline dat thoi han cho ReadInto; zero time = cho vo han.
+func (c *Collector) SetReadDeadline(t time.Time) {
+	c.reader.SetDeadline(t)
+}
+
 // ReadInto doc mot ban ghi tu ring buffer vao rec.
 func (c *Collector) ReadInto(rec *ringbuf.Record) error {
 	return c.reader.ReadInto(rec)
+}
+
+// ReplaceCgroupFilter thay toan bo key trong hids_cgroups bang tap id moi.
+func (c *Collector) ReplaceCgroupFilter(ids []uint64) error {
+	m := c.coll.Maps["hids_cgroups"]
+	if m == nil {
+		return errors.New("khong tim thay map hids_cgroups")
+	}
+	var key uint64
+	var val uint8
+	iter := m.Iterate()
+	for iter.Next(&key, &val) {
+		if err := m.Delete(key); err != nil {
+			return fmt.Errorf("xoa cgroup id %d: %w", key, err)
+		}
+	}
+	one := uint8(1)
+	for _, id := range ids {
+		if err := m.Put(id, one); err != nil {
+			return fmt.Errorf("nap cgroup id %d: %w", id, err)
+		}
+	}
+	return nil
 }
 
 // Detach go chuong trinh khoi tracepoint de khong con ban ghi moi sinh ra.

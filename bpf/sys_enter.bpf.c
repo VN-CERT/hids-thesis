@@ -28,8 +28,10 @@
 
 char LICENSE[] SEC("license") = "GPL";
 
-/* So level to tien toi da duyet khi loc theo cgroup. */
-#define HIDS_MAX_CGROUP_LEVEL 16
+/* bpf_ringbuf_* flags; user space doc theo nhịp khi dung BPF_RB_NO_WAKEUP. */
+#ifndef BPF_RB_NO_WAKEUP
+#define BPF_RB_NO_WAKEUP (1ULL)
+#endif
 
 /* Bang flags chot trong .cursor/rules/hids.mdc. */
 #define HIDS_F_FIRST          (1U << 0)
@@ -172,7 +174,7 @@ struct {
 
 struct {
 	__uint(type, BPF_MAP_TYPE_HASH);
-	__uint(max_entries, 1024);
+	__uint(max_entries, 4096);
 	__type(key, __u64); /* cgroup id = so inode cua thu muc cgroup v2 */
 	__type(value, __u8);
 } hids_cgroups SEC(".maps");
@@ -402,20 +404,7 @@ static __always_inline bool cgroup_selected(void)
 {
 	__u64 id = bpf_get_current_cgroup_id();
 
-	if (bpf_map_lookup_elem(&hids_cgroups, &id))
-		return true;
-
-	for (int level = 0; level < HIDS_MAX_CGROUP_LEVEL; level++) {
-		__u64 anc = bpf_get_current_ancestor_cgroup_id(level);
-
-		/* 0 nghia la level sau hon do sau hien tai, khong con to tien nao. */
-		if (!anc)
-			break;
-		if (bpf_map_lookup_elem(&hids_cgroups, &anc))
-			return true;
-	}
-
-	return false;
+	return bpf_map_lookup_elem(&hids_cgroups, &id) != NULL;
 }
 
 /* sat32 ep mot gia tri ns ve u32, bao hoa va bat OVERFLOW khi tran. */
@@ -486,7 +475,7 @@ int BPF_PROG(hids_sys_enter, struct pt_regs *regs, long id)
 		return 0;
 	*seqp += 1;
 
-	rec = bpf_ringbuf_reserve(&hids_events, sizeof(*rec), 0);
+	rec = bpf_ringbuf_reserve(&hids_events, sizeof(*rec), BPF_RB_NO_WAKEUP);
 	if (!rec) {
 		__u64 *drops = bpf_map_lookup_elem(&hids_drops, &key0);
 
@@ -528,7 +517,7 @@ int BPF_PROG(hids_sys_enter, struct pt_regs *regs, long id)
 	rec->reserved = 0;
 	rec->flags = flags;
 
-	bpf_ringbuf_submit(rec, 0);
+	bpf_ringbuf_submit(rec, BPF_RB_NO_WAKEUP);
 
 	/* Bat dau khoang moi. */
 	st->seen = 1;
