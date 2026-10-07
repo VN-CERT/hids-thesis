@@ -1,6 +1,6 @@
 // Package recfmt dinh nghia dinh dang file .bin do hids-collect ghi ra:
 // phan dau la cac dong van ban bat dau bang '#', ket thuc bang dong "#END",
-// sau do la cac ban ghi nhi phan 48 byte noi tiep nhau (little-endian).
+// sau do la cac ban ghi nhi phan 48 hoac 56 byte noi tiep nhau (little-endian).
 package recfmt
 
 import (
@@ -8,11 +8,15 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
+	"strconv"
 	"strings"
 )
 
-// RecordSize la kich thuoc co dinh cua mot ban ghi, theo dac ta trong hids.mdc.
-const RecordSize = 48
+// RecordSize la kich thuoc ban ghi moi (M6a), theo dac ta trong hids.mdc.
+const RecordSize = 56
+
+// LegacyRecordSize la kich thuoc ban ghi truoc M6a.
+const LegacyRecordSize = 48
 
 // EndMarker la dong cuoi cua phan header.
 const EndMarker = "#END"
@@ -36,17 +40,19 @@ const MaxCPU = 256
 
 // Record la mot ban ghi syscall da giai ma.
 type Record struct {
-	TsEnter   uint64
-	CgroupID  uint64
-	TID       uint32
-	Seq       uint32
-	SyscallNr uint16
-	Flags     uint16
-	CPUNs     uint32
-	StealNs   uint32
-	IrqNs     uint32
-	RqNs      uint32
-	VolUs     uint32
+	TsEnter    uint64
+	CgroupID   uint64
+	TID        uint32
+	Seq        uint32
+	SyscallNr  uint16
+	Flags      uint16
+	CPUNs      uint32
+	StealNs    uint32
+	IrqNs      uint32
+	RqNs       uint32
+	VolUs      uint32
+	StealOffNs uint32
+	Reserved   uint32
 }
 
 // CPU tra ve so CPU luc sys_enter, lay tu bit8..15 cua flags.
@@ -54,11 +60,35 @@ func (r Record) CPU() int {
 	return int(r.Flags&FlagCPUMask) >> FlagCPUShift
 }
 
-// Decode doc mot ban ghi tu dung RecordSize byte.
-func Decode(b []byte) (Record, error) {
-	if len(b) != RecordSize {
-		return Record{}, fmt.Errorf("ban ghi dai %d byte, phai %d byte", len(b), RecordSize)
+// RecordSizeFromHeader tra ve kich thuoc ban ghi tu header; mac dinh 48 neu khong co.
+func RecordSizeFromHeader(h Header) (int, error) {
+	raw := h.Get("record_size")
+	if raw == "" {
+		return LegacyRecordSize, nil
 	}
+	n, err := strconv.Atoi(raw)
+	if err != nil {
+		return 0, fmt.Errorf("record_size khong hop le: %q", raw)
+	}
+	if n != LegacyRecordSize && n != RecordSize {
+		return 0, fmt.Errorf("record_size %d: chi ho tro %d hoac %d", n, LegacyRecordSize, RecordSize)
+	}
+	return n, nil
+}
+
+// Decode doc mot ban ghi tu dung size byte (48 hoac 56).
+func Decode(b []byte) (Record, error) {
+	switch len(b) {
+	case LegacyRecordSize:
+		return decode48(b)
+	case RecordSize:
+		return decode56(b)
+	default:
+		return Record{}, fmt.Errorf("ban ghi dai %d byte, phai %d hoac %d byte", len(b), LegacyRecordSize, RecordSize)
+	}
+}
+
+func decode48(b []byte) (Record, error) {
 	return Record{
 		TsEnter:   binary.LittleEndian.Uint64(b[0:]),
 		CgroupID:  binary.LittleEndian.Uint64(b[8:]),
@@ -72,6 +102,16 @@ func Decode(b []byte) (Record, error) {
 		RqNs:      binary.LittleEndian.Uint32(b[40:]),
 		VolUs:     binary.LittleEndian.Uint32(b[44:]),
 	}, nil
+}
+
+func decode56(b []byte) (Record, error) {
+	r, err := decode48(b[:LegacyRecordSize])
+	if err != nil {
+		return r, err
+	}
+	r.StealOffNs = binary.LittleEndian.Uint32(b[48:52])
+	r.Reserved = binary.LittleEndian.Uint32(b[52:56])
+	return r, nil
 }
 
 // Header la phan van ban o dau file.
@@ -112,9 +152,13 @@ func ReadHeader(r *bufio.Reader) (Header, error) {
 }
 
 // ForEach doc het cac ban ghi con lai va goi fn cho tung ban ghi.
+// recordSize phai la LegacyRecordSize hoac RecordSize (lay tu header).
 // Tra ve so ban ghi doc duoc va so byte thua o cuoi file (neu co).
-func ForEach(r io.Reader, fn func(Record) error) (int64, int, error) {
-	buf := make([]byte, RecordSize*4096)
+func ForEach(r io.Reader, recordSize int, fn func(Record) error) (int64, int, error) {
+	if recordSize != LegacyRecordSize && recordSize != RecordSize {
+		return 0, 0, fmt.Errorf("recordSize %d: chi ho tro %d hoac %d", recordSize, LegacyRecordSize, RecordSize)
+	}
+	buf := make([]byte, recordSize*4096)
 	var count int64
 	var leftover int
 
@@ -124,10 +168,10 @@ func ForEach(r io.Reader, fn func(Record) error) (int64, int, error) {
 			return count, leftover, nil
 		}
 
-		full := n / RecordSize * RecordSize
+		full := n / recordSize * recordSize
 		leftover = n - full
-		for off := 0; off < full; off += RecordSize {
-			rec, derr := Decode(buf[off : off+RecordSize])
+		for off := 0; off < full; off += recordSize {
+			rec, derr := Decode(buf[off : off+recordSize])
 			if derr != nil {
 				return count, leftover, derr
 			}

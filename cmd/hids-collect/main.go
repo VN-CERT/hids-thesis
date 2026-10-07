@@ -1,5 +1,5 @@
 // hids-collect gan hids_sys_enter vao tp_btf/sys_enter, loc theo pid/cgroup va
-// ghi cac ban ghi 48 byte ra file .bin. Can chay bang root.
+// ghi cac ban ghi 56 byte ra file .bin. Can chay bang root.
 package main
 
 import (

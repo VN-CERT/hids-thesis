@@ -25,8 +25,9 @@ Collector eBPF đo khoảng thời gian giữa hai syscall liên tiếp của t�
 - Lỗi verifier/libbpf phải in nguyên văn ra stderr và ghi vào out/<tên>.log.
 - Kết thúc mỗi nhiệm vụ: báo cáo ngắn gồm việc đã làm, lệnh build, lệnh chạy, phương án đã dùng (nếu có dự phòng), lỗi còn tồn tại. Commit và gắn tag git theo mốc (m1, m2, ...).
 
-# Đặc tả bản ghi syscall (dùng từ M2; cố định 48 byte, little-endian)
-ts_enter u64 ns (bpf_ktime_get_ns tại sys_enter) | cgroup_id u64 | tid u32 | seq u32 (tăng dần theo CPU) | syscall_nr u16 | flags u16 | cpu_ns u32 | steal_ns u32 | irq_ns u32 | rq_ns u32 | vol_us u32
+# Đặc tả bản ghi syscall (M6a; cố định 56 byte, little-endian; file cũ 48 byte vẫn đọc được)
+ts_enter u64 ns (bpf_ktime_get_ns tại sys_enter) | cgroup_id u64 | tid u32 | seq u32 (tăng dần theo CPU) | syscall_nr u16 | flags u16 | cpu_ns u32 | steal_ns u32 | irq_ns u32 | rq_ns u32 | vol_us u32 | steal_off_ns u32 | reserved u32 (= 0)
+steal_off_ns: steal trên vCPU liên quan khi thread OFF-CPU trong khoảng; không nằm trong tổng Δt (chồng lên vol/rq), chỉ đo bổ sung.
 Các thành phần thuộc khoảng từ sys_enter trước đó của cùng tid tới sys_enter hiện tại; mỗi thành phần được đo độc lập (không suy ra từ Δt trừ các phần khác).
 
 # Bảng flags (kiến trúc sư chốt, cố định từ M3)

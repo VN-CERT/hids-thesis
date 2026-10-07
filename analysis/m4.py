@@ -14,6 +14,7 @@ import pandas as pd
 BURN_NRS = {35, 230}
 SLEEP_NR = 110
 E2_LEVEL_ORDER = ["Unlimited", "36000", "24000", "12000"]
+FLAG_CLAMPED = 1 << 6
 
 
 def sort_levels(levels: list[str]) -> list[str]:
@@ -28,7 +29,7 @@ def baseline_level_key(by_level: dict[str, pd.DataFrame], exp: str) -> str:
     if "0" in by_level:
         return "0"
     return sort_levels(list(by_level.keys()))[0]
-COLS = ["dt_ns", "cpu_ns", "steal_ns", "irq_ns", "rq_ns", "vol_ns"]
+COLS = ["dt_ns", "cpu_ns", "steal_ns", "irq_ns", "rq_ns", "vol_ns", "steal_off_ns"]
 CORE_METRICS = ("dt", "cpu", "steal", "rq")
 STAT_COLS = ["n", "median_us", "p90_us", "p99_us"] + [
     f"{c.replace('_ns', '')}_median_us" for c in COLS
@@ -77,6 +78,22 @@ def steal_total_ns(sub: pd.DataFrame) -> float:
     return float(s.sum())
 
 
+def clamped_count(sub: pd.DataFrame) -> float:
+    if sub.empty or "flags" not in sub.columns:
+        return float("nan")
+    fl = pd.to_numeric(sub["flags"], errors="coerce").fillna(0).astype(np.int64)
+    return float((fl & FLAG_CLAMPED).sum())
+
+
+def steal_off_total_ns(sub: pd.DataFrame) -> float:
+    if sub.empty or "steal_off_ns" not in sub.columns:
+        return float("nan")
+    s = sub["steal_off_ns"].dropna().astype(float)
+    if s.empty:
+        return float("nan")
+    return float(s.sum())
+
+
 def load_csv(path: Path) -> pd.DataFrame:
     df = pd.read_csv(path)
     for c in COLS + ["dt_ns"]:
@@ -118,6 +135,8 @@ def level_table(df: pd.DataFrame, level: str, baseline_medians: dict) -> list[di
                 row[f"{key}_p99_us"] = p99
         row["steal_gt0_frac"] = steal_gt0_frac(sub)
         row["steal_total_ns"] = steal_total_ns(sub)
+        row["steal_off_total_ns"] = steal_off_total_ns(sub)
+        row["clamped_n"] = clamped_count(sub)
         row["vm_steal_probe_pct"] = float("nan")
         base_dt = baseline_medians.get((kind, "dt"), float("nan"))
         base_cpu = baseline_medians.get((kind, "cpu"), float("nan"))
@@ -193,7 +212,8 @@ def boxplot_e2(outdir: Path, by_level: dict[str, pd.DataFrame], probe_pcts: dict
 def decomposition_rows(exp: str, by_level: dict[str, pd.DataFrame]) -> list[dict]:
     levels = sort_levels(list(by_level.keys()))
     bl = baseline_level_key(by_level, exp)
-    comp_cols = ["cpu_ns", "steal_ns", "irq_ns", "rq_ns", "vol_ns"]
+    dt_cols = ["cpu_ns", "steal_ns", "irq_ns", "rq_ns", "vol_ns"]
+    comp_cols = dt_cols + ["steal_off_ns"]
     rows: list[dict] = []
     for kind in ("burn", "sleep"):
         if bl not in by_level:
@@ -211,7 +231,7 @@ def decomposition_rows(exp: str, by_level: dict[str, pd.DataFrame]) -> list[dict
             parts = {c: float(sub[c].mean()) for c in comp_cols}
             d_dt = mean_dt - base_dt
             d_parts = {c.replace("_ns", ""): parts[c] - base_parts[c] for c in comp_cols}
-            check = sum(d_parts.values()) - d_dt
+            check = sum(d_parts[c.replace("_ns", "")] for c in dt_cols) - d_dt
             rows.append(
                 {
                     "experiment": exp,
@@ -223,6 +243,7 @@ def decomposition_rows(exp: str, by_level: dict[str, pd.DataFrame]) -> list[dict
                     "delta_irq_mean_ns": d_parts["irq"],
                     "delta_rq_mean_ns": d_parts["rq"],
                     "delta_vol_mean_ns": d_parts["vol"],
+                    "delta_steal_off_mean_ns": d_parts.get("steal_off", float("nan")),
                     "check_sum_ns": check,
                 }
             )
@@ -236,7 +257,7 @@ def print_decomposition(exp: str, rows: list[dict]) -> None:
     print(f"\n=== Phan ra muc tang — {exp} (ns, so voi muc dau) ===")
     hdr = (
         f"{'kind':6} {'level':>10} {'d_dt':>12} {'d_cpu':>10} {'d_steal':>10} "
-        f"{'d_irq':>8} {'d_rq':>10} {'d_vol':>10} {'check':>10}"
+        f"{'d_irq':>8} {'d_rq':>10} {'d_vol':>10} {'d_st_off':>10} {'check':>10}"
     )
     print(hdr)
     for r in sub:
@@ -244,7 +265,8 @@ def print_decomposition(exp: str, rows: list[dict]) -> None:
             f"{r['kind']:6} {str(r['level']):>10} {r['delta_dt_mean_ns']:12.0f} "
             f"{r['delta_cpu_mean_ns']:10.0f} {r['delta_steal_mean_ns']:10.0f} "
             f"{r['delta_irq_mean_ns']:8.0f} {r['delta_rq_mean_ns']:10.0f} "
-            f"{r['delta_vol_mean_ns']:10.0f} {r['check_sum_ns']:10.0f}"
+            f"{r['delta_vol_mean_ns']:10.0f} {r['delta_steal_off_mean_ns']:10.0f} "
+            f"{r['check_sum_ns']:10.0f}"
         )
 
 

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0
 //
-// Chuong trinh BPF cua collector. Ghi mot ban ghi 48 byte cho moi sys_enter
+// Chuong trinh BPF cua collector. Ghi mot ban ghi 56 byte cho moi sys_enter
 // cua cac thread duoc chon, kem phan ra 5 thanh phan cua khoang giua hai
 // sys_enter lien tiep: cpu, steal, irq, rq, vol.
 //
@@ -22,6 +22,7 @@
 // dung nhu libbpf lam cho typed ksym.
 
 #include "vmlinux.h"
+#include <bpf/bpf_core_read.h>
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_tracing.h>
 
@@ -62,7 +63,7 @@ char LICENSE[] SEC("license") = "GPL";
 
 #define HIDS_U32_MAX 0xffffffffU
 
-/* Ban ghi 48 byte, little-endian, dung dac ta trong hids.mdc. */
+/* Ban ghi 56 byte, little-endian, dung dac ta trong hids.mdc. */
 struct hids_rec {
 	__u64 ts_enter;
 	__u64 cgroup_id;
@@ -75,9 +76,11 @@ struct hids_rec {
 	__u32 irq_ns;
 	__u32 rq_ns;
 	__u32 vol_us;
+	__u32 steal_off_ns;
+	__u32 reserved;
 };
 
-_Static_assert(sizeof(struct hids_rec) == 48, "ban ghi phai dung 48 byte");
+_Static_assert(sizeof(struct hids_rec) == 56, "ban ghi phai dung 56 byte");
 
 /* Trang thai theo thread (muc B cua M3). */
 struct hids_tstate {
@@ -89,6 +92,7 @@ struct hids_tstate {
 	__u64 acc_irq;
 	__u64 acc_rq;
 	__u64 acc_vol;
+	__u64 acc_steal_off; /* steal tren vCPU khi OFF-CPU, khong nam trong tong dt */
 
 	/* Moc bat dau doan ON-CPU hien tai. */
 	__u64 on_ts;
@@ -99,6 +103,10 @@ struct hids_tstate {
 	/* Trang thai OFF-CPU. */
 	__u64 off_ts;
 	__u64 wake_ts;
+	__u32 off_cpu;       /* CPU luc switch-out (phan ngu) */
+	__u32 target_cpu;    /* CPU cho phan cho rq */
+	__u64 off_steal_raw; /* vmw tho tren off_cpu luc switch-out */
+	__u64 rq_steal_raw;  /* vmw tho tren target_cpu luc bat dau cho rq */
 	__u8 off_kind;
 
 	__u8 on_active;    /* dang o tren CPU? */
@@ -125,12 +133,15 @@ struct hids_tstate {
  * soft_raw_ns chi dung de doi chieu voi softirqs-bpfcc (bcc tinh ca phan long). */
 struct hids_irqstate {
 	__u64 hard_start; /* 0 = khong hoat dong */
+	__u64 hard_start_steal;
 	__u64 hard_ns;
 
 	__u64 vec_start;
+	__u64 vec_start_steal;
 	__u64 vec_ns;
 
 	__u64 soft_start;
+	__u64 soft_start_steal;
 	__u64 soft_snap;     /* (hard_ns + vec_ns) luc soft vao */
 	__u64 soft_raw_ns;   /* tong (ra - vao), ke ca phan long */
 	__u64 soft_excl_ns;  /* soft_raw tru phan long */
@@ -207,6 +218,114 @@ static __always_inline struct hids_irqstate *irq_state(void)
 	return bpf_map_lookup_elem(&hids_irq, &key0);
 }
 
+/* irq_dur tra ve do dai mot khoang irq, hoac 0 neu khoang do bat thuong. */
+static __always_inline __u64 irq_dur(struct hids_irqstate *is, __u64 start, __u64 now)
+{
+	__u64 d;
+
+	if (now <= start)
+		return 0;
+	d = now - start;
+	if (d > HIDS_IRQ_MAX_NS) {
+		is->odd_ns += d;
+		is->odd_cnt += 1;
+		return 0;
+	}
+	return d;
+}
+
+/* steal_raw_on_cpu doc bo dem steal tho cua mot CPU (doc tu xa). */
+static __always_inline __u64 steal_raw_on_cpu(__u32 cpu)
+{
+	if (hids_steal_off)
+		return 0;
+
+	if (hids_steal_fallback) {
+		const struct rq *rq = bpf_per_cpu_ptr(&runqueues, cpu);
+
+		return rq ? rq->prev_steal_time : 0;
+	}
+
+	{
+		const struct vmware_steal_time *st = bpf_per_cpu_ptr(&vmw_steal_time, cpu);
+
+		return st ? st->clock : 0;
+	}
+}
+
+/* steal_raw_now doc bo dem steal tho cua CPU hien tai.
+ * Khong fallback: vmw_steal_time.clock, don vi chu ky vTSC.
+ * Fallback:       rq->prev_steal_time, don vi ns. */
+static __always_inline __u64 steal_raw_now(void)
+{
+	return steal_raw_on_cpu(bpf_get_smp_processor_id());
+}
+
+/* steal_delta_ns quy mot muc tang cua bo dem steal ra ns. */
+static __always_inline __u64 steal_delta_ns(__u64 raw_delta)
+{
+	if (hids_steal_off)
+		return 0;
+	if (hids_steal_fallback)
+		return raw_delta; /* da la ns */
+	if (hids_tsc_khz == 0)
+		return 0;
+	if (raw_delta > (1ULL << 43))
+		return 0;
+	return raw_delta * 1000000ULL / hids_tsc_khz;
+}
+
+static __always_inline void steal_off_add(struct hids_tstate *st, __u64 delta)
+{
+	if (!delta)
+		return;
+	st->acc_steal_off += delta;
+}
+
+static __always_inline void steal_off_close_cpu(struct hids_tstate *st, __u32 cpu, __u64 raw_start)
+{
+	__u64 raw_now, delta;
+
+	if (hids_steal_off)
+		return;
+	raw_now = steal_raw_on_cpu(cpu);
+	if (raw_now <= raw_start)
+		return;
+	delta = steal_delta_ns(raw_now - raw_start);
+	steal_off_add(st, delta);
+}
+
+/* irq_progress_ns: do dai irq dang do, tru delta steal tren CPU hien tai. */
+static __always_inline __u64 irq_progress_ns(__u64 start, __u64 start_steal, __u64 now)
+{
+	__u64 d, steal_ns, raw;
+
+	if (!start || now <= start)
+		return 0;
+	d = now - start;
+	raw = steal_raw_now();
+	steal_ns = raw > start_steal ? steal_delta_ns(raw - start_steal) : 0;
+	if (steal_ns >= d)
+		return 0;
+	return d - steal_ns;
+}
+
+/* irq_interval_ns: dong mot khoang irq da ket thuc, tru steal. */
+static __always_inline __u64 irq_interval_ns(struct hids_irqstate *is, __u64 start,
+					     __u64 start_steal, __u64 now)
+{
+	__u64 d, steal_ns, raw;
+
+	d = irq_dur(is, start, now);
+	if (!d)
+		return 0;
+	raw = steal_raw_now();
+	steal_ns = raw > start_steal ? steal_delta_ns(raw - start_steal) : 0;
+	if (steal_ns >= d)
+		return 0;
+	return d - steal_ns;
+}
+
 /* irq_total_at tra ve bo cong don irq cua CPU hien tai tinh den thoi diem now,
  * CONG CA phan dang do cua tung loai dang hoat dong. sched_switch co the xay ra
  * ngay trong duong thoat irq (preempt_schedule_irq), khi do phan irq da chay
@@ -222,14 +341,14 @@ static __always_inline __u64 irq_total_at(struct hids_irqstate *is, __u64 now)
 
 	hv = is->hard_ns + is->vec_ns;
 	if (is->hard_start && now > is->hard_start)
-		hv += now - is->hard_start;
+		hv += irq_progress_ns(is->hard_start, is->hard_start_steal, now);
 	if (is->vec_start && now > is->vec_start)
-		hv += now - is->vec_start;
+		hv += irq_progress_ns(is->vec_start, is->vec_start_steal, now);
 
 	total = hv + is->soft_excl_ns;
 
 	if (is->soft_start && now > is->soft_start) {
-		__u64 dur = now - is->soft_start;
+		__u64 dur = irq_progress_ns(is->soft_start, is->soft_start_steal, now);
 		__u64 nested = hv > is->soft_snap ? hv - is->soft_snap : 0;
 
 		if (dur > nested)
@@ -237,43 +356,6 @@ static __always_inline __u64 irq_total_at(struct hids_irqstate *is, __u64 now)
 	}
 
 	return total;
-}
-
-/* steal_raw_now doc bo dem steal tho cua CPU hien tai.
- * Khong fallback: vmw_steal_time.clock, don vi chu ky vTSC.
- * Fallback:       rq->prev_steal_time, don vi ns. */
-static __always_inline __u64 steal_raw_now(void)
-{
-	if (hids_steal_off)
-		return 0;
-
-	if (hids_steal_fallback) {
-		const struct rq *rq = bpf_this_cpu_ptr(&runqueues);
-
-		return rq->prev_steal_time;
-	}
-
-	{
-		const struct vmware_steal_time *st = bpf_this_cpu_ptr(&vmw_steal_time);
-
-		return st->clock;
-	}
-}
-
-/* steal_delta_ns quy mot muc tang cua bo dem steal ra ns. */
-static __always_inline __u64 steal_delta_ns(__u64 raw_delta)
-{
-	if (hids_steal_off)
-		return 0;
-	if (hids_steal_fallback)
-		return raw_delta; /* da la ns */
-	if (hids_tsc_khz == 0)
-		return 0;
-	/* chu ky x 1e6 / tsc_khz. Chan tran: 1.8e19 / 1e6 = 1.8e13 chu ky,
-	 * tuong duong khoang 2.5 gio steal lien tuc tren mot doan ON-CPU. */
-	if (raw_delta > (1ULL << 43))
-		return 0;
-	return raw_delta * 1000000ULL / hids_tsc_khz;
 }
 
 /* open_on_cpu ghi moc bat dau mot doan ON-CPU tai thoi diem now. */
@@ -434,13 +516,16 @@ int BPF_PROG(hids_sys_enter, struct pt_regs *regs, long id)
 		rec->irq_ns = 0;
 		rec->rq_ns = 0;
 		rec->vol_us = 0;
+		rec->steal_off_ns = 0;
 	} else {
 		rec->cpu_ns = sat32(st->acc_cpu, &flags);
 		rec->steal_ns = sat32(st->acc_steal, &flags);
 		rec->irq_ns = sat32(st->acc_irq, &flags);
 		rec->rq_ns = sat32(st->acc_rq, &flags);
 		rec->vol_us = sat32((st->acc_vol + 500) / 1000, &flags);
+		rec->steal_off_ns = sat32(st->acc_steal_off, &flags);
 	}
+	rec->reserved = 0;
 	rec->flags = flags;
 
 	bpf_ringbuf_submit(rec, 0);
@@ -455,6 +540,7 @@ int BPF_PROG(hids_sys_enter, struct pt_regs *regs, long id)
 	st->acc_irq = 0;
 	st->acc_rq = 0;
 	st->acc_vol = 0;
+	st->acc_steal_off = 0;
 	open_on_cpu(st, ts, cpu);
 
 	return 0;
@@ -474,8 +560,12 @@ int BPF_PROG(hids_sched_switch, bool preempt, struct task_struct *prev,
 		close_on_cpu(st, now);
 		st->off_ts = now;
 		st->wake_ts = 0;
+		st->off_cpu = cpu;
+		st->off_steal_raw = steal_raw_on_cpu(cpu);
 		if (preempt || prev_state == HIDS_TASK_RUNNING) {
 			st->off_kind = HIDS_OFF_RUNNABLE;
+			st->target_cpu = cpu;
+			st->rq_steal_raw = st->off_steal_raw;
 		} else {
 			st->off_kind = HIDS_OFF_SLEEP;
 			if (prev_state & HIDS_TASK_UNINTERRUPTIBLE)
@@ -486,6 +576,7 @@ int BPF_PROG(hids_sched_switch, bool preempt, struct task_struct *prev,
 	/* next duoc chay lai. */
 	st = bpf_task_storage_get(&hids_task_state, next, NULL, 0);
 	if (st && st->seen) {
+		steal_off_close_cpu(st, st->target_cpu, st->rq_steal_raw);
 		if (st->off_kind == HIDS_OFF_RUNNABLE) {
 			if (now > st->off_ts)
 				st->acc_rq += now - st->off_ts;
@@ -526,6 +617,10 @@ static __always_inline void mark_wakeup(struct task_struct *p)
 		return;
 	if (st->off_kind != HIDS_OFF_SLEEP)
 		return;
+	/* Phan ngu: steal tren off_cpu tu switch-out den wakeup. */
+	steal_off_close_cpu(st, st->off_cpu, st->off_steal_raw);
+	st->target_cpu = (__u32)BPF_CORE_READ(p, wake_cpu);
+	st->rq_steal_raw = steal_raw_on_cpu(st->target_cpu);
 	/* sched_wakeup co the chay song song voi sched_switch tren CPU khac;
 	 * chi ghi khi o day con trong. */
 	__sync_val_compare_and_swap(&st->wake_ts, 0, now);
@@ -547,34 +642,14 @@ int BPF_PROG(hids_sched_wakeup_new, struct task_struct *p)
 
 /* ---- Bo cong don irq per-CPU (muc C) ---- */
 
-/* irq_dur tra ve do dai mot khoang irq, hoac 0 neu khoang do bat thuong.
- *
- * Chan an toan HIDS_IRQ_MAX_NS KHONG phai hang so vat ly. No bat truong hop
- * mot moc vao khong co moc ra tuong ung (vi du nap chuong trinh dung giua mot
- * irq dang chay), khi do mot exit sau nay se dong so voi moc rat cu. Khoang do
- * bi loai ra va dem lai de bao cao, thay vi cong vao lam sai so lieu. Bo dem
- * nay phai bang 0; khac 0 la co loi can bao kien truc su. */
-static __always_inline __u64 irq_dur(struct hids_irqstate *is, __u64 start, __u64 now)
-{
-	__u64 d;
-
-	if (now <= start)
-		return 0;
-	d = now - start;
-	if (d > HIDS_IRQ_MAX_NS) {
-		is->odd_ns += d;
-		is->odd_cnt += 1;
-		return 0;
-	}
-	return d;
-}
-
 static __always_inline void irq_hard_in(void)
 {
 	struct hids_irqstate *is = irq_state();
 
-	if (is)
+	if (is) {
 		is->hard_start = bpf_ktime_get_ns();
+		is->hard_start_steal = steal_raw_now();
+	}
 }
 
 static __always_inline void irq_hard_out(void)
@@ -590,15 +665,17 @@ static __always_inline void irq_hard_out(void)
 	if (!start)
 		return;
 	is->hard_start = 0;
-	is->hard_ns += irq_dur(is, start, bpf_ktime_get_ns());
+	is->hard_ns += irq_interval_ns(is, start, is->hard_start_steal, bpf_ktime_get_ns());
 }
 
 static __always_inline void irq_vec_in(void)
 {
 	struct hids_irqstate *is = irq_state();
 
-	if (is)
+	if (is) {
 		is->vec_start = bpf_ktime_get_ns();
+		is->vec_start_steal = steal_raw_now();
+	}
 }
 
 static __always_inline void irq_vec_out(void)
@@ -612,7 +689,7 @@ static __always_inline void irq_vec_out(void)
 	if (!start)
 		return;
 	is->vec_start = 0;
-	is->vec_ns += irq_dur(is, start, bpf_ktime_get_ns());
+	is->vec_ns += irq_interval_ns(is, start, is->vec_start_steal, bpf_ktime_get_ns());
 }
 
 static __always_inline void irq_soft_in(void)
@@ -623,6 +700,7 @@ static __always_inline void irq_soft_in(void)
 		return;
 	is->soft_snap = is->hard_ns + is->vec_ns;
 	is->soft_start = bpf_ktime_get_ns();
+	is->soft_start_steal = steal_raw_now();
 }
 
 static __always_inline void irq_soft_out(void)
@@ -637,7 +715,7 @@ static __always_inline void irq_soft_out(void)
 		return;
 	is->soft_start = 0;
 
-	d = irq_dur(is, start, bpf_ktime_get_ns());
+	d = irq_interval_ns(is, start, is->soft_start_steal, bpf_ktime_get_ns());
 	if (!d)
 		return;
 

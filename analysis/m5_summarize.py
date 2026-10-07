@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
-"""Tong hop ket qua M5 tu cac thu muc run*/result.txt."""
+"""Tong hop ket qua M5 tu cac thu muc run*/result.txt (stdlib only)."""
 from __future__ import annotations
 
-import re
+import csv
+import statistics
 import sys
 from pathlib import Path
-
-import numpy as np
-import pandas as pd
 
 
 def parse_result(path: Path) -> dict[str, str]:
@@ -19,70 +17,81 @@ def parse_result(path: Path) -> dict[str, str]:
     return out
 
 
-def load_load(root: Path, load: str) -> pd.DataFrame:
-    rows = []
-    for cond_dir in sorted((root / load).glob("C*")):
+def load_rows(root: Path, load: str) -> list[dict]:
+    rows: list[dict] = []
+    load_dir = root / load
+    if not load_dir.is_dir():
+        return rows
+    for cond_dir in sorted(load_dir.glob("C*")):
         cond = cond_dir.name
-        vals = []
-        recs = []
-        drops = []
+        vals: list[float] = []
+        recs: list[float] = []
+        drops: list[float] = []
         for run_dir in sorted(cond_dir.glob("run*")):
             rf = run_dir / "result.txt"
             if not rf.exists():
                 continue
             p = parse_result(rf)
-            if "value" in p and p["value"]:
+            if p.get("value"):
                 try:
                     vals.append(float(p["value"]))
                 except ValueError:
                     pass
-            if "records" in p:
+            if p.get("records"):
                 try:
                     recs.append(float(p["records"]))
                 except ValueError:
                     pass
-            if "drops" in p:
+            if p.get("drops"):
                 try:
                     drops.append(float(p["drops"]))
                 except ValueError:
                     pass
         if not vals:
             continue
+        mean = statistics.mean(vals)
+        std = statistics.stdev(vals) if len(vals) > 1 else 0.0
         rows.append(
             {
                 "load": load,
                 "condition": cond,
-                "mean": float(np.mean(vals)),
-                "std": float(np.std(vals, ddof=1)) if len(vals) > 1 else 0.0,
+                "mean": mean,
+                "std": std,
                 "n_runs": len(vals),
-                "records_mean": float(np.mean(recs)) if recs else float("nan"),
-                "drops_mean": float(np.mean(drops)) if drops else float("nan"),
+                "records_mean": statistics.mean(recs) if recs else "",
+                "drops_mean": statistics.mean(drops) if drops else "",
             }
         )
-    return pd.DataFrame(rows)
-
-
-def add_overhead(df: pd.DataFrame) -> pd.DataFrame:
-    if df.empty:
-        return df
-    base = df[df["condition"] == "C0"]["mean"]
-    b = float(base.iloc[0]) if len(base) else float("nan")
-    df = df.copy()
-    df["overhead_pct"] = (df["mean"] - b) / b * 100.0 if b else float("nan")
-    return df
+    if not rows:
+        return rows
+    base = next((r["mean"] for r in rows if r["condition"] == "C0"), None)
+    for r in rows:
+        if base and base != 0:
+            r["overhead_pct"] = (r["mean"] - base) / base * 100.0
+        else:
+            r["overhead_pct"] = 0.0 if r["condition"] == "C0" else ""
+    return rows
 
 
 def main() -> None:
     root = Path(sys.argv[1])
-    parts = []
+    fieldnames = [
+        "load",
+        "condition",
+        "mean",
+        "std",
+        "n_runs",
+        "records_mean",
+        "drops_mean",
+        "overhead_pct",
+    ]
+    all_rows: list[dict] = []
     for load in ("T1", "T2", "T3", "T4"):
-        if (root / load).exists():
-            parts.append(add_overhead(load_load(root, load)))
-    if not parts:
-        print("load,condition,mean,std,n_runs,records_mean,drops_mean,overhead_pct")
-        return
-    out = pd.concat(parts, ignore_index=True)
-    print(out.to_csv(index=False))
+        all_rows.extend(load_rows(root, load))
+    w = csv.DictWriter(sys.stdout, fieldnames=fieldnames, lineterminator="\n")
+    w.writeheader()
+    for row in all_rows:
+        w.writerow(row)
 
 
 if __name__ == "__main__":

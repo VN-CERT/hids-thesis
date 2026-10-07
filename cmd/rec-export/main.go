@@ -31,20 +31,25 @@ func run() error {
 	defer f.Close()
 
 	br := bufio.NewReaderSize(f, 4*1024*1024)
-	if _, err := recfmt.ReadHeader(br); err != nil {
+	header, err := recfmt.ReadHeader(br)
+	if err != nil {
+		return err
+	}
+	recordSize, err := recfmt.RecordSizeFromHeader(header)
+	if err != nil {
 		return err
 	}
 
 	w := csv.NewWriter(os.Stdout)
 	if err := w.Write([]string{
 		"tid", "ts_enter", "syscall_nr", "flags",
-		"cpu_ns", "steal_ns", "irq_ns", "rq_ns", "vol_ns", "dt_ns",
+		"cpu_ns", "steal_ns", "irq_ns", "rq_ns", "vol_ns", "steal_off_ns", "dt_ns",
 	}); err != nil {
 		return err
 	}
 
 	lastTs := map[uint32]uint64{}
-	_, _, err = recfmt.ForEach(br, func(r recfmt.Record) error {
+	_, _, err = recfmt.ForEach(br, recordSize, func(r recfmt.Record) error {
 		dt := ""
 		if r.Flags&recfmt.FlagFirst == 0 {
 			if prev, ok := lastTs[r.TID]; ok && r.TsEnter > prev {
@@ -63,6 +68,7 @@ func run() error {
 			fmt.Sprintf("%d", r.IrqNs),
 			fmt.Sprintf("%d", r.RqNs),
 			fmt.Sprintf("%d", volNs),
+			fmt.Sprintf("%d", r.StealOffNs),
 			dt,
 		}
 		return w.Write(row)

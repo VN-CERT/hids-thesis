@@ -47,12 +47,17 @@ func run() error {
 	defer f.Close()
 
 	br := bufio.NewReaderSize(f, 4*1024*1024)
-	if _, err := recfmt.ReadHeader(br); err != nil {
+	header, err := recfmt.ReadHeader(br)
+	if err != nil {
+		return err
+	}
+	recordSize, err := recfmt.RecordSizeFromHeader(header)
+	if err != nil {
 		return err
 	}
 
 	var recs []recfmt.Record
-	_, _, err = recfmt.ForEach(br, func(r recfmt.Record) error {
+	_, _, err = recfmt.ForEach(br, recordSize, func(r recfmt.Record) error {
 		if *tid != 0 && r.TID != uint32(*tid) {
 			return nil
 		}
@@ -69,7 +74,7 @@ func run() error {
 		return err
 	}
 
-	var cpu, steal, irq, rq, volNs uint64
+	var cpu, steal, irq, rq, volNs, stealOff uint64
 	flagCounts := map[string]int64{
 		"FIRST": 0, "GAP_BEFORE": 0, "D_SLEEP": 0, "MIGRATED": 0,
 		"OVERFLOW": 0, "STEAL_FALLBACK": 0, "CLAMPED": 0,
@@ -80,6 +85,7 @@ func run() error {
 		irq += uint64(r.IrqNs)
 		rq += uint64(r.RqNs)
 		volNs += uint64(r.VolUs) * 1000
+		stealOff += uint64(r.StealOffNs)
 		if r.Flags&recfmt.FlagFirst != 0 {
 			flagCounts["FIRST"]++
 		}
@@ -119,7 +125,7 @@ func run() error {
 	tw.Flush()
 
 	fmt.Println("--- tong thanh phan (ns) ---")
-	fmt.Printf("cpu %d\nsteal %d\nirq %d\nrq %d\nvol %d\n", cpu, steal, irq, rq, volNs)
+	fmt.Printf("cpu %d\nsteal %d\nirq %d\nrq %d\nvol %d\nsteal_off %d\n", cpu, steal, irq, rq, volNs, stealOff)
 	fmt.Printf("cpu+steal+irq %d\n", cpu+steal+irq)
 
 	printResidualGroup("tat ca (tru FIRST)", recs, false, false)

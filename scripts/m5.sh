@@ -14,6 +14,13 @@ REST=${M5_REST:-10}
 N_SYSINJ=${M5_N_SYSINJ:-10000000}
 DECOY_CG="/sys/fs/cgroup/hids-m5-decoy"
 M5PY=./analysis/m5_summarize.py
+M5_PYTHON=(env PYTHONNOUSERSITE=1 /usr/bin/python3)
+
+write_m5_summary() {
+	[[ -d $OUTROOT ]] || return 0
+	[[ -f $M5PY ]] || return 0
+	"${M5_PYTHON[@]}" "$M5PY" "$OUTROOT" >"$OUTROOT/summary.csv" 2>/dev/null || true
+}
 
 die() { echo "m5: $*" >&2; exit 1; }
 
@@ -405,6 +412,7 @@ PY
 
 main() {
 	[[ $EUID -eq 0 ]] || die "can root"
+	trap write_m5_summary EXIT
 	require_clean_git
 	for f in "$COLLECT" "$RECSTAT" "$SYSINJ"; do
 		[[ -x $f ]] || die "thieu $f (make build)"
@@ -445,8 +453,8 @@ main() {
 		[[ -n $n ]] && docker start "$n" >/dev/null 2>&1 || true
 	done <"$OUTROOT/docker-stopped.txt"
 
-	[[ -f $M5PY ]] && python3 "$M5PY" "$OUTROOT" >"$OUTROOT/summary.csv"
-	echo "m5 xong: $OUTROOT"
+	write_m5_summary
+	echo "m5 xong: $OUTROOT (summary: $OUTROOT/summary.csv)"
 }
 
 main "$@"

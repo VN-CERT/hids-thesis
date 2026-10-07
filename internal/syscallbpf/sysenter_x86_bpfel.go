@@ -14,18 +14,21 @@ import (
 )
 
 type sysEnterHidsIrqstate struct {
-	_          structs.HostLayout
-	HardStart  uint64
-	HardNs     uint64
-	VecStart   uint64
-	VecNs      uint64
-	SoftStart  uint64
-	SoftSnap   uint64
-	SoftRawNs  uint64
-	SoftExclNs uint64
-	OddNs      uint64
-	OddCnt     uint32
-	Pad        uint32
+	_              structs.HostLayout
+	HardStart      uint64
+	HardStartSteal uint64
+	HardNs         uint64
+	VecStart       uint64
+	VecStartSteal  uint64
+	VecNs          uint64
+	SoftStart      uint64
+	SoftStartSteal uint64
+	SoftSnap       uint64
+	SoftRawNs      uint64
+	SoftExclNs     uint64
+	OddNs          uint64
+	OddCnt         uint32
+	Pad            uint32
 }
 
 type sysEnterHidsTstate struct {
@@ -36,6 +39,7 @@ type sysEnterHidsTstate struct {
 	AccIrq       uint64
 	AccRq        uint64
 	AccVol       uint64
+	AccStealOff  uint64
 	OnTs         uint64
 	OnStealRaw   uint64
 	OnIrqTotal   uint64
@@ -43,6 +47,10 @@ type sysEnterHidsTstate struct {
 	_            [4]byte
 	OffTs        uint64
 	WakeTs       uint64
+	OffCpu       uint32
+	TargetCpu    uint32
+	OffStealRaw  uint64
+	RqStealRaw   uint64
 	OffKind      uint8
 	OnActive     uint8
 	Seen         uint8
