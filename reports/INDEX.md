@@ -12,3 +12,4 @@
 | [R008](R008-m4.1-mem-e4.md) | 2026-10-07 13:35 | M4.1 | Sửa hiệu chỉnh `wl mem`, chạy lại E4, `summary.csv` tái tạo. | Xong. |
 | [R009](R009-m4-e2-tag.md) | 2026-10-07 14:05 | M4 | E2 trong `summary.csv`, `E2.png`, tag `m4`. | **E2 không hợp lệ, thay bằng R010** |
 | [R010](R010-m4.2-e2-invalid-fix.md) | 2026-10-07 15:00 | M4.2 | Loại E2 sai; sửa `m4.sh e2` + workflow; chờ người dùng thu E2 lại. | Xong phần chuẩn bị. |
+| [R011](R011-m4.3-e2-stats-fix.md) | 2026-10-07 15:15 | M4.3 | Sửa E2 + stats; E2-lan1; không chạy E2 lại. | Xong. |

@@ -7,6 +7,7 @@ cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
 WL=./bin/wl
 COLLECT=./bin/hids-collect
 EXPORT=./bin/rec-export
+STEAL_PROBE=./bin/steal-probe
 E3BIN=./bin/m4_e3
 M4PY=./analysis/m4.py
 # Tranh numpy 2.x trong /usr/local lam hong pandas he thong.
@@ -66,33 +67,62 @@ for tag in ("idle", "stress2"):
         row = df.iloc[-1]
     else:
         row = df2.loc[df2["vol_ns"].idxmax()]
+    dt_us = float(row["dt_ns"]) / 1000.0
+    cpu_us = float(row["cpu_ns"]) / 1000.0
+    st_us = float(row["steal_ns"]) / 1000.0
+    rq_us = float(row["rq_ns"]) / 1000.0
+    st_ns = float(row["steal_ns"])
     e3_rows.append({
         "experiment": f"E3-{tag}",
         "level": tag,
         "kind": "connect",
         "n": 1,
-        "median_us": float(row["dt_ns"]) / 1000.0,
-        "p90_us": float(row["dt_ns"]) / 1000.0,
-        "p99_us": float(row["dt_ns"]) / 1000.0,
-        "dt_median_us": float(row["dt_ns"]) / 1000.0,
-        "cpu_median_us": float(row["cpu_ns"]) / 1000.0,
-        "steal_median_us": float(row["steal_ns"]) / 1000.0,
+        "median_us": dt_us,
+        "p90_us": dt_us,
+        "p99_us": dt_us,
+        "dt_mean_us": dt_us,
+        "dt_p90_us": dt_us,
+        "dt_p99_us": dt_us,
+        "dt_median_us": dt_us,
+        "cpu_median_us": cpu_us,
+        "cpu_mean_us": cpu_us,
+        "cpu_p90_us": cpu_us,
+        "cpu_p99_us": cpu_us,
+        "steal_median_us": st_us,
+        "steal_mean_us": st_us,
+        "steal_p90_us": st_us,
+        "steal_p99_us": st_us,
+        "rq_median_us": rq_us,
+        "rq_mean_us": rq_us,
+        "rq_p90_us": rq_us,
+        "rq_p99_us": rq_us,
         "irq_median_us": float(row["irq_ns"]) / 1000.0,
-        "rq_median_us": float(row["rq_ns"]) / 1000.0,
         "vol_median_us": float(row["vol_ns"]) / 1000.0,
+        "steal_gt0_frac": 1.0 if st_ns > 0 else 0.0,
+        "steal_total_ns": st_ns,
         "ratio_dt": float("nan"),
         "ratio_cpu": float("nan"),
     })
 if e3_rows:
     s = pd.concat([s, pd.DataFrame(e3_rows)], ignore_index=True)
+def _f(txt):
+    t = (txt or "").strip()
+    if not t:
+        return float("nan")
+    return float(t)
+
 s["vm_steal_pct"] = float("nan")
+s["vm_steal_probe_pct"] = float("nan")
 for lv in ("Unlimited", "36000", "24000", "12000"):
-    sp = root / "E2" / f"{lv}.vm_steal_pct"
-    if not sp.exists():
-        continue
-    pct = float(sp.read_text().strip())
-    m = (s["experiment"] == "E2") & (s["level"].astype(str) == lv)
-    s.loc[m, "vm_steal_pct"] = pct
+    for subdir in ("E2",):
+        sp = root / subdir / f"{lv}.vm_steal_pct"
+        if sp.exists():
+            m = (s["experiment"] == "E2") & (s["level"].astype(str) == lv)
+            s.loc[m, "vm_steal_pct"] = _f(sp.read_text())
+        pp = root / subdir / f"{lv}.vm_steal_probe_pct"
+        if pp.exists():
+            m = (s["experiment"] == "E2") & (s["level"].astype(str) == lv)
+            s.loc[m, "vm_steal_probe_pct"] = _f(pp.read_text())
 s.to_csv(root / "summary.csv", index=False)
 print(f"luu {root / 'summary.csv'} ({len(s)} dong)")
 PY
@@ -340,17 +370,50 @@ print(f"{100.0 * steal / active:.3f}")
 PY
 }
 
+E2_STRESS_PID=""
+E2_PROBE_PID=""
+
+e2_stress_start() {
+	stress-ng --cpu 22 --taskset 0-19,22-23 --timeout 7200 >/dev/null 2>&1 &
+	E2_STRESS_PID=$!
+	sleep 2
+}
+
+e2_stress_stop() {
+	[[ -n $E2_STRESS_PID ]] && kill "$E2_STRESS_PID" 2>/dev/null
+	[[ -n $E2_STRESS_PID ]] && wait "$E2_STRESS_PID" 2>/dev/null || true
+	E2_STRESS_PID=""
+}
+
+e2_probe_start() {
+	local probe_csv=$1
+	"$STEAL_PROBE" -interval 1s -out "$probe_csv" >/dev/null 2>out/m4-e2-steal-probe.log &
+	E2_PROBE_PID=$!
+	sleep 1
+}
+
+e2_probe_stop() {
+	[[ -n $E2_PROBE_PID ]] && kill -INT "$E2_PROBE_PID" 2>/dev/null
+	[[ -n $E2_PROBE_PID ]] && wait "$E2_PROBE_PID" 2>/dev/null || true
+	E2_PROBE_PID=""
+}
+
+e2_cleanup() {
+	e2_probe_stop
+	e2_stress_stop
+}
+
 e2_wait_steal_ok() {
 	local label=$1 need_limit=$2 pct
 	while true; do
-		echo "m4 E2 ${label}: do steal VM 10 giay (/proc/stat)..." >&2
+		echo "m4 E2 ${label}: do steal VM 10 giay (/proc/stat, stress dang chay)..." >&2
 		pct=$(measure_vm_steal_pct_10s)
 		echo "m4 E2 ${label}: vm_steal_pct=${pct}%" >&2
-		if [[ $need_limit -eq 0 ]]; then
+		if [[ "$need_limit" == "0" ]]; then
 			echo "$pct"
 			return 0
 		fi
-		if awk -v p="$pct" 'BEGIN{exit !(p>=5.0)}'; then
+		if awk -v p="$pct" 'BEGIN{exit !(p+0 >= 5.0)}'; then
 			echo "$pct"
 			return 0
 		fi
@@ -360,35 +423,43 @@ e2_wait_steal_ok() {
 }
 
 e2_one_level() {
-	local label=$1 limit_msg=$2 need_limit=$3
-	local loops bin csv sp pct
+	local label=$1 limit_msg=$2 need_limit=$3 probe_csv=$4
+	local loops bin csv pct probe_pct wall0 wall1
 	echo "Tren vCenter: Edit Settings -> CPU -> Limit = ${limit_msg} -> OK. Xong bam Enter." >&2
 	read -r
 	pct=$(e2_wait_steal_ok "$label" "$need_limit")
 	mkdir -p out
-	echo "E2 ${label} vm_steal_pct=${pct}%" >>out/m4-e2-steal.log
-	stress-ng --cpu 22 --taskset 0-19,22-23 --timeout 120 >/dev/null 2>&1 &
-	sp=$!
-	sleep 2
+	echo "E2 ${label} vm_steal_pct_check=${pct}%" >>out/m4-e2-steal.log
 	loops=$(read_burn_loops)
+	wall0=$(date -Iseconds)
 	bin=$(run_wl_mixed "$loops" 500)
-	kill "$sp" 2>/dev/null
-	wait "$sp" 2>/dev/null
+	wall1=$(date -Iseconds)
+	probe_pct=$("${M4_PYTHON[@]}" "$M4PY" --probe-steal-pct "$probe_csv" "$wall0" "$wall1" 2>/dev/null || echo "nan")
+	echo "E2 ${label} vm_steal_probe_pct=${probe_pct}% (cua so ${wall0} .. ${wall1})" >>out/m4-e2-steal.log
 	mkdir -p "$OUTROOT/E2"
 	csv="$OUTROOT/E2/${label}.csv"
 	export_csv "$bin" "$csv"
 	cp "$bin" "$OUTROOT/E2/${label}.bin"
 	echo "$pct" >"$OUTROOT/E2/${label}.vm_steal_pct"
+	echo "$probe_pct" >"$OUTROOT/E2/${label}.vm_steal_probe_pct"
+	echo "m4 E2 ${label}: collector window steal_probe_pct=${probe_pct}%" >&2
 	echo "E2:${label}:${csv}"
 }
 
 e2_collect() {
-	local manifest=()
+	local manifest=() probe_csv
+	mkdir -p "$OUTROOT/E2" out
+	probe_csv="$OUTROOT/E2/steal-probe.csv"
 	: >out/m4-e2-steal.log
-	manifest+=("$(e2_one_level Unlimited Unlimited 0)")
-	manifest+=("$(e2_one_level 36000 36000 MHz 1)")
-	manifest+=("$(e2_one_level 24000 24000 MHz 1)")
-	manifest+=("$(e2_one_level 12000 12000 MHz 1)")
+	trap e2_cleanup EXIT
+	e2_stress_start
+	e2_probe_start "$probe_csv"
+	manifest+=("$(e2_one_level Unlimited "Unlimited" 0 "$probe_csv")")
+	manifest+=("$(e2_one_level 36000 "36000 MHz" 1 "$probe_csv")")
+	manifest+=("$(e2_one_level 24000 "24000 MHz" 1 "$probe_csv")")
+	manifest+=("$(e2_one_level 12000 "12000 MHz" 1 "$probe_csv")")
+	trap - EXIT
+	e2_cleanup
 	echo "Dat lai Unlimited tren vCenter." >&2
 	printf '%s\n' "${manifest[@]}"
 }
@@ -399,8 +470,9 @@ e2_prep() {
 wl mixed R=500 tren CPU 20.
 Dong thoi: stress-ng --cpu 22 --taskset 0-19,22-23 (CPU 21 cho he thong).
 Bon muc Limit: Unlimited, 36000, 24000, 12000 MHz.
+Truoc muc dau: stress-ng 22 CPU (0-19,22-23) + steal-probe 1s (giu suot 4 muc).
 Truoc moi muc: script in huong dan vCenter, CHO Enter.
-Sau Enter: do steal VM 10 giay; muc co limit can vm_steal_pct >= 5% truoc khi thu.
+Sau Enter: do steal VM 10 giay (co stress); muc co limit can vm_steal_pct >= 5%.
 Khong co cach bo qua Enter.
 
 Chay: sudo bash scripts/m4.sh e2
@@ -410,7 +482,7 @@ EOF
 
 main() {
 	[[ $EUID -eq 0 ]] || die "can root"
-	for f in "$WL" "$COLLECT" "$EXPORT" "$E3BIN"; do
+	for f in "$WL" "$COLLECT" "$EXPORT" "$E3BIN" "$STEAL_PROBE"; do
 		[[ -x $f ]] || die "khong co $f (make build?)"
 	done
 	[[ -f $M4PY ]] || die "khong co $M4PY"
