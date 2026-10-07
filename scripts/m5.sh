@@ -241,8 +241,14 @@ t2_run() {
 		stress_pids+=($!)
 	}
 	wait_pid_gone "$pid"
-	out=$(grep -i 'Average:' "$dir/bench.log" | tail -1 | awk '{print $2}')
-	[[ -n $out ]] || out=$(awk '/Total time:/{t=$3} END{if(t>0) print t*1e6/1000000}' "$dir/bench.log")
+	out=$(grep -E 'usecs/op' "$dir/bench.log" | tail -1 | awk '{print $1}')
+	if [[ -z $out ]]; then
+		out=$(grep -i 'Average:' "$dir/bench.log" | tail -1 | awk '{print $2}')
+	fi
+	if [[ -z $out ]]; then
+		out=$(awk '/Total time:/{t=$(NF-1)} END{if(t>0) print t*1e6/1000000}' "$dir/bench.log")
+	fi
+	[[ -n $out ]] || die "T2: khong parse bench.log $dir"
 	local coll_usec=0 recs=0 drops=0
 	if [[ $cond != C0 ]]; then
 		kill -TERM "$coll_pid" 2>/dev/null || true
