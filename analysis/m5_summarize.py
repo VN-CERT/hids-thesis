@@ -88,6 +88,9 @@ def main() -> None:
     all_rows: list[dict] = []
     for load in ("T1", "T2", "T3", "T4", "T3-R", "T4-R"):
         all_rows.extend(load_rows(root, load))
+    for load_dir in sorted(root.glob("T*-R*")):
+        if load_dir.is_dir():
+            all_rows.extend(load_rows(root, load_dir.name))
     w = csv.DictWriter(sys.stdout, fieldnames=fieldnames, lineterminator="\n")
     w.writeheader()
     for row in all_rows:
