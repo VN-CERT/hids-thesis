@@ -2,6 +2,8 @@
 # m5c_diag.sh — buoc 1 M5c: T3/T4, C0 + (a)(b)(f), 60s.
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
+# shellcheck source=scripts/hids_data_policy.sh
+source scripts/hids_data_policy.sh
 
 COLLECT=./bin/hids-collect
 DATE=$(date +%Y%m%d)
@@ -174,6 +176,7 @@ measure_idle_bpf() {
 	sleep 16
 	sysctl -w kernel.bpf_stats_enabled=0 >/dev/null
 	dump_bpf_hids "$OUTROOT/bpf-idle.json" "$IDLE_BPF"
+	hids_drop_collect_bin "$OUTROOT/idle.bin"
 }
 
 run_t3_load() {
@@ -283,10 +286,13 @@ run_variant() {
 		"$((usec1 - usec0))" "$bpf_note" "$dir" >>"$RESULT"
 
 	echo "$load $variant: metric=$metric lat=$lat p99=$p99 IWI=$diwi CAL=$dcal RES=$dres cgroup_usec=$((usec1-usec0))"
+	[[ -n ${out_path:-} && -f ${out_path:-} ]] && hids_drop_collect_bin "$out_path"
 }
 
 main() {
 	[[ $EUID -eq 0 ]] || die "can root"
+	trap hids_print_df_at_job_end EXIT
+	hids_require_disk_for_long_job
 	[[ -x $COLLECT ]] || die "make build"
 	command -v docker wrk bpftool systemd-run >/dev/null || die "thieu cong cu"
 	mkdir -p "$OUTROOT"

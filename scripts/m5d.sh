@@ -8,6 +8,9 @@ export GOPATH="${GOPATH:-/root/go}"
 export GOMODCACHE="${GOMODCACHE:-/root/go/pkg/mod}"
 export PATH="/usr/local/go/bin:/root/go/bin:${PATH}"
 
+# shellcheck source=scripts/hids_data_policy.sh
+source scripts/hids_data_policy.sh
+
 DATE=$(date +%Y%m%d)
 OUTROOT="${M5D_OUT:-validation/m5d-${DATE}}"
 CONTAINERS="${M5_CONTAINERS_RESTORE:-/root/containers-da-dung.txt}"
@@ -32,6 +35,7 @@ trap start_containers EXIT
 
 {
 	echo "=== m5d $(date -Iseconds) out=$OUTROOT ==="
+	hids_require_disk_for_long_job
 	stop_containers
 	if ! make build 2>&1; then
 		echo "m5d: make build that bai (xem tren)" >&2
@@ -133,4 +137,5 @@ PY
 		M5C_FIXED_OUT="$OUTROOT" M5C_FIXED_RUNS=3 bash scripts/m5c_fixed.sh
 
 	echo "=== m5d xong $OUTROOT ==="
+	hids_print_df_at_job_end
 } | tee -a "$LOG"

@@ -2,6 +2,8 @@
 # m5c_regress.sh — buoc 2: T1/T2 (C0–C2) + T4-C1, G7, G3.
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
+# shellcheck source=scripts/hids_data_policy.sh
+source scripts/hids_data_policy.sh
 
 HOOK="${1:-fentry}"
 DATE=$(date +%Y%m%d)
@@ -33,6 +35,7 @@ mkdir -p out/jobs
 LOG="out/jobs/m5c-regress-${HOOK}.log"
 {
 	echo "=== m5c regress hook=$HOOK $(date -Iseconds) ==="
+	hids_require_disk_for_long_job
 	M5_SKIP_GIT_CHECK=1 M5C_REGRESS_HOOK="$HOOK" M5C_REGRESS_MODE=step2 M5_OUTROOT="$OUTROOT" M5_RUNS=5 \
 		bash scripts/m5.sh
 	echo "=== G7 ==="
@@ -41,6 +44,7 @@ LOG="out/jobs/m5c-regress-${HOOK}.log"
 	G7_SKIP_GIT_CHECK=1 HIDS_COLLECT_EXTRA="-sys-enter-hook $HOOK" bash scripts/g7.sh b-nho 1000000
 	echo "=== G3 ==="
 	G3_SKIP_GIT_CHECK=1 bash scripts/g3.sh
+	hids_print_df_at_job_end
 } | tee -a "$LOG"
 
 echo "xong regress $OUTROOT"

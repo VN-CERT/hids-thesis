@@ -21,6 +21,8 @@
 set -uo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
+# shellcheck source=scripts/hids_data_policy.sh
+source scripts/hids_data_policy.sh
 
 COLLECT=./bin/hids-collect
 RECSTAT=./bin/rec-stat
@@ -250,6 +252,9 @@ run_injection() {
 	echo
 	check_kernel_clean
 	echo
+	if [[ $label == g7b* ]]; then
+		hids_drop_out_bin "$bin"
+	fi
 	echo "du lieu: $bin | thong ke: $bin.stats"
 }
 
@@ -429,8 +434,16 @@ main() {
 	check_common
 	case "$part" in
 	a) run_injection g7a 1 "$n" 64 0 ;;
-	b) run_injection g7b 24 "$n" 64 1 ;;
-	b-nho) run_injection g7b-nho 24 "$n" 1 1 ;;
+	b)
+		hids_require_disk_for_long_job
+		run_injection g7b 24 "$n" 64 1
+		hids_print_df_at_job_end
+		;;
+	b-nho)
+		hids_require_disk_for_long_job
+		run_injection g7b-nho 24 "$n" 1 1
+		hids_print_df_at_job_end
+		;;
 	c) part_c ;;
 	d) part_d "$n" ;;
 	*)

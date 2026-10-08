@@ -2,6 +2,8 @@
 # m5b_diag.sh — buoc 1 M5b: T3-C1 va T4-C1, bien the (a)–(e), 60 giay moi lan.
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
+# shellcheck source=scripts/hids_data_policy.sh
+source scripts/hids_data_policy.sh
 
 COLLECT=./bin/hids-collect
 DATE=$(date +%Y%m%d)
@@ -180,10 +182,13 @@ PY
 		>>"$RESULT"
 
 	echo "$load $variant: metric=$metric coll_usec_delta=$coll_delta IWI_delta=$diwi CAL_delta=$dcal"
+	hids_drop_collect_bin "$dir/collect.bin"
 }
 
 main() {
 	[[ $EUID -eq 0 ]] || die "can root"
+	trap hids_print_df_at_job_end EXIT
+	hids_require_disk_for_long_job
 	[[ -x $COLLECT ]] || die "make build"
 	command -v docker wrk bpftool systemd-run >/dev/null || die "thieu cong cu"
 	mkdir -p "$OUTROOT"

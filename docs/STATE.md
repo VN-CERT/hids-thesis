@@ -11,12 +11,14 @@ Cập nhật lần cuối: 2026-10-08 13:10 (giờ máy)
 
 ## Bước đang làm
 - `systemd-run` unit **hids-m5d** → `scripts/m5d.sh` → `validation/m5d-20261008/`
+- Chính sách dọn dữ liệu: `docs/tasks/don-du-lieu.md`, `scripts/hids_data_policy.sh`, `make clean-out`
 
 ## Bước tiếp theo
 - Khi job xong: R019, tag `m5d`, O5 chỉ nếu bpf-delta ≥1,5× idle
 
 ## Việc đang chạy
-- **hids-m5d** — `bash scripts/m5d.sh` — log `out/jobs/m5d.log` — kiểm: `systemctl is-active hids-m5d` (lần trước chết 13:06 do `make generate`; đã khởi động lại)
+- **hids-m5d** — `M5D_SKIP_VERIFY=1` tiếp tục ma trận — log `out/jobs/m5d.log`, trạng thái `out/jobs/m5d.status` (watch script)
+- Lần trước chết 13:22: verify G7+G3 S1–S5 xong; g3 G-real lỗi `qdrant` (đã sửa subset `m5d`)
 
 ## Vướng mắc / chờ kiến trúc sư
 - O5 (ring buffer per-CPU) chỉ khi điều kiện BPF stats đạt.

@@ -14,7 +14,7 @@ LDFLAGS = -X hids/internal/buildinfo.Commit=$(GIT_COMMIT)
 
 BINARIES := bin/steal-probe bin/steal-summary bin/hids-collect bin/rec-stat bin/rec-check bin/rec-export bin/wl bin/m4_e3 bin/sysinj
 
-.PHONY: build generate vmlinux clean
+.PHONY: build generate vmlinux clean clean-out
 
 build: generate bin/sysinj bin/wl
 	@mkdir -p bin
@@ -52,3 +52,6 @@ vmlinux:
 clean:
 	rm -f $(BINARIES)
 	rm -f internal/stealbpf/*.o internal/syscallbpf/*.o
+
+clean-out:
+	bash scripts/clean_out.sh

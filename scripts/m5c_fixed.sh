@@ -3,6 +3,8 @@
 set -euo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
+# shellcheck source=scripts/hids_data_policy.sh
+source scripts/hids_data_policy.sh
 
 COLLECT=./bin/hids-collect
 RECSTAT=./bin/rec-stat
@@ -110,15 +112,6 @@ collector_drops() {
 scope_usage_usec() {
 	local cg=$1
 	[[ -f $cg/cpu.stat ]] && awk '/^usage_usec/{print $2}' "$cg/cpu.stat" || echo 0
-}
-
-m5_drop_collect_artifacts() {
-	local dir=$1
-	local bf="$dir/collect.bin"
-	if [[ -f $bf ]]; then
-		echo "bin_bytes=$(stat -c %s "$bf" 2>/dev/null || echo 0)" >>"$dir/result.txt"
-		rm -f "$dir/collect.bin" "$dir/collect.bin.periodic" "$dir/collect.bin.stats"
-	fi
 }
 
 stress_cpus_complement() {
@@ -643,7 +636,8 @@ m5_progress() {
 
 main() {
 	[[ $EUID -eq 0 ]] || die "can root"
-	trap 'write_m5_summary; restore_production_containers' EXIT
+	trap 'hids_print_df_at_job_end; write_m5_summary; restore_production_containers' EXIT
+	hids_require_disk_for_long_job
 	require_clean_git
 	for f in "$COLLECT" "$RECSTAT"; do
 		[[ -x $f ]] || die "thieu $f (make build)"
