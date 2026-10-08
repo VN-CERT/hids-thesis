@@ -103,6 +103,7 @@ recstat_count() {
 }
 
 collector_drops() {
+	[[ -f $1 ]] || { echo 0; return 0; }
 	awk '/mat_tong=/{for(i=1;i<=NF;i++) if($i~/^mat_tong=/){split($i,a,"="); print a[2]}}' "$1" 2>/dev/null | tail -1
 }
 
