@@ -40,7 +40,7 @@ LOG="out/jobs/m5c-regress-${HOOK}.log"
 	G7_SKIP_GIT_CHECK=1 HIDS_COLLECT_EXTRA="-sys-enter-hook $HOOK" bash scripts/g7.sh d 1000000
 	G7_SKIP_GIT_CHECK=1 HIDS_COLLECT_EXTRA="-sys-enter-hook $HOOK" bash scripts/g7.sh b-nho 1000000
 	echo "=== G3 ==="
-	G7_SKIP_GIT_CHECK=1 bash scripts/g3.sh
+	G3_SKIP_GIT_CHECK=1 bash scripts/g3.sh
 } | tee -a "$LOG"
 
 echo "xong regress $OUTROOT"

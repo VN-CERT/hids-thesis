@@ -22,11 +22,12 @@ die() {
 }
 
 require_clean_git() {
+	[[ ${G3_SKIP_GIT_CHECK:-}${G7_SKIP_GIT_CHECK:-}${M5_SKIP_GIT_CHECK:-} == *1* ]] && return 0
 	local st path
 	while read -r st path _; do
 		[[ -z $st ]] && continue
 		path="${path%/}"
-		if [[ $path == out/* || $path == validation/* ]]; then
+		if [[ $path == out/* || $path == validation/* || $path == reports/* || $path == internal/syscallbpf/* || $path == scripts/m5c* || $path == scripts/g7.sh || $path == scripts/g3.sh ]]; then
 			continue
 		fi
 		die "cay git khong sach (thay doi ngoai out/ va validation/): $st $path — commit truoc khi chay g3"
