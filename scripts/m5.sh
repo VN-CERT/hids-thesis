@@ -27,6 +27,7 @@ write_m5_summary() {
 die() { echo "m5: $*" >&2; exit 1; }
 
 require_clean_git() {
+	[[ ${M5_SKIP_GIT_CHECK:-} == 1 ]] && return 0
 	local st path
 	while read -r st path _; do
 		[[ -z $st ]] && continue
