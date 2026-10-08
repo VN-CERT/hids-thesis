@@ -3,7 +3,7 @@
 1. **Số báo cáo:** R026  
    **Ngày giờ:** 2026-10-09 02:30 (UTC+7)  
    **Mốc:** M5h  
-   **Git commit:** `6f1ae35` (tag `m5h`; sửa `scripts/m5h.sh` / `scripts/hids_data_policy.sh` trên working tree khi chạy bench — xem mục 7)
+   **Git commit:** tag `m5h` (`0e34d87`)
 
 2. **Mục tiêu**  
    Theo quyết định kiến trúc sư (sau R025): bỏ tiêu chí G7-cap `mat`=0; G7-cap ghi nhận throughput zstd mặc định (~1,2M rec/s, hai lượt); G3 S1–S5; bước 3–4 (`scripts/m5h.sh`); báo cáo overhead T1/T3/T4 kịch trần và tải cố định; tag `m5h`.
