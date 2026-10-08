@@ -15,7 +15,7 @@
 // khong doi o day.
 //
 // Ve khai bao ksym: vmw_steal_time va runqueues la bien per-CPU cua kernel,
-// doc qua bpf_this_cpu_ptr. Chung KHONG mang thuoc tinh __ksym vi loader Go
+// doc qua bpf_per_cpu_ptr. Chung KHONG mang thuoc tinh __ksym vi loader Go
 // github.com/cilium/ebpf v0.22.0 tu choi BTF Var co kieu trong section .ksyms.
 // internal/stealbpf.AssignPerCPUKsyms tra BTF id that cua VAR trong
 // /sys/kernel/btf/vmlinux va ghi vao lenh ld_imm64 duoi dang BPF_PSEUDO_BTF_ID,
@@ -283,24 +283,12 @@ static __always_inline __u64 steal_raw_on_cpu(__u32 cpu)
 /* steal_raw_this_cpu doc bo dem steal tho cua CPU hien tai.
  * Khong fallback: vmw_steal_time.clock, don vi chu ky vTSC.
  * Fallback:       rq->prev_steal_time, don vi ns.
- * M5h: dung bpf_this_cpu_ptr (mot helper) thay cho
- * bpf_per_cpu_ptr(bpf_get_smp_processor_id()) (hai helper); cung gia tri. */
+ * M5h-r2: dung duong bpf_per_cpu_ptr da kiem chung tu M1. Noi nao da co so
+ * CPU thi goi thang steal_raw_on_cpu(cpu) de khoi goi bpf_get_smp_processor_id
+ * them lan nua. */
 static __always_inline __u64 steal_raw_this_cpu(void)
 {
-	if (hids_steal_off)
-		return 0;
-
-	if (hids_steal_fallback) {
-		const struct rq *rq = bpf_this_cpu_ptr(&runqueues);
-
-		return rq ? rq->prev_steal_time : 0;
-	}
-
-	{
-		const struct vmware_steal_time *st = bpf_this_cpu_ptr(&vmw_steal_time);
-
-		return st ? st->clock : 0;
-	}
+	return steal_raw_on_cpu(bpf_get_smp_processor_id());
 }
 
 /* steal_delta_ns quy mot muc tang cua bo dem steal ra ns. */
@@ -515,7 +503,7 @@ static __always_inline int hids_on_sys_enter(long id)
 
 	/* M5h: doc MOT lan steal tho va bo cong don irq cua CPU nay tai ts; dung
 	 * chung cho dong doan cu va mo doan moi (hai moc trung nhau). */
-	raw = steal_raw_this_cpu();
+	raw = steal_raw_on_cpu(cpu);
 	itot = irq_total_at(irq_state(), ts, raw);
 
 	if (!st->seen) {
@@ -600,79 +588,77 @@ int BPF_PROG(hids_sys_enter_fentry, struct pt_regs *regs, int nr)
 	return hids_on_sys_enter((long)nr);
 }
 
+/* M5h-r2: doc moc thoi gian, so CPU, steal tho va bo cong don irq cua CPU hien
+ * tai, mot lan cho ca prev va next. */
+static __always_inline void read_now(__u64 *now, __u32 *cpu, __u64 *raw, __u64 *itot)
+{
+	*now = bpf_ktime_get_ns();
+	*cpu = bpf_get_smp_processor_id();
+	*raw = steal_raw_on_cpu(*cpu);
+	*itot = irq_total_at(irq_state(), *now, *raw);
+}
+
 SEC("tp_btf/sched_switch")
 int BPF_PROG(hids_sched_switch, bool preempt, struct task_struct *prev,
 	     struct task_struct *next, unsigned int prev_state)
 {
-	struct hids_tstate *sp, *sn;
-	__u64 now, raw, itot;
-	__u32 cpu;
+	struct hids_tstate *st;
+	__u64 now = 0, raw = 0, itot = 0;
+	__u32 cpu = 0;
+	int got = 0;
 
-	/* Khong tao storage o day. */
-	sp = bpf_task_storage_get(&hids_task_state, prev, NULL, 0);
-	if (sp && !sp->seen)
-		sp = NULL;
-	sn = bpf_task_storage_get(&hids_task_state, next, NULL, 0);
-	if (sn && !sn->seen)
-		sn = NULL;
-
-	/* M5h: duong nhanh. Ca hai task deu khong duoc theo doi (truong hop pho
-	 * bien cua cac tien trinh khong phai dich) thi khong doc dong ho, steal,
-	 * irq. */
-	if (!sp && !sn)
-		return 0;
-
-	now = bpf_ktime_get_ns();
-	cpu = bpf_get_smp_processor_id();
-	/* M5h: doc MOT lan, dung chung cho prev (dong doan) va next (mo doan). */
-	raw = steal_raw_this_cpu();
-	itot = irq_total_at(irq_state(), now, raw);
-
-	/* prev roi CPU. */
-	if (sp) {
-		close_on_cpu(sp, now, raw, itot);
-		sp->off_ts = now;
-		sp->wake_ts = 0;
-		sp->off_cpu = cpu;
-		sp->off_steal_raw = raw;
+	/* prev roi CPU. Khong tao storage o day. Task khong duoc theo doi (truong
+	 * hop pho bien) thi khong doc dong ho, steal, irq. */
+	st = bpf_task_storage_get(&hids_task_state, prev, NULL, 0);
+	if (st && st->seen) {
+		read_now(&now, &cpu, &raw, &itot);
+		got = 1;
+		close_on_cpu(st, now, raw, itot);
+		st->off_ts = now;
+		st->wake_ts = 0;
+		st->off_cpu = cpu;
+		st->off_steal_raw = raw;
 		if (preempt || prev_state == HIDS_TASK_RUNNING) {
-			sp->off_kind = HIDS_OFF_RUNNABLE;
-			sp->target_cpu = cpu;
-			sp->rq_steal_raw = raw;
+			st->off_kind = HIDS_OFF_RUNNABLE;
+			st->target_cpu = cpu;
+			st->rq_steal_raw = raw;
 		} else {
-			sp->off_kind = HIDS_OFF_SLEEP;
+			st->off_kind = HIDS_OFF_SLEEP;
 			if (prev_state & HIDS_TASK_UNINTERRUPTIBLE)
-				sp->pending_flags |= HIDS_F_D_SLEEP;
+				st->pending_flags |= HIDS_F_D_SLEEP;
 		}
 	}
 
 	/* next duoc chay lai. */
-	if (sn) {
-		steal_off_close_reuse(sn, sn->target_cpu, sn->rq_steal_raw, cpu, raw);
-		if (sn->off_kind == HIDS_OFF_RUNNABLE) {
-			if (now > sn->off_ts)
-				sn->acc_rq += now - sn->off_ts;
-		} else if (sn->off_kind == HIDS_OFF_SLEEP) {
-			__u64 w = sn->wake_ts;
+	st = bpf_task_storage_get(&hids_task_state, next, NULL, 0);
+	if (st && st->seen) {
+		if (!got)
+			read_now(&now, &cpu, &raw, &itot);
+		steal_off_close_reuse(st, st->target_cpu, st->rq_steal_raw, cpu, raw);
+		if (st->off_kind == HIDS_OFF_RUNNABLE) {
+			if (now > st->off_ts)
+				st->acc_rq += now - st->off_ts;
+		} else if (st->off_kind == HIDS_OFF_SLEEP) {
+			__u64 w = st->wake_ts;
 
-			if (w == 0 || w < sn->off_ts || w > now) {
+			if (w == 0 || w < st->off_ts || w > now) {
 				/* Khong co moc wakeup dung dan: tinh ca doan vao
 				 * vol va bat CLAMPED. */
-				if (now > sn->off_ts)
-					sn->acc_vol += now - sn->off_ts;
-				sn->pending_flags |= HIDS_F_CLAMPED;
+				if (now > st->off_ts)
+					st->acc_vol += now - st->off_ts;
+				st->pending_flags |= HIDS_F_CLAMPED;
 			} else {
-				sn->acc_vol += w - sn->off_ts;
-				sn->acc_rq += now - w;
+				st->acc_vol += w - st->off_ts;
+				st->acc_rq += now - w;
 			}
 		}
-		sn->off_kind = HIDS_OFF_NONE;
-		sn->wake_ts = 0;
+		st->off_kind = HIDS_OFF_NONE;
+		st->wake_ts = 0;
 
-		if (cpu != sn->on_cpu)
-			sn->pending_flags |= HIDS_F_MIGRATED;
+		if (cpu != st->on_cpu)
+			st->pending_flags |= HIDS_F_MIGRATED;
 
-		open_on_cpu(sn, now, cpu, raw, itot);
+		open_on_cpu(st, now, cpu, raw, itot);
 	}
 
 	return 0;
