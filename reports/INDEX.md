@@ -25,3 +25,4 @@
 | [R021](R021-m5f-wrk2-t3r-t4r-case-a.md) | 2026-10-08 23:10 | M5f | Case A T4 wrk, T3 cấu hình mới, T3-R/T4-R + m5f_parse; tag `m5f`. | Xong. `m5f_parse.tsv` tái tạo bằng `scripts/m5f_reparse_fixed.sh`; O5 không làm. |
 | [R022](R022-m5h-bpf-verifier-stop.md) | 2026-10-08 23:45 | M5h | BPF tối ưu + Go; G7a verifier `hids_sched_switch`. | Dừng bước 2; không tag `m5h`. |
 | [R023](R023-m5h-r2-sha256-stop.md) | 2026-10-09 00:10 | M5h-r2 | Tiếp M5h; sha256 BPF chưa `14d065a6…`. | Dừng bước 0; không tag `m5h`. |
+| [R024](R024-m5h-r2-g7b-stop.md) | 2026-10-09 00:35 | M5h-r2 | G7a đạt; G7b mat=13238390. | Dừng bước 2; không tag `m5h`. |

@@ -1,6 +1,6 @@
 # Trạng thái dự án HIDS
 
-Cập nhật lần cuối: 2026-10-09 00:10 (giờ máy)
+Cập nhật lần cuối: 2026-10-09 00:35 (giờ máy)
 
 ## Lịch sử git và tham chiếu phiên bản
 
@@ -11,13 +11,14 @@ Cập nhật lần cuối: 2026-10-09 00:10 (giờ máy)
 
 ## Mốc hiện tại và mục tiêu
 
-- **M5h:** **dừng bước 0 (r2)** — file BPF trên máy vẫn sha256 `7618d9c1…` (R022), chưa bản `14d065a6…` (R023); **chưa** tag `m5h`.
+- **M5h:** **dừng bước 2 (r2)** — BPF `5beaace`; G7a/fentry OK; G7b `mat`≠0 (R024); **chưa** tag `m5h`.
 - **M5f:** đã đóng — R021, tag `m5f`.
 
 ## Bước đã xong (M5h)
 
-- Bước 0: commit BPF `25c66cb`.
-- Bước 1: Go + header `539a171`; `make build` OK.
+- Bước 0 r2: BPF `5beaace` (sha256 `14d065a6…`).
+- Bước 1: Go `539a171`; build OK.
+- Bước 2 một phần: G7a + G7a fentry (`validation/m5h-20261009/step2/`).
 
 ## Bước đang làm
 
@@ -25,8 +26,8 @@ Cập nhật lần cuối: 2026-10-09 00:10 (giờ máy)
 
 ## Bước tiếp theo
 
-- **Người dùng** chép BPF M5h-r2 (`14d065a6…`) vào `bpf/sys_enter.bpf.c`.
-- Agent: commit M5h-r2 → `make build` → M5h bước 2–4 (`docs/tasks/M5h.md`).
+- Kiến trúc sư: G7b `mat`=0 với BPF r2 (R024).
+- Sau đó: G7b-nho, G3, bước 3–4 M5h.
 
 ## Việc đang chạy
 
@@ -34,5 +35,5 @@ Cập nhật lần cuối: 2026-10-09 00:10 (giờ máy)
 
 ## Vướng mắc / chờ kiến trúc sư
 
-- **M5h:** R022 verifier (bản cũ); R023 chờ file BPF r2 trên máy.
+- **M5h:** R024 G7b mất bản ghi; R022/R023 lịch sử.
 - O5 không làm.
