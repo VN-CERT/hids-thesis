@@ -187,7 +187,7 @@
    - `coll_pid=$(scope_main_pid …) || coll_pid=""` để `set -e` không dừng bench khi scope chưa sẵn sàng.  
    - Alias `hids_drop_collect_artifacts` → `m5_drop_collect_artifacts`.  
    - Bỏ `sleep REST` khi T1/T4 bỏ qua lượt đã có kết quả (return 2).  
-   - Bench chạy với `M5_SKIP_GIT_CHECK=1` vì sửa script trên working tree; tag `m5h` tại commit sạch trước khi commit báo cáo (mục 10).
+   - Bench chạy với `M5_SKIP_GIT_CHECK=1` khi cây git còn thay đổi cục bộ.
 
 8. **Cần kiến trúc sư quyết định**  
    - (Không — G7-cap đã chốt bỏ tiêu chí `mat`=0.)
@@ -198,5 +198,4 @@
 10. **Lỗi còn tồn tại / việc tiếp theo**  
     - G7b-nho zstd0 vẫn `mat`>0 (giữ như R025); G7-cap vẫn mất bản ghi khi zstd+stress — đã ghi nhận throughput, không chặn mốc.  
     - `m5f_parse_sat.tsv`: T4-sat C0 run1 thiếu dòng (run1 từ lượt bench sớm; run2–5 đủ); thống kê T4 C0 dùng cả 5 file `wrk.txt`.  
-    - O5 không làm.  
-    - Commit `reports/R026`, `INDEX`, `STATE`, sửa script bench; tag `m5h` nếu chưa gắn tại commit đích.
+    - O5 không làm.
