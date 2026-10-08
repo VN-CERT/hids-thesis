@@ -1,6 +1,6 @@
 # Trạng thái dự án HIDS
 
-Cập nhật lần cuối: 2026-10-08 20:30 (giờ máy)
+Cập nhật lần cuối: 2026-10-08 21:45 (giờ máy)
 
 ## Lịch sử git và tham chiếu phiên bản
 
@@ -11,7 +11,7 @@ Cập nhật lần cuối: 2026-10-08 20:30 (giờ máy)
 
 ## Mốc hiện tại và mục tiêu
 
-- **M5f:** đang chạy — G7a/G7-cap2 xong; đo wrk2/T3-R/T4-R → `validation/m5f-20261008/`, R021 + tag `m5f`.
+- **M5f:** đang chạy tiếp (case A) — `scripts/m5f_resume.sh`, tag `m5f` + R021 khi xong.
 - **M5e:** đã đóng — R020, tag `m5e`.
 - **M5d:** đã đóng — R019, tag `m5d`.
 
@@ -22,7 +22,7 @@ Cập nhật lần cuối: 2026-10-08 20:30 (giờ máy)
 
 ## Bước đang làm
 
-- M5f bước 6–8: job `hids-m5f` — log `out/jobs/m5f.log`, trạng thái `out/jobs/m5f.status`.
+- M5f resume: `hids-m5f-resume` — log `out/jobs/m5f-resume.log`, `out/jobs/m5f-resume.status`.
 
 ## Bước tiếp theo
 
@@ -30,7 +30,7 @@ Cập nhật lần cuối: 2026-10-08 20:30 (giờ máy)
 
 ## Việc đang chạy
 
-- **hids-m5f** — `M5F_SKIP_STEP2=1 bash scripts/m5f.sh` — log `out/jobs/m5f.log` — `out/jobs/m5f.status`
+- **hids-m5f-resume** — `bash scripts/m5f_resume.sh` — log `out/jobs/m5f-resume.log`
 
 ## Vướng mắc / chờ kiến trúc sư
 
