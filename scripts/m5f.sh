@@ -41,6 +41,7 @@ require_clean_git() {
 	local st path
 	while read -r st path _; do
 		[[ -z $st ]] && continue
+		[[ $st == '??' ]] && continue
 		path="${path%/}"
 		[[ $path == out/* || $path == validation/* || $path == reports/* || $path == internal/syscallbpf/* ]] && continue
 		die "cay git khong sach: $st $path"
