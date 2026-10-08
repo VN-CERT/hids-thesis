@@ -129,12 +129,19 @@ func Load(cfg Config) (*Collector, error) {
 	if len(cfg.CgroupIDs) > 0 {
 		filterCgroup = 1
 	}
+	filterPID := uint8(0)
+	if len(cfg.TGIDs) > 0 {
+		filterPID = 1
+	}
+	rbWakeBytes := uint64(cfg.RingbufBytes) / 8
 	vars := map[string]any{
-		"hids_self_tgid":      cfg.SelfTGID,
-		"hids_filter_cgroup":  filterCgroup,
-		"hids_tsc_khz":        cfg.TSCKHz,
-		"hids_steal_fallback": boolToU8(cfg.StealFallback),
-		"hids_steal_off":      boolToU8(cfg.StealOff),
+		"hids_self_tgid":       cfg.SelfTGID,
+		"hids_filter_cgroup":   filterCgroup,
+		"hids_filter_pid":      filterPID,
+		"hids_rb_wake_bytes":   rbWakeBytes,
+		"hids_tsc_khz":         cfg.TSCKHz,
+		"hids_steal_fallback":  boolToU8(cfg.StealFallback),
+		"hids_steal_off":       boolToU8(cfg.StealOff),
 	}
 	for name, val := range vars {
 		v := spec.Variables[name]

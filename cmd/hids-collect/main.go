@@ -201,10 +201,15 @@ func run() error {
 	}
 	startWall := time.Now()
 
-	filterPID := "khong co"
+	filterTGIDs := "khong co"
 	if len(tgids) > 0 {
-		filterPID = tgids.String()
+		filterTGIDs = tgids.String()
 	}
+	filterPIDFlag := 0
+	if len(tgids) > 0 {
+		filterPIDFlag = 1
+	}
+	rbWakeBytes := uint64(ringbufBytes) / 8
 	filterCgroup := "khong co"
 	if len(cgroupDesc) > 0 {
 		filterCgroup = strings.Join(cgroupDesc, " | ")
@@ -217,9 +222,11 @@ func run() error {
 		fmt.Sprintf("nr_cpus_possible: %d", possibleCPUs),
 		fmt.Sprintf("git_commit: %s", buildinfo.GitCommit()),
 		fmt.Sprintf("record_size: %d", recfmt.RecordSize),
-		fmt.Sprintf("filter_pid: %s", filterPID),
+		fmt.Sprintf("filter_tgids: %s", filterTGIDs),
+		fmt.Sprintf("filter_pid: %d", filterPIDFlag),
 		fmt.Sprintf("filter_cgroup: %s", filterCgroup),
 		fmt.Sprintf("ringbuf_bytes: %d", ringbufBytes),
+		fmt.Sprintf("rb_wake_bytes: %d", rbWakeBytes),
 		fmt.Sprintf("stealclock: %s", stealStatus),
 		fmt.Sprintf("stealclock_evidence: %s", stealEvidence),
 		fmt.Sprintf("steal_mode: %s", stealMode),
@@ -280,7 +287,7 @@ func run() error {
 	} else {
 		fmt.Fprintf(os.Stderr, "ghi vao %s\n", outPath)
 	}
-	fmt.Fprintf(os.Stderr, "loc pid: %s | loc cgroup: %s | ring buffer: %d MiB\n", filterPID, filterCgroup, *ringbufMB)
+	fmt.Fprintf(os.Stderr, "loc pid: %s | loc cgroup: %s | ring buffer: %d MiB\n", filterTGIDs, filterCgroup, *ringbufMB)
 	// Tracepoint da gan xong tu luc Load(); tu day moi sys_enter deu duoc dem.
 	// Script do dung dong nay de biet khi nao bat dau duoc.
 	fmt.Fprintln(os.Stderr, "READY")

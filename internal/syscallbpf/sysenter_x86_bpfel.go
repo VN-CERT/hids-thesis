@@ -102,6 +102,8 @@ const (
 	sysEnterProgHidsSysEnter                   = "hids_sys_enter"
 	sysEnterProgHidsSysEnterFentry             = "hids_sys_enter_fentry"
 	sysEnterVarHidsFilterCgroup                = "hids_filter_cgroup"
+	sysEnterVarHidsFilterPid                   = "hids_filter_pid"
+	sysEnterVarHidsRbWakeBytes                 = "hids_rb_wake_bytes"
 	sysEnterVarHidsSelfTgid                    = "hids_self_tgid"
 	sysEnterVarHidsStealFallback               = "hids_steal_fallback"
 	sysEnterVarHidsStealOff                    = "hids_steal_off"
@@ -201,6 +203,8 @@ type sysEnterMapSpecs struct {
 // It can be passed ebpf.CollectionSpec.Assign.
 type sysEnterVariableSpecs struct {
 	HidsFilterCgroup  *ebpf.VariableSpec `ebpf:"hids_filter_cgroup"`
+	HidsFilterPid     *ebpf.VariableSpec `ebpf:"hids_filter_pid"`
+	HidsRbWakeBytes   *ebpf.VariableSpec `ebpf:"hids_rb_wake_bytes"`
 	HidsSelfTgid      *ebpf.VariableSpec `ebpf:"hids_self_tgid"`
 	HidsStealFallback *ebpf.VariableSpec `ebpf:"hids_steal_fallback"`
 	HidsStealOff      *ebpf.VariableSpec `ebpf:"hids_steal_off"`
@@ -253,6 +257,8 @@ func (m *sysEnterMaps) Close() error {
 // It can be passed to loadSysEnterObjects or ebpf.CollectionSpec.LoadAndAssign.
 type sysEnterVariables struct {
 	HidsFilterCgroup  *ebpf.Variable `ebpf:"hids_filter_cgroup"`
+	HidsFilterPid     *ebpf.Variable `ebpf:"hids_filter_pid"`
+	HidsRbWakeBytes   *ebpf.Variable `ebpf:"hids_rb_wake_bytes"`
 	HidsSelfTgid      *ebpf.Variable `ebpf:"hids_self_tgid"`
 	HidsStealFallback *ebpf.Variable `ebpf:"hids_steal_fallback"`
 	HidsStealOff      *ebpf.Variable `ebpf:"hids_steal_off"`
