@@ -92,6 +92,7 @@ recstat_count() {
 }
 
 collector_drops() {
+	[[ -f $1 ]] || { echo 0; return 0; }
 	awk '/mat_tong=/{for(i=1;i<=NF;i++) if($i~/^mat_tong=/){split($i,a,"="); print a[2]}}' "$1" 2>/dev/null | tail -1
 }
 
@@ -464,10 +465,24 @@ m5_progress() {
 
 main() {
 	[[ $EUID -eq 0 ]] || die "can root"
-	if [[ -n ${M5C_REGRESS_HOOK:-} ]]; then
-		export HIDS_COLLECT_EXTRA="-sys-enter-hook ${M5C_REGRESS_HOOK}"
+	if [[ -n ${M5C_REGRESS_HOOK:-} && -z ${HIDS_COLLECT_EXTRA:-} ]]; then
+		export HIDS_COLLECT_EXTRA="-sys-enter-hook ${M5C_REGRESS_HOOK} -allow-no-stealclock"
 	fi
 	trap 'write_m5_summary; restore_production_containers' EXIT
+	if [[ -n ${M5_ONLY_T1_COND:-} ]]; then
+		require_clean_git
+		require_from_m6a
+		for f in "$COLLECT" "$RECSTAT" "$SYSINJ"; do
+			[[ -x $f ]] || die "thieu $f (make build)"
+		done
+		mkdir -p "$OUTROOT" out "$DECOY_CG"
+		local run
+		for ((run = 1; run <= RUNS; run++)); do
+			t1_run "$M5_ONLY_T1_COND" "$run"
+		done
+		write_m5_summary
+		exit 0
+	fi
 	require_clean_git
 	require_from_m6a
 	for f in "$COLLECT" "$RECSTAT" "$SYSINJ"; do
