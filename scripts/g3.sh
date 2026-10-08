@@ -3,6 +3,8 @@
 set -uo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
+# shellcheck source=scripts/hids_data_policy.sh
+source scripts/hids_data_policy.sh
 
 COLLECT=./bin/hids-collect
 RECCHK=./bin/rec-check
