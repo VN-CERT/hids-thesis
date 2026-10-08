@@ -6,6 +6,7 @@ import (
 	"os"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/cilium/ebpf"
 	"github.com/cilium/ebpf/link"
@@ -292,6 +293,11 @@ func (c *Collector) IRQTracepoints() []string {
 // ReadInto doc mot ban ghi tu ring buffer vao rec.
 func (c *Collector) ReadInto(rec *ringbuf.Record) error {
 	return c.reader.ReadInto(rec)
+}
+
+// SetDeadline dat timeout cho ReadInto (O1: poll 10 ms).
+func (c *Collector) SetDeadline(t time.Time) {
+	c.reader.SetDeadline(t)
 }
 
 // SysEnterHook tra ve che do gan chinh (tracepoint hoac fentry).

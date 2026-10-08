@@ -26,54 +26,105 @@ const (
 	ToleranceRel = 0.01      // 1%
 )
 
-// StealClock la ket qua dem dong "vmware-stealtime" trong kernel log.
+// StealClock la ket qua kiem stealclock (journal hoac chung minh runtime).
 type StealClock struct {
-	Lines  int    // so dong tim thay
-	NrCPUs int    // so CPU mong doi
-	Source string // lenh da dung
-	OK     bool   // Lines == NrCPUs
+	Lines    int    // so dong vmware-stealtime trong journal (neu co)
+	NrCPUs   int    // so CPU mong doi
+	Source   string // lenh / phuong phap
+	Evidence string // journalctl | vmw_steal_time_snapshot
+	OK       bool
 }
 
 // Status tra ve mo ta ngan gon de ghi vao header.
 func (s StealClock) Status() string {
-	if s.OK {
+	if !s.OK {
+		return fmt.Sprintf("KHONG DU (evidence=%s, %s)", s.Evidence, s.Source)
+	}
+	if s.Evidence == "journalctl" {
 		return fmt.Sprintf("bat (%d/%d dong \"vmware-stealtime\" trong %s)", s.Lines, s.NrCPUs, s.Source)
 	}
-	return fmt.Sprintf("KHONG DU (%d/%d dong \"vmware-stealtime\" trong %s)", s.Lines, s.NrCPUs, s.Source)
+	return fmt.Sprintf("bat (%s: %s)", s.Evidence, s.Source)
 }
 
-// CountStealClock dem so dong "vmware-stealtime" trong kernel log. Moi CPU co
-// stealclock sinh ra dung mot dong luc khoi dong.
-func CountStealClock(nrCPUs int) (StealClock, error) {
-	sources := [][]string{
-		{"dmesg"},
-		{"journalctl", "-k", "-b", "--no-pager"},
+func countVMWStealtimeInJournal() (int, error) {
+	args := []string{"journalctl", "-k", "-b", "--no-pager"}
+	out, err := exec.Command(args[0], args[1:]...).Output()
+	if err != nil {
+		return 0, fmt.Errorf("%s: %w", strings.Join(args, " "), err)
 	}
+	n := 0
+	sc := bufio.NewScanner(bytes.NewReader(out))
+	sc.Buffer(make([]byte, 0, 64*1024), 1024*1024)
+	for sc.Scan() {
+		if strings.Contains(sc.Text(), "vmware-stealtime") {
+			n++
+		}
+	}
+	return n, nil
+}
 
-	var problems []string
-	for _, args := range sources {
-		out, err := exec.Command(args[0], args[1:]...).Output()
-		if err != nil {
-			problems = append(problems, fmt.Sprintf("%s: %v", strings.Join(args, " "), err))
-			continue
+// ProveVMWStealActive chup vmw_steal_time hai lan cach SettleTime; moi CPU phai
+// co muc tang > 0 (chu ky vTSC).
+func ProveVMWStealActive(nrCPUs int) error {
+	snap, vmwErr, err := stealbpf.Load(false)
+	if err != nil {
+		return err
+	}
+	defer snap.Close()
+	if !snap.HasVMW() {
+		return fmt.Errorf("khong nap vmw_steal_time: %v", vmwErr)
+	}
+	first, err := snap.Snapshot(nrCPUs)
+	if err != nil {
+		return err
+	}
+	start := make([]stealbpf.Slot, len(first))
+	copy(start, first)
+	time.Sleep(SettleTime)
+	end, err := snap.Snapshot(nrCPUs)
+	if err != nil {
+		return err
+	}
+	for i := 0; i < nrCPUs; i++ {
+		if !start[i].HasVMW() || !end[i].HasVMW() {
+			return fmt.Errorf("CPU %d: khong doc duoc vmw_steal_time", i)
 		}
-		n := 0
-		sc := bufio.NewScanner(bytes.NewReader(out))
-		sc.Buffer(make([]byte, 0, 64*1024), 1024*1024)
-		for sc.Scan() {
-			if strings.Contains(sc.Text(), "vmware-stealtime") {
-				n++
-			}
+		if end[i].VmwRaw <= start[i].VmwRaw {
+			return fmt.Errorf("CPU %d: vmw_steal_time khong tang trong %s", i, SettleTime)
 		}
+	}
+	return nil
+}
+
+// DetectStealClock: journalctl -k -b truoc; neu khong du thi chung minh runtime.
+func DetectStealClock(nrCPUs int) (StealClock, error) {
+	src := "journalctl -k -b --no-pager"
+	n, err := countVMWStealtimeInJournal()
+	if err != nil {
+		return StealClock{}, err
+	}
+	if n == nrCPUs {
 		return StealClock{
-			Lines:  n,
-			NrCPUs: nrCPUs,
-			Source: strings.Join(args, " "),
-			OK:     n == nrCPUs,
+			Lines: n, NrCPUs: nrCPUs, Source: src,
+			Evidence: "journalctl", OK: true,
 		}, nil
 	}
+	runtimeSrc := fmt.Sprintf("vmw_steal_time snapshot 2x cach %s", SettleTime)
+	if err := ProveVMWStealActive(nrCPUs); err != nil {
+		return StealClock{
+			Lines: n, NrCPUs: nrCPUs, Source: src + "; " + runtimeSrc,
+			Evidence: "none", OK: false,
+		}, nil
+	}
+	return StealClock{
+		Lines: n, NrCPUs: nrCPUs, Source: runtimeSrc,
+		Evidence: "vmw_steal_time_snapshot", OK: true,
+	}, nil
+}
 
-	return StealClock{}, fmt.Errorf("khong doc duoc kernel log (%s)", strings.Join(problems, "; "))
+// CountStealClock giu ten goi cu; goi DetectStealClock.
+func CountStealClock(nrCPUs int) (StealClock, error) {
+	return DetectStealClock(nrCPUs)
 }
 
 // CPUCompare la ket qua so hai duong do steal tren mot CPU.

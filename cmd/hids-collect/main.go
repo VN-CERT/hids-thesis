@@ -140,7 +140,7 @@ func run() error {
 		return err
 	}
 
-	stealMode, stealStatus, err := checkSteal(nrCPUs, tsc.KHz, *allowNoStealclock, *stealFallback)
+	stealMode, stealStatus, stealEvidence, err := checkSteal(nrCPUs, tsc.KHz, *allowNoStealclock, *stealFallback)
 	if err != nil {
 		return err
 	}
@@ -220,6 +220,7 @@ func run() error {
 		fmt.Sprintf("filter_cgroup: %s", filterCgroup),
 		fmt.Sprintf("ringbuf_bytes: %d", ringbufBytes),
 		fmt.Sprintf("stealclock: %s", stealStatus),
+		fmt.Sprintf("stealclock_evidence: %s", stealEvidence),
 		fmt.Sprintf("steal_mode: %s", stealMode),
 		fmt.Sprintf("tsc_khz: %d", tsc.KHz),
 		fmt.Sprintf("tsc_source: %s | %s", tsc.Source, tsc.Line),
@@ -322,7 +323,9 @@ func run() error {
 	var shortRecords int64
 	var sinceFlush int64
 
+	const readPoll = 10 * time.Millisecond
 	for {
+		coll.SetDeadline(time.Now().Add(readPoll))
 		err := coll.ReadInto(&rec)
 		if err != nil {
 			if errors.Is(err, os.ErrDeadlineExceeded) {
@@ -457,35 +460,36 @@ const (
 //
 // Khong dat thi tu choi chay, tru khi nguoi dung ghi ro co de bo qua. Do steal
 // sai ma khong bao thi toan bo so lieu nghien cuu khong dung duoc.
-func checkSteal(nrCPUs int, tscKHz uint64, allowNoStealclock, forceFallback bool) (mode, status string, err error) {
-	sc, err := stealcheck.CountStealClock(nrCPUs)
+func checkSteal(nrCPUs int, tscKHz uint64, allowNoStealclock, forceFallback bool) (mode, status, evidence string, err error) {
+	sc, err := stealcheck.DetectStealClock(nrCPUs)
 	if err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
 	status = sc.Status()
+	evidence = sc.Evidence
 	fmt.Fprintf(os.Stderr, "stealclock: %s\n", status)
+	fmt.Fprintf(os.Stderr, "stealclock_evidence: %s\n", evidence)
 
 	if !sc.OK {
 		if !allowNoStealclock {
-			return "", "", fmt.Errorf(
-				"kernel log co %d dong \"vmware-stealtime\" (nguon: %s) nhung may co %d CPU: "+
-					"stealclock khong bat du tren moi CPU nen khong do duoc steal. "+
-					"Chay lai voi -allow-no-stealclock de thu thap voi steal = 0",
-				sc.Lines, sc.Source, nrCPUs)
+			return "", "", evidence, fmt.Errorf(
+				"khong chung minh duoc stealclock tren %d CPU (%s). "+
+					"Khong dung -allow-no-stealclock trong phép do",
+				nrCPUs, sc.Source)
 		}
 		fmt.Fprintf(os.Stderr, "CANH BAO: chay voi -allow-no-stealclock, steal = 0 tren moi ban ghi\n")
-		return stealModeOff, status, nil
+		return stealModeOff, status, evidence, nil
 	}
 
 	if forceFallback {
 		fmt.Fprintf(os.Stderr, "chay voi -steal-fallback: dung rq->prev_steal_time, moi ban ghi mang co STEAL_FALLBACK\n")
-		return stealModeFallback, status, nil
+		return stealModeFallback, status, evidence, nil
 	}
 
 	fmt.Fprintf(os.Stderr, "doi chieu vmw_steal_time voi rq->prev_steal_time trong %s...\n", stealcheck.SettleTime)
 	cmp, err := stealcheck.CompareStealPaths(nrCPUs, tscKHz)
 	if err != nil {
-		return "", "", fmt.Errorf("khong doi chieu duoc hai duong do steal: %w", err)
+		return "", "", evidence, fmt.Errorf("khong doi chieu duoc hai duong do steal: %w", err)
 	}
 	fmt.Fprintf(os.Stderr, "doi chieu xong: lech lon nhat %d ns tren %d CPU, nguong max(%d ns, %.0f%%)\n",
 		cmp.MaxDiff, len(cmp.PerCPU), stealcheck.ToleranceNs, stealcheck.ToleranceRel*100)
@@ -501,10 +505,10 @@ func checkSteal(nrCPUs int, tscKHz uint64, allowNoStealclock, forceFallback bool
 			fmt.Fprintf(&b, "  %4d %14d %14d %12d %12d\n", c.CPU, c.VmwNs, c.RqNs, c.DiffNs, c.LimitNs)
 		}
 		fmt.Fprintf(&b, "Chay lai voi -steal-fallback de dung rq->prev_steal_time")
-		return "", "", errors.New(b.String())
+		return "", "", evidence, errors.New(b.String())
 	}
 
-	return stealModeVMW, status, nil
+	return stealModeVMW, status, evidence, nil
 }
 
 // watchLoss ghi mot dong vao file .periodic sau moi recfmt.PeriodicInterval.

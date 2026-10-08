@@ -28,6 +28,12 @@
 
 char LICENSE[] SEC("license") = "GPL";
 
+/* bpf_ringbuf_query / bpf_ringbuf_submit flags (linux/bpf.h) */
+#define BPF_RB_NO_WAKEUP		(1ULL << 0)
+#define BPF_RB_FORCE_WAKEUP		(1ULL << 1)
+#define BPF_RB_AVAIL_DATA		0
+#define BPF_RB_RING_SIZE		1
+
 /* Bang flags chot trong .cursor/rules/hids.mdc. */
 #define HIDS_F_FIRST          (1U << 0)
 #define HIDS_F_GAP_BEFORE     (1U << 1)
@@ -159,6 +165,17 @@ struct {
 	__uint(type, BPF_MAP_TYPE_RINGBUF);
 	__uint(max_entries, 1 << 26); /* user space ghi de theo -ringbuf-mb */
 } hids_events SEC(".maps");
+
+static __always_inline void hids_ringbuf_submit_record(void *rec)
+{
+	__u64 avail = bpf_ringbuf_query(&hids_events, BPF_RB_AVAIL_DATA);
+	__u64 ring_sz = bpf_ringbuf_query(&hids_events, BPF_RB_RING_SIZE);
+	__u64 flags = BPF_RB_NO_WAKEUP;
+
+	if (ring_sz >= 8 && avail >= ring_sz / 8)
+		flags = BPF_RB_FORCE_WAKEUP;
+	bpf_ringbuf_submit(rec, flags);
+}
 
 struct {
 	__uint(type, BPF_MAP_TYPE_HASH);
@@ -503,7 +520,7 @@ static __always_inline int hids_on_sys_enter(long id)
 	rec->reserved = 0;
 	rec->flags = flags;
 
-	bpf_ringbuf_submit(rec, 0);
+	hids_ringbuf_submit_record(rec);
 
 	st->seen = 1;
 	st->gap_pending = 0;

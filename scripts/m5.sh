@@ -466,7 +466,7 @@ m5_progress() {
 main() {
 	[[ $EUID -eq 0 ]] || die "can root"
 	if [[ -n ${M5C_REGRESS_HOOK:-} && -z ${HIDS_COLLECT_EXTRA:-} ]]; then
-		export HIDS_COLLECT_EXTRA="-sys-enter-hook ${M5C_REGRESS_HOOK} -allow-no-stealclock"
+		export HIDS_COLLECT_EXTRA="-sys-enter-hook ${M5C_REGRESS_HOOK}"
 	fi
 	trap 'write_m5_summary; restore_production_containers' EXIT
 	if [[ -n ${M5_ONLY_T1_COND:-} ]]; then
@@ -506,6 +506,7 @@ main() {
 	for t in T1 T2 T3 T4; do
 		[[ ${M5C_REGRESS_MODE:-} == step2 && $t == T3 ]] && continue
 		for cond in C0 C1 C2 C3; do
+			[[ ${M5D_MODE:-} == 1 && $cond == C3 ]] && continue
 			[[ ${M5C_REGRESS_MODE:-} == step2 && $t == T4 && $cond != C1 ]] && continue
 			[[ ${M5C_REGRESS_MODE:-} == step2 && $cond == C3 ]] && continue
 			for ((run = 1; run <= RUNS; run++)); do
