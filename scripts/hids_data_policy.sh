@@ -50,6 +50,10 @@ m5_drop_collect_artifacts() {
 	fi
 }
 
+hids_drop_collect_artifacts() {
+	m5_drop_collect_artifacts "$@"
+}
+
 hids_drop_out_bin() {
 	local bin=$1
 	[[ ${KEEP_RAW:-} == 1 ]] && return 0
