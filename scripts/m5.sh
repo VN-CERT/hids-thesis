@@ -345,7 +345,7 @@ t3_run() {
 		stress_pids+=($!)
 	}
 	taskset -c 16-19 docker exec -u postgres pgtest pgbench -c 16 -j 4 -T 60 -U postgres -d postgres \
-		>"$dir/pgbench.log" 2>&1 || true
+		>"$dir/pgbench.log" 2>/dev/null || true
 	local tps lat
 	tps=$(awk '/^tps =/{print $3; exit}' "$dir/pgbench.log")
 	lat=$(awk '/latency average =/{print $4; exit}' "$dir/pgbench.log")

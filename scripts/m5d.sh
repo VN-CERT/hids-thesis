@@ -45,6 +45,9 @@ trap start_containers EXIT
 		echo "=== buoc 2: bo qua verify (M5D_SKIP_VERIFY=1) ==="
 	fi
 
+	if [[ ${M5D_SKIP_BPF:-} == 1 ]] || [[ -f $OUTROOT/bpf/bpf-delta.tsv ]]; then
+		echo "=== buoc 3: bo qua BPF stats (da co hoac M5D_SKIP_BPF=1) ==="
+	else
 	echo "=== buoc 3: BPF stats idle ==="
 	mkdir -p "$OUTROOT/bpf"
 	sysctl -w kernel.bpf_stats_enabled=1 >/dev/null
@@ -103,6 +106,7 @@ def delta(a, b):
             print(f"bpf_load {name} avg_ns={avg:.1f} delta_cnt={dc}")
 PY
 	sysctl -w kernel.bpf_stats_enabled=0 >/dev/null
+	fi
 
 	echo "=== buoc 4: ma tran kich tran ==="
 	M5_SKIP_GIT_CHECK=1 M5D_MODE=1 M5_OUTROOT="$OUTROOT" M5_RUNS=5 bash scripts/m5.sh
