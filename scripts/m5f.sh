@@ -210,7 +210,7 @@ t4_sat_load() {
 		;;
 	*) die "cond $cond";;
 	esac
-	taskset -c 16-19 wrk2 -t4 -c64 -d60s --latency "http://127.0.0.1:18080/f.bin" >"$dir/wrk2.txt" 2>&1 || true
+	taskset -c 16-19 /usr/local/bin/wrk2 -t4 -c64 -d60s --latency "http://127.0.0.1:18080/f.bin" >"$dir/wrk2.txt" 2>&1 || true
 	[[ -n $coll_pid ]] && kill -TERM "$coll_pid" 2>/dev/null || true
 	[[ -n $coll_pid ]] && wait_pid_gone "$coll_pid"
 	usec1=$(scope_usage_usec "$cgroup")
@@ -265,10 +265,17 @@ t3r_run() {
 	base=$(c0_tps_t3)
 	rate=$(frac_target "$base" "$pct")
 	t3r_load "$pct" "$cond" "$run"
-	if ! record_parse "$label" pgbench --target "$rate" "$dir"/pglog.*; then
+	shopt -s nullglob
+	local pgfiles=("$dir"/pglog.*)
+	shopt -u nullglob
+	[[ ${#pgfiles[@]} -gt 0 ]] || die "thieu pglog $dir"
+	if ! record_parse "$label" pgbench --target "$rate" "${pgfiles[@]}"; then
 		echo "m5f: retry $label" >&2
 		t3r_load "$pct" "$cond" "$run"
-		record_parse "$label" pgbench --target "$rate" "$dir"/pglog.* || \
+		shopt -s nullglob
+		pgfiles=("$dir"/pglog.*)
+		shopt -u nullglob
+		record_parse "$label" pgbench --target "$rate" "${pgfiles[@]}" || \
 			echo "m5f: $label van NGHI_NGO/LECH" >>"$OUTROOT/parse-warnings.txt"
 	fi
 }
@@ -302,7 +309,7 @@ t4r_load() {
 		;;
 	*) die "cond";;
 	esac
-	taskset -c 16-19 wrk2 -t4 -c64 -d60s -R "$rate_int" --latency "http://127.0.0.1:18080/f.bin" >"$dir/wrk2.txt" 2>&1 || true
+	taskset -c 16-19 /usr/local/bin/wrk2 -t4 -c64 -d60s -R "$rate_int" --latency "http://127.0.0.1:18080/f.bin" >"$dir/wrk2.txt" 2>&1 || true
 	[[ -n $coll_pid ]] && kill -TERM "$coll_pid" 2>/dev/null || true
 	[[ -n $coll_pid ]] && wait_pid_gone "$coll_pid"
 	usec1=$(scope_usage_usec "$cg")
@@ -326,12 +333,10 @@ t4r_run() {
 }
 
 step6_benchmark() {
-	command -v wrk2 docker systemd-run >/dev/null || die "thieu wrk2/docker"
+	[[ -x /usr/local/bin/wrk2 ]] || die "thieu /usr/local/bin/wrk2"
+	command -v docker systemd-run >/dev/null || die "thieu docker/systemd-run"
 	mkdir -p "$OUTROOT" out "$DECOY_CG"
-	{
-		echo -n "label	"
-		python3 "$M5F_PARSE" --header
-	} >"$PARSE_TSV"
+	echo "label	kieu	n	toc_do_per_s	lat_tb_ms	p50_ms	p99_ms	max_ms	lag_tb_ms	lag_p99_ms	loi	dat_muc	hop_ly" >"$PARSE_TSV"
 	stop_containers
 	docker rm -f pgtest m5-nginx 2>/dev/null || true
 	setup_pg
