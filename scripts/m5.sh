@@ -364,7 +364,7 @@ EOF
 t4_run() {
 	local cond=$1 run=$2
 	local dir="$OUTROOT/T4/${cond}/run${run}"
-	[[ -f $dir/result.txt ]] && return 0
+	[[ ${M5E_FORCE:-} != 1 && -f $dir/result.txt ]] && return 0
 	mkdir -p "$dir"
 	local cgroup coll_pid stress_pids=() stress_cpus
 	cgroup=$(docker_cgroup m5-nginx)
@@ -492,13 +492,25 @@ main() {
 		for spec in ${M5_RERUN//,/ }; do
 			t=${spec%%:*}
 			cond=${spec#*:}
-			for ((run = 1; run <= RUNS; run++)); do
-				case $t in
-				T3) t3_run "$cond" "$run" ;;
-				T4) t4_run "$cond" "$run" ;;
-				*) die "M5_RERUN khong hop le: $spec" ;;
-				esac
-			done
+			if [[ ${M5E_INTERLEAVE:-} == 1 ]]; then
+				for ((run = 1; run <= RUNS; run++)); do
+					for cond in C0 C1 C2; do
+						case $t in
+						T3) t3_run "$cond" "$run" ;;
+						T4) t4_run "$cond" "$run" ;;
+						*) die "M5_RERUN khong hop le: $spec" ;;
+						esac
+					done
+				done
+			else
+				for ((run = 1; run <= RUNS; run++)); do
+					case $t in
+					T3) t3_run "$cond" "$run" ;;
+					T4) t4_run "$cond" "$run" ;;
+					*) die "M5_RERUN khong hop le: $spec" ;;
+					esac
+				done
+			fi
 		done
 		docker rm -f pgtest m5-nginx 2>/dev/null || true
 		write_m5_summary

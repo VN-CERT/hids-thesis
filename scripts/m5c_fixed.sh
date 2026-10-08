@@ -465,7 +465,7 @@ PY
 t3_fixed_run() {
 	local pct=$1 cond=$2 run=$3
 	local dir="$OUTROOT/T3-R${pct}/${cond}/run${run}"
-	[[ -f $dir/result.txt ]] && return 0
+	[[ ${M5C_FIXED_FORCE:-} != 1 && -f $dir/result.txt ]] && return 0
 	mkdir -p "$dir"
 	local rate load_cg coll_cg coll_pid="" usec0 usec1 unit
 	rate=$(frac_c0_metric T3 "$pct")
@@ -503,10 +503,19 @@ t3_fixed_run() {
 	[[ -n $coll_pid ]] && kill -TERM "$coll_pid" 2>/dev/null || true
 	[[ -n $coll_pid ]] && wait_pid_gone "$coll_pid"
 	usec1=$(scope_usage_usec "$load_cg")
-	local tps lat_avg lat_p99 recs drops
-	tps=$(awk '/^tps =/{print $3; exit}' "$dir/pgbench.log")
-	lat_avg=$(awk '/latency average =/{print $4; exit}' "$dir/pgbench.log")
-	lat_p99=$(python3 analysis/m5d_p99.py pgbench "$dir/pgbench_txn.log" 2>/dev/null || true)
+	local lat_json sanity_ok=0 tps lat_avg lat_p50 lat_p99 lat_max recs drops
+	if [[ -f $dir/pgbench_txn.log ]]; then
+		lat_json=$(python3 analysis/m5e_latency.py pgbench "$dir/pgbench_txn.log" 60) || lat_json='{"sanity_ok":false}'
+		sanity_ok=$(python3 -c "import json,sys; print(1 if json.loads(sys.argv[1])['sanity_ok'] else 0)" "$lat_json")
+		tps=$(python3 -c "import json,sys; print(json.loads(sys.argv[1])['rate_per_s'])" "$lat_json")
+		lat_avg=$(python3 -c "import json,sys; print(json.loads(sys.argv[1])['avg_ms'])" "$lat_json")
+		lat_p50=$(python3 -c "import json,sys; print(json.loads(sys.argv[1])['p50_ms'])" "$lat_json")
+		lat_p99=$(python3 -c "import json,sys; print(json.loads(sys.argv[1])['p99_ms'])" "$lat_json")
+		lat_max=$(python3 -c "import json,sys; print(json.loads(sys.argv[1])['max_ms'])" "$lat_json")
+	else
+		lat_json='{}'
+		tps=0
+	fi
 	recs=$(recstat_count "$dir/collect.bin" 2>/dev/null || echo 0)
 	drops=$(collector_drops "$dir/collect.log")
 	[[ $cond != C0 ]] && m5_drop_collect_artifacts "$dir"
@@ -514,7 +523,11 @@ t3_fixed_run() {
 metric=tps
 value=$tps
 latency_ms=$lat_avg
+p50_ms=$lat_p50
 p99_ms=$lat_p99
+max_ms=$lat_max
+latency_sanity=$sanity_ok
+latency_json=$lat_json
 cgroup_cpu_usec=$((usec1 - usec0))
 target_tps=$rate
 pct_c0=$pct
@@ -522,13 +535,13 @@ condition=$cond
 records=$recs
 drops=$drops
 EOF
-	echo "T3-R${pct} $cond run$run: tps=$tps lat=$lat_avg p99=$lat_p99"
+	echo "T3-R${pct} $cond run$run: tps=$tps lat_avg=$lat_avg p50=$lat_p50 p99=$lat_p99 sanity=$sanity_ok"
 }
 
 t4_fixed_run() {
 	local pct=$1 cond=$2 run=$3
 	local dir="$OUTROOT/T4-R${pct}/${cond}/run${run}"
-	[[ -f $dir/result.txt ]] && return 0
+	[[ ${M5C_FIXED_FORCE:-} != 1 && -f $dir/result.txt ]] && return 0
 	mkdir -p "$dir"
 	local rate load_cg coll_pid="" usec0 usec1 hey unit
 	rate=$(frac_c0_metric T4 "$pct")
@@ -573,18 +586,31 @@ PY
 	[[ -n $coll_pid ]] && kill -TERM "$coll_pid" 2>/dev/null || true
 	[[ -n $coll_pid ]] && wait_pid_gone "$coll_pid"
 	usec1=$(scope_usage_usec "$load_cg")
-	local rps p50 p99 recs drops
-	rps=$(awk '/Requests\/sec:/{print $2; exit}' "$dir/hey.log")
-	p50=$(awk -F, 'NF>=5 && $1 !~ /HTTP|response/ {print $4; exit}' "$dir/hey.csv" 2>/dev/null | awk '{printf "%.3f", $1*1000}')
-	p99=$(python3 analysis/m5d_p99.py hey "$dir/hey.csv" 2>/dev/null || true)
+	local lat_json sanity_ok=0 rps lat_avg lat_p50 lat_p99 lat_max recs drops
+	if [[ -f $dir/hey.csv ]]; then
+		lat_json=$(python3 analysis/m5e_latency.py hey "$dir/hey.csv" 60) || lat_json='{"sanity_ok":false}'
+		sanity_ok=$(python3 -c "import json,sys; print(1 if json.loads(sys.argv[1])['sanity_ok'] else 0)" "$lat_json")
+		rps=$(python3 -c "import json,sys; print(json.loads(sys.argv[1])['rate_per_s'])" "$lat_json")
+		lat_avg=$(python3 -c "import json,sys; print(json.loads(sys.argv[1])['avg_ms'])" "$lat_json")
+		lat_p50=$(python3 -c "import json,sys; print(json.loads(sys.argv[1])['p50_ms'])" "$lat_json")
+		lat_p99=$(python3 -c "import json,sys; print(json.loads(sys.argv[1])['p99_ms'])" "$lat_json")
+		lat_max=$(python3 -c "import json,sys; print(json.loads(sys.argv[1])['max_ms'])" "$lat_json")
+	else
+		lat_json='{}'
+		rps=0
+	fi
 	recs=$(recstat_count "$dir/collect.bin" 2>/dev/null || echo 0)
 	drops=$(collector_drops "$dir/collect.log")
 	[[ $cond != C0 ]] && m5_drop_collect_artifacts "$dir"
 	cat >"$dir/result.txt" <<EOF
 metric=rps
 value=$rps
-latency_ms=$p50
-p99_ms=$p99
+latency_ms=$lat_avg
+p50_ms=$lat_p50
+p99_ms=$lat_p99
+max_ms=$lat_max
+latency_sanity=$sanity_ok
+latency_json=$lat_json
 cgroup_cpu_usec=$((usec1 - usec0))
 target_rps=$rate
 pct_c0=$pct
@@ -593,7 +619,7 @@ tool=hey
 records=$recs
 drops=$drops
 EOF
-	echo "T4-R${pct} $cond run$run: rps=$rps p50=$p50 p99=$p99"
+	echo "T4-R${pct} $cond run$run: rps=$rps lat_avg=$lat_avg p50=$lat_p50 p99=$lat_p99 sanity=$sanity_ok"
 }
 
 bpf_kernel_cost() {
@@ -638,7 +664,7 @@ main() {
 	[[ $EUID -eq 0 ]] || die "can root"
 	trap 'hids_print_df_at_job_end; write_m5_summary; restore_production_containers' EXIT
 	hids_require_disk_for_long_job
-	require_clean_git
+	[[ ${M5_SKIP_GIT_CHECK:-} == 1 ]] || require_clean_git
 	for f in "$COLLECT" "$RECSTAT"; do
 		[[ -x $f ]] || die "thieu $f (make build)"
 	done
@@ -651,30 +677,54 @@ main() {
 	setup_nginx
 	local pct cond run
 	for pct in 25 50; do
-		for cond in C0 C1 C2; do
+		if [[ ${M5E_INTERLEAVE:-} == 1 ]]; then
 			for ((run = 1; run <= RUNS; run++)); do
-				t3_fixed_run "$pct" "$cond" "$run"
-				write_m5_summary
-				sleep "$REST"
+				for cond in C0 C1 C2; do
+					t3_fixed_run "$pct" "$cond" "$run"
+					write_m5_summary
+					sleep "$REST"
+				done
 			done
-		done
+		else
+			for cond in C0 C1 C2; do
+				for ((run = 1; run <= RUNS; run++)); do
+					t3_fixed_run "$pct" "$cond" "$run"
+					write_m5_summary
+					sleep "$REST"
+				done
+			done
+		fi
 	done
 	for pct in 25 50; do
-		for cond in C0 C1 C2; do
+		if [[ ${M5E_INTERLEAVE:-} == 1 ]]; then
 			for ((run = 1; run <= RUNS; run++)); do
-				t4_fixed_run "$pct" "$cond" "$run"
-				write_m5_summary
-				sleep "$REST"
+				for cond in C0 C1 C2; do
+					t4_fixed_run "$pct" "$cond" "$run"
+					write_m5_summary
+					sleep "$REST"
+				done
 			done
-		done
+		else
+			for cond in C0 C1 C2; do
+				for ((run = 1; run <= RUNS; run++)); do
+					t4_fixed_run "$pct" "$cond" "$run"
+					write_m5_summary
+					sleep "$REST"
+				done
+			done
+		fi
 	done
+	if [[ ${M5E_ONLY_FIXED:-} != 1 ]]; then
 	M5_SKIP_GIT_CHECK=1 M5C_REGRESS_HOOK="$HOOK" M5C_REGRESS_MODE=step2 M5_OUTROOT="$OUTROOT/mini-t1" M5_RUNS=5 \
 		bash scripts/m5.sh || true
 	cp -f "$OUTROOT/mini-t1/summary.csv" "$OUTROOT/t1-t2-mini.csv" 2>/dev/null || true
+	fi
 	python3 - "$OUTROOT" <<'PY' | tee "$OUTROOT/observer_cost.txt" || true
 import csv, sys
 from pathlib import Path
 p = Path(sys.argv[1]) / "mini-t1" / "summary.csv"
+if not p.exists():
+    p = Path(sys.argv[1]) / "summary.csv"
 if not p.exists():
     sys.exit(0)
 rows = list(csv.DictReader(p.open()))
