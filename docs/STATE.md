@@ -1,6 +1,6 @@
 # Trạng thái dự án HIDS
 
-Cập nhật lần cuối: 2026-10-08 23:45 (giờ máy)
+Cập nhật lần cuối: 2026-10-09 00:10 (giờ máy)
 
 ## Lịch sử git và tham chiếu phiên bản
 
@@ -11,7 +11,7 @@ Cập nhật lần cuối: 2026-10-08 23:45 (giờ máy)
 
 ## Mốc hiện tại và mục tiêu
 
-- **M5h:** **dừng** — verifier từ chối `hids_sched_switch` (R022); chờ BPF sửa từ kiến trúc sư; **chưa** tag `m5h`.
+- **M5h:** **dừng bước 0 (r2)** — file BPF trên máy vẫn sha256 `7618d9c1…` (R022), chưa bản `14d065a6…` (R023); **chưa** tag `m5h`.
 - **M5f:** đã đóng — R021, tag `m5f`.
 
 ## Bước đã xong (M5h)
@@ -25,8 +25,8 @@ Cập nhật lần cuối: 2026-10-08 23:45 (giờ máy)
 
 ## Bước tiếp theo
 
-- Kiến trúc sư sửa `bpf/sys_enter.bpf.c` (verifier pass).
-- Chạy lại M5h từ bước 2 (`docs/tasks/M5h.md`).
+- **Người dùng** chép BPF M5h-r2 (`14d065a6…`) vào `bpf/sys_enter.bpf.c`.
+- Agent: commit M5h-r2 → `make build` → M5h bước 2–4 (`docs/tasks/M5h.md`).
 
 ## Việc đang chạy
 
@@ -34,5 +34,5 @@ Cập nhật lần cuối: 2026-10-08 23:45 (giờ máy)
 
 ## Vướng mắc / chờ kiến trúc sư
 
-- **M5h:** `R1 pointer |= pointer prohibited` trong `hids_sched_switch` (chi tiết R022).
+- **M5h:** R022 verifier (bản cũ); R023 chờ file BPF r2 trên máy.
 - O5 không làm.
