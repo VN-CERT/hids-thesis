@@ -36,11 +36,11 @@ LOG="out/jobs/m5c-regress-${HOOK}.log"
 	M5_SKIP_GIT_CHECK=1 M5C_REGRESS_HOOK="$HOOK" M5C_REGRESS_MODE=step2 M5_OUTROOT="$OUTROOT" M5_RUNS=5 \
 		bash scripts/m5.sh
 	echo "=== G7 ==="
-	HIDS_COLLECT_EXTRA="-sys-enter-hook $HOOK" bash scripts/g7.sh a 1000000
-	HIDS_COLLECT_EXTRA="-sys-enter-hook $HOOK" bash scripts/g7.sh d 1000000
-	HIDS_COLLECT_EXTRA="-sys-enter-hook $HOOK" bash scripts/g7.sh b-nho 1000000
+	G7_SKIP_GIT_CHECK=1 HIDS_COLLECT_EXTRA="-sys-enter-hook $HOOK" bash scripts/g7.sh a 1000000
+	G7_SKIP_GIT_CHECK=1 HIDS_COLLECT_EXTRA="-sys-enter-hook $HOOK" bash scripts/g7.sh d 1000000
+	G7_SKIP_GIT_CHECK=1 HIDS_COLLECT_EXTRA="-sys-enter-hook $HOOK" bash scripts/g7.sh b-nho 1000000
 	echo "=== G3 ==="
-	bash scripts/g3.sh
+	G7_SKIP_GIT_CHECK=1 bash scripts/g3.sh
 } | tee -a "$LOG"
 
 echo "xong regress $OUTROOT"
