@@ -28,7 +28,8 @@ make build
 
 hids_require_disk_for_long_job
 
-# --- G7 ---
+# --- G7 (G3/R003: khong nen file; g3.sh da -zstd-level 0) ---
+export HIDS_COLLECT_EXTRA="-zstd-level 0"
 G7_SKIP_GIT_CHECK=1 bash scripts/g7.sh a 1000000 | tee "$OUT/g7a.txt"
 g7a_mat=$(grep -E 'tong bo dem mat:' "$OUT/g7a.txt" | tail -1 | awk '{print $NF}')
 g7a_diff=$(grep -E 'tong \(perf - ban ghi\):' "$OUT/g7a.txt" | tail -1 | awk '{print $NF}')
@@ -41,6 +42,7 @@ g7b_diff=$(grep -E 'tong \(perf - ban ghi\):' "$OUT/g7b.txt" | tail -1 | awk '{p
 [[ ${g7b_mat:-x} == 0 && ${g7b_diff:-x} == 0 ]] && pass "G7b mat=0 perf-diff=0" || fail "G7b mat=$g7b_mat perf-diff=$g7b_diff"
 
 G7_SKIP_GIT_CHECK=1 bash scripts/g7.sh b-nho 1000000 | tee "$OUT/g7b-nho.txt"
+unset HIDS_COLLECT_EXTRA
 g7n_diff=$(grep -E 'tong \(perf - ban ghi\):' "$OUT/g7b-nho.txt" | tail -1 | awk '{print $NF}')
 g7n_mat=$(grep -E 'tong bo dem mat:' "$OUT/g7b-nho.txt" | tail -1 | awk '{print $NF}')
 g7n_seq=$(grep -E 'tong so seq bi thieu' "$OUT/g7b-nho.txt" | tail -1 | awk '{print $NF}')

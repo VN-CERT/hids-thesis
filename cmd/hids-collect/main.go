@@ -14,6 +14,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"sync"
 	"syscall"
 	"time"
 
@@ -259,7 +260,9 @@ func run() error {
 	var zstdEnc *zstd.Encoder
 	var recordOut io.Writer = f
 	if *zstdLevel > 0 {
-		zstdEnc, err = zstd.NewWriter(f, zstd.WithEncoderLevel(zstd.EncoderLevelFromZstd(*zstdLevel)))
+		zstdEnc, err = zstd.NewWriter(f,
+			zstd.WithEncoderLevel(zstd.EncoderLevelFromZstd(*zstdLevel)),
+			zstd.WithEncoderConcurrency(4))
 		if err != nil {
 			return fmt.Errorf("tao bo nen zstd: %w", err)
 		}
@@ -267,6 +270,10 @@ func run() error {
 		recordOut = zstdEnc
 	}
 	bw := bufio.NewWriterSize(recordOut, 4*1024*1024)
+	var asyncSink *asyncRecordSink
+	if *zstdLevel > 0 && !*discard {
+		asyncSink = startAsyncRecordSink(bw)
+	}
 
 	if *discard {
 		fmt.Fprintln(os.Stderr, "che do -discard: doc ring buffer, khong ghi ban ghi nhi phan")
@@ -352,7 +359,11 @@ func run() error {
 			continue
 		}
 		if !*discard {
-			if _, err := bw.Write(rec.RawSample); err != nil {
+			if asyncSink != nil {
+				if err := asyncSink.enqueue(rec.RawSample); err != nil {
+					return err
+				}
+			} else if _, err := bw.Write(rec.RawSample); err != nil {
 				return err
 			}
 		}
@@ -360,7 +371,11 @@ func run() error {
 		sinceFlush++
 	}
 
-	if err := bw.Flush(); err != nil {
+	if asyncSink != nil {
+		if err := asyncSink.close(); err != nil {
+			return err
+		}
+	} else if err := bw.Flush(); err != nil {
 		return err
 	}
 
@@ -619,6 +634,53 @@ func refreshCgroupFilter(coll *syscallbpf.Collector, roots []string, stop <-chan
 			}
 		}
 	}
+}
+
+// asyncRecordSink: goroutine doc ringbuf chi day vao channel; goroutine khac ghi/nen.
+const asyncRecordQueue = 32768
+
+type asyncRecordSink struct {
+	ch   chan *[]byte
+	done chan error
+	pool sync.Pool
+}
+
+func startAsyncRecordSink(bw *bufio.Writer) *asyncRecordSink {
+	s := &asyncRecordSink{
+		ch:   make(chan *[]byte, asyncRecordQueue),
+		done: make(chan error, 1),
+	}
+	s.pool.New = func() interface{} {
+		b := make([]byte, recfmt.RecordSize)
+		return &b
+	}
+	go func() {
+		var err error
+		for bp := range s.ch {
+			if _, err = bw.Write(*bp); err != nil {
+				s.pool.Put(bp)
+				break
+			}
+			s.pool.Put(bp)
+		}
+		if err == nil {
+			err = bw.Flush()
+		}
+		s.done <- err
+	}()
+	return s
+}
+
+func (s *asyncRecordSink) enqueue(sample []byte) error {
+	bp := s.pool.Get().(*[]byte)
+	copy(*bp, sample)
+	s.ch <- bp
+	return nil
+}
+
+func (s *asyncRecordSink) close() error {
+	close(s.ch)
+	return <-s.done
 }
 
 func cgroupID(path string) (uint64, error) {
