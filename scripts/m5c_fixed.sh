@@ -503,7 +503,7 @@ t3_fixed_run() {
 	*) die "cond $cond";;
 	esac
 	taskset -c 16-19 docker exec -u postgres pgtest pgbench -c 16 -j 4 -T 60 -R "$rate" -U postgres -d postgres \
-		>"$dir/pgbench.log" 2>&1 || true
+		>"$dir/pgbench.log" 2>/dev/null || true
 	[[ -n $coll_pid ]] && kill -TERM "$coll_pid" 2>/dev/null || true
 	[[ -n $coll_pid ]] && wait_pid_gone "$coll_pid"
 	usec1=$(scope_usage_usec "$load_cg")
