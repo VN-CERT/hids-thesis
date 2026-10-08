@@ -1,6 +1,6 @@
 # Trạng thái dự án HIDS
 
-Cập nhật lần cuối: 2026-10-09 00:35 (giờ máy)
+Cập nhật lần cuối: 2026-10-09 00:45 (giờ máy)
 
 ## Lịch sử git và tham chiếu phiên bản
 
@@ -11,14 +11,14 @@ Cập nhật lần cuối: 2026-10-09 00:35 (giờ máy)
 
 ## Mốc hiện tại và mục tiêu
 
-- **M5h:** **dừng bước 2 (r2)** — BPF `5beaace`; G7a/fentry OK; G7b `mat`≠0 (R024); **chưa** tag `m5h`.
+- **M5h:** **dừng trước G3** — G7b/G7b-nho zstd0 OK; G7-cap zstd mặc định `mat`≠0 (R025); **chưa** tag `m5h`.
 - **M5f:** đã đóng — R021, tag `m5f`.
 
 ## Bước đã xong (M5h)
 
 - Bước 0 r2: BPF `5beaace` (sha256 `14d065a6…`).
 - Bước 1: Go `539a171`; build OK.
-- Bước 2 một phần: G7a + G7a fentry (`validation/m5h-20261009/step2/`).
+- Bước 2: G7a/fentry; G7b/G7b-nho zstd0; G7-cap fail (`validation/m5h-20261009/step2/`).
 
 ## Bước đang làm
 
@@ -26,8 +26,8 @@ Cập nhật lần cuối: 2026-10-09 00:35 (giờ máy)
 
 ## Bước tiếp theo
 
-- Kiến trúc sư: G7b `mat`=0 với BPF r2 (R024).
-- Sau đó: G7b-nho, G3, bước 3–4 M5h.
+- Kiến trúc sư: G7-cap `mat`=0 (R025; M5f cùng script đã `mat`=0).
+- Sau đó: G3, bước 3–4 M5h.
 
 ## Việc đang chạy
 
@@ -35,5 +35,5 @@ Cập nhật lần cuối: 2026-10-09 00:35 (giờ máy)
 
 ## Vướng mắc / chờ kiến trúc sư
 
-- **M5h:** R024 G7b mất bản ghi; R022/R023 lịch sử.
+- **M5h:** R025 G7-cap; R024/R022/R023 lịch sử.
 - O5 không làm.
