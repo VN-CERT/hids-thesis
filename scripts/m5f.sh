@@ -38,14 +38,7 @@ start_containers() {
 trap 'start_containers; hids_print_df_at_job_end' EXIT
 
 require_clean_git() {
-	local st path
-	while read -r st path _; do
-		[[ -z $st ]] && continue
-		[[ $st == '??' ]] && continue
-		path="${path%/}"
-		[[ $path == out/* || $path == validation/* || $path == reports/* || $path == internal/syscallbpf/* ]] && continue
-		die "cay git khong sach: $st $path"
-	done < <(git status --porcelain 2>/dev/null | awk '{print $1, $2}')
+	hids_require_clean_git || die "cay git khong sach"
 }
 
 docker_cgroup() { cgroup_path_of_pid "$(docker inspect -f '{{.State.Pid}}' "$1")"; }

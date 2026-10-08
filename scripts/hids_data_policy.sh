@@ -2,6 +2,23 @@
 # shellcheck shell=bash
 HIDS_MIN_FREE_GB=20
 
+# Kiem tra git truoc benchmark: bo qua out/, validation/, reports/, syscallbpf .o; bo qua moi '??'.
+hids_require_clean_git() {
+	[[ ${G7_SKIP_GIT_CHECK:-}${M5_SKIP_GIT_CHECK:-} == *1* ]] && return 0
+	local st path
+	while read -r st path _; do
+		[[ -z $st ]] && continue
+		[[ $st == '??' ]] && continue
+		path="${path%/}"
+		if [[ $path == out/* || $path == validation/* || $path == reports/* || $path == internal/syscallbpf/* ]]; then
+			continue
+		fi
+		echo "hids: cay git khong sach: $st $path" >&2
+		return 1
+	done < <(git status --porcelain 2>/dev/null | awk '{print $1, $2}')
+	return 0
+}
+
 hids_require_disk_for_long_job() {
 	local avail_kb
 	avail_kb=$(df -Pk "${HIDS_DISK_CHECK_PATH:-/}" | awk 'NR==2 {print $4}')

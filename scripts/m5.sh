@@ -29,16 +29,7 @@ write_m5_summary() {
 die() { echo "m5: $*" >&2; exit 1; }
 
 require_clean_git() {
-	[[ ${M5_SKIP_GIT_CHECK:-} == 1 ]] && return 0
-	local st path
-	while read -r st path _; do
-		[[ -z $st ]] && continue
-		path="${path%/}"
-		if [[ $path == out/* || $path == validation/* || $path == reports/* || $path == internal/syscallbpf/* ]]; then
-			continue
-		fi
-		die "cay git khong sach: $st $path"
-	done < <(git status --porcelain 2>/dev/null | awk '{print $1, $2}')
+	hids_require_clean_git || die "cay git khong sach"
 }
 
 require_from_m6a() {

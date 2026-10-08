@@ -24,15 +24,7 @@ die() {
 }
 
 require_clean_git() {
-	local st path
-	while read -r st path _; do
-		[[ -z $st ]] && continue
-		path="${path%/}"
-		if [[ $path == out/* || $path == validation/m4* ]]; then
-			continue
-		fi
-		die "cay git khong sach: $st $path — commit truoc khi chay e4"
-	done < <(git status --porcelain 2>/dev/null | awk '{print $1, $2}')
+	hids_require_clean_git || die "cay git khong sach — commit truoc khi chay e4"
 }
 
 rebuild_summary() {
