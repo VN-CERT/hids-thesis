@@ -257,7 +257,13 @@ setup_pg() {
 		sleep 1
 	done
 	[[ $ready -eq 1 ]] || die "pgtest khong ready"
-	docker exec -u postgres pgtest pgbench -i -s 50 -U postgres -d postgres >/dev/null 2>&1
+	for i in $(seq 1 5); do
+		if docker exec -u postgres pgtest pgbench -i -s 50 -U postgres -d postgres >>"$OUTROOT/setup-pg-pgbench.log" 2>&1; then
+			return 0
+		fi
+		sleep 3
+	done
+	die "pgbench -i that bai (xem $OUTROOT/setup-pg-pgbench.log)"
 }
 setup_nginx() {
 	docker rm -f m5-nginx 2>/dev/null || true
