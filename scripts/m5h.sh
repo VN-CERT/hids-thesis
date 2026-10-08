@@ -136,7 +136,7 @@ start_collector() {
 		"$COLLECT" "${hook_args[@]}" -cgroup "$cg_target" -duration 3600s -out "$dir/collect.bin" \
 		2>"$dir/collect.log" &
 	sleep 0.5
-	coll_pid=$(scope_main_pid "$unit")
+	coll_pid=$(scope_main_pid "$unit") || coll_pid=""
 	wait_ready "$dir/collect.log"
 	echo "$coll_pid"
 }
@@ -146,13 +146,18 @@ run_sysinj_scope() {
 	systemd-run --scope --unit="$unit" --slice=system.slice \
 		taskset -c 12 "$SYSINJ" -n "$N_SYSINJ" <"$fifo" >"$log" 2>&1 &
 	sleep 0.8
-	scope_main_pid "$unit"
+	local pid
+	pid=$(scope_main_pid "$unit") || pid=""
+	echo "$pid"
 }
 
 t1_run() {
 	local cond=$1 run=$2
 	local dir="$OUTROOT/T1/${cond}/run${run}"
-	[[ -f $dir/result.txt ]] && return 0
+	if [[ -f $dir/result.txt ]]; then
+		echo "T1 $cond run$run: (bo qua, da co ket qua)"
+		return 2
+	fi
 	mkdir -p "$dir"
 	local base hook fifo unit load_pid cgroup coll_pid="" coll_unit
 	base=$(m5h_cond_base "$cond")
@@ -173,7 +178,7 @@ t1_run() {
 			"$COLLECT" "${ha[@]}" -cgroup "$cg_target" -duration 3600s -out "$dir/collect.bin" \
 			2>"$dir/collect.log" &
 		sleep 0.5
-		coll_pid=$(scope_main_pid "$coll_unit")
+		coll_pid=$(scope_main_pid "$coll_unit") || coll_pid="" || coll_pid=""
 		wait_ready "$dir/collect.log"
 	fi
 	sleep 1
@@ -199,7 +204,11 @@ t1_run() {
 t4_sat() {
 	local cond=$1 run=$2
 	local dir="$OUTROOT/T4/${cond}/run${run}"
-	[[ -f $dir/wrk.txt && -f $dir/meta.txt ]] && return 0
+	if [[ -f $dir/wrk.txt && -f $dir/meta.txt ]]; then
+		echo "T4-sat $cond run$run: (bo qua)"
+		return 2
+	fi
+	echo "T4-sat $cond run$run: bat dau"
 	mkdir -p "$dir"
 	local base hook cgroup coll_pid="" coll_unit usec0 usec1
 	base=$(m5h_cond_base "$cond")
@@ -216,7 +225,7 @@ t4_sat() {
 			"$COLLECT" "${ha[@]}" -cgroup "$cg_target" -duration 120s -out "$dir/collect.bin" \
 			2>"$dir/collect.log" &
 		sleep 0.5
-		coll_pid=$(scope_main_pid "$coll_unit")
+		coll_pid=$(scope_main_pid "$coll_unit") || coll_pid=""
 		wait_ready "$dir/collect.log"
 	fi
 	taskset -c 16-19 wrk -t4 -c64 -d60s --latency "http://127.0.0.1:18080/f.bin" >"$dir/wrk.txt" 2>&1 || true
@@ -248,7 +257,7 @@ setup_pg() {
 		sleep 1
 	done
 	[[ $ready -eq 1 ]] || die "pgtest khong ready"
-	docker exec -u postgres pgtest pgbench -i -s 50 -U postgres -d postgres >/dev/null
+	docker exec -u postgres pgtest pgbench -i -s 50 -U postgres -d postgres >/dev/null 2>&1
 }
 setup_nginx() {
 	docker rm -f m5-nginx 2>/dev/null || true
@@ -277,7 +286,7 @@ t3_sat() {
 		systemd-run --scope --unit="$coll_unit" --slice=system.slice -- \
 			"$COLLECT" -cgroup "$cg" -duration 120s -out "$dir/collect.bin" 2>"$dir/collect.log" &
 		sleep 0.5
-		coll_pid=$(scope_main_pid "$coll_unit")
+		coll_pid=$(scope_main_pid "$coll_unit") || coll_pid=""
 		wait_ready "$dir/collect.log"
 		;;
 	C2)
@@ -285,7 +294,7 @@ t3_sat() {
 		systemd-run --scope --unit="$coll_unit" --slice=system.slice -- \
 			"$COLLECT" -cgroup "$DECOY_CG" -duration 120s -out "$dir/collect.bin" 2>"$dir/collect.log" &
 		sleep 0.5
-		coll_pid=$(scope_main_pid "$coll_unit")
+		coll_pid=$(scope_main_pid "$coll_unit") || coll_pid=""
 		wait_ready "$dir/collect.log"
 		;;
 	*) die "t3 cond";;
@@ -375,7 +384,7 @@ t3r_run() {
 		systemd-run --scope --unit="$coll_unit" --slice=system.slice -- \
 			"$COLLECT" -cgroup "$cg" -duration 120s -out "$dir/collect.bin" 2>"$dir/collect.log" &
 		sleep 0.5
-		coll_pid=$(scope_main_pid "$coll_unit")
+		coll_pid=$(scope_main_pid "$coll_unit") || coll_pid=""
 		wait_ready "$dir/collect.log"
 		;;
 	C2)
@@ -383,7 +392,7 @@ t3r_run() {
 		systemd-run --scope --unit="$coll_unit" --slice=system.slice -- \
 			"$COLLECT" -cgroup "$DECOY_CG" -duration 120s -out "$dir/collect.bin" 2>"$dir/collect.log" &
 		sleep 0.5
-		coll_pid=$(scope_main_pid "$coll_unit")
+		coll_pid=$(scope_main_pid "$coll_unit") || coll_pid=""
 		wait_ready "$dir/collect.log"
 		;;
 	*) die "t3r";;
@@ -439,7 +448,7 @@ t4r_run() {
 			"$COLLECT" "${ha[@]}" -cgroup "$cg_target" -duration 120s -out "$dir/collect.bin" \
 			2>"$dir/collect.log" &
 		sleep 0.5
-		coll_pid=$(scope_main_pid "$coll_unit")
+		coll_pid=$(scope_main_pid "$coll_unit") || coll_pid=""
 		wait_ready "$dir/collect.log"
 	fi
 	taskset -c 16-19 /usr/local/bin/wrk2 -t4 -c64 -d60s -R "$rate_int" --latency "http://127.0.0.1:18080/f.bin" >"$dir/wrk2.txt" 2>&1 || true
@@ -459,20 +468,24 @@ main() {
 	echo "=== m5h bench $(date -Iseconds) ==="
 	hids_require_disk_for_long_job
 	hids_require_clean_git || die "git khong sach"
-	make build
+	if [[ ${M5H_SKIP_BUILD:-} != 1 ]]; then
+		make build
+		git checkout HEAD -- internal/syscallbpf/sysenter_x86_bpfel.o internal/stealbpf/stealsnaprq_x86_bpfel.o 2>/dev/null || true
+	fi
 	command -v wrk wrk2 docker systemd-run >/dev/null || die "thieu cong cu"
 	[[ -x /usr/local/bin/wrk2 ]] || die "thieu wrk2"
 
-	echo "load	cond	run	records	drops	secs	recs_per_s" >"$C1_METRICS"
-	echo "label	kieu	n	toc_do_per_s	lat_tb_ms	p50_ms	p99_ms	max_ms	lag_tb_ms	lag_p99_ms	loi	dat_muc	hop_ly" >"$PARSE_FIXED"
-	echo "label	kieu	n	toc_do_per_s	(note: sat)" >"$PARSE_SAT"
+	[[ -s $C1_METRICS ]] || echo "load	cond	run	records	drops	secs	recs_per_s" >"$C1_METRICS"
+	[[ -s $PARSE_FIXED ]] || echo "label	kieu	n	toc_do_per_s	lat_tb_ms	p50_ms	p99_ms	max_ms	lag_tb_ms	lag_p99_ms	loi	dat_muc	hop_ly" >"$PARSE_FIXED"
+	[[ -s $PARSE_SAT ]] || echo "label	kieu	n	toc_do_per_s	(note: sat)" >"$PARSE_SAT"
 
 	stop_containers
 	local run cond pct
 	for ((run = 1; run <= 5; run++)); do
 		for cond in "${T1_CONDS[@]}"; do
-			t1_run "$cond" "$run"
-			sleep "$REST"
+			local tr=0
+			t1_run "$cond" "$run" || tr=$?
+			[[ $tr -eq 2 ]] || sleep "$REST"
 		done
 	done
 	docker rm -f pgtest m5-nginx 2>/dev/null || true
@@ -480,8 +493,9 @@ main() {
 	setup_nginx
 	for ((run = 1; run <= 5; run++)); do
 		for cond in "${T4_CONDS[@]}"; do
-			t4_sat "$cond" "$run"
-			sleep "$REST"
+			local t4r=0
+			t4_sat "$cond" "$run" || t4r=$?
+			[[ $t4r -eq 2 ]] || sleep "$REST"
 		done
 	done
 	for ((run = 1; run <= 3; run++)); do
