@@ -100,6 +100,7 @@ const (
 	sysEnterProgHidsSchedWakeup                = "hids_sched_wakeup"
 	sysEnterProgHidsSchedWakeupNew             = "hids_sched_wakeup_new"
 	sysEnterProgHidsSysEnter                   = "hids_sys_enter"
+	sysEnterProgHidsSysEnterFentry             = "hids_sys_enter_fentry"
 	sysEnterVarHidsFilterCgroup                = "hids_filter_cgroup"
 	sysEnterVarHidsSelfTgid                    = "hids_self_tgid"
 	sysEnterVarHidsStealFallback               = "hids_steal_fallback"
@@ -179,6 +180,7 @@ type sysEnterProgramSpecs struct {
 	HidsSchedWakeup                *ebpf.ProgramSpec `ebpf:"hids_sched_wakeup"`
 	HidsSchedWakeupNew             *ebpf.ProgramSpec `ebpf:"hids_sched_wakeup_new"`
 	HidsSysEnter                   *ebpf.ProgramSpec `ebpf:"hids_sys_enter"`
+	HidsSysEnterFentry             *ebpf.ProgramSpec `ebpf:"hids_sys_enter_fentry"`
 }
 
 // sysEnterMapSpecs contains maps before they are loaded into the kernel.
@@ -291,6 +293,7 @@ type sysEnterPrograms struct {
 	HidsSchedWakeup                *ebpf.Program `ebpf:"hids_sched_wakeup"`
 	HidsSchedWakeupNew             *ebpf.Program `ebpf:"hids_sched_wakeup_new"`
 	HidsSysEnter                   *ebpf.Program `ebpf:"hids_sys_enter"`
+	HidsSysEnterFentry             *ebpf.Program `ebpf:"hids_sys_enter_fentry"`
 }
 
 func (p *sysEnterPrograms) Close() error {
@@ -325,6 +328,7 @@ func (p *sysEnterPrograms) Close() error {
 		p.HidsSchedWakeup,
 		p.HidsSchedWakeupNew,
 		p.HidsSysEnter,
+		p.HidsSysEnterFentry,
 	)
 }
 
