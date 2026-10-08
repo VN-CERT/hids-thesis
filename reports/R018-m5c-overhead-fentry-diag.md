@@ -3,7 +3,7 @@
 1. **Số báo cáo:** R018  
    **Ngày giờ:** 2026-10-08 11:30 (UTC+7)  
    **Mốc:** M5c  
-   **Git commit:** `ac5b8cf` (tag `m5c`)
+   **Git commit:** `0736d22` (tag `m5c`)
 
 2. **Mục tiêu**  
    Theo R017: bỏ O1 (NO_WAKEUP / `-ringbuf-poll-ms`); chẩn đoán lại T3/T4 (C0, C1 đĩa, discard, tmpfs); thử O4 fentry; O5 chỉ khi BPF stats đủ; ma trận T3-R/T4-R; chi phí người quan sát; không hồi quy G7/G3.
