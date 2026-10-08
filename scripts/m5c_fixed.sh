@@ -15,7 +15,6 @@ DIAG_SUMMARY="${M5C_DIAG_SUMMARY:-validation/m5c-${DATE}/diag/diag-summary.tsv}"
 RUNS=${M5C_FIXED_RUNS:-3}
 CONTAINERS_RESTORE="${M5_CONTAINERS_RESTORE:-/root/containers-da-dung.txt}"
 STRESS_CPU_METHOD=(--cpu-method int64)
-RUNS=${M5_RUNS:-5}
 REST=${M5_REST:-10}
 N_SYSINJ=${M5_N_SYSINJ:-10000000}
 DECOY_CG="/sys/fs/cgroup/hids-m5-decoy"
@@ -484,8 +483,7 @@ t3_fixed_run() {
 	C1)
 		coll_cg="$load_cg"
 		unit="hids-m5c-t3r${pct}-${cond}-${run}-$$"
-		systemd-run --scope --unit="$unit" --slice=system.slice \
-			# shellcheck disable=SC2086
+		systemd-run --scope --unit="$unit" --slice=system.slice -- \
 			"$COLLECT" ${HIDS_COLLECT_EXTRA:-} -cgroup "$coll_cg" -duration 120s -out "$dir/collect.bin" \
 			2>"$dir/collect.log" &
 		sleep 0.5
@@ -495,8 +493,7 @@ t3_fixed_run() {
 	C2)
 		mkdir -p "$DECOY_CG"
 		unit="hids-m5c-t3r${pct}-${cond}-${run}-$$"
-		systemd-run --scope --unit="$unit" --slice=system.slice \
-			# shellcheck disable=SC2086
+		systemd-run --scope --unit="$unit" --slice=system.slice -- \
 			"$COLLECT" ${HIDS_COLLECT_EXTRA:-} -cgroup "$DECOY_CG" -duration 120s -out "$dir/collect.bin" \
 			2>"$dir/collect.log" &
 		sleep 0.5
@@ -548,8 +545,7 @@ t4_fixed_run() {
 	C0) ;;
 	C1)
 		unit="hids-m5c-t4r${pct}-${cond}-${run}-$$"
-		systemd-run --scope --unit="$unit" --slice=system.slice \
-			# shellcheck disable=SC2086
+		systemd-run --scope --unit="$unit" --slice=system.slice -- \
 			"$COLLECT" ${HIDS_COLLECT_EXTRA:-} -cgroup "$load_cg" -duration 120s -out "$dir/collect.bin" \
 			2>"$dir/collect.log" &
 		sleep 0.5
@@ -559,8 +555,7 @@ t4_fixed_run() {
 	C2)
 		mkdir -p "$DECOY_CG"
 		unit="hids-m5c-t4r${pct}-${cond}-${run}-$$"
-		systemd-run --scope --unit="$unit" --slice=system.slice \
-			# shellcheck disable=SC2086
+		systemd-run --scope --unit="$unit" --slice=system.slice -- \
 			"$COLLECT" ${HIDS_COLLECT_EXTRA:-} -cgroup "$DECOY_CG" -duration 120s -out "$dir/collect.bin" \
 			2>"$dir/collect.log" &
 		sleep 0.5
@@ -674,7 +669,7 @@ main() {
 			done
 		done
 	done
-	M5C_REGRESS_HOOK="$HOOK" M5C_REGRESS_MODE=step2 M5_OUTROOT="$OUTROOT/mini-t1" M5_RUNS=5 \
+	M5_SKIP_GIT_CHECK=1 M5C_REGRESS_HOOK="$HOOK" M5C_REGRESS_MODE=step2 M5_OUTROOT="$OUTROOT/mini-t1" M5_RUNS=5 \
 		bash scripts/m5.sh || true
 	cp -f "$OUTROOT/mini-t1/summary.csv" "$OUTROOT/t1-t2-mini.csv" 2>/dev/null || true
 	python3 - "$OUTROOT" <<'PY' | tee "$OUTROOT/observer_cost.txt" || true

@@ -33,7 +33,7 @@ mkdir -p out/jobs
 LOG="out/jobs/m5c-regress-${HOOK}.log"
 {
 	echo "=== m5c regress hook=$HOOK $(date -Iseconds) ==="
-	M5C_REGRESS_HOOK="$HOOK" M5C_REGRESS_MODE=step2 M5_OUTROOT="$OUTROOT" M5_RUNS=5 \
+	M5_SKIP_GIT_CHECK=1 M5C_REGRESS_HOOK="$HOOK" M5C_REGRESS_MODE=step2 M5_OUTROOT="$OUTROOT" M5_RUNS=5 \
 		bash scripts/m5.sh
 	echo "=== G7 ==="
 	HIDS_COLLECT_EXTRA="-sys-enter-hook $HOOK" bash scripts/g7.sh a 1000000

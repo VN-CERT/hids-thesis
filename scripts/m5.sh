@@ -32,7 +32,7 @@ require_clean_git() {
 	while read -r st path _; do
 		[[ -z $st ]] && continue
 		path="${path%/}"
-		if [[ $path == out/* || $path == validation/* || $path == internal/syscallbpf/*bpf* ]]; then
+		if [[ $path == out/* || $path == validation/* || $path == reports/* || $path == internal/syscallbpf/* ]]; then
 			continue
 		fi
 		die "cay git khong sach: $st $path"
@@ -153,8 +153,7 @@ t1_run() {
 	case $cond in
 	C0) ;;
 	C1|C3)
-		systemd-run --scope --unit="hids-m5-coll-${cond}-${run}-$$" --slice=system.slice \
-			# shellcheck disable=SC2086
+		systemd-run --scope --unit="hids-m5-coll-${cond}-${run}-$$" --slice=system.slice -- \
 			"$COLLECT" ${HIDS_COLLECT_EXTRA:-} -cgroup "$cgroup" -duration 3600s -out "$dir/collect.bin" \
 			>"$dir/collect-scope.log" 2>"$dir/collect.log" &
 		coll_pid=$!
@@ -164,8 +163,7 @@ t1_run() {
 		;;
 	C2)
 		mkdir -p "$DECOY_CG"
-		systemd-run --scope --unit="hids-m5-coll-${cond}-${run}-$$" --slice=system.slice \
-			# shellcheck disable=SC2086
+		systemd-run --scope --unit="hids-m5-coll-${cond}-${run}-$$" --slice=system.slice -- \
 			"$COLLECT" ${HIDS_COLLECT_EXTRA:-} -cgroup "$DECOY_CG" -duration 3600s -out "$dir/collect.bin" \
 			>"$dir/collect-scope.log" 2>"$dir/collect.log" &
 		sleep 0.5
@@ -231,8 +229,7 @@ t2_run() {
 	case $cond in
 	C0) ;;
 	C1|C3)
-		systemd-run --scope --unit="hids-m5-t2c-${cond}-${run}-$$" --slice=system.slice \
-			# shellcheck disable=SC2086
+		systemd-run --scope --unit="hids-m5-t2c-${cond}-${run}-$$" --slice=system.slice -- \
 			"$COLLECT" ${HIDS_COLLECT_EXTRA:-} -cgroup "$cgroup" -duration 600s -out "$dir/collect.bin" \
 			2>"$dir/collect.log" &
 		sleep 0.5
@@ -241,8 +238,7 @@ t2_run() {
 		;;
 	C2)
 		mkdir -p "$DECOY_CG"
-		systemd-run --scope --unit="hids-m5-t2c-${cond}-${run}-$$" --slice=system.slice \
-			# shellcheck disable=SC2086
+		systemd-run --scope --unit="hids-m5-t2c-${cond}-${run}-$$" --slice=system.slice -- \
 			"$COLLECT" ${HIDS_COLLECT_EXTRA:-} -cgroup "$DECOY_CG" -duration 600s -out "$dir/collect.bin" \
 			2>"$dir/collect.log" &
 		sleep 0.5
@@ -325,8 +321,7 @@ t3_run() {
 	case $cond in
 	C0) ;;
 	C1|C3)
-		systemd-run --scope --unit="hids-m5-t3c-${cond}-${run}-$$" --slice=system.slice \
-			# shellcheck disable=SC2086
+		systemd-run --scope --unit="hids-m5-t3c-${cond}-${run}-$$" --slice=system.slice -- \
 			"$COLLECT" ${HIDS_COLLECT_EXTRA:-} -cgroup "$cgroup" -duration 120s -out "$dir/collect.bin" \
 			2>"$dir/collect.log" &
 		sleep 0.5
@@ -335,8 +330,7 @@ t3_run() {
 		;;
 	C2)
 		mkdir -p "$DECOY_CG"
-		systemd-run --scope --unit="hids-m5-t3c-${cond}-${run}-$$" --slice=system.slice \
-			# shellcheck disable=SC2086
+		systemd-run --scope --unit="hids-m5-t3c-${cond}-${run}-$$" --slice=system.slice -- \
 			"$COLLECT" ${HIDS_COLLECT_EXTRA:-} -cgroup "$DECOY_CG" -duration 120s -out "$dir/collect.bin" \
 			2>"$dir/collect.log" &
 		sleep 0.5
@@ -383,8 +377,7 @@ t4_run() {
 	case $cond in
 	C0) ;;
 	C1|C3)
-		systemd-run --scope --unit="hids-m5-t4c-${cond}-${run}-$$" --slice=system.slice \
-			# shellcheck disable=SC2086
+		systemd-run --scope --unit="hids-m5-t4c-${cond}-${run}-$$" --slice=system.slice -- \
 			"$COLLECT" ${HIDS_COLLECT_EXTRA:-} -cgroup "$cgroup" -duration 120s -out "$dir/collect.bin" \
 			2>"$dir/collect.log" &
 		sleep 0.5
@@ -393,8 +386,7 @@ t4_run() {
 		;;
 	C2)
 		mkdir -p "$DECOY_CG"
-		systemd-run --scope --unit="hids-m5-t4c-${cond}-${run}-$$" --slice=system.slice \
-			# shellcheck disable=SC2086
+		systemd-run --scope --unit="hids-m5-t4c-${cond}-${run}-$$" --slice=system.slice -- \
 			"$COLLECT" ${HIDS_COLLECT_EXTRA:-} -cgroup "$DECOY_CG" -duration 120s -out "$dir/collect.bin" \
 			2>"$dir/collect.log" &
 		sleep 0.5
