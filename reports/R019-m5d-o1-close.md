@@ -3,7 +3,7 @@
 1. **Số báo cáo:** R019  
    **Ngày giờ:** 2026-10-08 17:05 (UTC+7)  
    **Mốc:** M5d  
-   **Git commit:** `5912f14` (tag `m5d`)
+   **Git commit:** `7ff5b73` (tag `m5d`)
 
 2. **Mục tiêu**  
    Kiểm chứng O1 trước khi dùng số overhead; đo công suất G7-cap; chi phí BPF; dọn dữ liệu; ma trận T1–T4 × C0–C2 và tải cố định; tag `m5d`.
