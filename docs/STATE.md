@@ -11,9 +11,9 @@ Cập nhật lần cuối: 2026-10-08 20:30 (giờ máy)
 
 ## Mốc hiện tại và mục tiêu
 
-- **M5e:** đã đóng — R020, tag `m5e` (xem báo cáo; dữ liệu trong `validation/m5e-20261008/`).
+- **M5f:** đang chạy — G7a/G7-cap2 xong; đo wrk2/T3-R/T4-R → `validation/m5f-20261008/`, R021 + tag `m5f`.
+- **M5e:** đã đóng — R020, tag `m5e`.
 - **M5d:** đã đóng — R019, tag `m5d`.
-- **M5f:** chưa bắt đầu — đặc tả `docs/tasks/M5f.md` (bước 1: checkout Go ghi/nén từ tag `m5d`).
 
 ## Bước đã xong
 
@@ -22,7 +22,7 @@ Cập nhật lần cuối: 2026-10-08 20:30 (giờ máy)
 
 ## Bước đang làm
 
-- (không)
+- M5f bước 6–8: job `hids-m5f` — log `out/jobs/m5f.log`, trạng thái `out/jobs/m5f.status`.
 
 ## Bước tiếp theo
 
@@ -30,7 +30,7 @@ Cập nhật lần cuối: 2026-10-08 20:30 (giờ máy)
 
 ## Việc đang chạy
 
-- (không)
+- **hids-m5f** — `M5F_SKIP_STEP2=1 bash scripts/m5f.sh` — log `out/jobs/m5f.log` — `out/jobs/m5f.status`
 
 ## Vướng mắc / chờ kiến trúc sư
 
