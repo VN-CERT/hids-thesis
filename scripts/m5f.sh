@@ -42,7 +42,7 @@ require_clean_git() {
 	while read -r st path _; do
 		[[ -z $st ]] && continue
 		path="${path%/}"
-		[[ $path == out/* || $path == validation/* || $path == reports/* ]] && continue
+		[[ $path == out/* || $path == validation/* || $path == reports/* || $path == internal/syscallbpf/* ]] && continue
 		die "cay git khong sach: $st $path"
 	done < <(git status --porcelain 2>/dev/null | awk '{print $1, $2}')
 }
