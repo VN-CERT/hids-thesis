@@ -99,7 +99,7 @@ m5h_cond_hook() {
 collect_hook_args() {
 	local hook=$1
 	[[ $hook == tracepoint ]] && return 0
-	echo -sys-enter-hook "$hook"
+	printf '%s\n' -sys-enter-hook "$hook"
 }
 
 append_c1_metrics() {
@@ -152,6 +152,7 @@ run_sysinj_scope() {
 t1_run() {
 	local cond=$1 run=$2
 	local dir="$OUTROOT/T1/${cond}/run${run}"
+	[[ -f $dir/result.txt ]] && return 0
 	mkdir -p "$dir"
 	local base hook fifo unit load_pid cgroup coll_pid="" coll_unit
 	base=$(m5h_cond_base "$cond")
@@ -198,6 +199,7 @@ t1_run() {
 t4_sat() {
 	local cond=$1 run=$2
 	local dir="$OUTROOT/T4/${cond}/run${run}"
+	[[ -f $dir/wrk.txt && -f $dir/meta.txt ]] && return 0
 	mkdir -p "$dir"
 	local base hook cgroup coll_pid="" coll_unit usec0 usec1
 	base=$(m5h_cond_base "$cond")
@@ -225,7 +227,7 @@ t4_sat() {
 	[[ $base == C1 ]] && append_c1_metrics T4 "$cond" "$run" "$dir/collect.log"
 	hids_drop_collect_artifacts "$dir" 2>/dev/null || true
 	local line
-	line=$(python3 "$M5F_PARSE" wrk2 "$dir/wrk.txt")
+	line=$(python3 "$M5F_PARSE" wrk2 "$dir/wrk.txt" 2>"$dir/parse.err") || line="PARSE_FAIL"
 	echo "T4-sat ${cond} run${run}	$line" >>"$PARSE_SAT"
 	local mat
 	mat=$(sed -n 's/.*mat: \([0-9]*\).*/\1/p' "$dir/collect.log" 2>/dev/null | tail -1)
@@ -262,6 +264,7 @@ setup_nginx() {
 t3_sat() {
 	local cond=$1 run=$2
 	local dir="$OUTROOT/T3/${cond}/run${run}"
+	[[ -f $dir/meta.txt && -f $dir/pglog.1 ]] && return 0
 	mkdir -p "$dir"
 	pg_maintain
 	local cg coll_pid="" usec0 usec1 coll_unit
@@ -301,7 +304,7 @@ t3_sat() {
 	shopt -s nullglob
 	local pgf=("$dir"/pglog.*)
 	shopt -u nullglob
-	line=$(python3 "$M5F_PARSE" pgbench "${pgf[@]}")
+	line=$(python3 "$M5F_PARSE" pgbench "${pgf[@]}" 2>"$dir/parse.err") || line="PARSE_FAIL"
 	echo "T3-sat ${cond} run${run}	$line" >>"$PARSE_SAT"
 }
 
@@ -351,7 +354,7 @@ record_parse_fixed() {
 	local label=$1
 	shift
 	local line
-	line=$(python3 "$M5F_PARSE" "$@")
+	line=$(python3 "$M5F_PARSE" "$@" 2>>"$OUTROOT/parse-errors.log") || line="PARSE_FAIL"
 	echo "$label	$line" >>"$PARSE_FIXED"
 }
 
