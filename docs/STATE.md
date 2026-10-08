@@ -3,22 +3,22 @@
 Cập nhật lần cuối: 2026-10-08 13:10 (giờ máy)
 
 ## Mốc hiện tại và mục tiêu
-- **M5d:** O1 ringbuf wakeup + poll 10 ms; stealclock journal/runtime; đang chạy `hids-m5d`.
+- **M5d:** đóng mốc — **dừng tại bước 1** (G7b chưa đạt mat=0). Ma trận `validation/m5d-20261008/` **không dùng** cho báo cáo cho đến khi O1 qua G7b.
 
 ## Bước đã xong
-- M5c R018, tag `m5c`
-- M5d: `docs/tasks/M5d.md`, stealclock, O1 BPF/user-space, G7a mat=0 (commit `86be9ef`)
+- Ma trận overhead + tải cố định (job `hids-m5d` 15:41)
+- Chính sách dọn dữ liệu (`0e52a32`)
+- Kiểm chứng đóng mốc: `scripts/m5d_close_step1_verify.sh` — **G7a PASS**, G7b **FAIL** (`verify-close/`, 16:17–16:22)
 
 ## Bước đang làm
-- `systemd-run` unit **hids-m5d** → `scripts/m5d.sh` → `validation/m5d-20261008/`
-- Chính sách dọn dữ liệu: `docs/tasks/don-du-lieu.md`, `scripts/hids_data_policy.sh`, `make clean-out`
+- Chờ kiến trúc sư: O1 chưa đủ cho G7b 24×24M (mat ≈ 1,5×10⁸); có LOSS ~26–38%/10s trong `out/g7b-20261008-161727-collect.log`
 
 ## Bước tiếp theo
-- Khi job xong: R019, tag `m5d`, O5 chỉ nếu bpf-delta ≥1,5× idle
+- Sau khi O1 (hoặc O5) đạt G7b mat=0: chạy lại bước 1 đầy đủ → bước 2 BPF → dọn mini-t1 → R019 + tag `m5d`
 
 ## Việc đang chạy
-- **hids-m5d** — `M5D_SKIP_VERIFY=1` tiếp tục ma trận — log `out/jobs/m5d.log`, trạng thái `out/jobs/m5d.status` (watch script)
-- Lần trước chết 13:22: verify G7+G3 S1–S5 xong; g3 G-real lỗi `qdrant` (đã sửa subset `m5d`)
+- (không)
 
 ## Vướng mắc / chờ kiến trúc sư
-- O5 (ring buffer per-CPU) chỉ khi điều kiện BPF stats đạt.
+- G7b với O1 hiện tại: ring buffer 64 MiB vẫn đầy dù FORCE_WAKEUP khi avail≥ring/8; user-space không kịp đọc.
+- O5 chỉ sau khi BPF stats + điều kiện 1,5×; chưa chạy bước 2 đóng mốc.

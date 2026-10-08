@@ -33,6 +33,7 @@ start_containers() {
 }
 trap start_containers EXIT
 
+exec > >(tee -a "$LOG") 2>&1
 {
 	echo "=== m5d $(date -Iseconds) out=$OUTROOT ==="
 	hids_require_disk_for_long_job
@@ -138,4 +139,4 @@ PY
 
 	echo "=== m5d xong $OUTROOT ==="
 	hids_print_df_at_job_end
-} | tee -a "$LOG"
+}
