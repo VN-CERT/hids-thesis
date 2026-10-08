@@ -20,3 +20,4 @@
 | [R016](R016-m5-m6a-overhead.md) | 2026-10-07 21:05 | M5 | Overhead C0–C3 T1–T4 m6a; `validation/m5-20261007-m6a/`. | Xong, tag `m5`. |
 | [R017](R017-m5b-overhead-opt.md) | 2026-10-07 22:15 | M5b | O2/O3, sửa C2; O1 NO_WAKEUP hoãn; M5b + G3; tag `m5b`. | Xong (T4-R/chẩn đoán cần chạy lại). |
 | [R018](R018-m5c-overhead-fentry-diag.md) | 2026-10-08 11:30 | M5c | Chẩn đoán đĩa; bỏ O1; O4 fentry; T3-R/T4-R; tag `m5c`. | Xong. O5 chưa; BPF stats tải rỗng. |
+| [R019](R019-m5d-o1-close.md) | 2026-10-08 17:05 | M5d | O1 verify G7/G3, G7-cap, BPF, ma trận C0–C2; tag `m5d`. | Xong. O5 chờ KA; T3-R thiếu số. |

@@ -477,6 +477,33 @@ main() {
 		write_m5_summary
 		exit 0
 	fi
+	if [[ -n ${M5_RERUN:-} ]]; then
+		require_clean_git
+		require_from_m6a
+		for f in "$COLLECT" "$RECSTAT" "$SYSINJ"; do
+			[[ -x $f ]] || die "thieu $f (make build)"
+		done
+		command -v docker systemd-run stress-ng perf wrk >/dev/null || die "thieu cong cu"
+		mkdir -p "$OUTROOT" out "$DECOY_CG"
+		docker rm -f pgtest m5-nginx 2>/dev/null || true
+		setup_pg
+		setup_nginx
+		local spec t cond run
+		for spec in ${M5_RERUN//,/ }; do
+			t=${spec%%:*}
+			cond=${spec#*:}
+			for ((run = 1; run <= RUNS; run++)); do
+				case $t in
+				T3) t3_run "$cond" "$run" ;;
+				T4) t4_run "$cond" "$run" ;;
+				*) die "M5_RERUN khong hop le: $spec" ;;
+				esac
+			done
+		done
+		docker rm -f pgtest m5-nginx 2>/dev/null || true
+		write_m5_summary
+		exit 0
+	fi
 	require_clean_git
 	require_from_m6a
 	for f in "$COLLECT" "$RECSTAT" "$SYSINJ"; do

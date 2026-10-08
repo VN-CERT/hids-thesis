@@ -3,7 +3,7 @@
 1. **Số báo cáo:** R017  
    **Ngày giờ:** 2026-10-07 22:15 (UTC+7)  
    **Mốc:** M5b  
-   **Git commit:** `255ef53` (tag `m5b`; sửa `m5b.sh`/hey sau tag trên nhánh master)
+   **Git commit:** `4057c59` (tag `m5b`)
 
 2. **Mục tiêu**  
    Chẩn đoán overhead T3/T4-C1; O1–O3; không hồi quy G7/G3; đo lại ma trận M5; T3-R/T4-R; chi phí người quan sát; so với R016.
