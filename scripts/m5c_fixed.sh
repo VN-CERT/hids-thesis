@@ -503,15 +503,17 @@ t3_fixed_run() {
 		;;
 	*) die "cond $cond";;
 	esac
-	taskset -c 16-19 docker exec -u postgres pgtest pgbench -c 16 -j 4 -T 60 -R "$rate" -U postgres -d postgres \
+	taskset -c 16-19 docker exec -u postgres pgtest pgbench -c 16 -j 4 -T 60 -R "$rate" \
+		--log=/tmp/pgbench_txn.log -U postgres -d postgres \
 		>"$dir/pgbench.log" 2>/dev/null || true
+	docker cp pgtest:/tmp/pgbench_txn.log "$dir/pgbench_txn.log" 2>/dev/null || true
 	[[ -n $coll_pid ]] && kill -TERM "$coll_pid" 2>/dev/null || true
 	[[ -n $coll_pid ]] && wait_pid_gone "$coll_pid"
 	usec1=$(scope_usage_usec "$load_cg")
 	local tps lat_avg lat_p99 recs drops
 	tps=$(awk '/^tps =/{print $3; exit}' "$dir/pgbench.log")
 	lat_avg=$(awk '/latency average =/{print $4; exit}' "$dir/pgbench.log")
-	lat_p99=$(awk '/^  p99 =/{print $3; exit}' "$dir/pgbench.log")
+	lat_p99=$(python3 analysis/m5d_p99.py pgbench "$dir/pgbench_txn.log" 2>/dev/null || true)
 	recs=$(recstat_count "$dir/collect.bin" 2>/dev/null || echo 0)
 	drops=$(collector_drops "$dir/collect.log")
 	[[ $cond != C0 ]] && m5_drop_collect_artifacts "$dir"
@@ -573,14 +575,15 @@ rate, w = float(sys.argv[1]), int(sys.argv[2])
 print(max(1, int(rate / w)))
 PY
 )
-	taskset -c 16-19 "$hey" -z 60s -q "$qps" -c "$workers" "http://127.0.0.1:18080/f.bin" >"$dir/hey.log" 2>&1 || true
+	taskset -c 16-19 "$hey" -z 60s -q "$qps" -c "$workers" -o csv \
+		"http://127.0.0.1:18080/f.bin" >"$dir/hey.csv" 2>"$dir/hey.log" || true
 	[[ -n $coll_pid ]] && kill -TERM "$coll_pid" 2>/dev/null || true
 	[[ -n $coll_pid ]] && wait_pid_gone "$coll_pid"
 	usec1=$(scope_usage_usec "$load_cg")
 	local rps p50 p99 recs drops
 	rps=$(awk '/Requests\/sec:/{print $2; exit}' "$dir/hey.log")
-	p50=$(awk '/Latency Distribution/{f=1;next} f&&/50%/{print $2; exit}' "$dir/hey.log")
-	p99=$(awk '/Latency Distribution/{f=1;next} f&&/99%/{print $2; exit}' "$dir/hey.log")
+	p50=$(awk -F, 'NF>=5 && $1 !~ /HTTP|response/ {print $4; exit}' "$dir/hey.csv" 2>/dev/null | awk '{printf "%.3f", $1*1000}')
+	p99=$(python3 analysis/m5d_p99.py hey "$dir/hey.csv" 2>/dev/null || true)
 	recs=$(recstat_count "$dir/collect.bin" 2>/dev/null || echo 0)
 	drops=$(collector_drops "$dir/collect.log")
 	[[ $cond != C0 ]] && m5_drop_collect_artifacts "$dir"

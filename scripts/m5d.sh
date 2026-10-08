@@ -97,12 +97,25 @@ PY
 	M5_SKIP_GIT_CHECK=1 M5D_MODE=1 M5_OUTROOT="$OUTROOT" M5_RUNS=5 bash scripts/m5.sh
 
 	echo "=== buoc 4: tải cố định ==="
+	python3 - "$OUTROOT" <<'PY' >"$OUTROOT/diag-summary.tsv"
+import sys
+from pathlib import Path
+root = Path(sys.argv[1])
+print("load\tvariant\tmetric\tlat_avg\tp99\tIWI_delta\tCAL_delta\tRES_delta\tcgroup_usec_delta\tbpf_sys_enter_avg_ns_runs_per_s\tdir")
+for load in ("T3", "T4"):
+    d = root / load / "C0" / "run1" / "result.txt"
+    if not d.exists():
+        continue
+    m = {}
+    for line in d.read_text().splitlines():
+        if "=" in line:
+            k, v = line.split("=", 1)
+            m[k] = v
+    metric = m.get("value", "")
+    print(f"{load}\tC0\t{metric}\t\t\t\t\t\t\t\t{root}/{load}/C0")
+PY
 	M5_SKIP_GIT_CHECK=1 M5C_BEST_HOOK=tracepoint M5C_DIAG_SUMMARY="$OUTROOT/diag-summary.tsv" \
-		M5C_FIXED_OUT="$OUTROOT" M5C_FIXED_RUNS=3 \
-		bash scripts/m5c_fixed.sh 2>/dev/null || \
-		M5_SKIP_GIT_CHECK=1 M5C_BEST_HOOK=tracepoint \
-		M5C_DIAG_SUMMARY=validation/m5c-20261008/diag/diag-summary.tsv \
-		M5C_FIXED_OUT="$OUTROOT" bash scripts/m5c_fixed.sh
+		M5C_FIXED_OUT="$OUTROOT" M5C_FIXED_RUNS=3 bash scripts/m5c_fixed.sh
 
 	echo "=== m5d xong $OUTROOT ==="
 } | tee -a "$LOG"

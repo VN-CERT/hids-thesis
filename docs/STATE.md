@@ -1,23 +1,22 @@
 # Trạng thái dự án HIDS
 
-Cập nhật lần cuối: 2026-10-08 11:30 (giờ máy)
+Cập nhật lần cuối: 2026-10-08 13:10 (giờ máy)
 
 ## Mốc hiện tại và mục tiêu
-- **M5c:** Xong R018, tag `m5c` trên `ac5b8cf`. O1 bỏ; O4 thử fentry (giữ tracepoint); O5 không làm.
+- **M5d:** O1 ringbuf wakeup + poll 10 ms; stealclock journal/runtime; đang chạy `hids-m5d`.
 
 ## Bước đã xong
-- M5c chẩn đoán `validation/m5c-20261008/diag/`, regress fentry, fixed-rate tracepoint, G7 fentry + G3 `validation/g3-20261008-v3/`
-- R018, tag `m5c` (commit `ac5b8cf`)
+- M5c R018, tag `m5c`
+- M5d: `docs/tasks/M5d.md`, stealclock, O1 BPF/user-space, G7a mat=0 (commit `86be9ef`)
 
 ## Bước đang làm
-Không.
+- `systemd-run` unit **hids-m5d** → `scripts/m5d.sh` → `validation/m5d-20261008/`
 
 ## Bước tiếp theo
-Chờ kiến trúc sư (BPF stats / baseline T1); hoặc mốc M6 tiếp theo.
+- Khi job xong: R019, tag `m5d`, O5 chỉ nếu bpf-delta ≥1,5× idle
 
 ## Việc đang chạy
-Không.
+- **hids-m5d** — `bash scripts/m5d.sh` — log `out/jobs/m5d.log` — dự kiến nhiều giờ (G7b 24M + ma trận M5)
 
 ## Vướng mắc / chờ kiến trúc sư
-- `bpf-hids.tsv` rỗng dưới tải → O5 chưa đủ điều kiện.
-- T1-C0 mini ~142 ns vs M5b ~195 ns (so chi phí quan sát).
+- O5 (ring buffer per-CPU) chỉ khi điều kiện BPF stats đạt.
