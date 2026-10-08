@@ -16,7 +16,7 @@ Cập nhật lần cuối: 2026-10-08 13:10 (giờ máy)
 - Khi job xong: R019, tag `m5d`, O5 chỉ nếu bpf-delta ≥1,5× idle
 
 ## Việc đang chạy
-- **hids-m5d** — `bash scripts/m5d.sh` — log `out/jobs/m5d.log` — dự kiến nhiều giờ (G7b 24M + ma trận M5)
+- **hids-m5d** — `bash scripts/m5d.sh` — log `out/jobs/m5d.log` — kiểm: `systemctl is-active hids-m5d` (lần trước chết 13:06 do `make generate`; đã khởi động lại)
 
 ## Vướng mắc / chờ kiến trúc sư
 - O5 (ring buffer per-CPU) chỉ khi điều kiện BPF stats đạt.

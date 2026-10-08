@@ -3,6 +3,10 @@
 set -euo pipefail
 cd "$(dirname "$0")/.." || exit 1
 [[ $EUID -eq 0 ]] || { echo "can root" >&2; exit 1; }
+export HOME="${HOME:-/root}"
+export GOPATH="${GOPATH:-/root/go}"
+export GOMODCACHE="${GOMODCACHE:-/root/go/pkg/mod}"
+export PATH="/usr/local/go/bin:/root/go/bin:${PATH}"
 
 DATE=$(date +%Y%m%d)
 OUTROOT="${M5D_OUT:-validation/m5d-${DATE}}"
