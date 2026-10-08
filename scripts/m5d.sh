@@ -38,8 +38,12 @@ trap start_containers EXIT
 		exit 1
 	fi
 
-	echo "=== buoc 2: verify O1 ==="
-	M5D_VERIFY_OUT="$OUTROOT/verify-o1" bash scripts/m5d_verify_o1.sh
+	if [[ ${M5D_SKIP_VERIFY:-} != 1 ]]; then
+		echo "=== buoc 2: verify O1 ==="
+		M5D_VERIFY_OUT="$OUTROOT/verify-o1" bash scripts/m5d_verify_o1.sh
+	else
+		echo "=== buoc 2: bo qua verify (M5D_SKIP_VERIFY=1) ==="
+	fi
 
 	echo "=== buoc 3: BPF stats idle ==="
 	mkdir -p "$OUTROOT/bpf"

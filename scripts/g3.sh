@@ -491,6 +491,13 @@ main() {
 	check_common
 	schedstats_save
 	case "$subset" in
+	m5d)
+		run_scenario S1 cpu 10000 300
+		run_scenario S2 sleep 5000 500
+		run_scenario S3 mixed 2000 3000 500
+		run_scenario S4 cpu 10000 300
+		run_scenario S5 io 300
+		;;
 	m32)
 		run_scenario S1 cpu 10000 300
 		run_scenario S4 cpu 10000 300

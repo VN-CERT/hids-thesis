@@ -14,5 +14,6 @@ G7_SKIP_GIT_CHECK=1 bash scripts/g7.sh b 24000000
 G7_SKIP_GIT_CHECK=1 bash scripts/g7.sh b-nho 1000000
 echo "--- IRQ sau G7b-nho (10s) ---"
 bash scripts/m5d_irq_sample.sh 10 "$OUT/irq.tsv"
-G3_SKIP_GIT_CHECK=1 G3_OUTROOT="$OUT/g3" bash scripts/g3.sh
+docker start qdrant >/dev/null 2>&1 || true
+G3_SKIP_GIT_CHECK=1 G3_OUTROOT="$OUT/g3" bash scripts/g3.sh m5d
 echo "=== verify xong ==="
