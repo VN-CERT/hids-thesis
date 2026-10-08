@@ -23,3 +23,4 @@
 | [R019](R019-m5d-o1-close.md) | 2026-10-08 17:05 | M5d | O1 verify G7/G3, G7-cap, BPF, ma trận C0–C2; tag `m5d`. | Xong. O5 chờ KA; T3-R thiếu số. |
 | [R020](R020-m5e-t3r-latency-noise.md) | 2026-10-08 19:45 | M5e | G7 zstd, T3-R/T4-R, T4 kịch trần, nhiễu git push; tag `m5e`. | Xong. O5 không làm. |
 | [R021](R021-m5f-wrk2-t3r-t4r-case-a.md) | 2026-10-08 23:10 | M5f | Case A T4 wrk, T3 cấu hình mới, T3-R/T4-R + m5f_parse; tag `m5f`. | Xong. `m5f_parse.tsv` tái tạo bằng `scripts/m5f_reparse_fixed.sh`; O5 không làm. |
+| [R022](R022-m5h-bpf-verifier-stop.md) | 2026-10-08 23:45 | M5h | BPF tối ưu + Go; G7a verifier `hids_sched_switch`. | Dừng bước 2; không tag `m5h`. |
