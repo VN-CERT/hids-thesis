@@ -502,7 +502,7 @@ t3_fixed_run() {
 		;;
 	*) die "cond $cond";;
 	esac
-	taskset -c 16-19 docker exec -u postgres pgtest pgbench -c 16 -j 4 -T 60 -R "$rate" -r -U postgres -d postgres \
+	taskset -c 16-19 docker exec -u postgres pgtest pgbench -c 16 -j 4 -T 60 -R "$rate" -U postgres -d postgres \
 		>"$dir/pgbench.log" 2>&1 || true
 	[[ -n $coll_pid ]] && kill -TERM "$coll_pid" 2>/dev/null || true
 	[[ -n $coll_pid ]] && wait_pid_gone "$coll_pid"
@@ -564,7 +564,8 @@ t4_fixed_run() {
 		;;
 	*) die "cond $cond";;
 	esac
-	local workers=64 qps
+	local workers=64
+	local qps
 	qps=$(python3 - "$rate" "$workers" <<'PY'
 import sys
 rate, w = float(sys.argv[1]), int(sys.argv[2])
