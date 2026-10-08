@@ -19,6 +19,12 @@ LOG=out/jobs/m5f-resume.log
 
 die() { echo "m5f-resume: $*" >&2; exit 1; }
 
+# meta.txt: "target_tps=123 cgroup_cpu_usec=456" (không dùng awk -F= — $2 sẽ là "123 cgroup_cpu_usec=456").
+meta_field() {
+	local file=$1 key=$2
+	grep -oE "${key}=[0-9]+" "$file" | head -1 | cut -d= -f2
+}
+
 stop_containers() {
 	[[ -f $CONTAINERS ]] || return 0
 	while read -r n; do
@@ -303,14 +309,14 @@ t3r_run() {
 	local dir="$OUTROOT/T3-R${pct}/${cond}/run${run}"
 	local rate label="T3-R${pct} ${cond} run${run}"
 	t3r_load "$pct" "$cond" "$run"
-	rate=$(awk -F= '/target_tps/{print $2}' "$dir/meta.txt")
+	rate=$(meta_field "$dir/meta.txt" target_tps)
 	shopt -s nullglob
 	local pgf=("$dir"/pglog.*)
 	shopt -u nullglob
 	if ! record_parse_fixed "$label" pgbench --target "$rate" "${pgf[@]}"; then
 		echo "m5f: retry $label" >&2
 		t3r_load "$pct" "$cond" "$run"
-		rate=$(awk -F= '/target_tps/{print $2}' "$dir/meta.txt")
+		rate=$(meta_field "$dir/meta.txt" target_tps)
 		pgfiles=("$dir"/pglog.*)
 		record_parse_fixed "$label" pgbench --target "$rate" "${pgfiles[@]}" || \
 			echo "$label van NGHI_NGO/LECH" >>"$OUTROOT/parse-warnings.txt"
@@ -359,11 +365,11 @@ t4r_run() {
 	local dir="$OUTROOT/T4-R${pct}/${cond}/run${run}"
 	local rate_int label="T4-R${pct} ${cond} run${run}"
 	t4r_load "$pct" "$cond" "$run"
-	rate_int=$(awk -F= '/target_rps/{print $2}' "$dir/meta.txt")
+	rate_int=$(meta_field "$dir/meta.txt" target_rps)
 	if ! record_parse_fixed "$label" wrk2 --target "$rate_int" "$dir/wrk2.txt"; then
 		echo "m5f: retry $label" >&2
 		t4r_load "$pct" "$cond" "$run"
-		rate_int=$(awk -F= '/target_rps/{print $2}' "$dir/meta.txt")
+		rate_int=$(meta_field "$dir/meta.txt" target_rps)
 		record_parse_fixed "$label" wrk2 --target "$rate_int" "$dir/wrk2.txt" || \
 			echo "$label van NGHI_NGO/LECH" >>"$OUTROOT/parse-warnings.txt"
 	fi
