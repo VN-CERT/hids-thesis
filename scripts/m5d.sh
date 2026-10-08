@@ -29,7 +29,10 @@ trap start_containers EXIT
 {
 	echo "=== m5d $(date -Iseconds) out=$OUTROOT ==="
 	stop_containers
-	make build
+	if ! make build 2>&1; then
+		echo "m5d: make build that bai (xem tren)" >&2
+		exit 1
+	fi
 
 	echo "=== buoc 2: verify O1 ==="
 	M5D_VERIFY_OUT="$OUTROOT/verify-o1" bash scripts/m5d_verify_o1.sh
