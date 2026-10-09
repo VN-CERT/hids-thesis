@@ -1,0 +1,8 @@
+Running as unit: hids-m5-t2-C2-4-2935877.scope; invocation ID: 127a34e0282348c2ace5f3847b02348a
+# Running 'sched/pipe' benchmark:
+# Executed 1000000 pipe operations between two processes
+
+     Total time: 4.254 [sec]
+
+       4.254700 usecs/op
+         235034 ops/sec

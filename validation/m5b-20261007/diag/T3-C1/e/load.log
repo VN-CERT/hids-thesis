@@ -1,0 +1,6 @@
+pgbench (16.14)
+pgbench: pghost: /var/run/postgresql pgport: 5432 nclients: 16 duration: 60 dbName: postgres
+pgbench: error: could not count number of branches: ERROR:  relation "pgbench_branches" does not exist
+LINE 1: select count(*) from pgbench_branches
+                             ^
+pgbench: hint: Perhaps you need to do initialization ("pgbench -i") in database "postgres".

@@ -1,0 +1,10 @@
+metric=rps
+value=
+p50_s=
+p99_s=
+cgroup_cpu_usec=0
+target_rps=80407
+tool=hey
+records=0
+0
+drops=

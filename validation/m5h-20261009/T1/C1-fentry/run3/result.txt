@@ -1,0 +1,1 @@
+metric=ns_per_syscall value=395.67

@@ -1,0 +1,49 @@
+stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+stealclock_evidence: journalctl
+doi chieu vmw_steal_time voi rq->prev_steal_time trong 3s...
+doi chieu xong: lech lon nhat 121585 ns tren 24 CPU, nguong max(2000000 ns, 1%)
+ghi vao validation/m5h-20261009/step2/g7-cap/zstd-default-p2-20261009-003827.bin
+loc pid: 768754,768755 | loc cgroup: khong co | ring buffer: 64 MiB
+READY
+LOSS mono_ns=36673025095384 mat=1512341 dinh_ghi=12887964 ti_le=11.735% mat_tong=1512341 dinh_ghi_tong=50422162 (ring buffer day, van thu thap tiep)
+LOSS mono_ns=36683022162193 mat=4857952 dinh_ghi=15617543 ti_le=31.106% mat_tong=6370293 dinh_ghi_tong=66039705 (ring buffer day, van thu thap tiep)
+LOSS mono_ns=36693022088875 mat=2088099 dinh_ghi=13883842 ti_le=15.040% mat_tong=8458392 dinh_ghi_tong=79923547 (ring buffer day, van thu thap tiep)
+ban ghi doc duoc: 72618011 | so lan dinh ghi: 81076403 | mat: 8458392
+irq cong don (ns): hard 1399342 | soft 110845437 | vector 26776646609 | tong 26888891388
+soft_raw cong don (ns): 110933237 (ke ca hard/vector long ben trong, de so voi softirqs-bpfcc)
+irq bat thuong: 0 khoang, 0 ns | loai con dang hoat dong: 0
+recursion_misses (bpf_prog_info), tong 0 tren 31 chuong trinh:
+  hids_irq_call_function_entry             0
+  hids_irq_call_function_exit              0
+  hids_irq_call_function_single_entry      0
+  hids_irq_call_function_single_exit       0
+  hids_irq_deferred_error_apic_entry       0
+  hids_irq_deferred_error_apic_exit        0
+  hids_irq_error_apic_entry                0
+  hids_irq_error_apic_exit                 0
+  hids_irq_irq_handler_entry               0
+  hids_irq_irq_handler_exit                0
+  hids_irq_irq_work_entry                  0
+  hids_irq_irq_work_exit                   0
+  hids_irq_local_timer_entry               0
+  hids_irq_local_timer_exit                0
+  hids_irq_reschedule_entry                0
+  hids_irq_reschedule_exit                 0
+  hids_irq_softirq_entry                   0
+  hids_irq_softirq_exit                    0
+  hids_irq_spurious_apic_entry             0
+  hids_irq_spurious_apic_exit              0
+  hids_irq_thermal_apic_entry              0
+  hids_irq_thermal_apic_exit               0
+  hids_irq_threshold_apic_entry            0
+  hids_irq_threshold_apic_exit             0
+  hids_irq_x86_platform_ipi_entry          0
+  hids_irq_x86_platform_ipi_exit           0
+  hids_sched_switch                        0
+  hids_sched_wakeup                        0
+  hids_sched_wakeup_new                    0
+  hids_sys_enter                           0
+  hids_sys_enter_fentry                    0
+thoi gian chay: 61.362 s | CPU collector: user 52.001 s, sys 1.380 s (getrusage RUSAGE_SELF)
+kich thuoc file: 545356702 byte
+du lieu: validation/m5h-20261009/step2/g7-cap/zstd-default-p2-20261009-003827.bin | thong ke: validation/m5h-20261009/step2/g7-cap/zstd-default-p2-20261009-003827.bin.stats | theo doi: validation/m5h-20261009/step2/g7-cap/zstd-default-p2-20261009-003827.bin.periodic

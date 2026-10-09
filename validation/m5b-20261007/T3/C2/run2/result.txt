@@ -1,0 +1,7 @@
+metric=tps
+value=4058.526142
+latency_ms=3.942
+records=0
+0
+drops=
+bin_bytes=1038

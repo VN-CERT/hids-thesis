@@ -1,0 +1,38 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: ff6c0ab
+# record_size: 56
+# filter_pid: khong co
+# filter_cgroup: /sys/fs/cgroup/system.slice/docker-65666a2b7a6fe15ba02554d79b5a97bf0f5a26e69a44e0ae55e516cb9ba5340e.scope (goc id=58878)
+# ringbuf_bytes: 67108864
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: journalctl -k -b | Oct 08 14:28:01 uni-lms-app kernel: vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# start_mono_ns: 29868336024753
+# start_wall: 2026-10-08T22:45:46.456120636+07:00
+# duration: 2m0s
+# moi dong cach nhau 10s
+mono_ns,wall,dinh_ghi_delta,mat_delta,dinh_ghi_tong,mat_tong,irq_hard_delta_ns,irq_soft_delta_ns,irq_vec_delta_ns,soft_raw_delta_ns,irq_hard_tong_ns,irq_soft_tong_ns,irq_vec_tong_ns,soft_raw_tong_ns
+29868342251331,2026-10-08T22:45:46.462346963+07:00,0,0,0,0,0,81986,2449322,81986,0,81986,2449322,81986
+29878343082340,2026-10-08T22:45:56.463177834+07:00,2684673,0,2684673,0,313847,7293196471,3920299940,7363191515,313847,7293278457,3922749262,7363273501
+29888343093517,2026-10-08T22:46:06.463189031+07:00,2693069,0,5377742,0,821775,7345020992,3958613732,7416687516,1135622,14638299449,7881362994,14779961017
+29898343071550,2026-10-08T22:46:16.463167192+07:00,2692352,0,8070094,0,312018,7250894939,3950289180,7321778254,1447640,21889194388,11831652174,22101739271
+29908343079731,2026-10-08T22:46:26.46317519+07:00,2692772,0,10762866,0,923879,7282273200,3956462900,7352582550,2371519,29171467588,15788115074,29454321821
+29918343096876,2026-10-08T22:46:36.463192373+07:00,2693679,0,13456545,0,498616,7257195806,3950561284,7327074424,2870135,36428663394,19738676358,36781396245
+29928343075102,2026-10-08T22:46:46.463170654+07:00,2693228,0,16149773,0,630116,7281731685,3947772280,7351370172,3500251,43710395079,23686448638,44132766417
+29928366465308,2026-10-08T22:46:46.486560856+07:00,1714,0,16151487,0,0,5524638,4113508,5587627,3500251,43715919717,23690562146,44138354044

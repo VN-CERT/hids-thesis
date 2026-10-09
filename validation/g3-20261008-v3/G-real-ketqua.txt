@@ -1,0 +1,59 @@
+=== G-real: cgroup qdrant 120s ===
+cgroup: /sys/fs/cgroup/system.slice/docker-319c38ff33aa4827288f68ca1236600174cf278175fd7d5d68657d48e2a6366f.scope
+G-real: collector READY, cho 30 giay truoc moc A
+mono_ns_bat_dau: 140660725087443
+mono_ns_ket_thuc: 140751198381552
+so thread giu (co trong cgroup.threads dau va cuoi): 103
+collector_cpu_steal_irq_ns 158298727
+collector_rq_ns 47414252
+collector_vol_ns 2079039329000
+collector_tong_5_ns 2079245041979
+collector_ban_ghi 21135
+top10_tid cpu_steal_irq_ns rq_ns vol_ns ban_ghi
+2655428 8627347 2221394 89988954000 919
+2655432 7836495 2238901 89990185000 919
+2655570 7680249 2360101 89989122000 919
+2655515 7597583 2069827 89990417000 919
+2655442 7500395 2124387 89990860000 919
+2655542 7466147 2146492 89990872000 919
+2655566 7413671 2271186 89990277000 919
+2655462 7402465 2011849 89991239000 919
+2655478 7388129 1955865 89990417000 919
+2655520 7232059 2173282 89990773000 918
+--- bang tong G-real ---
+thanh_phan             collector          tham_chieu         nguon
+cpu+steal+irq          158298727          209310008          Tong Delta schedstat field1
+rq                     47414252           349287             Tong Delta schedstat field2
+vol                    2079039329000      2171280000000      Tong Delta sum_sleep_runtime
+cpu+rq                 205712979          209659295          collector | schedstat exec+run_delay
+vol vs sleep           2079039329000      2171280000000      collector vol | kernel sleep
+tong 3+rq+vol          2079245041979      2171489659295      collector | exec+run_delay+sleep
+--- top 10 thread (cpu+steal+irq collector) ---
+top10_tid cpu_steal_irq_ns rq_ns vol_ns ban_ghi
+2655428 8627347 2221394 89988954000 919
+2655432 7836495 2238901 89990185000 919
+2655570 7680249 2360101 89989122000 919
+2655515 7597583 2069827 89990417000 919
+2655442 7500395 2124387 89990860000 919
+2655542 7466147 2146492 89990872000 919
+2655566 7413671 2271186 89990277000 919
+2655462 7402465 2011849 89991239000 919
+2655478 7388129 1955865 89990417000 919
+2655520 7232059 2173282 89990773000 918
+--- log collector (cuoi) ---
+  hids_irq_spurious_apic_exit              0
+  hids_irq_thermal_apic_entry              0
+  hids_irq_thermal_apic_exit               0
+  hids_irq_threshold_apic_entry            0
+  hids_irq_threshold_apic_exit             0
+  hids_irq_x86_platform_ipi_entry          0
+  hids_irq_x86_platform_ipi_exit           0
+  hids_sched_switch                        0
+  hids_sched_wakeup                        0
+  hids_sched_wakeup_new                    0
+  hids_sys_enter                           0
+  hids_sys_enter_fentry                    0
+thoi gian chay: 120.011 s | CPU collector: user 0.280 s, sys 0.447 s (getrusage RUSAGE_SELF)
+kich thuoc file: 1578587 byte
+du lieu: out/g3-greal-100327.bin | thong ke: out/g3-greal-100327.bin.stats | theo doi: out/g3-greal-100327.bin.periodic
+chi tiet sched: validation/g3-20261008-v3/G-real-sched-refs.txt

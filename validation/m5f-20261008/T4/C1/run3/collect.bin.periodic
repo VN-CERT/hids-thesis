@@ -1,0 +1,38 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: ff6c0ab
+# record_size: 56
+# filter_pid: khong co
+# filter_cgroup: /sys/fs/cgroup/system.slice/docker-e0c9f967c4e6d67020642fdc0583d625564a35ba4a9e7f5ee197157bfd408c11.scope (goc id=51360)
+# ringbuf_bytes: 67108864
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: journalctl -k -b | Oct 08 14:28:01 uni-lms-app kernel: vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# start_mono_ns: 26458692085140
+# start_wall: 2026-10-08T21:48:56.812181317+07:00
+# duration: 2m0s
+# moi dong cach nhau 10s
+mono_ns,wall,dinh_ghi_delta,mat_delta,dinh_ghi_tong,mat_tong,irq_hard_delta_ns,irq_soft_delta_ns,irq_vec_delta_ns,soft_raw_delta_ns,irq_hard_tong_ns,irq_soft_tong_ns,irq_vec_tong_ns,soft_raw_tong_ns
+26458696783570,2026-10-08T21:48:56.816879593+07:00,0,0,0,0,1120,42027,1697054,42027,1120,42027,1697054,42027
+26468697074500,2026-10-08T21:49:06.81717026+07:00,8811239,0,8811239,0,418726,21817769893,6499891722,21981715311,419846,21817811920,6501588776,21981757338
+26478697082118,2026-10-08T21:49:16.817177653+07:00,8820764,0,17632003,0,462578,21836664523,6457292600,22003302561,882424,43654476443,12958881376,43985059899
+26488697076742,2026-10-08T21:49:26.817172239+07:00,8781262,0,26413265,0,2430750,21754614536,6337295467,21916544310,3313174,65409090979,19296176843,65901604209
+26498696809867,2026-10-08T21:49:36.81690534+07:00,8790816,0,35204081,0,1047500,21800318987,6321541777,21961346738,4360674,87209409966,25617718620,87862950947
+26508696826094,2026-10-08T21:49:46.816921634+07:00,8792887,0,43996968,0,466005,21757838929,6287376516,21918419027,4826679,108967248895,31905095136,109781369974
+26518696806369,2026-10-08T21:49:56.816901835+07:00,8775449,0,52772417,0,2338097,21814189538,6289529436,21977447102,7164776,130781438433,38194624572,131758817076
+26518826536405,2026-10-08T21:49:56.946631987+07:00,91709,0,52864126,0,237286,218556099,73779923,220317555,7402062,130999994532,38268404495,131979134631

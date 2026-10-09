@@ -1,0 +1,4 @@
+# Cửa sổ nhiễu git push (giờ máy +07). Nguồn: xem R020 mục 5.
+# name	startHH:MM	endHH:MM	note
+push-A	17:51	17:56	sua .git/index 17:51:12; VS Code git diff numstat 17:51:09-17:52:24 (exthost4)
+push-B	18:13	18:18	sua .git/config 18:15:12; git diff 18:17:43-18:18:44 (exthost4)

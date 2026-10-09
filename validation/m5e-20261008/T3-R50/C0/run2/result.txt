@@ -1,0 +1,15 @@
+metric=tps
+value=1937.1
+latency_ms=500.0350403868326
+p50_ms=498.864
+p99_ms=990.404
+max_ms=999.989
+latency_sanity=1
+latency_json={"n": 116226, "rate_per_s": 1937.1, "avg_ms": 500.0350403868326, "p50_ms": 498.864, "p99_ms": 990.404, "max_ms": 999.989, "sanity_ok": true, "sanity_msg": "ok"}
+cgroup_cpu_usec=91432713
+target_tps=1946.522442
+pct_c0=50
+condition=C0
+records=
+drops=0
+noise=0

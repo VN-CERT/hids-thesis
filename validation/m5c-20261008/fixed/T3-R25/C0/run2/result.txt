@@ -1,0 +1,10 @@
+metric=tps
+value=951.111952
+latency_ms=2.150
+p99_ms=
+cgroup_cpu_usec=43342525
+target_tps=952.1255372500001
+pct_c0=25
+condition=C0
+records=0
+drops=

@@ -1,0 +1,53 @@
+Running as unit: hids-m5b-diag-T3-d-1869221.scope; invocation ID: 1e6127b2841d49c395e0cf3b8a13cdad
+CANH BAO: binary build tu cay lam viec con thay doi chua commit (git_commit=64e4baf-dirty).
+CANH BAO: du lieu ghi ra khong tai lap duoc tu git. Commit truoc khi do that.
+stealclock: bat (24/24 dong "vmware-stealtime" trong dmesg)
+doi chieu vmw_steal_time voi rq->prev_steal_time trong 3s...
+doi chieu xong: lech lon nhat 10903 ns tren 24 CPU, nguong max(2000000 ns, 1%)
+ghi vao validation/m5b-20261007/diag/T3-C1/d/collect.bin
+loc pid: khong co | loc cgroup: /sys/fs/cgroup/system.slice/docker-820e2560bb65d55d7d2be2c3c47fb6beb3ea751ac96efcf886bfe9d024f8cf48.scope (goc id=61068) | ring buffer: 64 MiB
+READY
+LOSS mono_ns=95119111106495 mat=7258184 dinh_ghi=7258181 ti_le=100.000% mat_tong=7258184 dinh_ghi_tong=7258181 (ring buffer day, van thu thap tiep)
+LOSS mono_ns=95129111312405 mat=7036953 dinh_ghi=7036925 ti_le=100.000% mat_tong=14295137 dinh_ghi_tong=14295106 (ring buffer day, van thu thap tiep)
+LOSS mono_ns=95139111468264 mat=7941348 dinh_ghi=7941372 ti_le=100.000% mat_tong=22236485 dinh_ghi_tong=22236478 (ring buffer day, van thu thap tiep)
+LOSS mono_ns=95149111166060 mat=7222436 dinh_ghi=7222435 ti_le=100.000% mat_tong=29458921 dinh_ghi_tong=29458913 (ring buffer day, van thu thap tiep)
+quet cgroup con chau: doc cgroup /sys/fs/cgroup/system.slice/docker-820e2560bb65d55d7d2be2c3c47fb6beb3ea751ac96efcf886bfe9d024f8cf48.scope: stat /sys/fs/cgroup/system.slice/docker-820e2560bb65d55d7d2be2c3c47fb6beb3ea751ac96efcf886bfe9d024f8cf48.scope: no such file or directory
+LOSS mono_ns=95156136453773 mat=4671541 dinh_ghi=4671549 ti_le=100.000% mat_tong=34130462 dinh_ghi_tong=34130462 (ring buffer day, van thu thap tiep)
+ban ghi doc duoc: 0 | so lan dinh ghi: 34130462 | mat: 34130462
+irq cong don (ns): hard 88072051 | soft 1712206262 | vector 14905401403 | tong 16705679716
+soft_raw cong don (ns): 1721372955 (ke ca hard/vector long ben trong, de so voi softirqs-bpfcc)
+irq bat thuong: 0 khoang, 0 ns | loai con dang hoat dong: 0
+recursion_misses (bpf_prog_info), tong 0 tren 30 chuong trinh:
+  hids_irq_call_function_entry             0
+  hids_irq_call_function_exit              0
+  hids_irq_call_function_single_entry      0
+  hids_irq_call_function_single_exit       0
+  hids_irq_deferred_error_apic_entry       0
+  hids_irq_deferred_error_apic_exit        0
+  hids_irq_error_apic_entry                0
+  hids_irq_error_apic_exit                 0
+  hids_irq_irq_handler_entry               0
+  hids_irq_irq_handler_exit                0
+  hids_irq_irq_work_entry                  0
+  hids_irq_irq_work_exit                   0
+  hids_irq_local_timer_entry               0
+  hids_irq_local_timer_exit                0
+  hids_irq_reschedule_entry                0
+  hids_irq_reschedule_exit                 0
+  hids_irq_softirq_entry                   0
+  hids_irq_softirq_exit                    0
+  hids_irq_spurious_apic_entry             0
+  hids_irq_spurious_apic_exit              0
+  hids_irq_thermal_apic_entry              0
+  hids_irq_thermal_apic_exit               0
+  hids_irq_threshold_apic_entry            0
+  hids_irq_threshold_apic_exit             0
+  hids_irq_x86_platform_ipi_entry          0
+  hids_irq_x86_platform_ipi_exit           0
+  hids_sched_switch                        0
+  hids_sched_wakeup                        0
+  hids_sched_wakeup_new                    0
+  hids_sys_enter                           0
+thoi gian chay: 47.030 s | CPU collector: user 0.239 s, sys 0.268 s (getrusage RUSAGE_SELF)
+kich thuoc file: 1117 byte
+du lieu: validation/m5b-20261007/diag/T3-C1/d/collect.bin | thong ke: validation/m5b-20261007/diag/T3-C1/d/collect.bin.stats | theo doi: validation/m5b-20261007/diag/T3-C1/d/collect.bin.periodic

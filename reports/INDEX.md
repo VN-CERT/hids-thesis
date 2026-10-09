@@ -27,4 +27,5 @@
 | [R023](R023-m5h-r2-sha256-stop.md) | 2026-10-09 00:10 | M5h-r2 | Tiếp M5h; sha256 BPF chưa `14d065a6…`. | Dừng bước 0; không tag `m5h`. |
 | [R024](R024-m5h-r2-g7b-stop.md) | 2026-10-09 00:35 | M5h-r2 | G7a đạt; G7b mat=13238390. | Dừng bước 2; không tag `m5h`. |
 | [R025](R025-m5h-r2-g7cap-stop.md) | 2026-10-09 00:45 | M5h-r2 | G7b zstd0 OK; G7-cap mat≠0. | Dừng trước G3; không tag `m5h`. |
-| [R026](R026-m5h-overhead.md) | 2026-10-09 02:30 | M5h | G3 OK; bench T1/T3/T4 + tải cố định; G7-cap throughput ~1,2M rec/s. | Xong, tag `m5h`. |
+| [R026](R026-m5h-overhead.md) | 2026-10-09 02:30 | M5h | G3 OK; bench T1/T3/T4 + tải cố định; G7-cap throughput ~1,2M rec/s. | Xong, tag `m5h`. Kiến trúc sư chấp nhận bộ số bài 1. |
+| [R027](R027-m5-close-disk-extend.md) | 2026-10-09 15:10 | M5 | Mở rộng `/` với đĩa `sdc` (~3 TB) vào LVM `ubuntu-vg`. | Xong. |

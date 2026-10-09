@@ -1,0 +1,16 @@
+metric=rps
+value=16666.666666666668
+latency_ms=0.4433694
+p50_ms=0.4
+p99_ms=1.5
+max_ms=7.4
+latency_sanity=1
+latency_json={"n": 1000000, "rate_per_s": 16666.666666666668, "avg_ms": 0.4433694, "p50_ms": 0.4, "p99_ms": 1.5, "max_ms": 7.4, "sanity_ok": true, "sanity_msg": "ok"}
+cgroup_cpu_usec=154769860
+target_rps=89368.305
+pct_c0=50
+condition=C0
+tool=hey
+records=
+drops=0
+noise=0

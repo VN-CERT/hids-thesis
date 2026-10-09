@@ -1,0 +1,39 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 583857b-dirty
+# record_size: 56
+# filter_pid: khong co
+# filter_cgroup: /sys/fs/cgroup/hids-m5-decoy (goc id=7858)
+# ringbuf_bytes: 67108864
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: dmesg | [    0.000000] vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# start_mono_ns: 17065914367230
+# start_wall: 2026-10-08T19:12:24.034463277+07:00
+# duration: 2m0s
+# moi dong cach nhau 10s
+mono_ns,wall,dinh_ghi_delta,mat_delta,dinh_ghi_tong,mat_tong,irq_hard_delta_ns,irq_soft_delta_ns,irq_vec_delta_ns,soft_raw_delta_ns,irq_hard_tong_ns,irq_soft_tong_ns,irq_vec_tong_ns,soft_raw_tong_ns
+17065917938342,2026-10-08T19:12:24.038033913+07:00,0,0,0,0,0,79620,1553892,79620,0,79620,1553892,79620
+17075918104555,2026-10-08T19:12:34.038200048+07:00,0,0,0,0,276418,15053778304,6193548719,15170948820,276418,15053857924,6195102611,15171028440
+17085918076627,2026-10-08T19:12:44.038172587+07:00,0,0,0,0,992536,15199852743,6141339189,15315457046,1268954,30253710667,12336441800,30486485486
+17095918101320,2026-10-08T19:12:54.038196903+07:00,0,0,0,0,224986,15231840054,6124167996,15347664496,1493940,45485550721,18460609796,45834149982
+17105918098242,2026-10-08T19:13:04.038193877+07:00,0,0,0,0,1315258,15186815548,6168451530,15303559855,2809198,60672366269,24629061326,61137709837
+17115918100540,2026-10-08T19:13:14.038196036+07:00,0,0,0,0,755726,15199982470,6145188531,15315678219,3564924,75872348739,30774249857,76453388056
+17125918079515,2026-10-08T19:13:24.038174967+07:00,0,0,0,0,497385,15156646355,6165450600,15273320477,4062309,91028995094,36939700457,91726708533
+17135918868072,2026-10-08T19:13:34.03896365+07:00,0,0,0,0,390724,78508668,206159100,78956664,4453033,91107503762,37145859557,91805665197
+17140627740482,2026-10-08T19:13:38.747836092+07:00,0,0,0,0,78950,10175308,70874111,10186089,4531983,91117679070,37216733668,91815851286

@@ -1,0 +1,38 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: ff6c0ab
+# record_size: 56
+# filter_pid: khong co
+# filter_cgroup: /sys/fs/cgroup/system.slice/docker-65666a2b7a6fe15ba02554d79b5a97bf0f5a26e69a44e0ae55e516cb9ba5340e.scope (goc id=58878)
+# ringbuf_bytes: 67108864
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: journalctl -k -b | Oct 08 14:28:01 uni-lms-app kernel: vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# start_mono_ns: 30521790921793
+# start_wall: 2026-10-08T22:56:39.911017706+07:00
+# duration: 2m0s
+# moi dong cach nhau 10s
+mono_ns,wall,dinh_ghi_delta,mat_delta,dinh_ghi_tong,mat_tong,irq_hard_delta_ns,irq_soft_delta_ns,irq_vec_delta_ns,soft_raw_delta_ns,irq_hard_tong_ns,irq_soft_tong_ns,irq_vec_tong_ns,soft_raw_tong_ns
+30521796475107,2026-10-08T22:56:39.916570805+07:00,0,0,0,0,0,100207,2559633,100470,0,100207,2559633,100470
+30531796535430,2026-10-08T22:56:49.916630886+07:00,5230872,0,5230872,0,389974,13386829281,5864888180,13508143133,389974,13386929488,5867447813,13508243603
+30541797100607,2026-10-08T22:56:59.917196287+07:00,5258681,0,10489553,0,1267379,13461515687,5923996486,13583292996,1657353,26848445175,11791444299,27091536599
+30551797100617,2026-10-08T22:57:09.917196149+07:00,5256887,0,15746440,0,412736,13489257345,5918389011,13612297016,2070089,40337702520,17709833310,40703833615
+30561796610471,2026-10-08T22:57:19.916705978+07:00,5254660,0,21001100,0,1412492,13500628700,5948099071,13622685148,3482581,53838331220,23657932381,54326518763
+30571797099326,2026-10-08T22:57:29.917194868+07:00,5256838,0,26257938,0,853899,13446824386,5921892757,13568215434,4336480,67285155606,29579825138,67894734197
+30581797095197,2026-10-08T22:57:39.917190775+07:00,5257822,0,31515760,0,1146228,13468469092,5949326878,13591005632,5482708,80753624698,35529152016,81485739829
+30581824252943,2026-10-08T22:57:39.944348716+07:00,4026,0,31519786,0,0,10554322,5535039,10644450,5482708,80764179020,35534687055,81496384279

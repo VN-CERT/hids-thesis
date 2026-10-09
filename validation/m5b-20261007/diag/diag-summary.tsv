@@ -1,0 +1,11 @@
+load	variant	metric	coll_usec_delta	IWI_delta	CAL_delta	records	drops	bpf_sys_enter_avg_ns_runs_per_s	dir
+T3	a	3531.256823	-313034	8	10213908	duoc:	41583536		validation/m5b-20261007/diag/T3-C1/a
+T3	b	3854.114572	-320288	14	10452134	duoc:	45367776		validation/m5b-20261007/diag/T3-C1/b
+T3	c	3746.599142	-323073	8	10064164	duoc:	44604312		validation/m5b-20261007/diag/T3-C1/c
+T3	d		-318668	8	7906391	duoc:	34130462		validation/m5b-20261007/diag/T3-C1/d
+T3	e		-304810	6	61847	duoc:	1080		validation/m5b-20261007/diag/T3-C1/e
+T4	a	169982.98	-324165	10	21040133	duoc:	63499961		validation/m5b-20261007/diag/T4-C1/a
+T4	b	151933.23	-313981	8	20971378	duoc:	56609539		validation/m5b-20261007/diag/T4-C1/b
+T4	c	147268.22	-320144	4	20605336	duoc:	54840591		validation/m5b-20261007/diag/T4-C1/c
+T4	d	151569.11	-318051	6	23131472	duoc:	56405514		validation/m5b-20261007/diag/T4-C1/d
+T4	e	153983.48	-310319	6	22997164	duoc:	57339254		validation/m5b-20261007/diag/T4-C1/e

@@ -1,0 +1,6 @@
+metric=ns_per_syscall
+value=192.27
+collector_user_usec=122779198779
+records=duoc:
+drops=0
+bin_bytes=1041

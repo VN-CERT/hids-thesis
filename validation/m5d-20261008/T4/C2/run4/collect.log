@@ -1,0 +1,11 @@
+Running as unit: hids-m5-t4c-C2-4-2935877.scope; invocation ID: 8b501a8ea1344bad8bd4be22c1513f2a
+CANH BAO: binary build tu cay lam viec con thay doi chua commit (git_commit=d858e45-dirty).
+CANH BAO: du lieu ghi ra khong tai lap duoc tu git. Commit truoc khi do that.
+stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+stealclock_evidence: journalctl
+doi chieu vmw_steal_time voi rq->prev_steal_time trong 3s...
+doi chieu xong: lech lon nhat 8655 ns tren 24 CPU, nguong max(2000000 ns, 1%)
+ghi vao validation/m5d-20261008/T4/C2/run4/collect.bin
+loc pid: khong co | loc cgroup: /sys/fs/cgroup/hids-m5-decoy (goc id=35902) | ring buffer: 64 MiB
+READY
+hids-collect: write validation/m5d-20261008/T4/C2/run4/collect.bin.stats: no space left on device

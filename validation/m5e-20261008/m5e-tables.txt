@@ -1,0 +1,18 @@
+=== tai co dinh (chi run latency_sanity=1) ===
+T3-R25	C0	avg_ms=500.4543	p50=500.0577	p99=989.6657	cgroup_cpu_usec=43395401	n=3
+T3-R25	C1	avg_ms=499.2883	p50=498.8060	p99=990.0350	cgroup_cpu_usec=48090905	n=3
+T3-R25	C2	avg_ms=498.4831	p50=496.2757	p99=989.6680	cgroup_cpu_usec=45012332	n=3
+T3-R50	C0	avg_ms=499.9400	p50=499.1613	p99=990.1753	cgroup_cpu_usec=91047874	n=3
+T3-R50	C1	avg_ms=499.1403	p50=499.0627	p99=989.8557	cgroup_cpu_usec=102706374	n=3
+T3-R50	C2	avg_ms=499.1796	p50=498.4923	p99=989.8447	cgroup_cpu_usec=93399346	n=3
+T4-R25	C0	avg_ms=0.3898	p50=0.3000	p99=1.1000	cgroup_cpu_usec=81099887	n=3
+T4-R25	C1	avg_ms=0.4185	p50=0.4000	p99=1.2000	cgroup_cpu_usec=91054784	n=3
+T4-R25	C2	avg_ms=0.4045	p50=0.3000	p99=1.2333	cgroup_cpu_usec=84629143	n=3
+T4-R50	C0	avg_ms=0.4501	p50=0.4000	p99=1.5333	cgroup_cpu_usec=155113408	n=3
+T4-R50	C1	avg_ms=0.4753	p50=0.4000	p99=1.6333	cgroup_cpu_usec=173116669	n=3
+T4-R50	C2	avg_ms=0.4651	p50=0.4000	p99=1.6000	cgroup_cpu_usec=161762545	n=3
+
+=== T4 kich tran (95% CI tren metric value) ===
+T4	C0	mean=185353.8171	std=2327.5880	ci95_half=1724.3013	n=7
+T4	C1	mean=169333.2057	std=4308.7912	ci95_half=3191.9972	n=7
+T4	C2	mean=180883.0614	std=2086.0372	ci95_half=1545.3580	n=7

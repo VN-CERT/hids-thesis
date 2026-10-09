@@ -1,0 +1,40 @@
+=== G7-cap mode=zstd-default nproc=1 zstd= duration=60s ring=64MiB ===
+  recs=73539066 mat=0 rate=1225529/s loss=0.0000% cpu_user=61.093s cpu_sys=48.662s elapsed=60.006
+da xoa validation/m5d-20261008/g7-cap/zstd-default-p1-20261008-163538.bin (giu validation/m5d-20261008/g7-cap/zstd-default-p1-20261008-163538.bin.stats validation/m5d-20261008/g7-cap/zstd-default-p1-20261008-163538.bin.periodic); dat KEEP_RAW=1 de giu file .bin
+=== G7-cap mode=zstd-default nproc=2 zstd= duration=60s ring=64MiB ===
+  recs=77628073 mat=0 rate=1293607/s loss=0.0000% cpu_user=61.09s cpu_sys=51.969s elapsed=60.009
+da xoa validation/m5d-20261008/g7-cap/zstd-default-p2-20261008-163643.bin (giu validation/m5d-20261008/g7-cap/zstd-default-p2-20261008-163643.bin.stats validation/m5d-20261008/g7-cap/zstd-default-p2-20261008-163643.bin.periodic); dat KEEP_RAW=1 de giu file .bin
+=== G7-cap mode=zstd-default nproc=4 zstd= duration=60s ring=64MiB ===
+  recs=69751823 mat=197502183 rate=1162337/s loss=73.9006% cpu_user=61.478s cpu_sys=49.314s elapsed=60.010
+da xoa validation/m5d-20261008/g7-cap/zstd-default-p4-20261008-163748.bin (giu validation/m5d-20261008/g7-cap/zstd-default-p4-20261008-163748.bin.stats validation/m5d-20261008/g7-cap/zstd-default-p4-20261008-163748.bin.periodic); dat KEEP_RAW=1 de giu file .bin
+=== G7-cap mode=zstd-default nproc=8 zstd= duration=60s ring=64MiB ===
+  recs=67668521 mat=137904447 rate=1127621/s loss=67.0830% cpu_user=61.484s cpu_sys=50.205s elapsed=60.010
+da xoa validation/m5d-20261008/g7-cap/zstd-default-p8-20261008-163853.bin (giu validation/m5d-20261008/g7-cap/zstd-default-p8-20261008-163853.bin.stats validation/m5d-20261008/g7-cap/zstd-default-p8-20261008-163853.bin.periodic); dat KEEP_RAW=1 de giu file .bin
+=== G7-cap mode=zstd-default nproc=16 zstd= duration=60s ring=64MiB ===
+  recs=66726269 mat=89727641 rate=1111993/s loss=57.3508% cpu_user=61.485s cpu_sys=49.703s elapsed=60.006
+da xoa validation/m5d-20261008/g7-cap/zstd-default-p16-20261008-163958.bin (giu validation/m5d-20261008/g7-cap/zstd-default-p16-20261008-163958.bin.stats validation/m5d-20261008/g7-cap/zstd-default-p16-20261008-163958.bin.periodic); dat KEEP_RAW=1 de giu file .bin
+=== G7-cap mode=zstd-default nproc=24 zstd= duration=60s ring=64MiB ===
+  recs=64242483 mat=73098053 rate=1070583/s loss=53.2239% cpu_user=61.462s cpu_sys=44.554s elapsed=60.007
+da xoa validation/m5d-20261008/g7-cap/zstd-default-p24-20261008-164104.bin (giu validation/m5d-20261008/g7-cap/zstd-default-p24-20261008-164104.bin.stats validation/m5d-20261008/g7-cap/zstd-default-p24-20261008-164104.bin.periodic); dat KEEP_RAW=1 de giu file .bin
+=== G7-cap mode=zstd0 nproc=1 zstd=-zstd-level 0 duration=60s ring=64MiB ===
+  recs=143142185 mat=0 rate=2385306/s loss=0.0000% cpu_user=61.054s cpu_sys=27.383s elapsed=60.010
+da xoa validation/m5d-20261008/g7-cap/zstd0-p1-20261008-164209.bin (giu validation/m5d-20261008/g7-cap/zstd0-p1-20261008-164209.bin.stats validation/m5d-20261008/g7-cap/zstd0-p1-20261008-164209.bin.periodic); dat KEEP_RAW=1 de giu file .bin
+=== G7-cap mode=zstd0 nproc=2 zstd=-zstd-level 0 duration=60s ring=64MiB ===
+  recs=166067275 mat=0 rate=2767327/s loss=0.0000% cpu_user=61.046s cpu_sys=32.751s elapsed=60.010
+da xoa validation/m5d-20261008/g7-cap/zstd0-p2-20261008-164315.bin (giu validation/m5d-20261008/g7-cap/zstd0-p2-20261008-164315.bin.stats validation/m5d-20261008/g7-cap/zstd0-p2-20261008-164315.bin.periodic); dat KEEP_RAW=1 de giu file .bin
+=== G7-cap mode=zstd0 nproc=4 zstd=-zstd-level 0 duration=60s ring=64MiB ===
+  recs=161738262 mat=3129622 rate=2695233/s loss=1.8983% cpu_user=61.052s cpu_sys=33.345s elapsed=60.009
+da xoa validation/m5d-20261008/g7-cap/zstd0-p4-20261008-164421.bin (giu validation/m5d-20261008/g7-cap/zstd0-p4-20261008-164421.bin.stats validation/m5d-20261008/g7-cap/zstd0-p4-20261008-164421.bin.periodic); dat KEEP_RAW=1 de giu file .bin
+=== G7-cap mode=zstd0 nproc=8 zstd=-zstd-level 0 duration=60s ring=64MiB ===
+  recs=153714089 mat=8484924 rate=2561560/s loss=5.2312% cpu_user=61.077s cpu_sys=35s elapsed=60.008
+da xoa validation/m5d-20261008/g7-cap/zstd0-p8-20261008-164527.bin (giu validation/m5d-20261008/g7-cap/zstd0-p8-20261008-164527.bin.stats validation/m5d-20261008/g7-cap/zstd0-p8-20261008-164527.bin.periodic); dat KEEP_RAW=1 de giu file .bin
+=== G7-cap mode=zstd0 nproc=16 zstd=-zstd-level 0 duration=60s ring=64MiB ===
+  recs=132301987 mat=1618699 rate=2204813/s loss=1.2087% cpu_user=61.051s cpu_sys=29.028s elapsed=60.006
+da xoa validation/m5d-20261008/g7-cap/zstd0-p16-20261008-164633.bin (giu validation/m5d-20261008/g7-cap/zstd0-p16-20261008-164633.bin.stats validation/m5d-20261008/g7-cap/zstd0-p16-20261008-164633.bin.periodic); dat KEEP_RAW=1 de giu file .bin
+=== G7-cap mode=zstd0 nproc=24 zstd=-zstd-level 0 duration=60s ring=64MiB ===
+  recs=126022812 mat=0 rate=2100065/s loss=0.0000% cpu_user=61.057s cpu_sys=27.188s elapsed=60.009
+da xoa validation/m5d-20261008/g7-cap/zstd0-p24-20261008-164739.bin (giu validation/m5d-20261008/g7-cap/zstd0-p24-20261008-164739.bin.stats validation/m5d-20261008/g7-cap/zstd0-p24-20261008-164739.bin.periodic); dat KEEP_RAW=1 de giu file .bin
+=== toc do cao nhat mat=0 theo luot ===
+zstd-default: max_rate=1293607/s nproc=2 recs=77628073
+zstd0: max_rate=2767327/s nproc=2 recs=166067275
+luu validation/m5d-20261008/g7-cap/summary.tsv

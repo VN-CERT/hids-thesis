@@ -1,0 +1,7 @@
+metric=rps
+value=132152.96
+p50_ms=33.23k
+p99_ms=
+records=48939212
+0
+drops=

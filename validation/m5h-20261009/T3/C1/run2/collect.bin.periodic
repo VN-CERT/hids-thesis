@@ -1,0 +1,40 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 0dd2964-dirty
+# record_size: 56
+# filter_tgids: khong co
+# filter_pid: 0
+# filter_cgroup: /sys/fs/cgroup/system.slice/docker-ab76f9e58dcc3b13f7411b7e2449a62f00df10093baae9be8b6674a534c9cc29.scope (goc id=81616)
+# ringbuf_bytes: 67108864
+# rb_wake_bytes: 8388608
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: journalctl -k -b | Oct 08 14:28:01 uni-lms-app kernel: vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# start_mono_ns: 40937177469333
+# start_wall: 2026-10-09T01:50:15.29756542+07:00
+# duration: 2m0s
+# moi dong cach nhau 10s
+mono_ns,wall,dinh_ghi_delta,mat_delta,dinh_ghi_tong,mat_tong,irq_hard_delta_ns,irq_soft_delta_ns,irq_vec_delta_ns,soft_raw_delta_ns,irq_hard_tong_ns,irq_soft_tong_ns,irq_vec_tong_ns,soft_raw_tong_ns
+40937183843167,2026-10-09T01:50:15.303938847+07:00,0,0,0,0,0,46248,2362883,46248,0,46248,2362883,46248
+40947184139487,2026-10-09T01:50:25.304235319+07:00,8160030,0,8160030,0,21438400,328691514,3917700612,331213035,21438400,328737762,3920063495,331259283
+40957184111646,2026-10-09T01:50:35.304207308+07:00,7961419,0,16121449,0,27480533,371836749,3853871219,374832145,48918933,700574511,7773934714,706091428
+40967183906157,2026-10-09T01:50:45.304001918+07:00,8588886,0,24710335,0,27040788,352399214,4043274021,355336799,75959721,1052973725,11817208735,1061428227
+40977183874543,2026-10-09T01:50:55.303970588+07:00,8264413,0,32974748,0,28086958,348804124,3883361997,351716283,104046679,1401777849,15700570732,1413144510
+40987184112623,2026-10-09T01:51:05.304208421+07:00,7690155,0,40664903,0,30679285,397934287,3700522310,400772090,134725964,1799712136,19401093042,1813916600
+40997184145643,2026-10-09T01:51:15.304241226+07:00,8506719,0,49171622,0,28889001,358744589,3966709954,361618909,163614965,2158456725,23367802996,2175535509
+40997401053095,2026-10-09T01:51:15.521149108+07:00,94284,0,49265906,0,384204,6363261,52986440,6436257,163999169,2164819986,23420789436,2181971766

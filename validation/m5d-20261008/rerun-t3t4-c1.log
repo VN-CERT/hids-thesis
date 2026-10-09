@@ -1,0 +1,15 @@
+T3 C1 run1: tps=3813.602435
+T3 C1 run2: tps=3935.998783
+T3 C1 run3: tps=3897.567613
+T3 C1 run4: tps=3922.431368
+T3 C1 run5: tps=3955.125817
+T4 C1 run1: rps=166913.00
+T4 C1 run2: rps=162143.41
+T4 C1 run3: rps=164150.03
+T4 C1 run4: rps=161688.53
+T4 C1 run5: rps=158521.26
+pgtest
+m5-nginx
+--- df -h (ket thuc job) ---
+Filesystem                         Size  Used Avail Use% Mounted on
+/dev/mapper/ubuntu--vg-ubuntu--lv  686G  136G  522G  21% /

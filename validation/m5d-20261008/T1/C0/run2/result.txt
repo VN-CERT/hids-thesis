@@ -1,0 +1,5 @@
+metric=ns_per_syscall
+value=141.63
+collector_user_usec=0
+records=0
+drops=0

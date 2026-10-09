@@ -1,0 +1,1 @@
+[{"id": 14909, "type": "syscall", "name": "hids_steal_snap", "tag": "2647e38a08f4e946", "gpl_compatible": true, "run_time_ns": 2547, "run_cnt": 1, "loaded_at": 1791440998, "uid": 0, "orphaned": false, "bytes_xlated": 464, "jited": true, "bytes_jited": 352, "bytes_memlock": 4096, "map_ids": [5805], "btf_id": 17811}]

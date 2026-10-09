@@ -1,0 +1,13 @@
+Running 1m test @ http://127.0.0.1:18080/f.bin
+  4 threads and 64 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   473.99us  237.16us   9.30ms   92.70%
+    Req/Sec    34.34k     1.06k   61.39k    87.84%
+  Latency Distribution
+     50%  436.00us
+     75%  512.00us
+     90%  628.00us
+     99%    1.16ms
+  8207648 requests in 1.00m, 33.26GB read
+Requests/sec: 136567.80
+Transfer/sec:    566.68MB

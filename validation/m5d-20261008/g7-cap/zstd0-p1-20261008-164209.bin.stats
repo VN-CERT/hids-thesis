@@ -1,0 +1,58 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 9ac6051-dirty
+# record_size: 56
+# filter_pid: 171584
+# filter_cgroup: khong co
+# ringbuf_bytes: 67108864
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: dmesg | [    0.000000] vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 0
+# start_mono_ns: 8055432575217
+# start_wall: 2026-10-08T16:42:13.552670917+07:00
+# duration: 2m0s
+# end_mono_ns: 8116486458955
+# end_wall: 2026-10-08T16:43:14.60655921+07:00
+# bin: validation/m5d-20261008/g7-cap/zstd0-p1-20261008-164209.bin
+# ban_ghi_sai_kich_thuoc: 0
+# so_ban_ghi_doc_duoc: 143142185
+cpu,seq_cuoi,mat
+0,12856298,0
+1,4982676,0
+2,0,0
+3,64180,0
+4,11986576,0
+5,123088,0
+6,88062,0
+7,492082,0
+8,44534,0
+9,4536468,0
+10,2919235,0
+11,7338,0
+12,3852901,0
+13,18063316,0
+14,10668197,0
+15,10119960,0
+16,8499427,0
+17,8752741,0
+18,7290397,0
+19,3623154,0
+20,11327419,0
+21,0,0
+22,206737,0
+23,22637399,0

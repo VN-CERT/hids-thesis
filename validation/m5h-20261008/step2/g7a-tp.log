@@ -1,0 +1,3 @@
+=== g7a: 1 sysinj, moi cai N=1000000, ring buffer 64 MiB, stress-ng=0 ===
+sysinj pids: 709244
+g7: collector khong in READY sau 30 giay, xem out/g7a-20261008-234447-collect.log

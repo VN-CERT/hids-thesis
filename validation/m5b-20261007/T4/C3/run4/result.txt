@@ -1,0 +1,8 @@
+metric=rps
+value=114939.16
+p50_ms=28.88k
+p99_ms=
+records=42732748
+0
+drops=
+bin_bytes=458212804

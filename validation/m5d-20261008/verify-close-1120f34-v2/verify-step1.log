@@ -1,0 +1,1638 @@
+=== m5d step1 verify 2026-10-08T16:32:45+07:00 git=9ac6051 ===
+go generate ./...
+go build -ldflags "-X hids/internal/buildinfo.Commit=9ac6051-dirty" -o bin/steal-probe ./cmd/steal-probe
+go build -ldflags "-X hids/internal/buildinfo.Commit=9ac6051-dirty" -o bin/steal-summary ./cmd/steal-summary
+go build -ldflags "-X hids/internal/buildinfo.Commit=9ac6051-dirty" -o bin/hids-collect ./cmd/hids-collect
+go build -ldflags "-X hids/internal/buildinfo.Commit=9ac6051-dirty" -o bin/rec-stat ./cmd/rec-stat
+go build -ldflags "-X hids/internal/buildinfo.Commit=9ac6051-dirty" -o bin/rec-check ./cmd/rec-check
+go build -ldflags "-X hids/internal/buildinfo.Commit=9ac6051-dirty" -o bin/rec-export ./cmd/rec-export
+=== g7a: 1 sysinj, moi cai N=1000000, ring buffer 64 MiB, stress-ng=0 ===
+sysinj pids: 146405
+collector da gan tracepoint (READY)
+perf da gan cho 1 tien trinh
+
+--- perf stat cua tung sysinj (nguyen van) ---
+### pid 146405
+
+ Performance counter stats for process id '146405':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+       3.003114593 seconds time elapsed
+
+--- log collector (nguyen van) ---
+CANH BAO: binary build tu cay lam viec con thay doi chua commit (git_commit=9ac6051-dirty).
+CANH BAO: du lieu ghi ra khong tai lap duoc tu git. Commit truoc khi do that.
+stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+stealclock_evidence: journalctl
+doi chieu vmw_steal_time voi rq->prev_steal_time trong 3s...
+doi chieu xong: lech lon nhat 48524 ns tren 24 CPU, nguong max(2000000 ns, 1%)
+ghi vao out/g7a-20261008-163250.bin
+loc pid: 146405 | loc cgroup: khong co | ring buffer: 64 MiB
+READY
+ban ghi doc duoc: 1000001 | so lan dinh ghi: 1000001 | mat: 0
+irq cong don (ns): hard 102289 | soft 13387230 | vector 88918705 | tong 102408224
+soft_raw cong don (ns): 13414993 (ke ca hard/vector long ben trong, de so voi softirqs-bpfcc)
+irq bat thuong: 0 khoang, 0 ns | loai con dang hoat dong: 0
+recursion_misses (bpf_prog_info), tong 0 tren 31 chuong trinh:
+  hids_irq_call_function_entry             0
+  hids_irq_call_function_exit              0
+  hids_irq_call_function_single_entry      0
+  hids_irq_call_function_single_exit       0
+  hids_irq_deferred_error_apic_entry       0
+  hids_irq_deferred_error_apic_exit        0
+  hids_irq_error_apic_entry                0
+  hids_irq_error_apic_exit                 0
+  hids_irq_irq_handler_entry               0
+  hids_irq_irq_handler_exit                0
+  hids_irq_irq_work_entry                  0
+  hids_irq_irq_work_exit                   0
+  hids_irq_local_timer_entry               0
+  hids_irq_local_timer_exit                0
+  hids_irq_reschedule_entry                0
+  hids_irq_reschedule_exit                 0
+  hids_irq_softirq_entry                   0
+  hids_irq_softirq_exit                    0
+  hids_irq_spurious_apic_entry             0
+  hids_irq_spurious_apic_exit              0
+  hids_irq_thermal_apic_entry              0
+  hids_irq_thermal_apic_exit               0
+  hids_irq_threshold_apic_entry            0
+  hids_irq_threshold_apic_exit             0
+  hids_irq_x86_platform_ipi_entry          0
+  hids_irq_x86_platform_ipi_exit           0
+  hids_sched_switch                        0
+  hids_sched_wakeup                        0
+  hids_sched_wakeup_new                    0
+  hids_sys_enter                           0
+  hids_sys_enter_fentry                    0
+thoi gian chay: 4.465 s | CPU collector: user 0.335 s, sys 0.215 s (getrusage RUSAGE_SELF)
+kich thuoc file: 56001131 byte
+du lieu: out/g7a-20261008-163250.bin | thong ke: out/g7a-20261008-163250.bin.stats | theo doi: out/g7a-20261008-163250.bin.periodic
+
+--- bang theo tung PID ---
+       pid   N_thiet_ke perf_sys_enter        ban_ghi  ban_ghi_110   perf-ban_ghi   GAP_BEFORE
+    146405      1000000        1000001        1000001      1000000              0            0
+      TONG      1000000        1000001        1000001      1000000              0            0
+
+--- doi chieu toan cuc ---
+tong lan dinh ghi (tong seq theo CPU):        1000001
+tong ban ghi doc duoc:                        1000001
+tong bo dem mat:                              0
+tong so seq bi thieu theo CPU:                0
+tong (perf - ban ghi):                        0
+
+--- thoi gian va dung luong ---
+thoi gian bom syscall: 0.418 s
+kich thuoc out/g7a-20261008-163250.bin: 56001131 byte
+kich thuoc out/g7a-20261008-163250.bin.stats: 1422 byte
+
+--- rec-stat day du (nguyen van) ---
+file: out/g7a-20261008-163250.bin
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 9ac6051-dirty
+# record_size: 56
+# filter_pid: 146405
+# filter_cgroup: khong co
+# ringbuf_bytes: 67108864
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: dmesg | [    0.000000] vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 0
+# start_mono_ns: 7496644043018
+# start_wall: 2026-10-08T16:32:54.764139159+07:00
+# duration: khong gioi han
+
+tong so ban ghi trong file : 1000001
+so ban ghi sau khi loc     : 1000001
+bo loc                     : khong co
+ts_enter nho nhat / lon nhat: 7498681927271 / 7499098188889 (ns, CLOCK_MONOTONIC)
+ban ghi co co FIRST        : 1
+ban ghi co co GAP_BEFORE   : 0
+ban ghi co syscall_nr=110  : 1000000
+
+so ban ghi theo tgid (1 tien trinh)
+    tgid  ban_ghi   nr=110  FIRST  GAP_BEFORE      nguon_tgid
+  146405  1000001  1000000      1           0  ? (suy tu tid)
+    TONG  1000001  1000000      1           0                
+
+so ban ghi theo tid (1 thread, in 1 dong dau)
+     tid  tgid  ban_ghi   nr=110
+  146405     ?  1000001  1000000
+
+top 2 syscall_nr (tong cong 2 gia tri khac nhau)
+  syscall_nr  ban_ghi
+         110  1000000
+         231        1
+
+theo tung CPU (cpu lay tu bit8..15 cua flags; seq_cuoi va mat lay tu .stats)
+   cpu  ban_ghi  seq_min  seq_max  lo_hong  seq_thieu  seq_cuoi  mat
+    18  1000001        1  1000001        0          0   1000001    0
+  TONG  1000001                          0          0   1000001    0
+
+y nghia cac cot:
+  ban_ghi   so ban ghi cua CPU do co trong file (tinh tren toan bo file,
+            khong phu thuoc -tgid/-nr/-from-mono/-to-mono)
+  seq_min   seq nho nhat doc duoc; bang 1 neu khong mat ban ghi nao o dau
+  lo_hong   so doan seq lien tuc bi thieu (ke ca doan dau tu 1 den seq_min
+            va doan cuoi tu seq_max den seq_cuoi)
+  seq_thieu tong so seq bi thieu; so nay doi chieu truc tiep voi cot mat
+  seq_cuoi  so lan dinh ghi tren CPU do, doc tu kernel luc collector dung
+  mat       bo dem bpf_ringbuf_reserve that bai, doc tu kernel
+
+doi chieu seq (toan cuc)
+  so lan dinh ghi (tong seq_cuoi cua moi CPU): 1000001
+  so ban ghi collector doc duoc             : 1000001
+  so ban ghi dem duoc trong file            : 1000001
+  tong bo dem mat (ring buffer day)         : 0
+  tong so seq bi thieu theo CPU             : 0
+  dinh ghi - ban ghi trong file             : 0
+
+--- kiem tra kernel sau khi collector thoat ---
+$ bpftool prog list | grep -ci hids
+0
+$ bpftool link list | grep -ci hids
+0
+$ bpftool map list | grep -ciE 'hids_|ringbuf'
+0
+$ ls -A /sys/fs/bpf | wc -l
+0
+
+du lieu: out/g7a-20261008-163250.bin | thong ke: out/g7a-20261008-163250.bin.stats
+PASS: G7a mat=0 perf-diff=0
+=== g7b: 24 sysinj, moi cai N=1000000, ring buffer 64 MiB, stress-ng=1 ===
+sysinj pids: 147242 147243 147244 147245 147246 147247 147248 147249 147250 147251 147252 147253 147254 147255 147256 147257 147258 147259 147260 147261 147262 147263 147264 147265
+collector da gan tracepoint (READY)
+perf da gan cho 24 tien trinh
+
+--- perf stat cua tung sysinj (nguyen van) ---
+### pid 147242
+
+ Performance counter stats for process id '147242':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      13.017873480 seconds time elapsed
+
+### pid 147243
+
+ Performance counter stats for process id '147243':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      12.017853671 seconds time elapsed
+
+### pid 147244
+
+ Performance counter stats for process id '147244':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      15.017890135 seconds time elapsed
+
+### pid 147245
+
+ Performance counter stats for process id '147245':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      13.015850151 seconds time elapsed
+
+### pid 147246
+
+ Performance counter stats for process id '147246':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      14.016829988 seconds time elapsed
+
+### pid 147247
+
+ Performance counter stats for process id '147247':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      13.016808017 seconds time elapsed
+
+### pid 147248
+
+ Performance counter stats for process id '147248':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      14.019804261 seconds time elapsed
+
+### pid 147249
+
+ Performance counter stats for process id '147249':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      13.017660173 seconds time elapsed
+
+### pid 147250
+
+ Performance counter stats for process id '147250':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      14.016782984 seconds time elapsed
+
+### pid 147251
+
+ Performance counter stats for process id '147251':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      14.016791070 seconds time elapsed
+
+### pid 147252
+
+ Performance counter stats for process id '147252':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      14.016747652 seconds time elapsed
+
+### pid 147253
+
+ Performance counter stats for process id '147253':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      14.018726129 seconds time elapsed
+
+### pid 147254
+
+ Performance counter stats for process id '147254':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      14.018751960 seconds time elapsed
+
+### pid 147255
+
+ Performance counter stats for process id '147255':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      14.018608711 seconds time elapsed
+
+### pid 147256
+
+ Performance counter stats for process id '147256':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      14.017718504 seconds time elapsed
+
+### pid 147257
+
+ Performance counter stats for process id '147257':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      14.018721258 seconds time elapsed
+
+### pid 147258
+
+ Performance counter stats for process id '147258':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      14.018690677 seconds time elapsed
+
+### pid 147259
+
+ Performance counter stats for process id '147259':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      14.016655037 seconds time elapsed
+
+### pid 147260
+
+ Performance counter stats for process id '147260':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      14.016639724 seconds time elapsed
+
+### pid 147261
+
+ Performance counter stats for process id '147261':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      14.017642053 seconds time elapsed
+
+### pid 147262
+
+ Performance counter stats for process id '147262':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      14.016623644 seconds time elapsed
+
+### pid 147263
+
+ Performance counter stats for process id '147263':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      14.017593523 seconds time elapsed
+
+### pid 147264
+
+ Performance counter stats for process id '147264':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      14.018613330 seconds time elapsed
+
+### pid 147265
+
+ Performance counter stats for process id '147265':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      13.017614945 seconds time elapsed
+
+--- log collector (nguyen van) ---
+CANH BAO: binary build tu cay lam viec con thay doi chua commit (git_commit=9ac6051-dirty).
+CANH BAO: du lieu ghi ra khong tai lap duoc tu git. Commit truoc khi do that.
+stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+stealclock_evidence: journalctl
+doi chieu vmw_steal_time voi rq->prev_steal_time trong 3s...
+doi chieu xong: lech lon nhat 11603 ns tren 24 CPU, nguong max(2000000 ns, 1%)
+ghi vao out/g7b-20261008-163259.bin
+loc pid: 147242,147243,147244,147245,147246,147247,147248,147249,147250,147251,147252,147253,147254,147255,147256,147257,147258,147259,147260,147261,147262,147263,147264,147265 | loc cgroup: khong co | ring buffer: 64 MiB
+READY
+ban ghi doc duoc: 24000024 | so lan dinh ghi: 24000024 | mat: 0
+irq cong don (ns): hard 468059 | soft 44611428 | vector 4436516127 | tong 4481595614
+soft_raw cong don (ns): 44675323 (ke ca hard/vector long ben trong, de so voi softirqs-bpfcc)
+irq bat thuong: 0 khoang, 0 ns | loai con dang hoat dong: 0
+recursion_misses (bpf_prog_info), tong 0 tren 31 chuong trinh:
+  hids_irq_call_function_entry             0
+  hids_irq_call_function_exit              0
+  hids_irq_call_function_single_entry      0
+  hids_irq_call_function_single_exit       0
+  hids_irq_deferred_error_apic_entry       0
+  hids_irq_deferred_error_apic_exit        0
+  hids_irq_error_apic_entry                0
+  hids_irq_error_apic_exit                 0
+  hids_irq_irq_handler_entry               0
+  hids_irq_irq_handler_exit                0
+  hids_irq_irq_work_entry                  0
+  hids_irq_irq_work_exit                   0
+  hids_irq_local_timer_entry               0
+  hids_irq_local_timer_exit                0
+  hids_irq_reschedule_entry                0
+  hids_irq_reschedule_exit                 0
+  hids_irq_softirq_entry                   0
+  hids_irq_softirq_exit                    0
+  hids_irq_spurious_apic_entry             0
+  hids_irq_spurious_apic_exit              0
+  hids_irq_thermal_apic_entry              0
+  hids_irq_thermal_apic_exit               0
+  hids_irq_threshold_apic_entry            0
+  hids_irq_threshold_apic_exit             0
+  hids_irq_x86_platform_ipi_entry          0
+  hids_irq_x86_platform_ipi_exit           0
+  hids_sched_switch                        0
+  hids_sched_wakeup                        0
+  hids_sched_wakeup_new                    0
+  hids_sys_enter                           0
+  hids_sys_enter_fentry                    0
+thoi gian chay: 16.077 s | CPU collector: user 5.221 s, sys 0.921 s (getrusage RUSAGE_SELF)
+kich thuoc file: 1344002580 byte
+du lieu: out/g7b-20261008-163259.bin | thong ke: out/g7b-20261008-163259.bin.stats | theo doi: out/g7b-20261008-163259.bin.periodic
+
+--- bang theo tung PID ---
+       pid   N_thiet_ke perf_sys_enter        ban_ghi  ban_ghi_110   perf-ban_ghi   GAP_BEFORE
+    147242      1000000        1000001        1000001      1000000              0            0
+    147243      1000000        1000001        1000001      1000000              0            0
+    147244      1000000        1000001        1000001      1000000              0            0
+    147245      1000000        1000001        1000001      1000000              0            0
+    147246      1000000        1000001        1000001      1000000              0            0
+    147247      1000000        1000001        1000001      1000000              0            0
+    147248      1000000        1000001        1000001      1000000              0            0
+    147249      1000000        1000001        1000001      1000000              0            0
+    147250      1000000        1000001        1000001      1000000              0            0
+    147251      1000000        1000001        1000001      1000000              0            0
+    147252      1000000        1000001        1000001      1000000              0            0
+    147253      1000000        1000001        1000001      1000000              0            0
+    147254      1000000        1000001        1000001      1000000              0            0
+    147255      1000000        1000001        1000001      1000000              0            0
+    147256      1000000        1000001        1000001      1000000              0            0
+    147257      1000000        1000001        1000001      1000000              0            0
+    147258      1000000        1000001        1000001      1000000              0            0
+    147259      1000000        1000001        1000001      1000000              0            0
+    147260      1000000        1000001        1000001      1000000              0            0
+    147261      1000000        1000001        1000001      1000000              0            0
+    147262      1000000        1000001        1000001      1000000              0            0
+    147263      1000000        1000001        1000001      1000000              0            0
+    147264      1000000        1000001        1000001      1000000              0            0
+    147265      1000000        1000001        1000001      1000000              0            0
+      TONG     24000000       24000024       24000024     24000000              0            0
+
+--- doi chieu toan cuc ---
+tong lan dinh ghi (tong seq theo CPU):        24000024
+tong ban ghi doc duoc:                        24000024
+tong bo dem mat:                              0
+tong so seq bi thieu theo CPU:                0
+tong (perf - ban ghi):                        0
+
+--- thoi gian va dung luong ---
+thoi gian bom syscall: 10.980 s
+kich thuoc out/g7b-20261008-163259.bin: 1344002580 byte
+kich thuoc out/g7b-20261008-163259.bin.stats: 1704 byte
+
+--- rec-stat day du (nguyen van) ---
+file: out/g7b-20261008-163259.bin
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 9ac6051-dirty
+# record_size: 56
+# filter_pid: 147242,147243,147244,147245,147246,147247,147248,147249,147250,147251,147252,147253,147254,147255,147256,147257,147258,147259,147260,147261,147262,147263,147264,147265
+# filter_cgroup: khong co
+# ringbuf_bytes: 67108864
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: dmesg | [    0.000000] vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 0
+# start_mono_ns: 7505145315852
+# start_wall: 2026-10-08T16:33:03.265411704+07:00
+# duration: khong gioi han
+
+tong so ban ghi trong file : 24000024
+so ban ghi sau khi loc     : 24000024
+bo loc                     : khong co
+ts_enter nho nhat / lon nhat: 7508224033442 / 7519201234904 (ns, CLOCK_MONOTONIC)
+ban ghi co co FIRST        : 24
+ban ghi co co GAP_BEFORE   : 0
+ban ghi co syscall_nr=110  : 24000000
+
+so ban ghi theo tgid (24 tien trinh)
+    tgid   ban_ghi    nr=110  FIRST  GAP_BEFORE      nguon_tgid
+  147242   1000001   1000000      1           0  ? (suy tu tid)
+  147243   1000001   1000000      1           0  ? (suy tu tid)
+  147244   1000001   1000000      1           0  ? (suy tu tid)
+  147245   1000001   1000000      1           0  ? (suy tu tid)
+  147246   1000001   1000000      1           0  ? (suy tu tid)
+  147247   1000001   1000000      1           0  ? (suy tu tid)
+  147248   1000001   1000000      1           0  ? (suy tu tid)
+  147249   1000001   1000000      1           0  ? (suy tu tid)
+  147250   1000001   1000000      1           0  ? (suy tu tid)
+  147251   1000001   1000000      1           0  ? (suy tu tid)
+  147252   1000001   1000000      1           0  ? (suy tu tid)
+  147253   1000001   1000000      1           0  ? (suy tu tid)
+  147254   1000001   1000000      1           0  ? (suy tu tid)
+  147255   1000001   1000000      1           0  ? (suy tu tid)
+  147256   1000001   1000000      1           0  ? (suy tu tid)
+  147257   1000001   1000000      1           0  ? (suy tu tid)
+  147258   1000001   1000000      1           0  ? (suy tu tid)
+  147259   1000001   1000000      1           0  ? (suy tu tid)
+  147260   1000001   1000000      1           0  ? (suy tu tid)
+  147261   1000001   1000000      1           0  ? (suy tu tid)
+  147262   1000001   1000000      1           0  ? (suy tu tid)
+  147263   1000001   1000000      1           0  ? (suy tu tid)
+  147264   1000001   1000000      1           0  ? (suy tu tid)
+  147265   1000001   1000000      1           0  ? (suy tu tid)
+    TONG  24000024  24000000     24           0                
+
+so ban ghi theo tid (24 thread, in 24 dong dau)
+     tid  tgid  ban_ghi   nr=110
+  147242     ?  1000001  1000000
+  147243     ?  1000001  1000000
+  147244     ?  1000001  1000000
+  147245     ?  1000001  1000000
+  147246     ?  1000001  1000000
+  147247     ?  1000001  1000000
+  147248     ?  1000001  1000000
+  147249     ?  1000001  1000000
+  147250     ?  1000001  1000000
+  147251     ?  1000001  1000000
+  147252     ?  1000001  1000000
+  147253     ?  1000001  1000000
+  147254     ?  1000001  1000000
+  147255     ?  1000001  1000000
+  147256     ?  1000001  1000000
+  147257     ?  1000001  1000000
+  147258     ?  1000001  1000000
+  147259     ?  1000001  1000000
+  147260     ?  1000001  1000000
+  147261     ?  1000001  1000000
+  147262     ?  1000001  1000000
+  147263     ?  1000001  1000000
+  147264     ?  1000001  1000000
+  147265     ?  1000001  1000000
+
+top 2 syscall_nr (tong cong 2 gia tri khac nhau)
+  syscall_nr   ban_ghi
+         110  24000000
+         231        24
+
+theo tung CPU (cpu lay tu bit8..15 cua flags; seq_cuoi va mat lay tu .stats)
+   cpu   ban_ghi  seq_min  seq_max  lo_hong  seq_thieu  seq_cuoi  mat
+     0   1655307        1  1655307        0          0   1655307    0
+     1   1533237        1  1533237        0          0   1533237    0
+     2   1150557        1  1150557        0          0   1150557    0
+     3   1113464        1  1113464        0          0   1113464    0
+     5   1706309        1  1706309        0          0   1706309    0
+     6    286042        1   286042        0          0    286042    0
+     7    569457        1   569457        0          0    569457    0
+     8   1509737        1  1509737        0          0   1509737    0
+     9   1373657        1  1373657        0          0   1373657    0
+    10   1049297        1  1049297        0          0   1049297    0
+    11    849228        1   849228        0          0    849228    0
+    12   1256091        1  1256091        0          0   1256091    0
+    13    964826        1   964826        0          0    964826    0
+    14   1112823        1  1112823        0          0   1112823    0
+    15    143680        1   143680        0          0    143680    0
+    16    921524        1   921524        0          0    921524    0
+    17    664754        1   664754        0          0    664754    0
+    18    926692        1   926692        0          0    926692    0
+    19   1774129        1  1774129        0          0   1774129    0
+    20      5182        1     5182        0          0      5182    0
+    21   1387351        1  1387351        0          0   1387351    0
+    22    834637        1   834637        0          0    834637    0
+    23   1212043        1  1212043        0          0   1212043    0
+  TONG  24000024                          0          0  24000024    0
+
+y nghia cac cot:
+  ban_ghi   so ban ghi cua CPU do co trong file (tinh tren toan bo file,
+            khong phu thuoc -tgid/-nr/-from-mono/-to-mono)
+  seq_min   seq nho nhat doc duoc; bang 1 neu khong mat ban ghi nao o dau
+  lo_hong   so doan seq lien tuc bi thieu (ke ca doan dau tu 1 den seq_min
+            va doan cuoi tu seq_max den seq_cuoi)
+  seq_thieu tong so seq bi thieu; so nay doi chieu truc tiep voi cot mat
+  seq_cuoi  so lan dinh ghi tren CPU do, doc tu kernel luc collector dung
+  mat       bo dem bpf_ringbuf_reserve that bai, doc tu kernel
+
+doi chieu seq (toan cuc)
+  so lan dinh ghi (tong seq_cuoi cua moi CPU): 24000024
+  so ban ghi collector doc duoc             : 24000024
+  so ban ghi dem duoc trong file            : 24000024
+  tong bo dem mat (ring buffer day)         : 0
+  tong so seq bi thieu theo CPU             : 0
+  dinh ghi - ban ghi trong file             : 0
+
+--- kiem tra kernel sau khi collector thoat ---
+$ bpftool prog list | grep -ci hids
+0
+$ bpftool link list | grep -ci hids
+0
+$ bpftool map list | grep -ciE 'hids_|ringbuf'
+0
+$ ls -A /sys/fs/bpf | wc -l
+0
+
+da xoa out/g7b-20261008-163259.bin (giu out/g7b-20261008-163259.bin.stats out/g7b-20261008-163259.bin.periodic); dat KEEP_RAW=1 de giu file .bin
+du lieu: out/g7b-20261008-163259.bin | thong ke: out/g7b-20261008-163259.bin.stats
+--- df -h (ket thuc job) ---
+Filesystem                         Size  Used Avail Use% Mounted on
+/dev/mapper/ubuntu--vg-ubuntu--lv  686G  130G  528G  20% /
+PASS: G7b mat=0 perf-diff=0
+=== g7b-nho: 24 sysinj, moi cai N=1000000, ring buffer 1 MiB, stress-ng=1 ===
+sysinj pids: 148569 148570 148571 148572 148573 148574 148575 148576 148577 148578 148579 148580 148581 148582 148583 148584 148585 148586 148587 148588 148589 148590 148591 148592
+collector da gan tracepoint (READY)
+perf da gan cho 24 tien trinh
+
+--- perf stat cua tung sysinj (nguyen van) ---
+### pid 148569
+
+ Performance counter stats for process id '148569':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      13.017912755 seconds time elapsed
+
+### pid 148570
+
+ Performance counter stats for process id '148570':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      13.017952063 seconds time elapsed
+
+### pid 148571
+
+ Performance counter stats for process id '148571':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      14.017980112 seconds time elapsed
+
+### pid 148572
+
+ Performance counter stats for process id '148572':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      12.016904822 seconds time elapsed
+
+### pid 148573
+
+ Performance counter stats for process id '148573':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      13.018934604 seconds time elapsed
+
+### pid 148574
+
+ Performance counter stats for process id '148574':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      12.014889721 seconds time elapsed
+
+### pid 148575
+
+ Performance counter stats for process id '148575':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      13.017898814 seconds time elapsed
+
+### pid 148576
+
+ Performance counter stats for process id '148576':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      14.017845340 seconds time elapsed
+
+### pid 148577
+
+ Performance counter stats for process id '148577':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      13.017853916 seconds time elapsed
+
+### pid 148578
+
+ Performance counter stats for process id '148578':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      13.016830829 seconds time elapsed
+
+### pid 148579
+
+ Performance counter stats for process id '148579':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      13.018844500 seconds time elapsed
+
+### pid 148580
+
+ Performance counter stats for process id '148580':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      14.016831086 seconds time elapsed
+
+### pid 148581
+
+ Performance counter stats for process id '148581':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      12.016818109 seconds time elapsed
+
+### pid 148582
+
+ Performance counter stats for process id '148582':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      14.016717186 seconds time elapsed
+
+### pid 148583
+
+ Performance counter stats for process id '148583':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      14.020704843 seconds time elapsed
+
+### pid 148584
+
+ Performance counter stats for process id '148584':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      13.015764929 seconds time elapsed
+
+### pid 148585
+
+ Performance counter stats for process id '148585':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      13.015779091 seconds time elapsed
+
+### pid 148586
+
+ Performance counter stats for process id '148586':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      12.014727831 seconds time elapsed
+
+### pid 148587
+
+ Performance counter stats for process id '148587':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      13.018749310 seconds time elapsed
+
+### pid 148588
+
+ Performance counter stats for process id '148588':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      14.017695052 seconds time elapsed
+
+### pid 148589
+
+ Performance counter stats for process id '148589':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      14.018769342 seconds time elapsed
+
+### pid 148590
+
+ Performance counter stats for process id '148590':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      12.016691806 seconds time elapsed
+
+### pid 148591
+
+ Performance counter stats for process id '148591':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      11.015654172 seconds time elapsed
+
+### pid 148592
+
+ Performance counter stats for process id '148592':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      14.020673165 seconds time elapsed
+
+--- log collector (nguyen van) ---
+CANH BAO: binary build tu cay lam viec con thay doi chua commit (git_commit=9ac6051-dirty).
+CANH BAO: du lieu ghi ra khong tai lap duoc tu git. Commit truoc khi do that.
+stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+stealclock_evidence: journalctl
+doi chieu vmw_steal_time voi rq->prev_steal_time trong 3s...
+doi chieu xong: lech lon nhat 21697 ns tren 24 CPU, nguong max(2000000 ns, 1%)
+ghi vao out/g7b-nho-20261008-163323.bin
+loc pid: 148569,148570,148571,148572,148573,148574,148575,148576,148577,148578,148579,148580,148581,148582,148583,148584,148585,148586,148587,148588,148589,148590,148591,148592 | loc cgroup: khong co | ring buffer: 1 MiB
+READY
+LOSS mono_ns=7539453768528 mat=1650295 dinh_ghi=15946771 ti_le=10.349% mat_tong=1650295 dinh_ghi_tong=15946771 (ring buffer day, van thu thap tiep)
+LOSS mono_ns=7544907311888 mat=594454 dinh_ghi=8053253 ti_le=7.382% mat_tong=2244749 dinh_ghi_tong=24000024 (ring buffer day, van thu thap tiep)
+ban ghi doc duoc: 21755275 | so lan dinh ghi: 24000024 | mat: 2244749
+irq cong don (ns): hard 342761 | soft 40852843 | vector 4827236316 | tong 4868431920
+soft_raw cong don (ns): 40901986 (ke ca hard/vector long ben trong, de so voi softirqs-bpfcc)
+irq bat thuong: 0 khoang, 0 ns | loai con dang hoat dong: 0
+recursion_misses (bpf_prog_info), tong 0 tren 31 chuong trinh:
+  hids_irq_call_function_entry             0
+  hids_irq_call_function_exit              0
+  hids_irq_call_function_single_entry      0
+  hids_irq_call_function_single_exit       0
+  hids_irq_deferred_error_apic_entry       0
+  hids_irq_deferred_error_apic_exit        0
+  hids_irq_error_apic_entry                0
+  hids_irq_error_apic_exit                 0
+  hids_irq_irq_handler_entry               0
+  hids_irq_irq_handler_exit                0
+  hids_irq_irq_work_entry                  0
+  hids_irq_irq_work_exit                   0
+  hids_irq_local_timer_entry               0
+  hids_irq_local_timer_exit                0
+  hids_irq_reschedule_entry                0
+  hids_irq_reschedule_exit                 0
+  hids_irq_softirq_entry                   0
+  hids_irq_softirq_exit                    0
+  hids_irq_spurious_apic_entry             0
+  hids_irq_spurious_apic_exit              0
+  hids_irq_thermal_apic_entry              0
+  hids_irq_thermal_apic_exit               0
+  hids_irq_threshold_apic_entry            0
+  hids_irq_threshold_apic_exit             0
+  hids_irq_x86_platform_ipi_entry          0
+  hids_irq_x86_platform_ipi_exit           0
+  hids_sched_switch                        0
+  hids_sched_wakeup                        0
+  hids_sched_wakeup_new                    0
+  hids_sys_enter                           0
+  hids_sys_enter_fentry                    0
+thoi gian chay: 15.460 s | CPU collector: user 4.790 s, sys 0.869 s (getrusage RUSAGE_SELF)
+kich thuoc file: 1218296634 byte
+du lieu: out/g7b-nho-20261008-163323.bin | thong ke: out/g7b-nho-20261008-163323.bin.stats | theo doi: out/g7b-nho-20261008-163323.bin.periodic
+
+--- bang theo tung PID ---
+       pid   N_thiet_ke perf_sys_enter        ban_ghi  ban_ghi_110   perf-ban_ghi   GAP_BEFORE
+    148569      1000000        1000001         907638       907637          92363          256
+    148570      1000000        1000001         910860       910859          89141          225
+    148571      1000000        1000001         882140       882139         117861          306
+    148572      1000000        1000001         902246       902245          97755          235
+    148573      1000000        1000001         896804       896803         103197          277
+    148574      1000000        1000001         920955       920954          79046          223
+    148575      1000000        1000001         911155       911154          88846          252
+    148576      1000000        1000001         898807       898806         101194          290
+    148577      1000000        1000001         900802       900801          99199          280
+    148578      1000000        1000001         908291       908290          91710          269
+    148579      1000000        1000001         904591       904590          95410          246
+    148580      1000000        1000001         878005       878004         121996          278
+    148581      1000000        1000001         924140       924139          75861          207
+    148582      1000000        1000001         905104       905103          94897          255
+    148583      1000000        1000001         915898       915897          84103          267
+    148584      1000000        1000001         889744       889743         110257          263
+    148585      1000000        1000001         915284       915283          84717          239
+    148586      1000000        1000001         931135       931134          68866          239
+    148587      1000000        1000001         917406       917405          82595          245
+    148588      1000000        1000001         909049       909048          90952          245
+    148589      1000000        1000001         895661       895660         104340          279
+    148590      1000000        1000001         931003       931002          68998          212
+    148591      1000000        1000001         898158       898157         101843          228
+    148592      1000000        1000001         900399       900398          99602          327
+      TONG     24000000       24000024       21755275     21755251        2244749         6143
+
+--- doi chieu toan cuc ---
+tong lan dinh ghi (tong seq theo CPU):        24000024
+tong ban ghi doc duoc:                        21755275
+tong bo dem mat:                              2244749
+tong so seq bi thieu theo CPU:                2244749
+tong (perf - ban ghi):                        2244749
+
+--- thoi gian va dung luong ---
+thoi gian bom syscall: 10.349 s
+kich thuoc out/g7b-nho-20261008-163323.bin: 1218296634 byte
+kich thuoc out/g7b-nho-20261008-163323.bin.stats: 1819 byte
+
+--- rec-stat day du (nguyen van) ---
+file: out/g7b-nho-20261008-163323.bin
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 9ac6051-dirty
+# record_size: 56
+# filter_pid: 148569,148570,148571,148572,148573,148574,148575,148576,148577,148578,148579,148580,148581,148582,148583,148584,148585,148586,148587,148588,148589,148590,148591,148592
+# filter_cgroup: khong co
+# ringbuf_bytes: 1048576
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: dmesg | [    0.000000] vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 0
+# start_mono_ns: 7529447738246
+# start_wall: 2026-10-08T16:33:27.56783418+07:00
+# duration: khong gioi han
+
+tong so ban ghi trong file : 21755275
+so ban ghi sau khi loc     : 21755275
+bo loc                     : khong co
+ts_enter nho nhat / lon nhat: 7532539031455 / 7542880201855 (ns, CLOCK_MONOTONIC)
+ban ghi co co FIRST        : 19
+ban ghi co co GAP_BEFORE   : 6143
+ban ghi co syscall_nr=110  : 21755251
+
+so ban ghi theo tgid (24 tien trinh)
+    tgid   ban_ghi    nr=110  FIRST  GAP_BEFORE      nguon_tgid
+  148586    931135    931134      0         239  ? (suy tu tid)
+  148590    931003    931002      0         212  ? (suy tu tid)
+  148581    924140    924139      1         207  ? (suy tu tid)
+  148574    920955    920954      1         223  ? (suy tu tid)
+  148587    917406    917405      0         245  ? (suy tu tid)
+  148583    915898    915897      1         267  ? (suy tu tid)
+  148585    915284    915283      1         239  ? (suy tu tid)
+  148575    911155    911154      1         252  ? (suy tu tid)
+  148570    910860    910859      1         225  ? (suy tu tid)
+  148588    909049    909048      1         245  ? (suy tu tid)
+  148578    908291    908290      1         269  ? (suy tu tid)
+  148569    907638    907637      1         256  ? (suy tu tid)
+  148582    905104    905103      1         255  ? (suy tu tid)
+  148579    904591    904590      1         246  ? (suy tu tid)
+  148572    902246    902245      1         235  ? (suy tu tid)
+  148577    900802    900801      1         280  ? (suy tu tid)
+  148592    900399    900398      0         327  ? (suy tu tid)
+  148576    898807    898806      1         290  ? (suy tu tid)
+  148591    898158    898157      0         228  ? (suy tu tid)
+  148573    896804    896803      1         277  ? (suy tu tid)
+  148589    895661    895660      1         279  ? (suy tu tid)
+  148584    889744    889743      1         263  ? (suy tu tid)
+  148571    882140    882139      1         306  ? (suy tu tid)
+  148580    878005    878004      1         278  ? (suy tu tid)
+    TONG  21755275  21755251     19        6143                
+
+so ban ghi theo tid (24 thread, in 24 dong dau)
+     tid  tgid  ban_ghi  nr=110
+  148586     ?   931135  931134
+  148590     ?   931003  931002
+  148581     ?   924140  924139
+  148574     ?   920955  920954
+  148587     ?   917406  917405
+  148583     ?   915898  915897
+  148585     ?   915284  915283
+  148575     ?   911155  911154
+  148570     ?   910860  910859
+  148588     ?   909049  909048
+  148578     ?   908291  908290
+  148569     ?   907638  907637
+  148582     ?   905104  905103
+  148579     ?   904591  904590
+  148572     ?   902246  902245
+  148577     ?   900802  900801
+  148592     ?   900399  900398
+  148576     ?   898807  898806
+  148591     ?   898158  898157
+  148573     ?   896804  896803
+  148589     ?   895661  895660
+  148584     ?   889744  889743
+  148571     ?   882140  882139
+  148580     ?   878005  878004
+
+top 2 syscall_nr (tong cong 2 gia tri khac nhau)
+  syscall_nr   ban_ghi
+         110  21755251
+         231        24
+
+theo tung CPU (cpu lay tu bit8..15 cua flags; seq_cuoi va mat lay tu .stats)
+   cpu   ban_ghi  seq_min  seq_max  lo_hong  seq_thieu  seq_cuoi      mat
+     0    330714        1   356946       92      26232    356946    26232
+     1    935358        1   998971      215      63613    998971    63613
+     2    758701        1   798779      203      40078    798779    40078
+     3   1039973        1  1173208      251     133235   1173208   133235
+     4     83857        1    86205       15       2758     86615     2758
+     5   1117091        1  1260780      304     143689   1260780   143689
+     6   1434348        1  1573602      291     139254   1573602   139254
+     7    563076        1   643389      192      80313    643389    80313
+     8   1499370        1  1631118      338     131748   1631118   131748
+     9    512960        1   550160      124      37200    550160    37200
+    10    269744        1   327319      122      57575    327319    57575
+    11   1067671        1  1180587      281     112916   1180587   112916
+    12   1618968        1  1788022      405     169054   1788022   169054
+    13   1747276        1  1933125      388     185849   1933125   185849
+    14    444063        1   518931      148      74868    518931    74868
+    15    522305        1   585883      186      63578    585883    63578
+    16    900399      442  1000001      327      99602   1000001    99602
+    17   1127673      631  1247970      252     120297   1247970   120297
+    18   1509176        1  1642977      289     133801   1642977   133801
+    19   1298394        1  1423645      306     125251   1423645   125251
+    20    584372      378   638314      130      53942    638314    53942
+    21    349021        1   370691      105      21670    370691    21670
+    22   1149721        1  1262534      305     112813   1262534   112813
+    23    891044        1  1006457      257     115413   1006457   115413
+  TONG  21755275                       5526    2244749  24000024  2244749
+
+y nghia cac cot:
+  ban_ghi   so ban ghi cua CPU do co trong file (tinh tren toan bo file,
+            khong phu thuoc -tgid/-nr/-from-mono/-to-mono)
+  seq_min   seq nho nhat doc duoc; bang 1 neu khong mat ban ghi nao o dau
+  lo_hong   so doan seq lien tuc bi thieu (ke ca doan dau tu 1 den seq_min
+            va doan cuoi tu seq_max den seq_cuoi)
+  seq_thieu tong so seq bi thieu; so nay doi chieu truc tiep voi cot mat
+  seq_cuoi  so lan dinh ghi tren CPU do, doc tu kernel luc collector dung
+  mat       bo dem bpf_ringbuf_reserve that bai, doc tu kernel
+
+doi chieu seq (toan cuc)
+  so lan dinh ghi (tong seq_cuoi cua moi CPU): 24000024
+  so ban ghi collector doc duoc             : 21755275
+  so ban ghi dem duoc trong file            : 21755275
+  tong bo dem mat (ring buffer day)         : 2244749
+  tong so seq bi thieu theo CPU             : 2244749
+  dinh ghi - ban ghi trong file             : 2244749
+
+--- kiem tra kernel sau khi collector thoat ---
+$ bpftool prog list | grep -ci hids
+0
+$ bpftool link list | grep -ci hids
+0
+$ bpftool map list | grep -ciE 'hids_|ringbuf'
+0
+$ ls -A /sys/fs/bpf | wc -l
+0
+
+da xoa out/g7b-nho-20261008-163323.bin (giu out/g7b-nho-20261008-163323.bin.stats out/g7b-nho-20261008-163323.bin.periodic); dat KEEP_RAW=1 de giu file .bin
+du lieu: out/g7b-nho-20261008-163323.bin | thong ke: out/g7b-nho-20261008-163323.bin.stats
+--- df -h (ket thuc job) ---
+Filesystem                         Size  Used Avail Use% Mounted on
+/dev/mapper/ubuntu--vg-ubuntu--lv  686G  130G  528G  20% /
+PASS: G7b-nho perf-diff=2244749 = mat = seq_thieu
+=== S1: wl cpu 10000 300 (CPU 20) ===
+wl pid=149872 tid=149872
+--- moc A schedstat (sum_exec_runtime run_delay pcount) ---
+254253500 4161 6
+--- moc A /proc/149872/sched ---
+sum_sleep_runtime                            :          3582.296683
+sum_block_runtime                            :             0.848716
+wait_sum                                     :             0.004161
+iowait_sum                                   :             0.848716
+--- moc B schedstat ---
+3288681494 40927 12
+--- moc B /proc/149872/sched ---
+sum_sleep_runtime                            :          3608.101221
+sum_block_runtime                            :             0.848716
+wait_sum                                     :             0.040927
+iowait_sum                                   :             0.848716
+cua so ts_enter: (7552810011351, 7555870281982]
+--- rec-check ---
+so ban ghi trong cua so: 301
+tid: 149872
+cua so ts_enter: (7552810011351, 7555870281982]
+co              so_ban_ghi
+FIRST           0
+GAP_BEFORE      0
+D_SLEEP         0
+MIGRATED        0
+OVERFLOW        0
+STEAL_FALLBACK  0
+CLAMPED         0
+--- tong thanh phan (ns) ---
+cpu 3022341722
+steal 69823
+irq 12023599
+rq 30105
+vol 25805000
+steal_off 10477
+cpu+steal+irq 3034435144
+--- G5 phan du |tat ca (tru FIRST)| (ns) ---
+so khoang: 300
+p50 0
+p99 0
+p99.9 0
+max 0
+so khoang |phan du| > 1000 ns: 0
+so khoang |phan du| > 10000 ns: 0
+--- G5 phan du |khong GAP_BEFORE| (ns) ---
+so khoang: 300
+p50 0
+p99 0
+p99.9 0
+max 0
+so khoang |phan du| > 1000 ns: 0
+so khoang |phan du| > 10000 ns: 0
+--- G5 phan du |co GAP_BEFORE| (ns) ---
+so khoang: 0
+--- bang doi chieu ---
+thanh_phan           collector       tham_chieu      nguon
+cpu+steal+irq        3034435144      3034427994      Delta schedstat field1 sum_exec_runtime
+rq                   30105           36766           Delta schedstat field2 run_delay
+rq (wait_sum)        30105           36766           Delta wait_sum /proc/sched
+vol                  25805000        25804500        Delta sum_sleep_runtime
+vol (D_SLEEP)        0               0               Delta sum_block_runtime
+--- log collector (cuoi) ---
+  hids_irq_deferred_error_apic_entry       0
+  hids_irq_deferred_error_apic_exit        0
+  hids_irq_error_apic_entry                0
+  hids_irq_error_apic_exit                 0
+  hids_irq_irq_handler_entry               0
+  hids_irq_irq_handler_exit                0
+  hids_irq_irq_work_entry                  0
+  hids_irq_irq_work_exit                   0
+  hids_irq_local_timer_entry               0
+  hids_irq_local_timer_exit                0
+  hids_irq_reschedule_entry                0
+  hids_irq_reschedule_exit                 0
+  hids_irq_softirq_entry                   0
+  hids_irq_softirq_exit                    0
+  hids_irq_spurious_apic_entry             0
+  hids_irq_spurious_apic_exit              0
+  hids_irq_thermal_apic_entry              0
+  hids_irq_thermal_apic_exit               0
+  hids_irq_threshold_apic_entry            0
+  hids_irq_threshold_apic_exit             0
+  hids_irq_x86_platform_ipi_entry          0
+  hids_irq_x86_platform_ipi_exit           0
+  hids_sched_switch                        0
+  hids_sched_wakeup                        0
+  hids_sched_wakeup_new                    0
+  hids_sys_enter                           0
+  hids_sys_enter_fentry                    0
+thoi gian chay: 3.111 s | CPU collector: user 0.147 s, sys 0.187 s (getrusage RUSAGE_SELF)
+kich thuoc file: 18043 byte
+du lieu: out/g3-S1-163347.bin | thong ke: out/g3-S1-163347.bin.stats | theo doi: out/g3-S1-163347.bin.periodic
+luu: validation/m5d-20261008/verify-close-1120f34-v2/g3/S1-ketqua.txt
+=== S2: wl sleep 5000 500 (CPU 20) ===
+wl pid=151483 tid=151483
+--- moc A schedstat (sum_exec_runtime run_delay pcount) ---
+252010850 37235 7
+--- moc A /proc/151483/sched ---
+sum_sleep_runtime                            :          3579.982137
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.037235
+iowait_sum                                   :             0.000000
+bpftrace pid=152134, runqlat pid=152156
+--- moc B schedstat ---
+256460627 581541 508
+--- moc B /proc/151483/sched ---
+sum_sleep_runtime                            :          6453.274242
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.581541
+iowait_sum                                   :             0.000000
+--- bpftrace (nguyen van, xem file S2.bpftrace.log) ---
+Attaching 2 probes...
+
+
+@rq_sau_wakeup_ns: 2972881
+@so_lan: 501
+@w: 0
+--- runqlat-bpfcc (histogram, xem file S2.runqlat.log) ---
+cua so ts_enter: (7559906871297, 7562785158940]
+--- rec-check ---
+so ban ghi trong cua so: 1001
+tid: 151483
+cua so ts_enter: (7559906871297, 7562785158940]
+co              so_ban_ghi
+FIRST           0
+GAP_BEFORE      0
+D_SLEEP         0
+MIGRATED        0
+OVERFLOW        0
+STEAL_FALLBACK  0
+CLAMPED         0
+--- tong thanh phan (ns) ---
+cpu 1893825
+steal 0
+irq 3887
+rq 3018948
+vol 2873357000
+steal_off 1865831
+cpu+steal+irq 1897712
+--- G5 phan du |tat ca (tru FIRST)| (ns) ---
+so khoang: 1000
+p50 0
+p99 484
+p99.9 500
+max 500
+so khoang |phan du| > 1000 ns: 0
+so khoang |phan du| > 10000 ns: 0
+--- G5 phan du |khong GAP_BEFORE| (ns) ---
+so khoang: 1000
+p50 0
+p99 484
+p99.9 500
+max 500
+so khoang |phan du| > 1000 ns: 0
+so khoang |phan du| > 10000 ns: 0
+--- G5 phan du |co GAP_BEFORE| (ns) ---
+so khoang: 0
+--- bang doi chieu ---
+thanh_phan           collector       tham_chieu      nguon
+cpu+steal+irq        1897712         4449777         Delta schedstat field1 sum_exec_runtime
+rq                   3018948         544306          Delta schedstat field2 run_delay
+rq (wait_sum)        3018948         544306          Delta wait_sum /proc/sched
+vol                  2873357000      2873290000      Delta sum_sleep_runtime
+vol (D_SLEEP)        0               0               Delta sum_block_runtime
+rq                   3018948         2972881         bpftrace @rq_sau_wakeup_ns (cot 3: 544306 run_delay)
+so_lan_wakeup        —             501             bpftrace @so_lan (cot 3: 501 Delta pcount)
+tong cpu+steal+irq+rq+vol | exec+run_delay+sleep 2878273660      2878284083      collector | kernel
+--- log collector (cuoi) ---
+  hids_irq_deferred_error_apic_entry       0
+  hids_irq_deferred_error_apic_exit        0
+  hids_irq_error_apic_entry                0
+  hids_irq_error_apic_exit                 0
+  hids_irq_irq_handler_entry               0
+  hids_irq_irq_handler_exit                0
+  hids_irq_irq_work_entry                  0
+  hids_irq_irq_work_exit                   0
+  hids_irq_local_timer_entry               0
+  hids_irq_local_timer_exit                0
+  hids_irq_reschedule_entry                0
+  hids_irq_reschedule_exit                 0
+  hids_irq_softirq_entry                   0
+  hids_irq_softirq_exit                    0
+  hids_irq_spurious_apic_entry             0
+  hids_irq_spurious_apic_exit              0
+  hids_irq_thermal_apic_entry              0
+  hids_irq_thermal_apic_exit               0
+  hids_irq_threshold_apic_entry            0
+  hids_irq_threshold_apic_exit             0
+  hids_irq_x86_platform_ipi_entry          0
+  hids_irq_x86_platform_ipi_exit           0
+  hids_sched_switch                        0
+  hids_sched_wakeup                        0
+  hids_sched_wakeup_new                    0
+  hids_sys_enter                           0
+  hids_sys_enter_fentry                    0
+thoi gian chay: 3.119 s | CPU collector: user 0.154 s, sys 0.173 s (getrusage RUSAGE_SELF)
+kich thuoc file: 57243 byte
+du lieu: out/g3-S2-163354.bin | thong ke: out/g3-S2-163354.bin.stats | theo doi: out/g3-S2-163354.bin.periodic
+luu: validation/m5d-20261008/verify-close-1120f34-v2/g3/S2-ketqua.txt
+=== S3: wl mixed 2000 3000 500 (CPU 20) ===
+wl pid=152979 tid=152979
+--- moc A schedstat (sum_exec_runtime run_delay pcount) ---
+252017596 4294 3
+--- moc A /proc/152979/sched ---
+sum_sleep_runtime                            :          3579.538936
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.004294
+iowait_sum                                   :             0.000000
+bpftrace pid=153663, runqlat pid=153681
+--- moc B schedstat ---
+1257490409 173653 505
+--- moc B /proc/152979/sched ---
+sum_sleep_runtime                            :          5347.617236
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.173653
+iowait_sum                                   :             0.000000
+--- bpftrace (nguyen van, xem file S3.bpftrace.log) ---
+Attaching 2 probes...
+
+
+@rq_sau_wakeup_ns: 3198150
+@so_lan: 501
+@w: 0
+--- runqlat-bpfcc (histogram, xem file S3.runqlat.log) ---
+cua so ts_enter: (7567015833233, 7569789554713]
+--- rec-check ---
+so ban ghi trong cua so: 1001
+tid: 152979
+cua so ts_enter: (7567015833233, 7569789554713]
+co              so_ban_ghi
+FIRST           0
+GAP_BEFORE      0
+D_SLEEP         0
+MIGRATED        0
+OVERFLOW        0
+STEAL_FALLBACK  0
+CLAMPED         0
+--- tong thanh phan (ns) ---
+cpu 998635736
+steal 63802
+irq 3673521
+rq 3223908
+vol 1768126000
+steal_off 986680
+cpu+steal+irq 1002373059
+--- G5 phan du |tat ca (tru FIRST)| (ns) ---
+so khoang: 1000
+p50 0
+p99 489
+p99.9 499
+max 499
+so khoang |phan du| > 1000 ns: 0
+so khoang |phan du| > 10000 ns: 0
+--- G5 phan du |khong GAP_BEFORE| (ns) ---
+so khoang: 1000
+p50 0
+p99 489
+p99.9 499
+max 499
+so khoang |phan du| > 1000 ns: 0
+so khoang |phan du| > 10000 ns: 0
+--- G5 phan du |co GAP_BEFORE| (ns) ---
+so khoang: 0
+--- bang doi chieu ---
+thanh_phan           collector       tham_chieu      nguon
+cpu+steal+irq        1002373059      1005472813      Delta schedstat field1 sum_exec_runtime
+rq                   3223908         169359          Delta schedstat field2 run_delay
+rq (wait_sum)        3223908         169359          Delta wait_sum /proc/sched
+vol                  1768126000      1768080000      Delta sum_sleep_runtime
+vol (D_SLEEP)        0               0               Delta sum_block_runtime
+rq                   3223908         3198150         bpftrace @rq_sau_wakeup_ns (cot 3: 169359 run_delay)
+so_lan_wakeup        —             501             bpftrace @so_lan (cot 3: 502 Delta pcount)
+tong cpu+steal+irq+rq+vol | exec+run_delay+sleep 2773722967      2773722172      collector | kernel
+--- log collector (cuoi) ---
+  hids_irq_deferred_error_apic_entry       0
+  hids_irq_deferred_error_apic_exit        0
+  hids_irq_error_apic_entry                0
+  hids_irq_error_apic_exit                 0
+  hids_irq_irq_handler_entry               0
+  hids_irq_irq_handler_exit                0
+  hids_irq_irq_work_entry                  0
+  hids_irq_irq_work_exit                   0
+  hids_irq_local_timer_entry               0
+  hids_irq_local_timer_exit                0
+  hids_irq_reschedule_entry                0
+  hids_irq_reschedule_exit                 0
+  hids_irq_softirq_entry                   0
+  hids_irq_softirq_exit                    0
+  hids_irq_spurious_apic_entry             0
+  hids_irq_spurious_apic_exit              0
+  hids_irq_thermal_apic_entry              0
+  hids_irq_thermal_apic_exit               0
+  hids_irq_threshold_apic_entry            0
+  hids_irq_threshold_apic_exit             0
+  hids_irq_x86_platform_ipi_entry          0
+  hids_irq_x86_platform_ipi_exit           0
+  hids_sched_switch                        0
+  hids_sched_wakeup                        0
+  hids_sched_wakeup_new                    0
+  hids_sys_enter                           0
+  hids_sys_enter_fentry                    0
+thoi gian chay: 3.019 s | CPU collector: user 0.156 s, sys 0.176 s (getrusage RUSAGE_SELF)
+kich thuoc file: 57243 byte
+du lieu: out/g3-S3-163401.bin | thong ke: out/g3-S3-163401.bin.stats | theo doi: out/g3-S3-163401.bin.periodic
+luu: validation/m5d-20261008/verify-close-1120f34-v2/g3/S3-ketqua.txt
+=== S4: wl cpu 10000 300 (CPU 20) ===
+wl pid=154467 tid=154467
+stress-ng pid=154471
+--- moc A schedstat (sum_exec_runtime run_delay pcount) ---
+251754079 2595419 4
+--- moc A /proc/154467/sched ---
+sum_sleep_runtime                            :          3581.709640
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             2.595419
+iowait_sum                                   :             0.000000
+--- moc B schedstat ---
+3248134378 2994827139 995
+--- moc B /proc/154467/sched ---
+sum_sleep_runtime                            :          3620.058825
+sum_block_runtime                            :             0.000000
+wait_sum                                     :          2994.827139
+iowait_sum                                   :             0.000000
+cua so ts_enter: (7574030047013, 7580057010632]
+--- rec-check ---
+so ban ghi trong cua so: 301
+tid: 154467
+cua so ts_enter: (7574030047013, 7580057010632]
+co              so_ban_ghi
+FIRST           0
+GAP_BEFORE      0
+D_SLEEP         0
+MIGRATED        0
+OVERFLOW        0
+STEAL_FALLBACK  0
+CLAMPED         0
+--- tong thanh phan (ns) ---
+cpu 2985233170
+steal 0
+irq 11144381
+rq 2992234109
+vol 38352000
+steal_off 0
+cpu+steal+irq 2996377551
+--- G5 phan du |tat ca (tru FIRST)| (ns) ---
+so khoang: 300
+p50 0
+p99 0
+p99.9 0
+max 0
+so khoang |phan du| > 1000 ns: 0
+so khoang |phan du| > 10000 ns: 0
+--- G5 phan du |khong GAP_BEFORE| (ns) ---
+so khoang: 300
+p50 0
+p99 0
+p99.9 0
+max 0
+so khoang |phan du| > 1000 ns: 0
+so khoang |phan du| > 10000 ns: 0
+--- G5 phan du |co GAP_BEFORE| (ns) ---
+so khoang: 0
+--- bang doi chieu ---
+thanh_phan           collector       tham_chieu      nguon
+cpu+steal+irq        2996377551      2996380299      Delta schedstat field1 sum_exec_runtime
+rq                   2992234109      2992231720      Delta schedstat field2 run_delay
+rq (wait_sum)        2992234109      2992230000      Delta wait_sum /proc/sched
+vol                  38352000        38349200        Delta sum_sleep_runtime
+vol (D_SLEEP)        0               0               Delta sum_block_runtime
+--- log collector (cuoi) ---
+  hids_irq_deferred_error_apic_entry       0
+  hids_irq_deferred_error_apic_exit        0
+  hids_irq_error_apic_entry                0
+  hids_irq_error_apic_exit                 0
+  hids_irq_irq_handler_entry               0
+  hids_irq_irq_handler_exit                0
+  hids_irq_irq_work_entry                  0
+  hids_irq_irq_work_exit                   0
+  hids_irq_local_timer_entry               0
+  hids_irq_local_timer_exit                0
+  hids_irq_reschedule_entry                0
+  hids_irq_reschedule_exit                 0
+  hids_irq_softirq_entry                   0
+  hids_irq_softirq_exit                    0
+  hids_irq_spurious_apic_entry             0
+  hids_irq_spurious_apic_exit              0
+  hids_irq_thermal_apic_entry              0
+  hids_irq_thermal_apic_exit               0
+  hids_irq_threshold_apic_entry            0
+  hids_irq_threshold_apic_exit             0
+  hids_irq_x86_platform_ipi_entry          0
+  hids_irq_x86_platform_ipi_exit           0
+  hids_sched_switch                        0
+  hids_sched_wakeup                        0
+  hids_sched_wakeup_new                    0
+  hids_sys_enter                           0
+  hids_sys_enter_fentry                    0
+thoi gian chay: 6.087 s | CPU collector: user 0.155 s, sys 0.187 s (getrusage RUSAGE_SELF)
+kich thuoc file: 18043 byte
+du lieu: out/g3-S4-163408.bin | thong ke: out/g3-S4-163408.bin.stats | theo doi: out/g3-S4-163408.bin.periodic
+luu: validation/m5d-20261008/verify-close-1120f34-v2/g3/S4-ketqua.txt
+=== S5: wl io 300 (CPU 20) ===
+wl pid=156816 tid=156816
+--- moc A schedstat (sum_exec_runtime run_delay pcount) ---
+300817087 41010 6
+--- moc A /proc/156816/sched ---
+sum_sleep_runtime                            :          3531.640423
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.041010
+iowait_sum                                   :             0.000000
+bpftrace pid=157502, runqlat pid=157520
+--- moc B schedstat ---
+318899013 403587 607
+--- moc B /proc/156816/sched ---
+sum_sleep_runtime                            :          4010.858249
+sum_block_runtime                            :           239.556536
+wait_sum                                     :             0.403587
+iowait_sum                                   :            58.963249
+--- bpftrace (nguyen van, xem file S5.bpftrace.log) ---
+Attaching 2 probes...
+
+
+@rq_sau_wakeup_ns: 1833252
+@so_lan: 601
+@w: 0
+--- runqlat-bpfcc (histogram, xem file S5.runqlat.log) ---
+cua so ts_enter: (7584118423159, 7584616086457]
+--- rec-check ---
+so ban ghi trong cua so: 1503
+tid: 156816
+cua so ts_enter: (7584118423159, 7584616086457]
+co              so_ban_ghi
+FIRST           0
+GAP_BEFORE      0
+D_SLEEP         300
+MIGRATED        0
+OVERFLOW        0
+STEAL_FALLBACK  0
+CLAMPED         0
+--- tong thanh phan (ns) ---
+cpu 16711141
+steal 0
+irq 90446
+rq 1857066
+vol 478996000
+steal_off 32868
+cpu+steal+irq 16801587
+--- G5 phan du |tat ca (tru FIRST)| (ns) ---
+so khoang: 1502
+p50 0
+p99 469
+p99.9 498
+max 499
+so khoang |phan du| > 1000 ns: 0
+so khoang |phan du| > 10000 ns: 0
+--- G5 phan du |khong GAP_BEFORE| (ns) ---
+so khoang: 1502
+p50 0
+p99 469
+p99.9 498
+max 499
+so khoang |phan du| > 1000 ns: 0
+so khoang |phan du| > 10000 ns: 0
+--- G5 phan du |co GAP_BEFORE| (ns) ---
+so khoang: 0
+--- bang doi chieu ---
+thanh_phan           collector       tham_chieu      nguon
+cpu+steal+irq        16801587        18081926        Delta schedstat field1 sum_exec_runtime
+rq                   1857066         362577          Delta schedstat field2 run_delay
+rq (wait_sum)        1857066         362577          Delta wait_sum /proc/sched
+vol                  478996000       479218000       Delta sum_sleep_runtime
+vol (D_SLEEP)        239334000       239557000       Delta sum_block_runtime
+rq                   1857066         1833252         bpftrace @rq_sau_wakeup_ns (cot 3: 362577 run_delay)
+so_lan_wakeup        —             601             bpftrace @so_lan (cot 3: 601 Delta pcount)
+tong cpu+steal+irq+rq+vol | exec+run_delay+sleep 497654653       497662503       collector | kernel
+--- log collector (cuoi) ---
+  hids_irq_deferred_error_apic_entry       0
+  hids_irq_deferred_error_apic_exit        0
+  hids_irq_error_apic_entry                0
+  hids_irq_error_apic_exit                 0
+  hids_irq_irq_handler_entry               0
+  hids_irq_irq_handler_exit                0
+  hids_irq_irq_work_entry                  0
+  hids_irq_irq_work_exit                   0
+  hids_irq_local_timer_entry               0
+  hids_irq_local_timer_exit                0
+  hids_irq_reschedule_entry                0
+  hids_irq_reschedule_exit                 0
+  hids_irq_softirq_entry                   0
+  hids_irq_softirq_exit                    0
+  hids_irq_spurious_apic_entry             0
+  hids_irq_spurious_apic_exit              0
+  hids_irq_thermal_apic_entry              0
+  hids_irq_thermal_apic_exit               0
+  hids_irq_threshold_apic_entry            0
+  hids_irq_threshold_apic_exit             0
+  hids_irq_x86_platform_ipi_entry          0
+  hids_irq_x86_platform_ipi_exit           0
+  hids_sched_switch                        0
+  hids_sched_wakeup                        0
+  hids_sched_wakeup_new                    0
+  hids_sys_enter                           0
+  hids_sys_enter_fentry                    0
+thoi gian chay: 0.735 s | CPU collector: user 0.156 s, sys 0.180 s (getrusage RUSAGE_SELF)
+kich thuoc file: 85355 byte
+du lieu: out/g3-S5-163418.bin | thong ke: out/g3-S5-163418.bin.stats | theo doi: out/g3-S5-163418.bin.periodic
+luu: validation/m5d-20261008/verify-close-1120f34-v2/g3/S5-ketqua.txt
+=== xong g3, du lieu trong validation/m5d-20261008/verify-close-1120f34-v2/g3 ===
+PASS: G3 S1 p99_phan_du_ns=0 max=0
+PASS: G3 S2 p99_phan_du_ns=484 max=500
+PASS: G3 S3 p99_phan_du_ns=489 max=499
+PASS: G3 S4 p99_phan_du_ns=0 max=0
+PASS: G3 S5 p99_phan_du_ns=469 max=499
+PASS: G3 S1-S5 p99 phan du <= 500 ns
+pgtest
+ts=2026-10-08T16:35:37+07:00 duration_s=60 IWI_delta=4 CAL_delta=10322619 RES_delta=706404 IWI_per_s=0 CAL_per_s=172043
+=== G7-cap (cong suat, khong thay G7b) ===
+=== G7-cap mode=zstd-default nproc=1 zstd= duration=60s ring=64MiB ===
+  recs=73539066 mat=0 rate=1225529/s loss=0.0000% cpu_user=61.093s cpu_sys=48.662s elapsed=60.006
+da xoa validation/m5d-20261008/g7-cap/zstd-default-p1-20261008-163538.bin (giu validation/m5d-20261008/g7-cap/zstd-default-p1-20261008-163538.bin.stats validation/m5d-20261008/g7-cap/zstd-default-p1-20261008-163538.bin.periodic); dat KEEP_RAW=1 de giu file .bin
+=== G7-cap mode=zstd-default nproc=2 zstd= duration=60s ring=64MiB ===
+  recs=77628073 mat=0 rate=1293607/s loss=0.0000% cpu_user=61.09s cpu_sys=51.969s elapsed=60.009
+da xoa validation/m5d-20261008/g7-cap/zstd-default-p2-20261008-163643.bin (giu validation/m5d-20261008/g7-cap/zstd-default-p2-20261008-163643.bin.stats validation/m5d-20261008/g7-cap/zstd-default-p2-20261008-163643.bin.periodic); dat KEEP_RAW=1 de giu file .bin
+=== G7-cap mode=zstd-default nproc=4 zstd= duration=60s ring=64MiB ===
+  recs=69751823 mat=197502183 rate=1162337/s loss=73.9006% cpu_user=61.478s cpu_sys=49.314s elapsed=60.010
+da xoa validation/m5d-20261008/g7-cap/zstd-default-p4-20261008-163748.bin (giu validation/m5d-20261008/g7-cap/zstd-default-p4-20261008-163748.bin.stats validation/m5d-20261008/g7-cap/zstd-default-p4-20261008-163748.bin.periodic); dat KEEP_RAW=1 de giu file .bin
+=== G7-cap mode=zstd-default nproc=8 zstd= duration=60s ring=64MiB ===
+  recs=67668521 mat=137904447 rate=1127621/s loss=67.0830% cpu_user=61.484s cpu_sys=50.205s elapsed=60.010
+da xoa validation/m5d-20261008/g7-cap/zstd-default-p8-20261008-163853.bin (giu validation/m5d-20261008/g7-cap/zstd-default-p8-20261008-163853.bin.stats validation/m5d-20261008/g7-cap/zstd-default-p8-20261008-163853.bin.periodic); dat KEEP_RAW=1 de giu file .bin
+=== G7-cap mode=zstd-default nproc=16 zstd= duration=60s ring=64MiB ===
+  recs=66726269 mat=89727641 rate=1111993/s loss=57.3508% cpu_user=61.485s cpu_sys=49.703s elapsed=60.006
+da xoa validation/m5d-20261008/g7-cap/zstd-default-p16-20261008-163958.bin (giu validation/m5d-20261008/g7-cap/zstd-default-p16-20261008-163958.bin.stats validation/m5d-20261008/g7-cap/zstd-default-p16-20261008-163958.bin.periodic); dat KEEP_RAW=1 de giu file .bin
+=== G7-cap mode=zstd-default nproc=24 zstd= duration=60s ring=64MiB ===
+  recs=64242483 mat=73098053 rate=1070583/s loss=53.2239% cpu_user=61.462s cpu_sys=44.554s elapsed=60.007
+da xoa validation/m5d-20261008/g7-cap/zstd-default-p24-20261008-164104.bin (giu validation/m5d-20261008/g7-cap/zstd-default-p24-20261008-164104.bin.stats validation/m5d-20261008/g7-cap/zstd-default-p24-20261008-164104.bin.periodic); dat KEEP_RAW=1 de giu file .bin
+=== G7-cap mode=zstd0 nproc=1 zstd=-zstd-level 0 duration=60s ring=64MiB ===
+  recs=143142185 mat=0 rate=2385306/s loss=0.0000% cpu_user=61.054s cpu_sys=27.383s elapsed=60.010
+da xoa validation/m5d-20261008/g7-cap/zstd0-p1-20261008-164209.bin (giu validation/m5d-20261008/g7-cap/zstd0-p1-20261008-164209.bin.stats validation/m5d-20261008/g7-cap/zstd0-p1-20261008-164209.bin.periodic); dat KEEP_RAW=1 de giu file .bin
+=== G7-cap mode=zstd0 nproc=2 zstd=-zstd-level 0 duration=60s ring=64MiB ===
+  recs=166067275 mat=0 rate=2767327/s loss=0.0000% cpu_user=61.046s cpu_sys=32.751s elapsed=60.010
+da xoa validation/m5d-20261008/g7-cap/zstd0-p2-20261008-164315.bin (giu validation/m5d-20261008/g7-cap/zstd0-p2-20261008-164315.bin.stats validation/m5d-20261008/g7-cap/zstd0-p2-20261008-164315.bin.periodic); dat KEEP_RAW=1 de giu file .bin
+=== G7-cap mode=zstd0 nproc=4 zstd=-zstd-level 0 duration=60s ring=64MiB ===
+  recs=161738262 mat=3129622 rate=2695233/s loss=1.8983% cpu_user=61.052s cpu_sys=33.345s elapsed=60.009
+da xoa validation/m5d-20261008/g7-cap/zstd0-p4-20261008-164421.bin (giu validation/m5d-20261008/g7-cap/zstd0-p4-20261008-164421.bin.stats validation/m5d-20261008/g7-cap/zstd0-p4-20261008-164421.bin.periodic); dat KEEP_RAW=1 de giu file .bin
+=== G7-cap mode=zstd0 nproc=8 zstd=-zstd-level 0 duration=60s ring=64MiB ===
+  recs=153714089 mat=8484924 rate=2561560/s loss=5.2312% cpu_user=61.077s cpu_sys=35s elapsed=60.008
+da xoa validation/m5d-20261008/g7-cap/zstd0-p8-20261008-164527.bin (giu validation/m5d-20261008/g7-cap/zstd0-p8-20261008-164527.bin.stats validation/m5d-20261008/g7-cap/zstd0-p8-20261008-164527.bin.periodic); dat KEEP_RAW=1 de giu file .bin
+=== G7-cap mode=zstd0 nproc=16 zstd=-zstd-level 0 duration=60s ring=64MiB ===
+  recs=132301987 mat=1618699 rate=2204813/s loss=1.2087% cpu_user=61.051s cpu_sys=29.028s elapsed=60.006
+da xoa validation/m5d-20261008/g7-cap/zstd0-p16-20261008-164633.bin (giu validation/m5d-20261008/g7-cap/zstd0-p16-20261008-164633.bin.stats validation/m5d-20261008/g7-cap/zstd0-p16-20261008-164633.bin.periodic); dat KEEP_RAW=1 de giu file .bin
+=== G7-cap mode=zstd0 nproc=24 zstd=-zstd-level 0 duration=60s ring=64MiB ===
+  recs=126022812 mat=0 rate=2100065/s loss=0.0000% cpu_user=61.057s cpu_sys=27.188s elapsed=60.009
+da xoa validation/m5d-20261008/g7-cap/zstd0-p24-20261008-164739.bin (giu validation/m5d-20261008/g7-cap/zstd0-p24-20261008-164739.bin.stats validation/m5d-20261008/g7-cap/zstd0-p24-20261008-164739.bin.periodic); dat KEEP_RAW=1 de giu file .bin
+=== toc do cao nhat mat=0 theo luot ===
+zstd-default: max_rate=1293607/s nproc=2 recs=77628073
+zstd0: max_rate=2767327/s nproc=2 recs=166067275
+luu validation/m5d-20261008/g7-cap/summary.tsv
+G7-cap zstd-default max_rate_mat0=1293607/s
+STEP1_ALL_PASS 2026-10-08T16:48:45+07:00
+--- df -h (ket thuc job) ---
+Filesystem                         Size  Used Avail Use% Mounted on
+/dev/mapper/ubuntu--vg-ubuntu--lv  686G  132G  526G  20% /

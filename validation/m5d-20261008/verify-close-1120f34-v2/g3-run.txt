@@ -1,0 +1,508 @@
+=== S1: wl cpu 10000 300 (CPU 20) ===
+wl pid=149872 tid=149872
+--- moc A schedstat (sum_exec_runtime run_delay pcount) ---
+254253500 4161 6
+--- moc A /proc/149872/sched ---
+sum_sleep_runtime                            :          3582.296683
+sum_block_runtime                            :             0.848716
+wait_sum                                     :             0.004161
+iowait_sum                                   :             0.848716
+--- moc B schedstat ---
+3288681494 40927 12
+--- moc B /proc/149872/sched ---
+sum_sleep_runtime                            :          3608.101221
+sum_block_runtime                            :             0.848716
+wait_sum                                     :             0.040927
+iowait_sum                                   :             0.848716
+cua so ts_enter: (7552810011351, 7555870281982]
+--- rec-check ---
+so ban ghi trong cua so: 301
+tid: 149872
+cua so ts_enter: (7552810011351, 7555870281982]
+co              so_ban_ghi
+FIRST           0
+GAP_BEFORE      0
+D_SLEEP         0
+MIGRATED        0
+OVERFLOW        0
+STEAL_FALLBACK  0
+CLAMPED         0
+--- tong thanh phan (ns) ---
+cpu 3022341722
+steal 69823
+irq 12023599
+rq 30105
+vol 25805000
+steal_off 10477
+cpu+steal+irq 3034435144
+--- G5 phan du |tat ca (tru FIRST)| (ns) ---
+so khoang: 300
+p50 0
+p99 0
+p99.9 0
+max 0
+so khoang |phan du| > 1000 ns: 0
+so khoang |phan du| > 10000 ns: 0
+--- G5 phan du |khong GAP_BEFORE| (ns) ---
+so khoang: 300
+p50 0
+p99 0
+p99.9 0
+max 0
+so khoang |phan du| > 1000 ns: 0
+so khoang |phan du| > 10000 ns: 0
+--- G5 phan du |co GAP_BEFORE| (ns) ---
+so khoang: 0
+--- bang doi chieu ---
+thanh_phan           collector       tham_chieu      nguon
+cpu+steal+irq        3034435144      3034427994      Delta schedstat field1 sum_exec_runtime
+rq                   30105           36766           Delta schedstat field2 run_delay
+rq (wait_sum)        30105           36766           Delta wait_sum /proc/sched
+vol                  25805000        25804500        Delta sum_sleep_runtime
+vol (D_SLEEP)        0               0               Delta sum_block_runtime
+--- log collector (cuoi) ---
+  hids_irq_deferred_error_apic_entry       0
+  hids_irq_deferred_error_apic_exit        0
+  hids_irq_error_apic_entry                0
+  hids_irq_error_apic_exit                 0
+  hids_irq_irq_handler_entry               0
+  hids_irq_irq_handler_exit                0
+  hids_irq_irq_work_entry                  0
+  hids_irq_irq_work_exit                   0
+  hids_irq_local_timer_entry               0
+  hids_irq_local_timer_exit                0
+  hids_irq_reschedule_entry                0
+  hids_irq_reschedule_exit                 0
+  hids_irq_softirq_entry                   0
+  hids_irq_softirq_exit                    0
+  hids_irq_spurious_apic_entry             0
+  hids_irq_spurious_apic_exit              0
+  hids_irq_thermal_apic_entry              0
+  hids_irq_thermal_apic_exit               0
+  hids_irq_threshold_apic_entry            0
+  hids_irq_threshold_apic_exit             0
+  hids_irq_x86_platform_ipi_entry          0
+  hids_irq_x86_platform_ipi_exit           0
+  hids_sched_switch                        0
+  hids_sched_wakeup                        0
+  hids_sched_wakeup_new                    0
+  hids_sys_enter                           0
+  hids_sys_enter_fentry                    0
+thoi gian chay: 3.111 s | CPU collector: user 0.147 s, sys 0.187 s (getrusage RUSAGE_SELF)
+kich thuoc file: 18043 byte
+du lieu: out/g3-S1-163347.bin | thong ke: out/g3-S1-163347.bin.stats | theo doi: out/g3-S1-163347.bin.periodic
+luu: validation/m5d-20261008/verify-close-1120f34-v2/g3/S1-ketqua.txt
+=== S2: wl sleep 5000 500 (CPU 20) ===
+wl pid=151483 tid=151483
+--- moc A schedstat (sum_exec_runtime run_delay pcount) ---
+252010850 37235 7
+--- moc A /proc/151483/sched ---
+sum_sleep_runtime                            :          3579.982137
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.037235
+iowait_sum                                   :             0.000000
+bpftrace pid=152134, runqlat pid=152156
+--- moc B schedstat ---
+256460627 581541 508
+--- moc B /proc/151483/sched ---
+sum_sleep_runtime                            :          6453.274242
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.581541
+iowait_sum                                   :             0.000000
+--- bpftrace (nguyen van, xem file S2.bpftrace.log) ---
+Attaching 2 probes...
+
+
+@rq_sau_wakeup_ns: 2972881
+@so_lan: 501
+@w: 0
+--- runqlat-bpfcc (histogram, xem file S2.runqlat.log) ---
+cua so ts_enter: (7559906871297, 7562785158940]
+--- rec-check ---
+so ban ghi trong cua so: 1001
+tid: 151483
+cua so ts_enter: (7559906871297, 7562785158940]
+co              so_ban_ghi
+FIRST           0
+GAP_BEFORE      0
+D_SLEEP         0
+MIGRATED        0
+OVERFLOW        0
+STEAL_FALLBACK  0
+CLAMPED         0
+--- tong thanh phan (ns) ---
+cpu 1893825
+steal 0
+irq 3887
+rq 3018948
+vol 2873357000
+steal_off 1865831
+cpu+steal+irq 1897712
+--- G5 phan du |tat ca (tru FIRST)| (ns) ---
+so khoang: 1000
+p50 0
+p99 484
+p99.9 500
+max 500
+so khoang |phan du| > 1000 ns: 0
+so khoang |phan du| > 10000 ns: 0
+--- G5 phan du |khong GAP_BEFORE| (ns) ---
+so khoang: 1000
+p50 0
+p99 484
+p99.9 500
+max 500
+so khoang |phan du| > 1000 ns: 0
+so khoang |phan du| > 10000 ns: 0
+--- G5 phan du |co GAP_BEFORE| (ns) ---
+so khoang: 0
+--- bang doi chieu ---
+thanh_phan           collector       tham_chieu      nguon
+cpu+steal+irq        1897712         4449777         Delta schedstat field1 sum_exec_runtime
+rq                   3018948         544306          Delta schedstat field2 run_delay
+rq (wait_sum)        3018948         544306          Delta wait_sum /proc/sched
+vol                  2873357000      2873290000      Delta sum_sleep_runtime
+vol (D_SLEEP)        0               0               Delta sum_block_runtime
+rq                   3018948         2972881         bpftrace @rq_sau_wakeup_ns (cot 3: 544306 run_delay)
+so_lan_wakeup        —             501             bpftrace @so_lan (cot 3: 501 Delta pcount)
+tong cpu+steal+irq+rq+vol | exec+run_delay+sleep 2878273660      2878284083      collector | kernel
+--- log collector (cuoi) ---
+  hids_irq_deferred_error_apic_entry       0
+  hids_irq_deferred_error_apic_exit        0
+  hids_irq_error_apic_entry                0
+  hids_irq_error_apic_exit                 0
+  hids_irq_irq_handler_entry               0
+  hids_irq_irq_handler_exit                0
+  hids_irq_irq_work_entry                  0
+  hids_irq_irq_work_exit                   0
+  hids_irq_local_timer_entry               0
+  hids_irq_local_timer_exit                0
+  hids_irq_reschedule_entry                0
+  hids_irq_reschedule_exit                 0
+  hids_irq_softirq_entry                   0
+  hids_irq_softirq_exit                    0
+  hids_irq_spurious_apic_entry             0
+  hids_irq_spurious_apic_exit              0
+  hids_irq_thermal_apic_entry              0
+  hids_irq_thermal_apic_exit               0
+  hids_irq_threshold_apic_entry            0
+  hids_irq_threshold_apic_exit             0
+  hids_irq_x86_platform_ipi_entry          0
+  hids_irq_x86_platform_ipi_exit           0
+  hids_sched_switch                        0
+  hids_sched_wakeup                        0
+  hids_sched_wakeup_new                    0
+  hids_sys_enter                           0
+  hids_sys_enter_fentry                    0
+thoi gian chay: 3.119 s | CPU collector: user 0.154 s, sys 0.173 s (getrusage RUSAGE_SELF)
+kich thuoc file: 57243 byte
+du lieu: out/g3-S2-163354.bin | thong ke: out/g3-S2-163354.bin.stats | theo doi: out/g3-S2-163354.bin.periodic
+luu: validation/m5d-20261008/verify-close-1120f34-v2/g3/S2-ketqua.txt
+=== S3: wl mixed 2000 3000 500 (CPU 20) ===
+wl pid=152979 tid=152979
+--- moc A schedstat (sum_exec_runtime run_delay pcount) ---
+252017596 4294 3
+--- moc A /proc/152979/sched ---
+sum_sleep_runtime                            :          3579.538936
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.004294
+iowait_sum                                   :             0.000000
+bpftrace pid=153663, runqlat pid=153681
+--- moc B schedstat ---
+1257490409 173653 505
+--- moc B /proc/152979/sched ---
+sum_sleep_runtime                            :          5347.617236
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.173653
+iowait_sum                                   :             0.000000
+--- bpftrace (nguyen van, xem file S3.bpftrace.log) ---
+Attaching 2 probes...
+
+
+@rq_sau_wakeup_ns: 3198150
+@so_lan: 501
+@w: 0
+--- runqlat-bpfcc (histogram, xem file S3.runqlat.log) ---
+cua so ts_enter: (7567015833233, 7569789554713]
+--- rec-check ---
+so ban ghi trong cua so: 1001
+tid: 152979
+cua so ts_enter: (7567015833233, 7569789554713]
+co              so_ban_ghi
+FIRST           0
+GAP_BEFORE      0
+D_SLEEP         0
+MIGRATED        0
+OVERFLOW        0
+STEAL_FALLBACK  0
+CLAMPED         0
+--- tong thanh phan (ns) ---
+cpu 998635736
+steal 63802
+irq 3673521
+rq 3223908
+vol 1768126000
+steal_off 986680
+cpu+steal+irq 1002373059
+--- G5 phan du |tat ca (tru FIRST)| (ns) ---
+so khoang: 1000
+p50 0
+p99 489
+p99.9 499
+max 499
+so khoang |phan du| > 1000 ns: 0
+so khoang |phan du| > 10000 ns: 0
+--- G5 phan du |khong GAP_BEFORE| (ns) ---
+so khoang: 1000
+p50 0
+p99 489
+p99.9 499
+max 499
+so khoang |phan du| > 1000 ns: 0
+so khoang |phan du| > 10000 ns: 0
+--- G5 phan du |co GAP_BEFORE| (ns) ---
+so khoang: 0
+--- bang doi chieu ---
+thanh_phan           collector       tham_chieu      nguon
+cpu+steal+irq        1002373059      1005472813      Delta schedstat field1 sum_exec_runtime
+rq                   3223908         169359          Delta schedstat field2 run_delay
+rq (wait_sum)        3223908         169359          Delta wait_sum /proc/sched
+vol                  1768126000      1768080000      Delta sum_sleep_runtime
+vol (D_SLEEP)        0               0               Delta sum_block_runtime
+rq                   3223908         3198150         bpftrace @rq_sau_wakeup_ns (cot 3: 169359 run_delay)
+so_lan_wakeup        —             501             bpftrace @so_lan (cot 3: 502 Delta pcount)
+tong cpu+steal+irq+rq+vol | exec+run_delay+sleep 2773722967      2773722172      collector | kernel
+--- log collector (cuoi) ---
+  hids_irq_deferred_error_apic_entry       0
+  hids_irq_deferred_error_apic_exit        0
+  hids_irq_error_apic_entry                0
+  hids_irq_error_apic_exit                 0
+  hids_irq_irq_handler_entry               0
+  hids_irq_irq_handler_exit                0
+  hids_irq_irq_work_entry                  0
+  hids_irq_irq_work_exit                   0
+  hids_irq_local_timer_entry               0
+  hids_irq_local_timer_exit                0
+  hids_irq_reschedule_entry                0
+  hids_irq_reschedule_exit                 0
+  hids_irq_softirq_entry                   0
+  hids_irq_softirq_exit                    0
+  hids_irq_spurious_apic_entry             0
+  hids_irq_spurious_apic_exit              0
+  hids_irq_thermal_apic_entry              0
+  hids_irq_thermal_apic_exit               0
+  hids_irq_threshold_apic_entry            0
+  hids_irq_threshold_apic_exit             0
+  hids_irq_x86_platform_ipi_entry          0
+  hids_irq_x86_platform_ipi_exit           0
+  hids_sched_switch                        0
+  hids_sched_wakeup                        0
+  hids_sched_wakeup_new                    0
+  hids_sys_enter                           0
+  hids_sys_enter_fentry                    0
+thoi gian chay: 3.019 s | CPU collector: user 0.156 s, sys 0.176 s (getrusage RUSAGE_SELF)
+kich thuoc file: 57243 byte
+du lieu: out/g3-S3-163401.bin | thong ke: out/g3-S3-163401.bin.stats | theo doi: out/g3-S3-163401.bin.periodic
+luu: validation/m5d-20261008/verify-close-1120f34-v2/g3/S3-ketqua.txt
+=== S4: wl cpu 10000 300 (CPU 20) ===
+wl pid=154467 tid=154467
+stress-ng pid=154471
+--- moc A schedstat (sum_exec_runtime run_delay pcount) ---
+251754079 2595419 4
+--- moc A /proc/154467/sched ---
+sum_sleep_runtime                            :          3581.709640
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             2.595419
+iowait_sum                                   :             0.000000
+--- moc B schedstat ---
+3248134378 2994827139 995
+--- moc B /proc/154467/sched ---
+sum_sleep_runtime                            :          3620.058825
+sum_block_runtime                            :             0.000000
+wait_sum                                     :          2994.827139
+iowait_sum                                   :             0.000000
+cua so ts_enter: (7574030047013, 7580057010632]
+--- rec-check ---
+so ban ghi trong cua so: 301
+tid: 154467
+cua so ts_enter: (7574030047013, 7580057010632]
+co              so_ban_ghi
+FIRST           0
+GAP_BEFORE      0
+D_SLEEP         0
+MIGRATED        0
+OVERFLOW        0
+STEAL_FALLBACK  0
+CLAMPED         0
+--- tong thanh phan (ns) ---
+cpu 2985233170
+steal 0
+irq 11144381
+rq 2992234109
+vol 38352000
+steal_off 0
+cpu+steal+irq 2996377551
+--- G5 phan du |tat ca (tru FIRST)| (ns) ---
+so khoang: 300
+p50 0
+p99 0
+p99.9 0
+max 0
+so khoang |phan du| > 1000 ns: 0
+so khoang |phan du| > 10000 ns: 0
+--- G5 phan du |khong GAP_BEFORE| (ns) ---
+so khoang: 300
+p50 0
+p99 0
+p99.9 0
+max 0
+so khoang |phan du| > 1000 ns: 0
+so khoang |phan du| > 10000 ns: 0
+--- G5 phan du |co GAP_BEFORE| (ns) ---
+so khoang: 0
+--- bang doi chieu ---
+thanh_phan           collector       tham_chieu      nguon
+cpu+steal+irq        2996377551      2996380299      Delta schedstat field1 sum_exec_runtime
+rq                   2992234109      2992231720      Delta schedstat field2 run_delay
+rq (wait_sum)        2992234109      2992230000      Delta wait_sum /proc/sched
+vol                  38352000        38349200        Delta sum_sleep_runtime
+vol (D_SLEEP)        0               0               Delta sum_block_runtime
+--- log collector (cuoi) ---
+  hids_irq_deferred_error_apic_entry       0
+  hids_irq_deferred_error_apic_exit        0
+  hids_irq_error_apic_entry                0
+  hids_irq_error_apic_exit                 0
+  hids_irq_irq_handler_entry               0
+  hids_irq_irq_handler_exit                0
+  hids_irq_irq_work_entry                  0
+  hids_irq_irq_work_exit                   0
+  hids_irq_local_timer_entry               0
+  hids_irq_local_timer_exit                0
+  hids_irq_reschedule_entry                0
+  hids_irq_reschedule_exit                 0
+  hids_irq_softirq_entry                   0
+  hids_irq_softirq_exit                    0
+  hids_irq_spurious_apic_entry             0
+  hids_irq_spurious_apic_exit              0
+  hids_irq_thermal_apic_entry              0
+  hids_irq_thermal_apic_exit               0
+  hids_irq_threshold_apic_entry            0
+  hids_irq_threshold_apic_exit             0
+  hids_irq_x86_platform_ipi_entry          0
+  hids_irq_x86_platform_ipi_exit           0
+  hids_sched_switch                        0
+  hids_sched_wakeup                        0
+  hids_sched_wakeup_new                    0
+  hids_sys_enter                           0
+  hids_sys_enter_fentry                    0
+thoi gian chay: 6.087 s | CPU collector: user 0.155 s, sys 0.187 s (getrusage RUSAGE_SELF)
+kich thuoc file: 18043 byte
+du lieu: out/g3-S4-163408.bin | thong ke: out/g3-S4-163408.bin.stats | theo doi: out/g3-S4-163408.bin.periodic
+luu: validation/m5d-20261008/verify-close-1120f34-v2/g3/S4-ketqua.txt
+=== S5: wl io 300 (CPU 20) ===
+wl pid=156816 tid=156816
+--- moc A schedstat (sum_exec_runtime run_delay pcount) ---
+300817087 41010 6
+--- moc A /proc/156816/sched ---
+sum_sleep_runtime                            :          3531.640423
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.041010
+iowait_sum                                   :             0.000000
+bpftrace pid=157502, runqlat pid=157520
+--- moc B schedstat ---
+318899013 403587 607
+--- moc B /proc/156816/sched ---
+sum_sleep_runtime                            :          4010.858249
+sum_block_runtime                            :           239.556536
+wait_sum                                     :             0.403587
+iowait_sum                                   :            58.963249
+--- bpftrace (nguyen van, xem file S5.bpftrace.log) ---
+Attaching 2 probes...
+
+
+@rq_sau_wakeup_ns: 1833252
+@so_lan: 601
+@w: 0
+--- runqlat-bpfcc (histogram, xem file S5.runqlat.log) ---
+cua so ts_enter: (7584118423159, 7584616086457]
+--- rec-check ---
+so ban ghi trong cua so: 1503
+tid: 156816
+cua so ts_enter: (7584118423159, 7584616086457]
+co              so_ban_ghi
+FIRST           0
+GAP_BEFORE      0
+D_SLEEP         300
+MIGRATED        0
+OVERFLOW        0
+STEAL_FALLBACK  0
+CLAMPED         0
+--- tong thanh phan (ns) ---
+cpu 16711141
+steal 0
+irq 90446
+rq 1857066
+vol 478996000
+steal_off 32868
+cpu+steal+irq 16801587
+--- G5 phan du |tat ca (tru FIRST)| (ns) ---
+so khoang: 1502
+p50 0
+p99 469
+p99.9 498
+max 499
+so khoang |phan du| > 1000 ns: 0
+so khoang |phan du| > 10000 ns: 0
+--- G5 phan du |khong GAP_BEFORE| (ns) ---
+so khoang: 1502
+p50 0
+p99 469
+p99.9 498
+max 499
+so khoang |phan du| > 1000 ns: 0
+so khoang |phan du| > 10000 ns: 0
+--- G5 phan du |co GAP_BEFORE| (ns) ---
+so khoang: 0
+--- bang doi chieu ---
+thanh_phan           collector       tham_chieu      nguon
+cpu+steal+irq        16801587        18081926        Delta schedstat field1 sum_exec_runtime
+rq                   1857066         362577          Delta schedstat field2 run_delay
+rq (wait_sum)        1857066         362577          Delta wait_sum /proc/sched
+vol                  478996000       479218000       Delta sum_sleep_runtime
+vol (D_SLEEP)        239334000       239557000       Delta sum_block_runtime
+rq                   1857066         1833252         bpftrace @rq_sau_wakeup_ns (cot 3: 362577 run_delay)
+so_lan_wakeup        —             601             bpftrace @so_lan (cot 3: 601 Delta pcount)
+tong cpu+steal+irq+rq+vol | exec+run_delay+sleep 497654653       497662503       collector | kernel
+--- log collector (cuoi) ---
+  hids_irq_deferred_error_apic_entry       0
+  hids_irq_deferred_error_apic_exit        0
+  hids_irq_error_apic_entry                0
+  hids_irq_error_apic_exit                 0
+  hids_irq_irq_handler_entry               0
+  hids_irq_irq_handler_exit                0
+  hids_irq_irq_work_entry                  0
+  hids_irq_irq_work_exit                   0
+  hids_irq_local_timer_entry               0
+  hids_irq_local_timer_exit                0
+  hids_irq_reschedule_entry                0
+  hids_irq_reschedule_exit                 0
+  hids_irq_softirq_entry                   0
+  hids_irq_softirq_exit                    0
+  hids_irq_spurious_apic_entry             0
+  hids_irq_spurious_apic_exit              0
+  hids_irq_thermal_apic_entry              0
+  hids_irq_thermal_apic_exit               0
+  hids_irq_threshold_apic_entry            0
+  hids_irq_threshold_apic_exit             0
+  hids_irq_x86_platform_ipi_entry          0
+  hids_irq_x86_platform_ipi_exit           0
+  hids_sched_switch                        0
+  hids_sched_wakeup                        0
+  hids_sched_wakeup_new                    0
+  hids_sys_enter                           0
+  hids_sys_enter_fentry                    0
+thoi gian chay: 0.735 s | CPU collector: user 0.156 s, sys 0.180 s (getrusage RUSAGE_SELF)
+kich thuoc file: 85355 byte
+du lieu: out/g3-S5-163418.bin | thong ke: out/g3-S5-163418.bin.stats | theo doi: out/g3-S5-163418.bin.periodic
+luu: validation/m5d-20261008/verify-close-1120f34-v2/g3/S5-ketqua.txt
+=== xong g3, du lieu trong validation/m5d-20261008/verify-close-1120f34-v2/g3 ===

@@ -1,0 +1,38 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: ff6c0ab
+# record_size: 56
+# filter_pid: khong co
+# filter_cgroup: /sys/fs/cgroup/system.slice/docker-e0c9f967c4e6d67020642fdc0583d625564a35ba4a9e7f5ee197157bfd408c11.scope (goc id=51360)
+# ringbuf_bytes: 67108864
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: journalctl -k -b | Oct 08 14:28:01 uni-lms-app kernel: vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# start_mono_ns: 26241200066153
+# start_wall: 2026-10-08T21:45:19.320162451+07:00
+# duration: 2m0s
+# moi dong cach nhau 10s
+mono_ns,wall,dinh_ghi_delta,mat_delta,dinh_ghi_tong,mat_tong,irq_hard_delta_ns,irq_soft_delta_ns,irq_vec_delta_ns,soft_raw_delta_ns,irq_hard_tong_ns,irq_soft_tong_ns,irq_vec_tong_ns,soft_raw_tong_ns
+26241205045123,2026-10-08T21:45:19.325140858+07:00,0,0,0,0,0,93412,1929350,93412,0,93412,1929350,93412
+26251205093686,2026-10-08T21:45:29.325189317+07:00,8864269,0,8864269,0,1807279,21788976390,6608610287,21955314617,1807279,21789069802,6610539637,21955408029
+26261205095438,2026-10-08T21:45:39.325190963+07:00,8849436,0,17713705,0,1088425,21791407843,6542715748,21957356854,2895704,43580477645,13153255385,43912764883
+26271205106347,2026-10-08T21:45:49.325201876+07:00,8811055,0,26524760,0,364913,21883025478,6519284995,22050586434,3260617,65463503123,19672540380,65963351317
+26281205076072,2026-10-08T21:45:59.325171619+07:00,8779395,0,35304155,0,1282141,21872738334,6472308256,22041758650,4542758,87336241457,26144848636,88005109967
+26291205067381,2026-10-08T21:46:09.325162923+07:00,8769479,0,44073634,0,2609014,21613926265,6271805289,21777526802,7151772,108950167722,32416653925,109782636769
+26301205116037,2026-10-08T21:46:19.325211592+07:00,8795390,0,52869024,0,496744,21728929530,6351478522,21891577225,7648516,130679097252,38768132447,131674213994
+26301234593185,2026-10-08T21:46:19.354688851+07:00,13805,0,52882829,0,0,35098575,12373444,35387016,7648516,130714195827,38780505891,131709601010

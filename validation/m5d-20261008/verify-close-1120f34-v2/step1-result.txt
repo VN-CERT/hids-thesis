@@ -1,0 +1,8 @@
+PASS: G7a mat=0 perf-diff=0
+PASS: G7b mat=0 perf-diff=0
+PASS: G7b-nho perf-diff=2244749 = mat = seq_thieu
+PASS: G3 S1-S5 p99 phan du <= 500 ns
+ts=2026-10-08T16:35:37+07:00 duration_s=60 IWI_delta=4 CAL_delta=10322619 RES_delta=706404 IWI_per_s=0 CAL_per_s=172043
+=== G7-cap (cong suat, khong thay G7b) ===
+G7-cap zstd-default max_rate_mat0=1293607/s
+STEP1_ALL_PASS 2026-10-08T16:48:45+07:00

@@ -1,0 +1,449 @@
+=== g7b-nho: 24 sysinj, moi cai N=1000000, ring buffer 1 MiB, stress-ng=1 ===
+sysinj pids: 760477 760478 760479 760480 760481 760482 760483 760484 760485 760486 760487 760488 760489 760490 760491 760492 760493 760494 760495 760496 760497 760498 760499 760500
+collector da gan tracepoint (READY)
+perf da gan cho 24 tien trinh
+
+--- perf stat cua tung sysinj (nguyen van) ---
+### pid 760477
+
+ Performance counter stats for process id '760477':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      13.015863165 seconds time elapsed
+
+### pid 760478
+
+ Performance counter stats for process id '760478':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      11.014838361 seconds time elapsed
+
+### pid 760479
+
+ Performance counter stats for process id '760479':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      12.017864197 seconds time elapsed
+
+### pid 760480
+
+ Performance counter stats for process id '760480':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      11.014842487 seconds time elapsed
+
+### pid 760481
+
+ Performance counter stats for process id '760481':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      12.014796624 seconds time elapsed
+
+### pid 760482
+
+ Performance counter stats for process id '760482':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      13.016848090 seconds time elapsed
+
+### pid 760483
+
+ Performance counter stats for process id '760483':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      13.016809497 seconds time elapsed
+
+### pid 760484
+
+ Performance counter stats for process id '760484':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      12.015790675 seconds time elapsed
+
+### pid 760485
+
+ Performance counter stats for process id '760485':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      13.021807111 seconds time elapsed
+
+### pid 760486
+
+ Performance counter stats for process id '760486':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      13.017768885 seconds time elapsed
+
+### pid 760487
+
+ Performance counter stats for process id '760487':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      13.017797196 seconds time elapsed
+
+### pid 760488
+
+ Performance counter stats for process id '760488':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      13.017751147 seconds time elapsed
+
+### pid 760489
+
+ Performance counter stats for process id '760489':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      13.015818546 seconds time elapsed
+
+### pid 760490
+
+ Performance counter stats for process id '760490':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      13.016708690 seconds time elapsed
+
+### pid 760491
+
+ Performance counter stats for process id '760491':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      13.017752303 seconds time elapsed
+
+### pid 760492
+
+ Performance counter stats for process id '760492':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      13.016739911 seconds time elapsed
+
+### pid 760493
+
+ Performance counter stats for process id '760493':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      13.017665803 seconds time elapsed
+
+### pid 760494
+
+ Performance counter stats for process id '760494':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      13.017591866 seconds time elapsed
+
+### pid 760495
+
+ Performance counter stats for process id '760495':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      13.016620175 seconds time elapsed
+
+### pid 760496
+
+ Performance counter stats for process id '760496':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      12.015546829 seconds time elapsed
+
+### pid 760497
+
+ Performance counter stats for process id '760497':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      13.016684584 seconds time elapsed
+
+### pid 760498
+
+ Performance counter stats for process id '760498':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      11.014554516 seconds time elapsed
+
+### pid 760499
+
+ Performance counter stats for process id '760499':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      12.014601978 seconds time elapsed
+
+### pid 760500
+
+ Performance counter stats for process id '760500':
+
+         1,000,001      raw_syscalls:sys_enter                                                
+
+      13.017579472 seconds time elapsed
+
+--- log collector (nguyen van) ---
+stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+stealclock_evidence: journalctl
+doi chieu vmw_steal_time voi rq->prev_steal_time trong 3s...
+doi chieu xong: lech lon nhat 11842 ns tren 24 CPU, nguong max(2000000 ns, 1%)
+ghi vao out/g7b-nho-20261009-003144.bin
+loc pid: 760477,760478,760479,760480,760481,760482,760483,760484,760485,760486,760487,760488,760489,760490,760491,760492,760493,760494,760495,760496,760497,760498,760499,760500 | loc cgroup: khong co | ring buffer: 1 MiB
+READY
+LOSS mono_ns=36240636497934 mat=10772093 dinh_ghi=17160696 ti_le=62.772% mat_tong=10772093 dinh_ghi_tong=17160696 (ring buffer day, van thu thap tiep)
+LOSS mono_ns=36245361027631 mat=4018993 dinh_ghi=6839328 ti_le=58.763% mat_tong=14791086 dinh_ghi_tong=24000024 (ring buffer day, van thu thap tiep)
+ban ghi doc duoc: 9208938 | so lan dinh ghi: 24000024 | mat: 14791086
+irq cong don (ns): hard 310118 | soft 38064699 | vector 2870087456 | tong 2908462273
+soft_raw cong don (ns): 38116634 (ke ca hard/vector long ben trong, de so voi softirqs-bpfcc)
+irq bat thuong: 0 khoang, 0 ns | loai con dang hoat dong: 0
+recursion_misses (bpf_prog_info), tong 0 tren 31 chuong trinh:
+  hids_irq_call_function_entry             0
+  hids_irq_call_function_exit              0
+  hids_irq_call_function_single_entry      0
+  hids_irq_call_function_single_exit       0
+  hids_irq_deferred_error_apic_entry       0
+  hids_irq_deferred_error_apic_exit        0
+  hids_irq_error_apic_entry                0
+  hids_irq_error_apic_exit                 0
+  hids_irq_irq_handler_entry               0
+  hids_irq_irq_handler_exit                0
+  hids_irq_irq_work_entry                  0
+  hids_irq_irq_work_exit                   0
+  hids_irq_local_timer_entry               0
+  hids_irq_local_timer_exit                0
+  hids_irq_reschedule_entry                0
+  hids_irq_reschedule_exit                 0
+  hids_irq_softirq_entry                   0
+  hids_irq_softirq_exit                    0
+  hids_irq_spurious_apic_entry             0
+  hids_irq_spurious_apic_exit              0
+  hids_irq_thermal_apic_entry              0
+  hids_irq_thermal_apic_exit               0
+  hids_irq_threshold_apic_entry            0
+  hids_irq_threshold_apic_exit             0
+  hids_irq_x86_platform_ipi_entry          0
+  hids_irq_x86_platform_ipi_exit           0
+  hids_sched_switch                        0
+  hids_sched_wakeup                        0
+  hids_sched_wakeup_new                    0
+  hids_sys_enter                           0
+  hids_sys_enter_fentry                    0
+thoi gian chay: 14.732 s | CPU collector: user 7.047 s, sys 0.349 s (getrusage RUSAGE_SELF)
+kich thuoc file: 110428825 byte
+du lieu: out/g7b-nho-20261009-003144.bin | thong ke: out/g7b-nho-20261009-003144.bin.stats | theo doi: out/g7b-nho-20261009-003144.bin.periodic
+
+--- bang theo tung PID ---
+       pid   N_thiet_ke perf_sys_enter        ban_ghi  ban_ghi_110   perf-ban_ghi   GAP_BEFORE
+    760477      1000000        1000001         392886       392886         607115         3272
+    760478      1000000        1000001         382606       382606         617395         2163
+    760479      1000000        1000001         312994       312993         687007         1496
+    760480      1000000        1000001         386418       386417         613583         2189
+    760481      1000000        1000001         374420       374419         625581         2700
+    760482      1000000        1000001         400304       400303         599697         2784
+    760483      1000000        1000001         388392       388391         611609         3185
+    760484      1000000        1000001         370676       370676         629325         2392
+    760485      1000000        1000001         399908       399908         600093         3302
+    760486      1000000        1000001         403136       403135         596865         3037
+    760487      1000000        1000001         384443       384442         615558         3408
+    760488      1000000        1000001         376215       376215         623786         3123
+    760489      1000000        1000001         437428       437427         562573         2894
+    760490      1000000        1000001         402348       402348         597653         2940
+    760491      1000000        1000001         400197       400197         599804         2700
+    760492      1000000        1000001         364176       364175         635825         2281
+    760493      1000000        1000001         373700       373699         626301         3355
+    760494      1000000        1000001         381626       381625         618375         3088
+    760495      1000000        1000001         384904       384903         615097         2647
+    760496      1000000        1000001         375645       375645         624356         2333
+    760497      1000000        1000001         410354       410353         589647         3206
+    760498      1000000        1000001         347321       347321         652680         1769
+    760499      1000000        1000001         383085       383085         616916         2198
+    760500      1000000        1000001         375756       375756         624245         2964
+      TONG     24000000       24000024        9208938      9208925       14791086        65426
+
+--- doi chieu toan cuc ---
+tong lan dinh ghi (tong seq theo CPU):        24000024
+tong ban ghi doc duoc:                        9208938
+tong bo dem mat:                              14791086
+tong so seq bi thieu theo CPU:                14791086
+tong (perf - ban ghi):                        14791086
+
+--- thoi gian va dung luong ---
+thoi gian bom syscall: 9.594 s
+kich thuoc out/g7b-nho-20261009-003144.bin: 110436695 byte
+kich thuoc out/g7b-nho-20261009-003144.bin.stats: 1895 byte
+
+--- rec-stat day du (nguyen van) ---
+file: out/g7b-nho-20261009-003144.bin
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 5beaace
+# record_size: 56
+# filter_tgids: 760477,760478,760479,760480,760481,760482,760483,760484,760485,760486,760487,760488,760489,760490,760491,760492,760493,760494,760495,760496,760497,760498,760499,760500
+# filter_pid: 1
+# filter_cgroup: khong co
+# ringbuf_bytes: 1048576
+# rb_wake_bytes: 131072
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: journalctl -k -b | Oct 08 14:28:01 uni-lms-app kernel: vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# start_mono_ns: 36230628867765
+# start_wall: 2026-10-09T00:31:48.748963695+07:00
+# duration: khong gioi han
+
+tong so ban ghi trong file : 9208938
+so ban ghi sau khi loc     : 9208938
+bo loc                     : khong co
+ts_enter nho nhat / lon nhat: 36233732045488 / 36243318794412 (ns, CLOCK_MONOTONIC)
+ban ghi co co FIRST        : 16
+ban ghi co co GAP_BEFORE   : 65426
+ban ghi co syscall_nr=110  : 9208925
+
+so ban ghi theo tgid (24 tien trinh)
+    tgid  ban_ghi   nr=110  FIRST  GAP_BEFORE      nguon_tgid
+  760489   437428   437427      0        2894  ? (suy tu tid)
+  760497   410354   410353      1        3206  ? (suy tu tid)
+  760486   403136   403135      1        3037  ? (suy tu tid)
+  760490   402348   402348      1        2940  ? (suy tu tid)
+  760482   400304   400303      1        2784  ? (suy tu tid)
+  760491   400197   400197      0        2700  ? (suy tu tid)
+  760485   399908   399908      1        3302  ? (suy tu tid)
+  760477   392886   392886      1        3272  ? (suy tu tid)
+  760483   388392   388391      1        3185  ? (suy tu tid)
+  760480   386418   386417      1        2189  ? (suy tu tid)
+  760495   384904   384903      0        2647  ? (suy tu tid)
+  760487   384443   384442      0        3408  ? (suy tu tid)
+  760499   383085   383085      1        2198  ? (suy tu tid)
+  760478   382606   382606      1        2163  ? (suy tu tid)
+  760494   381626   381625      0        3088  ? (suy tu tid)
+  760488   376215   376215      0        3123  ? (suy tu tid)
+  760500   375756   375756      0        2964  ? (suy tu tid)
+  760496   375645   375645      1        2333  ? (suy tu tid)
+  760481   374420   374419      1        2700  ? (suy tu tid)
+  760493   373700   373699      0        3355  ? (suy tu tid)
+  760484   370676   370676      1        2392  ? (suy tu tid)
+  760492   364176   364175      1        2281  ? (suy tu tid)
+  760498   347321   347321      1        1769  ? (suy tu tid)
+  760479   312994   312993      1        1496  ? (suy tu tid)
+    TONG  9208938  9208925     16       65426                
+
+so ban ghi theo tid (24 thread, in 24 dong dau)
+     tid  tgid  ban_ghi  nr=110
+  760489     ?   437428  437427
+  760497     ?   410354  410353
+  760486     ?   403136  403135
+  760490     ?   402348  402348
+  760482     ?   400304  400303
+  760491     ?   400197  400197
+  760485     ?   399908  399908
+  760477     ?   392886  392886
+  760483     ?   388392  388391
+  760480     ?   386418  386417
+  760495     ?   384904  384903
+  760487     ?   384443  384442
+  760499     ?   383085  383085
+  760478     ?   382606  382606
+  760494     ?   381626  381625
+  760488     ?   376215  376215
+  760500     ?   375756  375756
+  760496     ?   375645  375645
+  760481     ?   374420  374419
+  760493     ?   373700  373699
+  760484     ?   370676  370676
+  760492     ?   364176  364175
+  760498     ?   347321  347321
+  760479     ?   312994  312993
+
+top 2 syscall_nr (tong cong 2 gia tri khac nhau)
+  syscall_nr  ban_ghi
+         110  9208925
+         231       13
+
+theo tung CPU (cpu lay tu bit8..15 cua flags; seq_cuoi va mat lay tu .stats)
+   cpu  ban_ghi  seq_min  seq_max  lo_hong  seq_thieu  seq_cuoi       mat
+     0   360079     1858  1041398     2451     681319   1041398    681319
+     1   260900      637   673785     1768     415848    676748    415848
+     2   448796      579  1144449     3783     712254   1161050    712254
+     3   635977        1  1700945     3986    1067073   1703050   1067073
+     4   326347        1   818105     2624     491758    818105    491758
+     6   474370        1  1266013     3123     798783   1273153    798783
+     7   372984       68   956829     1939     583845    956829    583845
+     8   610376      605  1573683     2711     964448   1574824    964448
+     9   650337        1  1650408     5013    1000071   1650408   1000071
+    10   210643        1   747876     1049     537233    747876    537233
+    11   268878        1   727604     1296     460919    729797    460919
+    12   444166        1  1116429     3617     672263   1116429    672263
+    13   181663        1   388083      932     206420    388083    206420
+    14   644201        1  1626133     3664     981932   1626133    981932
+    15   558240        1  1438656     3799     882894   1441134    882894
+    16   329166        1   834327     3236     510705    839871    510705
+    17   186983        1   486261     1044     299278    486261    299278
+    18   439387        1  1134909     2790     696106   1135493    696106
+    19   154546        1   396399     2021     241853    396399    241853
+    20   587660        1  1570418     4314     982758   1570418    982758
+    21   218026      281   564928     2303     357995    576021    357995
+    22   437428      564  1000001     2894     562573   1000001    562573
+    23   407785        1  1089541     3128     682758   1090543    682758
+  TONG  9208938                      63485   14791086  24000024  14791086
+
+y nghia cac cot:
+  ban_ghi   so ban ghi cua CPU do co trong file (tinh tren toan bo file,
+            khong phu thuoc -tgid/-nr/-from-mono/-to-mono)
+  seq_min   seq nho nhat doc duoc; bang 1 neu khong mat ban ghi nao o dau
+  lo_hong   so doan seq lien tuc bi thieu (ke ca doan dau tu 1 den seq_min
+            va doan cuoi tu seq_max den seq_cuoi)
+  seq_thieu tong so seq bi thieu; so nay doi chieu truc tiep voi cot mat
+  seq_cuoi  so lan dinh ghi tren CPU do, doc tu kernel luc collector dung
+  mat       bo dem bpf_ringbuf_reserve that bai, doc tu kernel
+
+doi chieu seq (toan cuc)
+  so lan dinh ghi (tong seq_cuoi cua moi CPU): 24000024
+  so ban ghi collector doc duoc             : 9208938
+  so ban ghi dem duoc trong file            : 9208938
+  tong bo dem mat (ring buffer day)         : 14791086
+  tong so seq bi thieu theo CPU             : 14791086
+  dinh ghi - ban ghi trong file             : 14791086
+
+--- kiem tra kernel sau khi collector thoat ---
+$ bpftool prog list | grep -ci hids
+0
+$ bpftool link list | grep -ci hids
+0
+$ bpftool map list | grep -ciE 'hids_|ringbuf'
+0
+$ ls -A /sys/fs/bpf | wc -l
+0
+
+da xoa out/g7b-nho-20261009-003144.bin (giu out/g7b-nho-20261009-003144.bin.stats out/g7b-nho-20261009-003144.bin.periodic); dat KEEP_RAW=1 de giu file .bin
+du lieu: out/g7b-nho-20261009-003144.bin | thong ke: out/g7b-nho-20261009-003144.bin.stats
+--- df -h (ket thuc job) ---
+Filesystem                         Size  Used Avail Use% Mounted on
+/dev/mapper/ubuntu--vg-ubuntu--lv  686G  175G  483G  27% /

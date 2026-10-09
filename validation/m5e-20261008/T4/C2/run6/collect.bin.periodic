@@ -1,0 +1,38 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 583857b-dirty
+# record_size: 56
+# filter_pid: khong co
+# filter_cgroup: /sys/fs/cgroup/hids-m5-decoy (goc id=7858)
+# ringbuf_bytes: 67108864
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: dmesg | [    0.000000] vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# start_mono_ns: 18370993865967
+# start_wall: 2026-10-08T19:34:09.113962283+07:00
+# duration: 2m0s
+# moi dong cach nhau 10s
+mono_ns,wall,dinh_ghi_delta,mat_delta,dinh_ghi_tong,mat_tong,irq_hard_delta_ns,irq_soft_delta_ns,irq_vec_delta_ns,soft_raw_delta_ns,irq_hard_tong_ns,irq_soft_tong_ns,irq_vec_tong_ns,soft_raw_tong_ns
+18371005408643,2026-10-08T19:34:09.125504278+07:00,0,0,0,0,0,165225,1728105,165422,0,165225,1728105,165422
+18381006145988,2026-10-08T19:34:19.126241535+07:00,0,0,0,0,231129,21161665279,6514499390,21340327510,231129,21161830504,6516227495,21340492932
+18391006078875,2026-10-08T19:34:29.126174377+07:00,0,0,0,0,220327,21310499379,6528734035,21492222869,451456,42472329883,13044961530,42832715801
+18401006080100,2026-10-08T19:34:39.12617563+07:00,0,0,0,0,5057718,21035343545,6564132681,21214735993,5509174,63507673428,19609094211,64047451794
+18411006130824,2026-10-08T19:34:49.126226345+07:00,0,0,0,0,1451591,20969571457,6498709856,21147550184,6960765,84477244885,26107804067,85195001978
+18421006100562,2026-10-08T19:34:59.126195997+07:00,0,0,0,0,194932,21048489900,6454385975,21225213424,7155697,105525734785,32562190042,106420215402
+18431006116204,2026-10-08T19:35:09.126211674+07:00,0,0,0,0,2145081,21113091499,6471548065,21288522213,9300778,126638826284,39033738107,127708737615
+18431130521355,2026-10-08T19:35:09.250616988+07:00,0,0,0,0,177555,214122081,78472919,215906831,9478333,126852948365,39112211026,127924644446

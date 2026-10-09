@@ -1,0 +1,47 @@
+Running as unit: hids-m5c-t4r25-C1-1-2779738.scope; invocation ID: c6be00619010479fbf78d7176c1f8f65
+CANH BAO: binary build tu cay lam viec con thay doi chua commit (git_commit=4057c59-dirty).
+CANH BAO: du lieu ghi ra khong tai lap duoc tu git. Commit truoc khi do that.
+stealclock: KHONG DU (0/24 dong "vmware-stealtime" trong dmesg)
+CANH BAO: chay voi -allow-no-stealclock, steal = 0 tren moi ban ghi
+ghi vao validation/m5c-20261008/fixed/T4-R25/C1/run1/collect.bin
+loc pid: khong co | loc cgroup: /sys/fs/cgroup/system.slice/docker-95ca2c3283bc88c08649afed71566556aad545999cff4050a4a2413dee0b9fbf.scope (goc id=107716) | ring buffer: 64 MiB
+READY
+ban ghi doc duoc: 17552231 | so lan dinh ghi: 17552231 | mat: 0
+irq cong don (ns): hard 5535920 | soft 35883554627 | vector 37245137404 | tong 73134227951
+soft_raw cong don (ns): 36261939452 (ke ca hard/vector long ben trong, de so voi softirqs-bpfcc)
+irq bat thuong: 0 khoang, 0 ns | loai con dang hoat dong: 0
+recursion_misses (bpf_prog_info), tong 0 tren 31 chuong trinh:
+  hids_irq_call_function_entry             0
+  hids_irq_call_function_exit              0
+  hids_irq_call_function_single_entry      0
+  hids_irq_call_function_single_exit       0
+  hids_irq_deferred_error_apic_entry       0
+  hids_irq_deferred_error_apic_exit        0
+  hids_irq_error_apic_entry                0
+  hids_irq_error_apic_exit                 0
+  hids_irq_irq_handler_entry               0
+  hids_irq_irq_handler_exit                0
+  hids_irq_irq_work_entry                  0
+  hids_irq_irq_work_exit                   0
+  hids_irq_local_timer_entry               0
+  hids_irq_local_timer_exit                0
+  hids_irq_reschedule_entry                0
+  hids_irq_reschedule_exit                 0
+  hids_irq_softirq_entry                   0
+  hids_irq_softirq_exit                    0
+  hids_irq_spurious_apic_entry             0
+  hids_irq_spurious_apic_exit              0
+  hids_irq_thermal_apic_entry              0
+  hids_irq_thermal_apic_exit               0
+  hids_irq_threshold_apic_entry            0
+  hids_irq_threshold_apic_exit             0
+  hids_irq_x86_platform_ipi_entry          0
+  hids_irq_x86_platform_ipi_exit           0
+  hids_sched_switch                        0
+  hids_sched_wakeup                        0
+  hids_sched_wakeup_new                    0
+  hids_sys_enter                           0
+  hids_sys_enter_fentry                    0
+thoi gian chay: 60.785 s | CPU collector: user 12.156 s, sys 6.195 s (getrusage RUSAGE_SELF)
+kich thuoc file: 201987925 byte
+du lieu: validation/m5c-20261008/fixed/T4-R25/C1/run1/collect.bin | thong ke: validation/m5c-20261008/fixed/T4-R25/C1/run1/collect.bin.stats | theo doi: validation/m5c-20261008/fixed/T4-R25/C1/run1/collect.bin.periodic

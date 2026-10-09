@@ -1,0 +1,38 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 583857b-dirty
+# record_size: 56
+# filter_pid: khong co
+# filter_cgroup: /sys/fs/cgroup/hids-m5-decoy (goc id=7858)
+# ringbuf_bytes: 67108864
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: dmesg | [    0.000000] vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# start_mono_ns: 17740326874048
+# start_wall: 2026-10-08T19:23:38.44697047+07:00
+# duration: 2m0s
+# moi dong cach nhau 10s
+mono_ns,wall,dinh_ghi_delta,mat_delta,dinh_ghi_tong,mat_tong,irq_hard_delta_ns,irq_soft_delta_ns,irq_vec_delta_ns,soft_raw_delta_ns,irq_hard_tong_ns,irq_soft_tong_ns,irq_vec_tong_ns,soft_raw_tong_ns
+17740330256617,2026-10-08T19:23:38.450352255+07:00,0,0,0,0,0,60543,1497607,60543,0,60543,1497607,60543
+17750331078903,2026-10-08T19:23:48.451174375+07:00,0,0,0,0,975908,21243408281,6520211377,21423626913,975908,21243468824,6521708984,21423687456
+17760331096515,2026-10-08T19:23:58.451191989+07:00,0,0,0,0,2401632,21367442475,6544037219,21550396543,3377540,42610911299,13065746203,42974083999
+17770331086866,2026-10-08T19:24:08.451182349+07:00,0,0,0,0,409016,21371142599,6508043441,21553298452,3786556,63982053898,19573789644,64527382451
+17780331077117,2026-10-08T19:24:18.451172664+07:00,0,0,0,0,847598,21371311691,6513625805,21552639948,4634154,85353365589,26087415449,86080022399
+17790331135556,2026-10-08T19:24:28.451231105+07:00,0,0,0,0,5183209,21267190647,6471083802,21449115503,9817363,106620556236,32558499251,107529137902
+17800331176457,2026-10-08T19:24:38.451272114+07:00,0,0,0,0,206258,21298740851,6534130020,21481293683,10023621,127919297087,39092629271,129010431585
+17800449303761,2026-10-08T19:24:38.569399377+07:00,0,0,0,0,3130,193735999,78162205,195653191,10026751,128113033086,39170791476,129206084776

@@ -1,0 +1,11 @@
+metric=rps
+value=45418.1802
+latency_ms=
+p99_ms=
+cgroup_cpu_usec=57301888
+target_rps=45521.67
+pct_c0=25
+condition=C0
+tool=hey
+records=0
+drops=0

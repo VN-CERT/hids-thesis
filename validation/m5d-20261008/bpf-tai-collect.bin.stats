@@ -1,0 +1,58 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 9ac6051-dirty
+# record_size: 56
+# filter_pid: khong co
+# filter_cgroup: /sys/fs/cgroup/system.slice/docker-d46319afc8797fe463c7e0afd0e57a8ce047198756c29a5cfa528d79ba4a9930.scope (goc id=24566)
+# ringbuf_bytes: 67108864
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: dmesg | [    0.000000] vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# start_mono_ns: 8618488277339
+# start_wall: 2026-10-08T16:51:36.608373359+07:00
+# duration: 2m0s
+# end_mono_ns: 8678621524335
+# end_wall: 2026-10-08T16:52:36.74162624+07:00
+# bin: validation/m5d-20261008/bpf-tai-collect.bin
+# ban_ghi_sai_kich_thuoc: 0
+# so_ban_ghi_doc_duoc: 43680768
+cpu,seq_cuoi,mat
+0,0,0
+1,0,0
+2,0,0
+3,0,0
+4,0,0
+5,0,0
+6,0,0
+7,0,0
+8,0,0
+9,0,0
+10,0,0
+11,0,0
+12,10879259,0
+13,10976645,0
+14,10871504,0
+15,10953360,0
+16,0,0
+17,0,0
+18,0,0
+19,0,0
+20,0,0
+21,0,0
+22,0,0
+23,0,0

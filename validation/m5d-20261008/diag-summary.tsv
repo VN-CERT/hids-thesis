@@ -1,0 +1,3 @@
+load	variant	metric	lat_avg	p99	IWI_delta	CAL_delta	RES_delta	cgroup_usec_delta	bpf_sys_enter_avg_ns_runs_per_s	dir
+T3	C0	3893.044884								validation/m5d-20261008/T3/C0
+T4	C0	178736.61								validation/m5d-20261008/T4/C0
