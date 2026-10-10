@@ -82,6 +82,9 @@ func run() error {
 		"diem gan sys_enter: tracepoint (mac dinh) hoac fentry (x64_sys_call)")
 	zstdLevel := flag.Int("zstd-level", 2,
 		"muc nen zstd luong (1-3); 0 = khong nen")
+	datadir := flag.String("datadir", "", "thu muc thu thap dai ngay (xoay file, proc/host TSV); de trong = che do cu")
+	rotate := flag.Duration("rotate", time.Hour, "chu ky xoay file wall clock khi -datadir duoc dat")
+	minFreeGB := flag.Float64("min-free-gb", 50, "ngung ghi .bin khi dung luong trong duoi nguong (GB)")
 	flag.Parse()
 
 	if os.Geteuid() != 0 {
@@ -100,10 +103,30 @@ func run() error {
 	if *zstdLevel < 0 || *zstdLevel > 3 {
 		return fmt.Errorf("-zstd-level phai trong 0..3, nhan duoc %d", *zstdLevel)
 	}
+	if *rotate <= 0 {
+		return fmt.Errorf("-rotate phai > 0")
+	}
 	if len(cgroupPaths) == 0 && len(tgids) == 0 {
 		return fmt.Errorf("can it nhat mot -pid hoac mot -cgroup")
 	}
 	buildinfo.WarnIfDirty(os.Stderr)
+
+	if *datadir != "" {
+		return runLongRun(longRunOpts{
+			datadir:       *datadir,
+			rotate:        *rotate,
+			minFreeGB:     *minFreeGB,
+			cgroupPaths:   cgroupPaths,
+			tgids:         tgids,
+			duration:      *duration,
+			ringbufMB:     *ringbufMB,
+			allowNoSteal:  *allowNoStealclock,
+			stealFallback: *stealFallback,
+			discard:       *discard,
+			sysEnterHook:  *sysEnterHook,
+			zstdLevel:     *zstdLevel,
+		})
+	}
 
 	release, err := hostinfo.KernelRelease()
 	if err != nil {
