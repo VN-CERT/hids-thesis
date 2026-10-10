@@ -19,7 +19,7 @@ hids_require_clean_git || die "cay git khong sach"
 [[ -x ./bin/hids-collect ]] || die "chay make build truoc"
 
 echo "=== G7a zstd-level 0 ==="
-bash scripts/g7.sh a 1000000 2>&1 | tee "$OUTROOT/g7a-z0.txt"
+HIDS_COLLECT_EXTRA="-zstd-level 0" bash scripts/g7.sh a 1000000 2>&1 | tee "$OUTROOT/g7a-z0.txt"
 g7a_mat=$(grep -E 'tong bo dem mat' "$OUTROOT/g7a-z0.txt" | tail -1 | awk '{print $NF}' || true)
 g7a_mat=${g7a_mat:-999}
 [[ "$g7a_mat" == 0 ]] && pass "G7a mat=0" || fail "G7a mat=$g7a_mat"
@@ -30,48 +30,63 @@ G3_OUTROOT="$OUTROOT/g3" bash scripts/g3.sh 2>&1 | tee "$OUTROOT/g3.log" || fail
 echo "=== G8 proc vs perf ==="
 CG8=/sys/fs/cgroup/hids-test8
 mkdir -p "$CG8"
-echo $$ >"$CG8/cgroup.procs" 2>/dev/null || true
 cleanup_g8() { rmdir "$CG8" 2>/dev/null || true; }
 trap cleanup_g8 EXIT
 
+g8_workload() {
+	echo $$ >"$CG8/cgroup.procs"
+	for _ in $(seq 1 500); do /bin/true; done
+}
+
+perf_sched_count() {
+	local ev=$1 out=$2
+	perf stat -a -e "$ev" -G hids-test8 -- bash -c "$(declare -f g8_workload); CG8=$CG8; g8_workload" >"$out" 2>&1
+	awk -v ev="$ev" '
+		$0 ~ ev { gsub(/,/, "", $1); print $1; exit }
+	' "$out"
+}
+
 G8DIR="$OUTROOT/g8"
-mkdir -p "$G8DIR"
+mkdir -p "$G8DIR/data"
 COLLECT_LOG="$G8DIR/collect.log"
 ./bin/hids-collect -datadir "$G8DIR/data" -cgroup "$CG8" -duration 120 -zstd-level 0 \
 	> "$COLLECT_LOG" 2>&1 &
 CPID=$!
-for i in $(seq 1 300); do grep -qx READY "$COLLECT_LOG" 2>/dev/null && break; sleep 0.1; done
+for _ in $(seq 1 300); do grep -qx READY "$COLLECT_LOG" 2>/dev/null && break; sleep 0.1; done
 grep -qx READY "$COLLECT_LOG" || fail "G8 collector khong READY"
 
-(
-  echo $$ >"$CG8/cgroup.procs"
-  for _ in $(seq 1 500); do /bin/true; done
-) &
-WORK=$!
-sleep 1
-T0=$(date +%s.%N)
-wait "$WORK" || true
-T1=$(date +%s.%N)
+g8_workload
 
 kill -TERM "$CPID" 2>/dev/null || true
 wait "$CPID" 2>/dev/null || true
 
-perf_exec=$(perf stat -a -e "sched:sched_process_exec" -G hids-test8 -- sleep 0.1 2>&1 | true)
-perf_fork=$(perf stat -a -e "sched:sched_process_fork" -G hids-test8 -- sleep 0.1 2>&1 | true)
-perf_exit=$(perf stat -a -e "sched:sched_process_exit" -G hids-test8 -- sleep 0.1 2>&1 | true)
-echo "perf_exec sample: $perf_exec" | tee "$G8DIR/perf-exec.txt"
-echo "perf_fork sample: $perf_fork" | tee "$G8DIR/perf-fork.txt"
-echo "perf_exit sample: $perf_exit" | tee "$G8DIR/perf-exit.txt"
-
-PROC_TSV=$(find "$G8DIR/data" -name 'proc-*.tsv.zst' | head -1)
+PROC_TSV=$(find "$G8DIR/data" -name 'proc-*.tsv.zst' | sort | tail -1)
 [[ -n $PROC_TSV ]] || fail "G8 khong co proc TSV"
-# Dem su kien tu TSV (bo header)
 zstdcat "$PROC_TSV" 2>/dev/null | tail -n +2 | awk -F'\t' '
   $2=="exec"{e++} $2=="fork"{f++} $2=="exit"{x++}
-  END{print "exec",e+0,"fork",f+0,"exit",x+0}
+  END{print "collector exec",e+0,"fork",f+0,"exit",x+0}
 ' | tee "$G8DIR/proc-counts.txt"
-true_exec=$(grep -c '/true$' <(zstdcat "$PROC_TSV" | tail -n +2 | cut -f8) || true)
-echo "exec filename /true: $true_exec" | tee "$G8DIR/true-exec.txt"
+coll_exec=$(awk '/collector exec/{print $3}' "$G8DIR/proc-counts.txt")
+coll_fork=$(awk '/collector fork/{print $5}' "$G8DIR/proc-counts.txt")
+coll_exit=$(awk '/collector exit/{print $7}' "$G8DIR/proc-counts.txt")
+
+perf_exec=$(perf_sched_count sched:sched_process_exec "$G8DIR/perf-exec.txt")
+perf_fork=$(perf_sched_count sched:sched_process_fork "$G8DIR/perf-fork.txt")
+perf_exit=$(perf_sched_count sched:sched_process_exit "$G8DIR/perf-exit.txt")
+{
+	echo "perf exec=$perf_exec fork=$perf_fork exit=$perf_exit"
+	echo "collector exec=$coll_exec fork=$coll_fork exit=$coll_exit"
+} | tee "$G8DIR/perf-vs-collector.txt"
+
+[[ "$coll_exec" == "$perf_exec" ]] && pass "G8 exec collector=$coll_exec perf=$perf_exec" \
+	|| fail "G8 exec collector=$coll_exec perf=$perf_exec"
+[[ "$coll_fork" == "$perf_fork" ]] && pass "G8 fork collector=$coll_fork perf=$perf_fork" \
+	|| fail "G8 fork collector=$coll_fork perf=$perf_fork"
+[[ "$coll_exit" == "$perf_exit" ]] && pass "G8 exit collector=$coll_exit perf=$perf_exit" \
+	|| fail "G8 exit collector=$coll_exit perf=$perf_exit"
+
+true_exec=$(zstdcat "$PROC_TSV" | tail -n +2 | awk -F'\t' '$2=="exec" && $8 ~ /\/true$/ {c++} END{print c+0}')
+echo "exec filename ket thuc /true: $true_exec" | tee "$G8DIR/true-exec.txt"
 [[ "$true_exec" -eq 500 ]] && pass "G8 exec /true = 500" || fail "G8 exec /true = $true_exec (can 500)"
 
 echo "=== G9 rotate 2m + rec-chain ==="
