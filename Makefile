@@ -11,12 +11,13 @@ GIT_REV = $(shell git rev-parse --short HEAD 2>/dev/null || echo unknown)
 GIT_DIRTY = $(shell git status --porcelain 2>/dev/null | awk '\
   $$2 ~ /^out\// || $$2 ~ /^validation\// { next } \
   $$2 ~ /^reports\// || $$2 ~ /^internal\/syscallbpf\// { next } \
+  $$2 ~ /^internal\/procbpf\// { next } \
   $$1 == "??" { next } \
   { found=1 } END { if (found) print "-dirty" }')
 GIT_COMMIT = $(GIT_REV)$(GIT_DIRTY)
 LDFLAGS = -X hids/internal/buildinfo.Commit=$(GIT_COMMIT)
 
-BINARIES := bin/steal-probe bin/steal-summary bin/hids-collect bin/rec-stat bin/rec-check bin/rec-export bin/wl bin/m4_e3 bin/sysinj
+BINARIES := bin/steal-probe bin/steal-summary bin/hids-collect bin/rec-stat bin/rec-check bin/rec-export bin/rec-chain bin/wl bin/m4_e3 bin/sysinj
 
 .PHONY: build generate vmlinux clean clean-out
 
@@ -28,6 +29,7 @@ build: generate bin/sysinj bin/wl
 	$(GO) build -ldflags "$(LDFLAGS)" -o bin/rec-stat ./cmd/rec-stat
 	$(GO) build -ldflags "$(LDFLAGS)" -o bin/rec-check ./cmd/rec-check
 	$(GO) build -ldflags "$(LDFLAGS)" -o bin/rec-export ./cmd/rec-export
+	$(GO) build -ldflags "$(LDFLAGS)" -o bin/rec-chain ./cmd/rec-chain
 
 # Cong cu kiem thu viet bang C, khong thuoc phan Go.
 bin/sysinj: tools/sysinj.c
@@ -55,7 +57,7 @@ vmlinux:
 
 clean:
 	rm -f $(BINARIES)
-	rm -f internal/stealbpf/*.o internal/syscallbpf/*.o
+	rm -f internal/stealbpf/*.o internal/syscallbpf/*.o internal/procbpf/*.o
 
 clean-out:
 	bash scripts/clean_out.sh

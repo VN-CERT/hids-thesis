@@ -1,0 +1,13 @@
+[Unit]
+Description=HIDS long-running syscall collector (M6b)
+After=network.target
+
+[Service]
+Type=simple
+EnvironmentFile=-/etc/hids/collect.env
+ExecStart=/usr/local/lib/hids/hids-collect-launch.sh
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
