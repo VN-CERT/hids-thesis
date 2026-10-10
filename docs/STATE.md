@@ -35,7 +35,7 @@ Cập nhật lần cuối: 2026-10-09 16:00 (giờ máy)
 
 ## Việc đang chạy
 
-- (không)
+- **hids-m6b1-gate** — `bash scripts/m6b1_gate.sh` (systemd `hids-m6b1-gate.service`); bắt đầu 2026-10-09 ~16:10; dự kiến ~25–35 phút (G3 + host 10 phút); log `out/jobs/m6b1-gate.log`, trạng thái `out/jobs/m6b1-gate.status`.
 
 ## Vướng mắc / chờ kiến trúc sư
 
