@@ -7,13 +7,13 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"slices"
 	"sort"
 	"strconv"
 	"strings"
 	"text/tabwriter"
 
 	"hids/internal/recfmt"
+	"hids/internal/recseq"
 )
 
 func main() {
@@ -346,101 +346,13 @@ func printSyscalls(bySyscall map[uint16]int64) {
 	fmt.Println()
 }
 
-// seqAnalysis la ket qua phan tich day seq cua mot CPU.
-type seqAnalysis struct {
-	records  int64
-	min      uint32
-	max      uint32
-	holes    int64  // so doan lien tuc bi thieu
-	missing  uint64 // tong so seq bi thieu
-	dup      int64  // so seq xuat hien hon mot lan
-	wrapped  bool   // day seq da quay vong qua 2^32
-	seqLast  uint32 // seq cuoi cung doc tu .stats
-	hasStats bool
-	drops    uint64
-}
-
-// analyzeSeq sap xep day seq cua mot CPU va dem lo hong. Day seq la mot day
-// tang dan modulo 2^32, nen sau khi sap xep tang dan theo gia tri uint32 ta tim
-// khoang trong lon nhat tren vong tron va xoay day bat dau tu sau khoang do.
-// Khi khong co quay vong, khoang trong lon nhat chinh la doan tu max ve min,
-// nen phep xoay khong doi gi.
-func analyzeSeq(seqs []uint32) seqAnalysis {
-	var a seqAnalysis
-	a.records = int64(len(seqs))
-	if len(seqs) == 0 {
-		return a
-	}
-
-	slices.Sort(seqs)
-	if len(seqs) == 1 {
-		a.min, a.max = seqs[0], seqs[0]
-		return a
-	}
-
-	// Tim khoang trong lon nhat tren vong tron, ke ca doan noi phan tu cuoi
-	// voi phan tu dau.
-	start := 0
-	biggest := uint64(seqs[0]) + (1 << 32) - uint64(seqs[len(seqs)-1])
-	for i := 0; i+1 < len(seqs); i++ {
-		d := uint64(seqs[i+1]) - uint64(seqs[i])
-		if d > biggest {
-			biggest = d
-			start = i + 1
-		}
-	}
-	a.wrapped = start != 0
-
-	a.min = seqs[start]
-	a.max = seqs[(start+len(seqs)-1)%len(seqs)]
-
-	for i := 0; i+1 < len(seqs); i++ {
-		cur := seqs[(start+i)%len(seqs)]
-		next := seqs[(start+i+1)%len(seqs)]
-		d := uint64(next-cur) & 0xffffffff
-		switch {
-		case d == 0:
-			a.dup++
-		case d > 1:
-			a.holes++
-			a.missing += d - 1
-		}
-	}
-
-	return a
-}
-
-// finish them phan thieu o dau day (seq bat dau tu 1) va phan thieu o cuoi day
-// (tu seq lon nhat doc duoc den seq cuoi cung kernel ghi nhan).
-func (a *seqAnalysis) finish() {
-	if a.records == 0 {
-		if a.hasStats {
-			a.missing = uint64(a.seqLast)
-			if a.seqLast > 0 {
-				a.holes = 1
-			}
-		}
-		return
-	}
-	if !a.wrapped && a.min > 1 {
-		a.holes++
-		a.missing += uint64(a.min) - 1
-	}
-	if a.hasStats {
-		if d := uint64(a.seqLast-a.max) & 0xffffffff; d > 0 {
-			a.holes++
-			a.missing += d
-		}
-	}
-}
-
 func printCPU(binPath string, seqByCPU map[int][]uint32, total, kept int64) error {
 	statsPath := binPath + recfmt.StatsSuffix
 	stats, statsErr := recfmt.ReadStats(statsPath)
 
-	byCPU := map[int]*seqAnalysis{}
+	byCPU := map[int]*recseq.Analysis{}
 	for cpu, seqs := range seqByCPU {
-		a := analyzeSeq(seqs)
+		a := recseq.Analyze(seqs)
 		byCPU[cpu] = &a
 	}
 	if statsErr == nil {
@@ -450,16 +362,16 @@ func printCPU(binPath string, seqByCPU map[int][]uint32, total, kept int64) erro
 				if c.SeqLast == 0 && c.Drops == 0 {
 					continue
 				}
-				a = &seqAnalysis{}
+				a = &recseq.Analysis{}
 				byCPU[c.CPU] = a
 			}
-			a.hasStats = true
-			a.seqLast = c.SeqLast
-			a.drops = c.Drops
+			a.HasStats = true
+			a.SeqLast = c.SeqLast
+			a.Drops = c.Drops
 		}
 	}
 	for _, a := range byCPU {
-		a.finish()
+		a.Finish()
 	}
 
 	cpus := make([]int, 0, len(byCPU))
@@ -482,30 +394,30 @@ func printCPU(binPath string, seqByCPU map[int][]uint32, total, kept int64) erro
 	for _, cpu := range cpus {
 		a := byCPU[cpu]
 		seqLast, drops := "-", "-"
-		if a.hasStats {
-			seqLast = strconv.FormatUint(uint64(a.seqLast), 10)
-			drops = strconv.FormatUint(a.drops, 10)
-			totAttempts += uint64(a.seqLast)
-			totDrops += a.drops
+		if a.HasStats {
+			seqLast = strconv.FormatUint(uint64(a.SeqLast), 10)
+			drops = strconv.FormatUint(a.Drops, 10)
+			totAttempts += uint64(a.SeqLast)
+			totDrops += a.Drops
 		}
 		minS, maxS := "-", "-"
-		if a.records > 0 {
-			minS = strconv.FormatUint(uint64(a.min), 10)
-			maxS = strconv.FormatUint(uint64(a.max), 10)
+		if a.Records > 0 {
+			minS = strconv.FormatUint(uint64(a.Min), 10)
+			maxS = strconv.FormatUint(uint64(a.Max), 10)
 		}
 		mark := ""
-		if a.wrapped {
+		if a.Wrapped {
 			mark = " (quay vong)"
 			anyWrapped = true
 		}
-		if a.dup > 0 {
+		if a.Dup > 0 {
 			anyDup = true
 		}
 		fmt.Fprintf(w, "%d\t%d\t%s\t%s\t%d\t%d\t%s\t%s\t%s\n",
-			cpu, a.records, minS, maxS, a.holes, a.missing, seqLast, drops, mark)
-		totRec += a.records
-		totHoles += a.holes
-		totMissing += a.missing
+			cpu, a.Records, minS, maxS, a.Holes, a.Missing, seqLast, drops, mark)
+		totRec += a.Records
+		totHoles += a.Holes
+		totMissing += a.Missing
 	}
 	fmt.Fprintf(w, "TONG\t%d\t\t\t%d\t%d\t%d\t%d\t\n", totRec, totHoles, totMissing, totAttempts, totDrops)
 	w.Flush()
