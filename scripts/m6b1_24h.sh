@@ -13,9 +13,9 @@ echo "out=$OUT" >>"$STATUS"
 
 # Chon 2-3 cgroup container dang chay (docker cgroup v2).
 mapfile -t CGS < <(docker ps -q 2>/dev/null | head -3 | while read -r id; do
-	docker inspect -f '{{.State.Pid}}' "$id" 2>/dev/null | while read -r pid; do
-		awk -v p="$pid" '$1==p {print $2}' /proc/"$pid"/cgroup 2>/dev/null | head -1
-	done
+	pid=$(docker inspect -f '{{.State.Pid}}' "$id" 2>/dev/null) || continue
+	rel=$(awk -F: '$1=="0" {print $3; exit}' "/proc/$pid/cgroup" 2>/dev/null) || continue
+	[[ -n $rel ]] && echo "/sys/fs/cgroup${rel}"
 done | sort -u)
 if [[ ${#CGS[@]} -eq 0 ]]; then
 	CGS=(/sys/fs/cgroup)
