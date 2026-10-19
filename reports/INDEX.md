@@ -29,3 +29,4 @@
 | [R025](R025-m5h-r2-g7cap-stop.md) | 2026-10-09 00:45 | M5h-r2 | G7b zstd0 OK; G7-cap mat≠0. | Dừng trước G3; không tag `m5h`. |
 | [R026](R026-m5h-overhead.md) | 2026-10-09 02:30 | M5h | G3 OK; bench T1/T3/T4 + tải cố định; G7-cap throughput ~1,2M rec/s. | Xong, tag `m5h`. Kiến trúc sư chấp nhận bộ số bài 1. |
 | [R027](R027-m5-close-disk-extend.md) | 2026-10-09 15:10 | M5 | Mở rộng `/` với đĩa `sdc` (~3 TB) vào LVM `ubuntu-vg`. | Xong. |
+| [R028](R028-m6b1-longrun-gate.md) | 2026-10-19 17:40 | M6b-1 | Cổng G7/G3/G8/G9/G10 + pre24h ĐẠT; thu 24h `hidsrun-24h` đang chạy. | Đang thu 24h; chưa tag `m6b1`. |
