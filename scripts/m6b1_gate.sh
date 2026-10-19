@@ -108,11 +108,11 @@ PROC_TSV=$(find "$G8DIR/data" -name 'proc-*.tsv.zst' | sort | tail -1)
 [[ -n ${PROC_TSV:-} ]] || fail "G8 khong co proc TSV"
 zstdcat "$PROC_TSV" | tail -n +2 | awk -F'\t' '
   $2=="exec"{e++} $2=="fork"{f++} $2=="exit"{x++}
-  END{print "collector exec",e+0,"fork",f+0,"exit",x+0}
+  END{printf "collector exec=%d fork=%d exit=%d\n", e+0, f+0, x+0}
 ' | tee "$G8DIR/proc-counts.txt"
-coll_exec=$(awk '/collector exec/{print $3}' "$G8DIR/proc-counts.txt")
-coll_fork=$(awk '/collector fork/{print $5}' "$G8DIR/proc-counts.txt")
-coll_exit=$(awk '/collector exit/{print $7}' "$G8DIR/proc-counts.txt")
+coll_exec=$(sed -n 's/.*exec=\([0-9]*\).*/\1/p' "$G8DIR/proc-counts.txt")
+coll_fork=$(sed -n 's/.*fork=\([0-9]*\).*/\1/p' "$G8DIR/proc-counts.txt")
+coll_exit=$(sed -n 's/.*exit=\([0-9]*\).*/\1/p' "$G8DIR/proc-counts.txt")
 perf_exec=$(perf_count_from sched:sched_process_exec "$G8DIR/perf-exec.txt")
 perf_fork=$(perf_count_from sched:sched_process_fork "$G8DIR/perf-fork.txt")
 perf_exit=$(perf_count_from sched:sched_process_exit "$G8DIR/perf-exit.txt")
