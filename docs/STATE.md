@@ -33,7 +33,7 @@ Cập nhật lần cuối: 2026-10-19 16:45 (giờ máy)
 
 ## Việc đang chạy
 
-- (sắp khởi động lại `hids-m6b1-gate` sau commit; G7a/G3 bỏ qua vì đã xong 2026-10-10)
+- **hids-m6b1-gate** — G8–G10 + host 10 phút (`M6B1_SKIP_G7A=1 M6B1_SKIP_G3=1`); bắt đầu 2026-10-19 ~16:50; dự kiến ~20 phút; log `out/jobs/m6b1-gate.log`.
 
 ## Vướng mắc / chờ kiến trúc sư
 
