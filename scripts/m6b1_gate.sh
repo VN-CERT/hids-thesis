@@ -39,22 +39,14 @@ wait_perf_fd() {
 hids_require_clean_git || die "cay git khong sach"
 [[ -x ./bin/hids-collect ]] || die "chay make build truoc"
 
-if [[ ${M6B1_SKIP_G7A:-} == 1 ]]; then
-	echo "=== G7a bo qua (M6B1_SKIP_G7A=1) ==="
-else
-	echo "=== G7a zstd-level 0 ==="
-	HIDS_COLLECT_EXTRA="-zstd-level 0" bash scripts/g7.sh a 1000000 2>&1 | tee "$OUTROOT/g7a-z0.txt"
-	g7a_mat=$(grep -E 'tong bo dem mat' "$OUTROOT/g7a-z0.txt" | tail -1 | awk '{print $NF}' || true)
-	g7a_mat=${g7a_mat:-999}
-	[[ "$g7a_mat" == 0 ]] && pass "G7a mat=0" || fail "G7a mat=$g7a_mat"
-fi
+echo "=== G7a zstd-level 0 ==="
+HIDS_COLLECT_EXTRA="-zstd-level 0" bash scripts/g7.sh a 1000000 2>&1 | tee "$OUTROOT/g7a-z0.txt"
+g7a_mat=$(grep -E 'tong bo dem mat' "$OUTROOT/g7a-z0.txt" | tail -1 | awk '{print $NF}' || true)
+g7a_mat=${g7a_mat:-999}
+[[ "$g7a_mat" == 0 ]] && pass "G7a mat=0" || fail "G7a mat=$g7a_mat"
 
-if [[ ${M6B1_SKIP_G3:-} == 1 ]]; then
-	echo "=== G3 bo qua (M6B1_SKIP_G3=1) ==="
-else
-	echo "=== G3 S1-S5 (subset g3.sh) ==="
-	G3_OUTROOT="$OUTROOT/g3" bash scripts/g3.sh 2>&1 | tee "$OUTROOT/g3.log" || fail "g3.sh loi"
-fi
+echo "=== G3 S1-S5 (subset g3.sh) ==="
+G3_OUTROOT="$OUTROOT/g3" bash scripts/g3.sh 2>&1 | tee "$OUTROOT/g3.log" || fail "g3.sh loi"
 
 echo "=== G8 proc vs perf ==="
 CG8=/sys/fs/cgroup/hids-test8

@@ -1,39 +1,40 @@
 # Trạng thái dự án HIDS
 
-Cập nhật lần cuối: 2026-10-19 16:45 (giờ máy)
+Cập nhật lần cuối: 2026-10-19 17:10 (giờ máy)
 
 ## Lịch sử git và tham chiếu phiên bản
 
 - Lịch sử git đã được **viết lại** để loại mọi file `*.bin` (GitHub chặn file > 100 MB). **Mọi hash commit cũ không còn hợp lệ** trên nhánh hiện tại.
 - Bảng đối chiếu hash cũ → mới: `docs/commit-map-loc-bin.txt`.
-- **Từ nay khi tham chiếu phiên bản:** dùng **TAG mốc** (`m1`, `m2`, … `m5f`, `m5h`, …), **không** dùng hash commit trong báo cáo, STATE, hay task (trừ khi ghi rõ là hash mới sau rewrite và chỉ để tra cứu bảng map).
+- **Từ nay khi tham chiếu phiên bản:** dùng **TAG mốc** (`m1`, `m2`, … `m5f`, `m5h`, `m6b1`, …), **không** dùng hash commit trong báo cáo/STATE (trừ tra cứu).
 - Dữ liệu thô **không** đưa vào git: `*.bin` và `*.bin.zst` đã có trong `.gitignore`.
 
 ## Mốc hiện tại và mục tiêu
 
 - **M5:** **đóng** — tag `m5h`.
-- **M6b-1:** **đang làm** — tính năng thu dài ngày trên máy test (task `docs/tasks/M6b-1.md`).
+- **M6b-1:** siết cổng + mục 1–3 trước 24h; rồi `hidsrun-24h` → `/srv/hids-data/<hostname>/`; R028 + tag `m6b1`.
 
 ## Bước đã xong (M6b-1)
 
-- `bpf/proc_events.bpf.c` đã commit (sha256 theo task).
-- Go: `internal/procbpf` (loader, parse), `internal/hostsample`, `internal/recseq`.
-- `cmd/hids-collect/longrun.go` + cờ `-datadir`, `-rotate`, `-min-free-gb`.
-- `cmd/rec-chain`, `deploy/hids-collect.service`, `scripts/m6b1_gate.sh`, Makefile `rec-chain`.
-- `make build` thành công.
+- Tính năng longrun, procbpf, rec-chain, deploy unit mẫu.
+- Kiến trúc sư duyệt G8, G9a, G10 ĐẠT; sha256 ba file khớp.
+- Host-stats 10 phút trong gate cũ đang chạy / sắp xong (`validation/m6b1-20261019/host10m`).
 
 ## Bước đang làm
 
-- G7a PASS (2026-10-10). G3 S1–S5 đã chạy xong. G8 lần 1 FAIL (`-duration 120`). G8 lần 2: proc BPF tgid read-only. G8 lần 3: collector không thoát SIGTERM. Đang sửa vòng đọc + chạy lại cổng.
+1. Xoá `M6B1_SKIP_*` khỏi `scripts/m6b1_gate.sh`, commit.
+2. Build binary sạch (có sửa SIGTERM) → chạy mục 1 (G7a, G7b-nho, G3 S1–S5), mục 2 G9b, mục 3 host 10 phút (`scripts/m6b1_pre24h.sh`).
+3. Sau đó 24h unit `hidsrun-24h`, R028, tag `m6b1`.
 
 ## Bước tiếp theo
 
-- Hoàn tất cổng M6b-1, tag `m6b1`, R028.
-- M6b-2 thu production.
+- Nếu mục 1–3 đạt: khởi động 24h; viết R028; tag `m6b1`.
+- Mục nào không đạt: DỪNG, dán nguyên văn.
 
 ## Việc đang chạy
 
-- **hids-m6b1-gate** — chạy lại sau sửa `hids_proc_self_tgid` trên spec; G8–G10 + host 10 phút; log `out/jobs/m6b1-gate.log`.
+- **hids-m6b1-gate** (lần cũ, G8–G10 PASS, đang host-stats 10 phút) — log `out/jobs/m6b1-gate.log`.
+- Sắp: **hids-m6b1-pre24h** sau khi commit + build.
 
 ## Vướng mắc / chờ kiến trúc sư
 
