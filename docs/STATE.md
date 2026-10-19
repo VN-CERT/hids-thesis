@@ -1,6 +1,6 @@
 # Trạng thái dự án HIDS
 
-Cập nhật lần cuối: 2026-10-09 16:00 (giờ máy)
+Cập nhật lần cuối: 2026-10-19 16:45 (giờ máy)
 
 ## Lịch sử git và tham chiếu phiên bản
 
@@ -24,9 +24,7 @@ Cập nhật lần cuối: 2026-10-09 16:00 (giờ máy)
 
 ## Bước đang làm
 
-- Chạy `scripts/m6b1_gate.sh` từ cây git sạch; sửa G8/G9 nếu gate lệch.
-- Commit các chunk còn lại (nếu chưa gom hết).
-- Bước 9 task: chạy thử 24h (systemd-run), báo cáo R028 — **chưa bắt đầu**.
+- Sửa cổng G8 (`-duration` thiếu đơn vị `s`); chạy lại G8–G10 + host 10 phút. G7a/G3 lần trước: G7a PASS, G3 xong, G8 FAIL.
 
 ## Bước tiếp theo
 
@@ -35,7 +33,7 @@ Cập nhật lần cuối: 2026-10-09 16:00 (giờ máy)
 
 ## Việc đang chạy
 
-- **hids-m6b1-gate** — `bash scripts/m6b1_gate.sh` (systemd `hids-m6b1-gate.service`); bắt đầu 2026-10-09 ~16:10; dự kiến ~25–35 phút (G3 + host 10 phút); log `out/jobs/m6b1-gate.log`, trạng thái `out/jobs/m6b1-gate.status`.
+- (sắp khởi động lại `hids-m6b1-gate` sau commit; G7a/G3 bỏ qua vì đã xong 2026-10-10)
 
 ## Vướng mắc / chờ kiến trúc sư
 

@@ -62,16 +62,16 @@ func newTSVZst(path string, headerCols []string, zlevel int) (*tsvZstWriter, err
 	if err != nil {
 		return nil, err
 	}
-	var recordOut io.Writer = f
-	var zenc *zstd.Encoder
-	if zlevel > 0 {
-		zenc, err = zstd.NewWriter(f, zstd.WithEncoderLevel(zstd.EncoderLevelFromZstd(zlevel)))
-		if err != nil {
-			f.Close()
-			return nil, err
-		}
-		recordOut = zenc
+	// File ten .tsv.zst luon nen; -zstd-level 0 chi ap dung luong .bin.
+	if zlevel < 1 {
+		zlevel = 1
 	}
+	zenc, err := zstd.NewWriter(f, zstd.WithEncoderLevel(zstd.EncoderLevelFromZstd(zlevel)))
+	if err != nil {
+		f.Close()
+		return nil, err
+	}
+	recordOut := io.Writer(zenc)
 	bw := bufio.NewWriter(recordOut)
 	w := &tsvZstWriter{path: path, f: f, zenc: zenc, bw: bw}
 	if len(headerCols) > 0 {
