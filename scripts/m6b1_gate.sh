@@ -65,8 +65,8 @@ cleanup_g8() {
 }
 
 g8_workload() {
-	echo $$ >"$CG8/cgroup.procs"
-	for _ in $(seq 1 500); do /bin/true; done
+	# Subshell: khong chuyen ca script gate vao cgroup.
+	bash -c 'echo $$ >"$1/cgroup.procs"; for _ in $(seq 1 500); do /bin/true; done' _ "$CG8"
 }
 
 perf_count_from() {
@@ -97,6 +97,11 @@ g8_workload
 
 wait "$PE" "$PF" "$PX" || true
 kill -TERM "$CPID" 2>/dev/null || true
+for _ in $(seq 1 40); do
+	kill -0 "$CPID" 2>/dev/null || break
+	sleep 0.25
+done
+kill -KILL "$CPID" 2>/dev/null || true
 wait "$CPID" 2>/dev/null || true
 
 PROC_TSV=$(find "$G8DIR/data" -name 'proc-*.tsv.zst' | sort | tail -1)

@@ -788,10 +788,7 @@ func runLongRun(o longRunOpts) error {
 		_ = procColl.Flush()
 	}()
 
-	var rec ringbuf.Record
-	var procRec ringbuf.Record
 	const readPoll = 10 * time.Millisecond
-	var sinceFlush int64
 	handleProcEvent := func(pr *ringbuf.Record) {
 		if len(pr.RawSample) != procbpf.EventSize {
 			return
@@ -814,67 +811,95 @@ func runLongRun(o longRunOpts) error {
 			bpflog.Note(os.Stderr, logPath, fmt.Sprintf("ghi proc: %v", err))
 		}
 	}
-	drainProc := func() {
+
+	errCh := make(chan error, 2)
+	var readers sync.WaitGroup
+	readers.Add(2)
+	go func() {
+		defer readers.Done()
+		var rec ringbuf.Record
+		var sinceFlush int64
+		for {
+			if err := ws.maybeRotate(time.Now(), header); err != nil {
+				errCh <- err
+				return
+			}
+			coll.SetDeadline(time.Now().Add(readPoll))
+			err := coll.ReadInto(&rec)
+			if err == nil {
+				sinceFlush++
+				if len(rec.RawSample) != recfmt.RecordSize {
+					continue
+				}
+				if diskPaused.Load() {
+					diskSkipped.Add(1)
+					continue
+				}
+				if werr := ws.writeRecord(rec.RawSample); werr != nil {
+					errCh <- werr
+					return
+				}
+				continue
+			}
+			if errors.Is(err, os.ErrDeadlineExceeded) {
+				continue
+			}
+			if errors.Is(err, ringbuf.ErrFlushed) {
+				if sinceFlush == 0 {
+					return
+				}
+				sinceFlush = 0
+				if ferr := coll.Flush(); ferr != nil {
+					errCh <- fmt.Errorf("doc vet syscall ringbuf: %w", ferr)
+					return
+				}
+				continue
+			}
+			if errors.Is(err, os.ErrClosed) {
+				return
+			}
+			errCh <- fmt.Errorf("doc syscall ringbuf: %w", err)
+			return
+		}
+	}()
+	go func() {
+		defer readers.Done()
+		var procRec ringbuf.Record
+		var sinceFlush int64
 		for {
 			procColl.SetDeadline(time.Now().Add(readPoll))
 			perr := procColl.ReadInto(&procRec)
 			if perr == nil {
+				sinceFlush++
 				handleProcEvent(&procRec)
 				continue
 			}
 			if errors.Is(perr, os.ErrDeadlineExceeded) {
-				return
+				continue
 			}
 			if errors.Is(perr, ringbuf.ErrFlushed) {
+				if sinceFlush == 0 {
+					return
+				}
+				sinceFlush = 0
 				_ = procColl.Flush()
 				continue
 			}
+			if errors.Is(perr, os.ErrClosed) {
+				return
+			}
+			errCh <- fmt.Errorf("doc proc ringbuf: %w", perr)
 			return
 		}
-	}
-
-	for {
-		if err := ws.maybeRotate(time.Now(), header); err != nil {
+	}()
+	readers.Wait()
+	select {
+	case err := <-errCh:
+		if err != nil {
 			return err
 		}
-
-		coll.SetDeadline(time.Now().Add(readPoll))
-		err := coll.ReadInto(&rec)
-		if err == nil {
-			sinceFlush++
-			if len(rec.RawSample) == recfmt.RecordSize {
-				if diskPaused.Load() {
-					diskSkipped.Add(1)
-				} else if werr := ws.writeRecord(rec.RawSample); werr != nil {
-					return werr
-				}
-			}
-		} else if errors.Is(err, os.ErrDeadlineExceeded) {
-			// fall through to proc read
-		} else if errors.Is(err, ringbuf.ErrFlushed) {
-			if sinceFlush == 0 {
-				break
-			}
-			sinceFlush = 0
-			if err := coll.Flush(); err != nil {
-				return fmt.Errorf("doc vet syscall ringbuf: %w", err)
-			}
-			continue
-		} else if errors.Is(err, os.ErrClosed) {
-			break
-		} else {
-			return fmt.Errorf("doc syscall ringbuf: %w", err)
-		}
-
-		procColl.SetDeadline(time.Now().Add(readPoll))
-		perr := procColl.ReadInto(&procRec)
-		if perr == nil {
-			handleProcEvent(&procRec)
-		} else if !errors.Is(perr, os.ErrDeadlineExceeded) && !errors.Is(perr, ringbuf.ErrFlushed) && !errors.Is(perr, os.ErrClosed) {
-			return fmt.Errorf("doc proc ringbuf: %w", perr)
-		}
+	default:
 	}
-	drainProc()
 
 	close(stopHost)
 	close(stopDisk)

@@ -24,7 +24,7 @@ Cập nhật lần cuối: 2026-10-19 16:45 (giờ máy)
 
 ## Bước đang làm
 
-- Sửa cổng G8 (`-duration` thiếu đơn vị `s`); chạy lại G8–G10 + host 10 phút. G7a/G3 lần trước: G7a PASS, G3 xong, G8 FAIL.
+- G7a PASS (2026-10-10). G3 S1–S5 đã chạy xong. G8 lần 1 FAIL (`-duration 120`). G8 lần 2: proc BPF tgid read-only. G8 lần 3: collector không thoát SIGTERM. Đang sửa vòng đọc + chạy lại cổng.
 
 ## Bước tiếp theo
 
