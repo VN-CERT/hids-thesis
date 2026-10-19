@@ -40,6 +40,13 @@ func Load(cfg Config) (*Collector, error) {
 	if err != nil {
 		return nil, err
 	}
+	v := spec.Variables["hids_proc_self_tgid"]
+	if v == nil {
+		return nil, errors.New("khong tim thay hids_proc_self_tgid")
+	}
+	if err := v.Set(cfg.SelfTGID); err != nil {
+		return nil, fmt.Errorf("dat hids_proc_self_tgid: %w", err)
+	}
 	coll, err := ebpf.NewCollectionWithOptions(spec, ebpf.CollectionOptions{
 		Programs: ebpf.ProgramOptions{LogLevel: ebpf.LogLevelBranch},
 	})
@@ -53,13 +60,6 @@ func Load(cfg Config) (*Collector, error) {
 			c.Close()
 		}
 	}()
-	v := coll.Variables["hids_proc_self_tgid"]
-	if v == nil {
-		return nil, errors.New("khong tim thay hids_proc_self_tgid")
-	}
-	if err := v.Set(cfg.SelfTGID); err != nil {
-		return nil, fmt.Errorf("dat hids_proc_self_tgid: %w", err)
-	}
 	reader, err := ringbuf.NewReader(coll.Maps["hids_proc_events"])
 	if err != nil {
 		return nil, fmt.Errorf("mo hids_proc_events: %w", err)
