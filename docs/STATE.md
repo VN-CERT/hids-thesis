@@ -33,8 +33,8 @@ Cập nhật lần cuối: 2026-10-19 17:10 (giờ máy)
 
 ## Việc đang chạy
 
-- **hids-m6b1-gate** (lần cũ, G8–G10 PASS, đang host-stats 10 phút) — log `out/jobs/m6b1-gate.log`.
-- Sắp: **hids-m6b1-pre24h** sau khi commit + build.
+- **hids-m6b1-pre24h** — mục 1–3 trước 24h; binary `git_commit=1a88508`; bắt đầu 2026-10-19 ~17:15; dự kiến ~35–45 phút; log `out/jobs/m6b1-pre24h.log`, status `out/jobs/m6b1-pre24h.status`.
+- Gate cũ `hids-m6b1-gate`: G8/G9a/G10 PASS; host data 600 dòng MONOTONIC_OK nhưng script exit=1 (`lines` unbound — lỗi bash, không đổi tiêu chí).
 
 ## Vướng mắc / chờ kiến trúc sư
 
