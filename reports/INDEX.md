@@ -30,3 +30,4 @@
 | [R026](R026-m5h-overhead.md) | 2026-10-09 02:30 | M5h | G3 OK; bench T1/T3/T4 + tải cố định; G7-cap throughput ~1,2M rec/s. | Xong, tag `m5h`. Kiến trúc sư chấp nhận bộ số bài 1. |
 | [R027](R027-m5-close-disk-extend.md) | 2026-10-09 15:10 | M5 | Mở rộng `/` với đĩa `sdc` (~3 TB) vào LVM `ubuntu-vg`. | Xong. |
 | [R028](R028-m6b1-longrun-gate.md) | 2026-10-19 17:40 | M6b-1 | Cổng G7/G3/G8/G9/G10 + pre24h ĐẠT; thu 24h xong (34.192.008 bản ghi, mất 0). | Xong, tag `m6b1`. |
+| [R029](R029-m6b1.1-cpu-records-per-sec-gate.md) | 2026-10-20 22:37 | M6b-1.1 | Chẩn đoán CPU ~10% lõi (sysmon Go + poll ring buffer 10 ms); sửa records_per_sec; cổng chạy lại đạt trừ lệch rq S3 >5%. | Xong phần đo/sửa, tag `m6b1.1`. Chờ kiến trúc sư quyết 2 câu hỏi (CPU ≤2%, lệch rq). |
