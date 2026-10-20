@@ -1,0 +1,12 @@
+=== S1: wl cpu 10000 300 (CPU 7) ===
+wl pid=51757 tid=51757
+--- moc A schedstat (sum_exec_runtime run_delay pcount) ---
+?
+--- moc A /proc/51757/sched ---
+khong doc duoc /proc/51757/sched
+--- moc B schedstat ---
+?
+--- moc B /proc/51757/sched ---
+khong doc duoc /proc/51757/sched
+khong tim thay getuid cho tid 51757
+g3: S1: khong tim cua so

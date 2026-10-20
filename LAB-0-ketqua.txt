@@ -1,0 +1,197 @@
+LAB-0 — KET QUA DUNG VA KIEM MAY NAN NHAN
+May: hids-collector (card co lap 192.168.77.10/24 tren ens35, card quan ly 10.70.55.201/25 tren ens33)
+Nhanh: lab-collector
+Vai tro: NAN NHAN trong lab HIDS. Khong cai/chay cong cu tan cong tren may nay. Khong dung may 192.168.77.20.
+Nhiem vu goc: docs/tasks/LAB-0.md
+
+================================================================
+1. MOI TRUONG — DAT
+================================================================
+$ nproc
+8
+$ uname -r
+6.8.0-142-generic
+(yeu cau 6.8: DAT)
+$ journalctl -k -b | grep -c vmware-stealtime
+8
+(yeu cau = nproc = 8: DAT)
+$ lscpu | grep 'Model name'
+Model name:                              Intel(R) Xeon(R) Gold 6330N CPU @ 2.20GHz
+BIOS Model name:                         Intel(R) Xeon(R) Gold 6330N CPU @ 2.20GHz  CPU @ 2.0GHz
+$ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+ens33            UP             10.70.55.201/25 fe80::250:56ff:febf:7aef/64
+ens35            UP             192.168.77.10/24 fe80::250:56ff:febf:18bd/64
+(yeu cau thay 192.168.77.10: DAT)
+$ hostname
+hids-collector
+
+Ket luan buoc 1: DAT tat ca dieu kien.
+
+================================================================
+2. KIEM COLLECTOR (8 vCPU) — DAT
+================================================================
+Truoc khi chay:
+$ bpftool prog show | grep -c hids_
+0
+(DAT, yeu cau = 0; kiem lai truoc G3 cung = 0, sau G7a/G3 cung = 0)
+
+----------------------------------------------------------------
+2a. G7a (-zstd-level 0)
+Lenh: HIDS_COLLECT_EXTRA="-zstd-level 0" bash scripts/g7.sh a
+File day du: validation/lab0-20261021/g7a.txt
+----------------------------------------------------------------
+--- bang theo tung PID ---
+       pid   N_thiet_ke perf_sys_enter        ban_ghi  ban_ghi_110   perf-ban_ghi   GAP_BEFORE
+     50110      1000000        1000001        1000001      1000000              0            0
+      TONG      1000000        1000001        1000001      1000000              0            0
+
+--- doi chieu toan cuc ---
+tong lan dinh ghi (tong seq theo CPU):        1000001
+tong ban ghi doc duoc:                        1000001
+tong bo dem mat:                              0
+tong so seq bi thieu theo CPU:                0
+tong (perf - ban ghi):                        0
+
+rec-stat: zstd_level: 0; tong so ban ghi trong file: 1000001; ban ghi co syscall_nr=110: 1000000
+Collector: ban ghi doc duoc: 1000001 | so lan dinh ghi: 1000001 | mat: 0
+Sau collector thoat: bpftool prog list | grep -ci hids = 0; link = 0; map hids_/ringbuf = 0; ls -A /sys/fs/bpf | wc -l = 0
+
+Ket luan G7a: DAT (perf = ban ghi = 1000001, mat = 0)
+
+----------------------------------------------------------------
+2b. G3 S1-S5
+Lenh: WL_CPU=7 G3_OUTROOT=validation/lab0-20261021/g3 bash scripts/g3.sh m5d
+(m5d la subset chi chay S1-S5 trong scripts/g3.sh; collector trong g3.sh da cung -zstd-level 0)
+File day du: validation/lab0-20261021/g3/S1-ketqua.txt .. S5-ketqua.txt,
+             validation/lab0-20261021/g3-run2.txt, cac file *.bpftrace.log
+----------------------------------------------------------------
+Phan du G5 |tat ca (tru FIRST)| (ns) — yeu cau <= 0,5 us = 500 ns:
+S1: so_khoang=300 p50=0 p99=0 p99.9=0 max=0 ns
+S2: so_khoang=1000 p50=0 p99=490 p99.9=500 max=500 ns
+S3: so_khoang=1000 p50=0 p99=492 p99.9=500 max=500 ns
+S4: so_khoang=300 p50=0 p99=0 p99.9=0 max=0 ns
+S5: so_khoang=1502 p50=0 p99=475 p99.9=498 max=499 ns
+=> S1 max 0 ns, S2 max 500 ns, S3 max 500 ns, S4 max 0 ns, S5 max 499 ns: DAT (<= 500 ns)
+
+recursion_misses (bpf_prog_info): tong 0 tren 31 chuong trinh, o ca G7a va tung kich ban G3 S1-S5: DAT (= 0)
+
+Bang doi chieu voi kernel (nguyen van tu muc "--- bang doi chieu ---" cua tung S*-ketqua.txt):
+
+[S1]
+thanh_phan           collector       tham_chieu      nguon
+cpu+steal+irq        3011642362      3011614935      Delta schedstat field1 sum_exec_runtime
+rq                   55821           73301           Delta schedstat field2 run_delay
+rq (wait_sum)        55821           73301           Delta wait_sum /proc/sched
+vol                  26216000        26215900        Delta sum_sleep_runtime
+vol (D_SLEEP)        0               0               Delta sum_block_runtime
+
+[S2]
+thanh_phan           collector       tham_chieu      nguon
+cpu+steal+irq        3321656         6347465         Delta schedstat field1 sum_exec_runtime
+rq                   7087496         4298235         Delta schedstat field2 run_delay
+rq (wait_sum)        7087496         4298240         Delta wait_sum /proc/sched
+vol                  2824192000      2823940000      Delta sum_sleep_runtime
+vol (D_SLEEP)        0               0               Delta sum_block_runtime
+rq                   7087496         6883754         bpftrace @rq_sau_wakeup_ns (cot 3: 4298235 run_delay)
+so_lan_wakeup        —             501             bpftrace @so_lan (cot 3: 501 Delta pcount)
+tong cpu+steal+irq+rq+vol | exec+run_delay+sleep 2834601152      2834585700      collector | kernel
+
+[S3]
+thanh_phan           collector       tham_chieu      nguon
+cpu+steal+irq        1005094386      1008373872      Delta schedstat field1 sum_exec_runtime
+rq                   4268598         1008268         Delta schedstat field2 run_delay
+rq (wait_sum)        4268598         1008270         Delta wait_sum /proc/sched
+vol                  1769525000      1769500000      Delta sum_sleep_runtime
+vol (D_SLEEP)        0               0               Delta sum_block_runtime
+rq                   4268598         4148304         bpftrace @rq_sau_wakeup_ns (cot 3: 1008268 run_delay)
+so_lan_wakeup        —             501             bpftrace @so_lan (cot 3: 501 Delta pcount)
+tong cpu+steal+irq+rq+vol | exec+run_delay+sleep 2778887984      2778882140      collector | kernel
+
+[S4]
+thanh_phan           collector       tham_chieu      nguon
+cpu+steal+irq        3075456446      3075494347      Delta schedstat field1 sum_exec_runtime
+rq                   3077540008      3077479736      Delta schedstat field2 run_delay
+rq (wait_sum)        3077540008      3077480000      Delta wait_sum /proc/sched
+vol                  27678000        27677200        Delta sum_sleep_runtime
+vol (D_SLEEP)        0               0               Delta sum_block_runtime
+
+[S5]
+thanh_phan           collector       tham_chieu      nguon
+cpu+steal+irq        18439345        19273368        Delta schedstat field1 sum_exec_runtime
+rq                   1281903         150884          Delta schedstat field2 run_delay
+rq (wait_sum)        1281903         150884          Delta wait_sum /proc/sched
+vol                  297151000       297453000       Delta sum_sleep_runtime
+vol (D_SLEEP)        55978000        56283100        Delta sum_block_runtime
+rq                   1281903         1198297         bpftrace @rq_sau_wakeup_ns (cot 3: 150884 run_delay)
+so_lan_wakeup        —             601             bpftrace @so_lan (cot 3: 601 Delta pcount)
+tong cpu+steal+irq+rq+vol | exec+run_delay+sleep 316872248       316877252       collector | kernel
+
+Ket luan G3: DAT theo tieu chi LAB-0 (phan du <= 0,5 us, recursion_misses = 0, co bang doi chieu kernel/bpftrace o S2/S3/S5)
+
+Ghi chu dieu chinh moi truong cho buoc 2 (khong sua collector/BPF, khong rebuild hids-collect):
+- scripts/g3.sh goc ghim WL_CPU=20, khong hop le tren may 8 vCPU (taskset -c 20: Invalid argument).
+  Da sua WL_CPU=20 -> WL_CPU="${WL_CPU:-20}" (mac dinh cu giu nguyen) va chay WL_CPU=7. Commit 26c6a09.
+- bin/wl (da build san) ghi hieu chuan vao duong cung /root/hids/out/m4-loops.txt (duong cua may test).
+  Lan G3 dau tien dung tai S1, nguyen van:
+    wl: loops_per_us=344.610590 loops_10ms=3446105 (hieu chinh 200226 us)
+    fopen m4-loops: No such file or directory
+    g3: S1: khong tim cua so
+  Xu ly: mkdir -p /root/hids/out (chi tao thu muc, khong sua code/binary), chay lai: DAT. Log lan 1: validation/lab0-20261021/g3-run.txt
+- stress-ng la dieu kien check_common cua g3.sh nhung nam o buoc 3, nen da cai stress-ng truoc G3 (xem buoc 3), cac goi con lai cai sau G3.
+- Truoc G7a, file tracked internal/stealbpf/stealsnaprq_x86_bpfel.o (file generate, hids-collect khong dung stealbpf)
+  dang khac HEAD lam cay khong sach. Da git checkout HEAD -- file do de chay g7/g3 khong dung co bo qua kiem tra git.
+  Binary bin/hids-collect khong build lai, khong thay doi. sha256 internal/syscallbpf/sysenter_x86_bpfel.o = c9dc792ff13f02ee67d4ae5acf5e619ff45bbee26d4dc66352489e511fd95a26 (khop HEAD).
+- Canh bao trong log collector "binary build tu cay lam viec con thay doi chua commit (git_commit=50b3668-dirty)"
+  la cua binary da build san truoc LAB-0, giu nguyen theo boi canh nhiem vu.
+
+================================================================
+3. CAI TAI BENIGN (qua card quan ly) — DAT
+================================================================
+Lenh: apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y nginx postgresql docker.io stress-ng
+(stress-ng cai truoc G3 nhu ghi chu buoc 2)
+
+Phien ban (dpkg -l):
+ii  nginx          1.24.0-2ubuntu7.18       amd64
+ii  postgresql     16+257build1.1           all
+ii  docker.io      29.1.3-0ubuntu3~24.04.2  amd64
+ii  stress-ng      0.17.06-1build1          amd64
+
+nginx version: nginx/1.24.0 (Ubuntu)
+psql (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)
+pgbench (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)
+Docker version 29.1.3, build 29.1.3-0ubuntu3~24.04.2
+stress-ng, version 0.17.06
+
+================================================================
+4. HAI CONTAINER TAI (chua chay tai) — DAT
+================================================================
+Ten hai container:
+1. lab0-nginx
+   Image: nginx:1.24 (digest sha256:f6daac2445b0ce70e64d77442ccf62839f3f1b4c24bf6746a857eff014e798c8)
+   Port: 0.0.0.0:18080->80/tcp
+   Phuc vu file 4 KiB: /srv/hids-data/nginx-html/file4k.bin (4096 byte, mount ro vao /usr/share/nginx/html)
+   Kiem chung: curl http://127.0.0.1:18080/file4k.bin -> http:200 size_download:4096
+2. lab0-postgres
+   Image: postgres:16 (digest sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d)
+   Port: 0.0.0.0:15432->5432/tcp (tranh cong 5432 cua postgresql tren host)
+   Khoi tao: docker exec lab0-postgres pgbench -i -s 50 -U postgres -h 127.0.0.1 postgres
+     -> done in 5.76 s; select count(*) from pgbench_accounts = 5000000
+
+$ docker ps
+NAMES           IMAGE         PORTS                                           STATUS
+lab0-postgres   postgres:16   0.0.0.0:15432->5432/tcp, [::]:15432->5432/tcp   Up
+lab0-nginx      nginx:1.24    0.0.0.0:18080->80/tcp, [::]:18080->80/tcp       Up
+
+Chua chay tai: khong chay cong cu sinh tai nao vao hai container (khong wrk/ab/hey, khong pgbench chay tai - chi pgbench -i khoi tao).
+
+================================================================
+5. THU MUC DU LIEU — DAT
+================================================================
+$ mkdir -p /srv/hids-data/hids-collector/
+drwxr-xr-x 2 root root 4096 /srv/hids-data/hids-collector/
+
+================================================================
+6. KET LUAN
+================================================================
+LAB-0 DAT tat ca cac buoc 1-5. Dung tai day (DUNG), cho nhiem vu tiep theo.
