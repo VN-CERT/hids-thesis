@@ -1,0 +1,11 @@
+so ban ghi tid=281298: 1505
+5 khoang phan du lon nhat (|dt - tong|, dt - tong, chi so): [(7979, -7979, 1277), (497, 497, 271), (496, 496, 131), (495, -495, 876), (492, -492, 1451)]
+
+ban ghi co phan du lon nhat: chi so 1277 (0-based trong tid), phan du = -7979 ns
+[1274] mono_ns(ts_enter)=968765367519869 tid=281298 syscall_nr=18 flags=5120 (khong co co nao) CPU=20 cpu_ns=84799 steal_ns=0 irq_ns=0 rq_ns=0 vol_ns=0 steal_off_ns=0 dt_ns=84799
+[1275] mono_ns(ts_enter)=968765367543975 tid=281298 syscall_nr=75 flags=5120 (khong co co nao) CPU=20 cpu_ns=24106 steal_ns=0 irq_ns=0 rq_ns=0 vol_ns=0 steal_off_ns=0 dt_ns=24106
+[1276] mono_ns(ts_enter)=968765368990755 tid=281298 syscall_nr=3 flags=5124 (D_SLEEP) CPU=20 cpu_ns=125979 steal_ns=0 irq_ns=0 rq_ns=22648 vol_ns=1298000 steal_off_ns=0 dt_ns=1446780
+[1277] mono_ns(ts_enter)=968765369000137 tid=281298 syscall_nr=110 flags=5184 (CLAMPED) CPU=20 cpu_ns=0 steal_ns=0 irq_ns=17361 rq_ns=0 vol_ns=0 steal_off_ns=0 dt_ns=9382 <== phan du 7979
+[1278] mono_ns(ts_enter)=968765369034297 tid=281298 syscall_nr=257 flags=5120 (khong co co nao) CPU=20 cpu_ns=34160 steal_ns=0 irq_ns=0 rq_ns=0 vol_ns=0 steal_off_ns=0 dt_ns=34160
+[1279] mono_ns(ts_enter)=968765369225522 tid=281298 syscall_nr=18 flags=5120 (khong co co nao) CPU=20 cpu_ns=191225 steal_ns=0 irq_ns=0 rq_ns=0 vol_ns=0 steal_off_ns=0 dt_ns=191225
+[1280] mono_ns(ts_enter)=968765369257912 tid=281298 syscall_nr=75 flags=5120 (khong co co nao) CPU=20 cpu_ns=32390 steal_ns=0 irq_ns=0 rq_ns=0 vol_ns=0 steal_off_ns=0 dt_ns=32390
