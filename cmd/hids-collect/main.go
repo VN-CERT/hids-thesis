@@ -88,6 +88,7 @@ func run() error {
 	noProc := flag.Bool("no-proc", false, "tat luong proc (BPF proc_events) - co thu nghiem M6b-1.1")
 	noHost := flag.Bool("no-host", false, "tat luong host stats 1Hz - co thu nghiem M6b-1.1")
 	cgroupRefresh := flag.Duration("cgroup-refresh", time.Second, "chu ky quet lai cgroup (mac dinh 1s) - co thu nghiem M6b-1.1")
+	rbPoll := flag.Duration("rb-poll", 200*time.Millisecond, "deadline moi lan cho doc ring buffer syscall (mac dinh 200ms; xoay file co the tre toi da bang gia tri nay)")
 	flag.Parse()
 
 	if os.Geteuid() != 0 {
@@ -108,6 +109,9 @@ func run() error {
 	}
 	if *rotate <= 0 {
 		return fmt.Errorf("-rotate phai > 0")
+	}
+	if *rbPoll <= 0 {
+		return fmt.Errorf("-rb-poll phai > 0")
 	}
 	if len(cgroupPaths) == 0 && len(tgids) == 0 {
 		return fmt.Errorf("can it nhat mot -pid hoac mot -cgroup")
@@ -131,6 +135,7 @@ func run() error {
 			noProc:        *noProc,
 			noHost:        *noHost,
 			cgroupRefresh: *cgroupRefresh,
+			rbPoll:        *rbPoll,
 		})
 	}
 
@@ -366,7 +371,7 @@ func run() error {
 	var shortRecords int64
 	var sinceFlush int64
 
-	const readPoll = 10 * time.Millisecond
+	readPoll := *rbPoll
 	for {
 		coll.SetDeadline(time.Now().Add(readPoll))
 		err := coll.ReadInto(&rec)

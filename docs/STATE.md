@@ -29,9 +29,15 @@ Cập nhật lần cuối: 2026-10-20 17:50 (giờ máy)
 - C xong (3 đợt, binary 8faaec1): G7a, G7b-nho đạt; G3 đạt ở đợt 2 (đợt 1 S5 max=7979); G9b đạt; G8 đạt ở đợt 3 (đợt 2 exit 501/502); G9, G10, host-stats đạt ở đợt 3; chạy 1 giờ xong. Lệch rq so với bpftrace: S3 vượt 5% cả hai đợt (10.91%, 8.43%) — chờ kiến trúc sư.
 - D: đã viết R029 (`reports/R029-m6b1.1-cpu-records-per-sec-gate.md`), cập nhật `reports/INDEX.md`. Gắn tag `m6b1.1` và dừng, chờ kiến trúc sư trả lời 2 câu hỏi trong R029 mục 8.
 
+## Bước đang làm (M6b-1.2)
+
+- Câu 1.1 xong (commit riêng "bộ đọc proc bỏ deadline"): đo sau sửa — idle 1.98% lõi (trước 4.4%), cấu hình 24 giờ ~6.9% lõi (trước ~9.9%). Output `validation/m6b12-20261020/after1-idle/`, `after1-24h/`.
+- Câu 1.2: đang thêm cờ `-rb-poll` (mặc định 200ms) cho bộ đọc syscall, cả chế độ `-datadir` và `-out`.
+- Tiếp theo: đường CPU theo tốc độ (1k/10k/100k/500k, mỗi mức 2 phút), câu 2 (bpftrace `@rq_sau_preempt_ns`, G3 lúc dừng container và lúc container chạy), trích bản ghi phần dư S5 7979, cổng cuối (G7a, G7b, G7b-nho, G8, G9a, G9b, G10, 1 giờ), tag `m6b1.2`, R030.
+
 ## Bước tiếp theo
 
-- Theo đúng thứ tự A → B → C → D trong task. Mục nào không đạt: dừng, dán nguyên văn.
+- Theo đúng thứ tự trong `docs/tasks/M6b-1.2.md`. Mục nào không đạt: dừng, dán nguyên văn.
 
 ## Việc đang chạy
 

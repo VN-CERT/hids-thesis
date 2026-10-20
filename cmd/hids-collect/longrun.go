@@ -48,6 +48,8 @@ type longRunOpts struct {
 	noProc        bool
 	noHost        bool
 	cgroupRefresh time.Duration
+	// Deadline cho doc ring buffer syscall (M6b-1.2 cau 1.2); mac dinh 200ms.
+	rbPoll time.Duration
 }
 
 type tsvZstWriter struct {
@@ -398,6 +400,9 @@ func runLongRun(o longRunOpts) error {
 	if o.cgroupRefresh <= 0 {
 		o.cgroupRefresh = time.Second
 	}
+	if o.rbPoll <= 0 {
+		o.rbPoll = 200 * time.Millisecond
+	}
 	if err := os.MkdirAll(o.datadir, 0o755); err != nil {
 		return err
 	}
@@ -546,6 +551,7 @@ func runLongRun(o longRunOpts) error {
 		fmt.Sprintf("no_proc: %v", o.noProc),
 		fmt.Sprintf("no_host: %v", o.noHost),
 		fmt.Sprintf("cgroup_refresh: %s", o.cgroupRefresh),
+		fmt.Sprintf("rb_poll: %s", o.rbPoll),
 	}
 	for _, name := range []string{"IRQ_TIME_ACCOUNTING", "PARAVIRT_TIME_ACCOUNTING", "SCHEDSTATS", "SCHED_INFO"} {
 		value, err := hostinfo.KernelConfig(name)
@@ -814,7 +820,7 @@ func runLongRun(o longRunOpts) error {
 		}
 	}()
 
-	const readPoll = 10 * time.Millisecond
+	readPoll := o.rbPoll
 	handleProcEvent := func(pr *ringbuf.Record) {
 		if len(pr.RawSample) != procbpf.EventSize {
 			return
