@@ -1,0 +1,54 @@
+== sample 1 2026-10-20T19:50:20+07:00
+258589 utime+stime=0.51s state=S
+258593 utime+stime=0.19s state=S
+258590 utime+stime=0.17s state=S
+258600 utime+stime=0.15s state=S
+258598 utime+stime=0.11s state=S
+258587 utime+stime=0.08s state=S
+258592 utime+stime=0.07s state=S
+258591 utime+stime=0.06s state=S
+== sample 2 2026-10-20T19:50:31+07:00
+258589 utime+stime=1.15s state=S
+258590 utime+stime=0.22s state=S
+258593 utime+stime=0.19s state=S
+258600 utime+stime=0.15s state=S
+258599 utime+stime=0.14s state=S
+258598 utime+stime=0.14s state=S
+258655 utime+stime=0.12s state=S
+258587 utime+stime=0.11s state=S
+== sample 3 2026-10-20T19:50:41+07:00
+258589 utime+stime=1.81s state=R
+258590 utime+stime=0.23s state=S
+258655 utime+stime=0.20s state=S
+258593 utime+stime=0.19s state=S
+258587 utime+stime=0.19s state=S
+258598 utime+stime=0.18s state=S
+258599 utime+stime=0.16s state=S
+258600 utime+stime=0.15s state=S
+== sample 4 2026-10-20T19:50:51+07:00
+258589 utime+stime=2.43s state=S
+258655 utime+stime=0.29s state=S
+258590 utime+stime=0.23s state=S
+258598 utime+stime=0.21s state=S
+258593 utime+stime=0.19s state=S
+258587 utime+stime=0.19s state=S
+258599 utime+stime=0.16s state=S
+258591 utime+stime=0.16s state=S
+== sample 5 2026-10-20T19:51:01+07:00
+258589 utime+stime=3.07s state=S
+258655 utime+stime=0.37s state=S
+259188 utime+stime=0.23s state=S
+258590 utime+stime=0.23s state=S
+258598 utime+stime=0.22s state=S
+258591 utime+stime=0.20s state=S
+258593 utime+stime=0.19s state=S
+258587 utime+stime=0.19s state=S
+== sample 6 2026-10-20T19:51:11+07:00
+258589 utime+stime=3.71s state=S
+258655 utime+stime=0.44s state=S
+259188 utime+stime=0.26s state=S
+258591 utime+stime=0.24s state=S
+258590 utime+stime=0.23s state=S
+258598 utime+stime=0.22s state=S
+258597 utime+stime=0.20s state=S
+258593 utime+stime=0.19s state=S

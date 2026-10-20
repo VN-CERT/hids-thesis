@@ -19,8 +19,11 @@ Cập nhật lần cuối: 2026-10-20 17:50 (giờ máy)
 
 ## Bước đang làm
 
-- A1 xong (commit e445f59, unit hids-m6b11-a1, exit=0): 5 phút đúng cấu hình 24h; CPU delta status 6.04/5.94/6.09 giây mỗi ~60 giây (≈10% một lõi); output `validation/m6b11-20261020/A1/` (top-H.txt, perf-report.txt, cpu-status-summary.txt, cpu-proc.tsv).
-- A2: đã thêm cờ thử nghiệm `-no-proc`, `-no-host`, `-cgroup-refresh` (mặc định giữ nguyên hành vi). Chuẩn bị chạy các biến thể 5 phút.
+- A1 xong (commit e445f59, unit hids-m6b11-a1, exit=0): 5 phút đúng cấu hình 24h; CPU ≈10% một lõi; output `validation/m6b11-20261020/A1/`.
+- A2 xong (unit hids-m6b11-a2, exit=0): baseline 9.7–10.0%; `-no-proc` 6.7–7.0%; `-no-host` 9.7–9.9%; `-cgroup-refresh 10s` 9.8–9.9%. Host/cgroup ≈ 0 điểm %; proc ≈ 3.1 điểm %.
+- Chẩn đoán sâu: target idle (0 bản ghi/s) vẫn ~4.4% lõi; idle + `-no-proc` ~2.4% → mỗi vòng poll ringbuf ~2% lõi khi idle. Thread nóng là sysmon của Go runtime (`nanosleep` ~1700/s, strace) do reader nằm trong blocking `epoll_wait` (deadline 10 ms) chạm ngưỡng retake 10 ms. Chi tiết: `validation/m6b11-20261020/A-summary.txt`.
+- A3: mục tiêu ≤2% KHÔNG đạt trong phạm vi sửa được phép (không đụng đường đọc ring buffer/deadline 10 ms). Không sửa ngoài phạm vi; chờ kiến trúc sư quyết định (câu hỏi trong R029). Các phần không phụ thuộc (B, C, D) làm tiếp theo quy tắc workflow.
+- Đang làm: B (sửa `records_per_sec` + lỗi biến `lines` trong `scripts/m6b1_gate.sh`).
 
 ## Bước tiếp theo
 
@@ -28,7 +31,7 @@ Cập nhật lần cuối: 2026-10-20 17:50 (giờ máy)
 
 ## Việc đang chạy
 
-- **hids-m6b11-a2** — 4 biến thể A2, mỗi biến thể 5 phút: a2-baseline, b-no-proc (`-no-proc`), c-no-host (`-no-host`), d-cgroup10s (`-cgroup-refresh 10s`); `DIAG_PERF=0`; bắt đầu 2026-10-20 ~18:05 (+07), dự kiến ~21 phút; log `out/jobs/m6b11-a2.log`, trạng thái `out/jobs/m6b11-a2.status`; output `validation/m6b11-20261020/{A2a,A2b,A2c,A2d}/`.
+- (không có)
 
 ## Vướng mắc / chờ kiến trúc sư
 

@@ -1,0 +1,60 @@
+# To display the perf.data header info, please use --header/--header-only options.
+#
+#
+# Total Lost Samples: 0
+#
+# Samples: 368  of event 'task-clock:ppp'
+# Event count (approx.): 3717171680
+#
+# Overhead  Command       Shared Object                             Symbol                                                     
+# ........  ............  ........................................  ...........................................................
+#
+    29.89%  hids-collect  [kernel.kallsyms]                         [k] finish_task_switch.isra.0
+            |
+            ---finish_task_switch.isra.0
+               __schedule
+               schedule
+               |          
+               |--26.09%--do_nanosleep
+               |          hrtimer_nanosleep
+               |          __x64_sys_nanosleep
+               |          x64_sys_call
+               |          do_syscall_64
+               |          entry_SYSCALL_64_after_hwframe
+               |          runtime.usleep.abi0
+               |          runtime.sysmon
+               |          runtime.mstart1
+               |          runtime.mstart0
+               |          runtime.mstart.abi0
+               |          
+               |--2.45%--schedule_hrtimeout_range_clock
+               |          schedule_hrtimeout_range
+               |          ep_poll
+               |          do_epoll_wait
+               |          __x64_sys_epoll_wait
+               |          x64_sys_call
+               |          do_syscall_64
+               |          entry_SYSCALL_64_after_hwframe
+               |          internal/runtime/syscall/linux.Syscall6
+               |          syscall.Syscall6
+               |          syscall.Syscall6.abi0
+               |          golang.org/x/sys/unix.EpollWait
+               |          github.com/cilium/ebpf/internal/epoll.(*Poller).Wait
+               |          github.com/cilium/ebpf/ringbuf.(*epollPoller).Wait
+               |          github.com/cilium/ebpf/ringbuf.(*Reader).ReadInto
+               |          |          
+               |          |--1.63%--main.runLongRun.func8
+               |          |          runtime.goexit.abi0
+               |          |          
+               |           --0.82%--main.runLongRun.func9
+               |                     runtime.goexit.abi0
+               |          
+                --1.36%--futex_wait_queue
+                          __futex_wait
+                          futex_wait
+                          do_futex
+                          __x64_sys_futex
+                          x64_sys_call
+                          do_syscall_64
+                          entry_SYSCALL_64_after_hwframe
+                          runtime.futex.abi0

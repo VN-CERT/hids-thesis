@@ -1,0 +1,2 @@
+wall	records_per_sec	kernel_drops_delta	disk_skipped_total	bin_bytes_compressed	free_gb	rss_bytes	cpu_seconds_total	proc_drops_delta
+2026-10-20T10:58:55.80557627Z	404.23	0	0	1446	3285.98	183177216	6.678	0

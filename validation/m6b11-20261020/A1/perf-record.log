@@ -1,0 +1,2 @@
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.081 MB validation/m6b11-20261020/A1/perf.data (368 samples) ]

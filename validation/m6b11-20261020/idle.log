@@ -1,0 +1,9 @@
+stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+stealclock_evidence: journalctl
+doi chieu vmw_steal_time voi rq->prev_steal_time trong 3s...
+doi chieu xong: lech lon nhat 280747 ns tren 24 CPU, nguong max(2000000 ns, 1%)
+mo segment 2026102012 -> validation/m6b11-20261020/idle/data/uni-lms-app-2026102012.bin
+longrun datadir=validation/m6b11-20261020/idle/data rotate=1h0m0s min_free_gb=50
+loc pid: 261330 | loc cgroup: khong co | ring buffer: 64 MiB
+READY
+ket thuc longrun end_mono_ns=968176077230988 disk_skipped=0

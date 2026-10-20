@@ -1,0 +1,4 @@
+variant=a2-baseline start=2026-10-20T19:22:15+07:00
+extra_args: 
+collector_pid=230133
+end=2026-10-20T19:27:19+07:00

@@ -1,0 +1,9 @@
+stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+stealclock_evidence: journalctl
+doi chieu vmw_steal_time voi rq->prev_steal_time trong 3s...
+doi chieu xong: lech lon nhat 205433 ns tren 24 CPU, nguong max(2000000 ns, 1%)
+mo segment 2026102012 -> validation/m6b11-20261020/A2a/data/uni-lms-app-2026102012.bin
+longrun datadir=validation/m6b11-20261020/A2a/data rotate=1h0m0s min_free_gb=50
+loc pid: khong co | loc cgroup: /sys/fs/cgroup/system.slice/docker-7421d7ae79685498cdaf7b24ea4426cccb9531070b12a3265fdf9d1738fdb592.scope (goc id=6215) | /sys/fs/cgroup/system.slice/docker-319c38ff33aa4827288f68ca1236600174cf278175fd7d5d68657d48e2a6366f.scope (goc id=6136) | ring buffer: 64 MiB
+READY
+ket thuc longrun end_mono_ns=966584849268744 disk_skipped=0

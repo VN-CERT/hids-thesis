@@ -1,0 +1,45 @@
+M6b-1.1 phan A - tong ket do CPU collector (tai ~400 ban ghi/s, 2 container hscd_redis+qdrant)
+Ngay: 2026-10-20. Binary: commit f6a53e3 (cac co thu nghiem mac dinh giu nguyen hanh vi).
+A1 binary: commit a22c0dc (validation/m6b11-20261020/A1/).
+
+=== A2: CPU % mot loi, moi bien the 5 phut (delta cpu_seconds trong status.tsv, moi ~60s) ===
+(a) a-baseline (A1, binary a22c0dc): 10.07% / 9.90% / 10.15%  (rec/s 395-403)
+(a) a2-baseline (binary f6a53e3):    9.73% / 9.92% / 10.04%
+(b) b-no-proc   (-no-proc):         6.71% / 6.79% / 6.96%
+(c) c-no-host   (-no-host):         9.68% / 9.77% / 9.90%
+(d) d-cgroup10s (-cgroup-refresh 10s): 9.78% / 9.90% / 9.87%
+
+Ket luan bien the: host stats ~0 diem %; quet cgroup 1s so voi 10s ~0 diem %;
+luong proc ~3.1 diem %; phan con lai ~6.8 diem % nam o duong loi (reader syscall + runtime).
+
+=== Thi nghiem bo sung (moi lan 70-120s, do /proc/<pid>/stat utime+stime) ===
+- Target idle (-pid tien trinh sleep, 0.00 ban ghi/s, day du 2 luong): 44 ticks/10s = ~4.4% loi.
+  status dong dau: cpu_seconds_total=3.508, records_per_sec=0.00. (idle/)
+- Target idle + GOMAXPROCS=2: 43-45 ticks/10s = ~4.4% loi. cpu_seconds_total=3.369. (idle2/)
+- Target idle + -no-proc (1 reader): 24 ticks/10s = ~2.4% loi. cpu_seconds_total=2.104. (idle3/)
+=> Moi vong poll ringbuf (epoll_wait blocking, deadline 10ms) ton ~2% loi ngay ca khi 0 ban ghi/s.
+
+=== Bang chung co che (perf, A1) ===
+- perf report A1 (validation/m6b11-20261020/A1/perf-report.txt): mau lon nhat
+  finish_task_switch qua do_nanosleep <- runtime.usleep <- runtime.sysmon (26.09%),
+  sau do ep_poll <- cilium ringbuf (*Reader).ReadInto (hai reader).
+- CPU theo thread (threads/perthread.txt): 1 thread chiem ~0.64s/10s, cac thread khac rat nho.
+- Thread nong (threads4): /proc/<tid>/syscall = nanosleep (35), wchan=hrtimer_nanosleep,
+  utime nho hon stime nhieu. strace -p <hot-tid> -c trong 6s: 10283 lan nanosleep (~1700/s).
+- Goroutine dump SIGQUIT (threads2.log): moi goroutine user deu blocked (epoll/select/chan);
+  thread nong la thread sysmon cua Go runtime.
+- Runtime Go 1.27.2 (/snap/go/11327/src/runtime/proc.go, sysmon/retake): reader nam trong
+  blocking syscall (epoll_wait qua Syscall6, khong qua netpoller) gan nhu lien tuc;
+  moi syscall keo dai toi 10ms cham nguong retake (forcePreemptNS=10ms) -> retake tra ve !=0
+  -> idle=0 -> delay sysmon reset ve 20us -> sysmon thuc ~1700 lan/s, moi lan khoa sched.lock
+  va quet toan bo P (24 P). Day la chi phi context switch/scheduling, khong phai tinh toan.
+
+=== Ket luan phan A ===
+- Viec dinh ky user-space duoc duyet (doc host 1Hz, quet cgroup) dong gop ~0 diem %
+  (bien the c, d). Doc /proc va cpu.stat nhieu lan moi giay khong phai nguyen nhan.
+- Nguyen nhan chinh: tuong tac giua duong doc ring buffer (blocking epoll_wait, deadline
+  10ms - CAM sua theo nhiem vu) voi sysmon cua Go runtime, cong luong proc (~3.1 diem %,
+  cung la mot reader ringbuf tuong tu).
+- Muc tieu <=2% loi KHONG dat duoc trong pham vi sua duoc phep (khong dung BPF, khong
+  dung duong doc ring buffer/deadline 10ms, khong dung cach nen). Dung phan A3 o day,
+  cho kien truc su quyet dinh (xem R029 muc 8).

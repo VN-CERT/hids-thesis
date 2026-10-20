@@ -1,0 +1,4 @@
+variant=d-cgroup10s start=2026-10-20T19:37:27+07:00
+extra_args: -cgroup-refresh 10s
+collector_pid=247015
+end=2026-10-20T19:42:30+07:00

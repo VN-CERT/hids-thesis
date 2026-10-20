@@ -1,0 +1,4 @@
+variant=b-no-proc start=2026-10-20T19:27:19+07:00
+extra_args: -no-proc
+collector_pid=236001
+end=2026-10-20T19:32:23+07:00
