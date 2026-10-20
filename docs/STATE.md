@@ -1,6 +1,6 @@
 # Trạng thái dự án HIDS
 
-Cập nhật lần cuối: 2026-10-20 17:45 (giờ máy)
+Cập nhật lần cuối: 2026-10-20 17:50 (giờ máy)
 
 ## Lịch sử git và tham chiếu phiên bản
 
@@ -10,28 +10,26 @@ Cập nhật lần cuối: 2026-10-20 17:45 (giờ máy)
 ## Mốc hiện tại và mục tiêu
 
 - **M5:** đóng (`m5h`).
-- **M6b-1:** **đóng** — R028, tag `m6b1`.
+- **M6b-1:** đóng (`m6b1`, R028).
+- **M6b-1.1:** đang làm — chẩn đoán CPU collector ~9,7% lõi, sửa `records_per_sec`, chạy lại cổng, tag `m6b1.1`, R029 (`docs/tasks/M6b-1.1.md`).
 
-## Bước đã xong (M6b-1)
+## Bước đã xong (M6b-1.1)
 
-- Xoá `M6B1_SKIP_*` khỏi `scripts/m6b1_gate.sh`.
-- Pre24h (`1a88508`): G7a, G7b-nho, G3 S1–S5, G9b, host 10 phút — exit=0.
-- G8 / G9a / G10 đã duyệt kiến trúc sư.
-- Thu 24 giờ `hidsrun-24h` xong 2026-10-20T17:38:14+07:00: 34.192.008 bản ghi, mất kernel 0, dữ liệu `/srv/hids-data/uni-lms-app/`.
-- R028 đã điền bảng 24 giờ.
+- Lưu nhiệm vụ nguyên văn `docs/tasks/M6b-1.1.md`.
 
 ## Bước đang làm
 
-- (không)
+- A1: chạy collector đúng cấu hình 24 giờ trong 5 phút, ghi `top -H` và `perf record/report`.
+- Sau đó A2 (biến thể a–d), A3 (tối ưu việc định kỳ user-space), B, C, D.
 
 ## Bước tiếp theo
 
-- M6b-2 (chờ nhiệm vụ từ kiến trúc sư).
+- Theo đúng thứ tự A → B → C → D trong task. Mục nào không đạt: dừng, dán nguyên văn.
 
 ## Việc đang chạy
 
-- (không)
+- (sắp chạy A1 bằng systemd-run)
 
 ## Vướng mắc / chờ kiến trúc sư
 
-- `status.tsv`: 24 dòng `records_per_sec` âm tại mỗi lần xoay file (ghi nhận ở R028 mục 10).
+- (không)
