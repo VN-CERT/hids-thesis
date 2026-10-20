@@ -21,13 +21,13 @@ func main() {
 }
 
 type residualStats struct {
-	label string
-	n     int
-	p50   int64
-	p99   int64
-	p999  int64
-	max   int64
-	over1 int
+	label  string
+	n      int
+	p50    int64
+	p99    int64
+	p999   int64
+	max    int64
+	over1  int
 	over10 int
 }
 
