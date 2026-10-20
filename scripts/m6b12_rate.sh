@@ -40,7 +40,7 @@ SAMPLER=$!
 
 # Pacer: moi giay bom dung RATE syscall (getppid) trong cgroup
 (
-	echo $$ >"$CG/cgroup.procs"
+	echo "$BASHPID" >"$CG/cgroup.procs"
 	end=$((SECONDS + 120))
 	while (( SECONDS < end )); do
 		s=$(date +%s%N)
