@@ -1,0 +1,1 @@
+G9 ranh_gioi lo_hong=0 seq_thieu=0 kernel_mat_tong=7520558

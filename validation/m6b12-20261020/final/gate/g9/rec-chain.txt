@@ -1,0 +1,32 @@
+=== validation/m6b12-20261020/final/gate/g9/uni-lms-app-202610201802.bin (tong 15543342 ban ghi) ===
+   cpu   ban_ghi  seq_min   seq_max  lo_hong  seq_thieu  seq_cuoi  mat
+     6  15543342        1  15543342        1     131090  15674432    0
+  TONG                                     1     131090              0
+
+=== validation/m6b12-20261020/final/gate/g9/uni-lms-app-202610201804.bin (tong 176936101 ban ghi) ===
+   cpu    ban_ghi   seq_min    seq_max  lo_hong  seq_thieu   seq_cuoi      mat
+     6  176936101  15543343  200000001      134   23063900  200000001  7520558
+  TONG                                      134   23063900             7520558
+
+=== validation/m6b12-20261020/final/gate/g9/uni-lms-app-202610201806.bin (tong 0 ban ghi) ===
+   cpu  ban_ghi  seq_min  seq_max  lo_hong  seq_thieu   seq_cuoi      mat
+     6        0        -        -        1  200000001  200000001  7520558
+  TONG                                   1  200000001             7520558
+
+=== validation/m6b12-20261020/final/gate/g9/uni-lms-app-202610201808.bin (tong 0 ban ghi) ===
+   cpu  ban_ghi  seq_min  seq_max  lo_hong  seq_thieu   seq_cuoi      mat
+     6        0        -        -        1  200000001  200000001  7520558
+  TONG                                   1  200000001             7520558
+
+=== validation/m6b12-20261020/final/gate/g9/uni-lms-app-202610201810.bin (tong 0 ban ghi) ===
+   cpu  ban_ghi  seq_min  seq_max  lo_hong  seq_thieu   seq_cuoi      mat
+     6        0        -        -        1  200000001  200000001  7520558
+  TONG                                   1  200000001             7520558
+
+ranh gioi file lien ke (seq theo CPU)
+   cpu                                                            file_truoc                                                              file_sau  seq_max_truoc  seq_min_sau  lo_hong  seq_thieu
+     6  validation/m6b12-20261020/final/gate/g9/uni-lms-app-202610201802.bin  validation/m6b12-20261020/final/gate/g9/uni-lms-app-202610201804.bin       15543342     15543343        0          0
+     6  validation/m6b12-20261020/final/gate/g9/uni-lms-app-202610201804.bin  validation/m6b12-20261020/final/gate/g9/uni-lms-app-202610201806.bin      200000001            -        0          0
+  TONG                                                                                                                                                                                0          0
+
+tong lo hong ranh gioi: 0 | tong seq thieu ranh gioi: 0

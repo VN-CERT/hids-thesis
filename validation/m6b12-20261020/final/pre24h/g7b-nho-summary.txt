@@ -1,0 +1,1 @@
+G7b-nho ban_ghi=22025000 mat=1975024 seq_thieu=1975024 (perf-ban_ghi)=1975024

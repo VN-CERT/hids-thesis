@@ -41,7 +41,15 @@ Cập nhật lần cuối: 2026-10-20 17:50 (giờ máy)
 
 ## Việc đang chạy
 
-- **hids-m6b12-final** — cổng cuối M6b-1.2 bằng binary cuối: G7b (24×1M, zstd0), pre24h (G7a, G7b-nho, G3, G9b, host10m), gate (G8, G9a, G10, host-stats), chạy 1 giờ cấu hình 24h; output `validation/m6b12-20261020/final/`; bắt đầu 2026-10-21 ~01:05 (+07), dự kiến ~2 giờ.
+- (không có)
+
+## Kết quả cổng cuối M6b-1.2 (binary fa60c56)
+
+- G7b lần 1: `tong bo dem mat: 54193` (tiêu chí = 0, không đạt); chạy lại xác nhận: mất = 0. Cả hai lần ghi nguyên văn trong R030.
+- pre24h lần 1 (trong job final): G3 S5 max=6298 → dừng trước G9b; lần 2 (`final2/`): đạt toàn bộ — G7a, G7b-nho (mat=seq_thieu=2401672), G3 max ≤500, G9b (lo_hong=0, seq_thieu=0, mat=0), host 600 dòng.
+- gate: đạt toàn bộ (G7a, G3, G8 khớp perf, G9a rec-chain 0/0, G10 PAUSE/RESUME/bo_vi_dia=16815920/mat=0, host).
+- Chạy 1 giờ: CPU 1.42% một lõi, RSS 193466368 B, records_per_sec không âm, kernel drops = 0, proc drops = 0.
+- Sau cùng: `bpftool prog show | grep -c hids_` = 0, không còn collector. Tag `m6b1.2`, R030 đã viết; chờ kiến trúc sư quyết về lệch rq (câu 2) và mất G7b lần 1.
 
 ## Kết quả M6b-1.2 tới trước cổng cuối
 
