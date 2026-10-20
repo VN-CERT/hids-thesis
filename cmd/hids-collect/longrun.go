@@ -898,7 +898,9 @@ func runLongRun(o longRunOpts) error {
 			var procRec ringbuf.Record
 			var sinceFlush int64
 			for {
-				procColl.SetDeadline(time.Now().Add(readPoll))
+				// Khong dat deadline: cho khong thoi han. BPF proc nop voi co 0
+				// nen kernel tu danh thuc khi co su kien. Dung bang Flush ->
+				// ErrFlushed nhu ban sua SIGTERM (M6b-1.2 cau 1.1).
 				perr := procColl.ReadInto(&procRec)
 				if perr == nil {
 					sinceFlush++
