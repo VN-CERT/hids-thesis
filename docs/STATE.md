@@ -32,7 +32,7 @@ Cập nhật lần cuối: 2026-10-20 17:50 (giờ máy)
 
 ## Việc đang chạy
 
-- (không có)
+- **hids-m6b11-c** — phần C: `scripts/m6b11_gate.sh` (pre24h: G7a, G7b-nho, G3, G9b, host10m → gate: G7a, G3, G8, G9, G10, host-stats → chạy 1 giờ cấu hình 24h); binary commit `8faaec1`; bắt đầu 2026-10-20 ~20:10 (+07), dự kiến ~2 giờ; log `validation/m6b11-20261020/C/gate-c.log`, trạng thái `validation/m6b11-20261020/C/gate-c.status`; output `validation/m6b11-20261020/C/`.
 
 ## Vướng mắc / chờ kiến trúc sư
 
