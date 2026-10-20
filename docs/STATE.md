@@ -41,7 +41,13 @@ Cập nhật lần cuối: 2026-10-20 17:50 (giờ máy)
 
 ## Việc đang chạy
 
-- (không có)
+- **hids-m6b12-final** — cổng cuối M6b-1.2 bằng binary cuối: G7b (24×1M, zstd0), pre24h (G7a, G7b-nho, G3, G9b, host10m), gate (G8, G9a, G10, host-stats), chạy 1 giờ cấu hình 24h; output `validation/m6b12-20261020/final/`; bắt đầu 2026-10-21 ~01:05 (+07), dự kiến ~2 giờ.
+
+## Kết quả M6b-1.2 tới trước cổng cuối
+
+- Câu 1: sau 1.1 (proc bỏ deadline) idle 1.98% / 24h ~6.9%; sau 1.2 (`-rb-poll` 200ms) idle 0.25% / 24h 1.34–1.46% lõi. Đường CPU theo tốc độ (ổn định, từ status.tsv): ~1.5k/s → 1.43%; ~10k/s → 3.83%; ~97k/s → 21.37%; ~475k/s → 114.97%; mất kernel = 0 ở mọi mức.
+- Câu 2: bpftrace đã thêm `@rq_sau_preempt_ns` + `@rq_tong_ns` (sửa lỗi lấy `nsecs` hai lần bằng một biến `$now`). Lệch rq so với TỔNG bpftrace: container dừng — S2 9.13%, S3 11.02%, S5 3.21%; container chạy — S2 7.80%, S3 9.88%, S5 7.13%. Tiêu chí ≤5% không đạt (trừ S5 lúc dừng container). G5 max ≤500 cả hai lần; file `validation/m6b12-20261020/cau2-summary.txt`.
+- Phần dư S5 7979: bản ghi chỉ số 1277 của tid 281298 trong `out/g3-S5-200335.bin`, cờ CLAMPED, irq_ns=17361 > dt_ns=9382, cpu_ns=0. File `validation/m6b12-20261020/s5-residual/s5-7979.txt`. Không sửa gì.
 
 ## Dọn trước M6b-1.2 (xong 2026-10-20)
 
