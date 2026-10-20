@@ -28,7 +28,7 @@ Cập nhật lần cuối: 2026-10-20 17:50 (giờ máy)
 
 ## Việc đang chạy
 
-- (không có)
+- **hids-m6b11-a2** — 4 biến thể A2, mỗi biến thể 5 phút: a2-baseline, b-no-proc (`-no-proc`), c-no-host (`-no-host`), d-cgroup10s (`-cgroup-refresh 10s`); `DIAG_PERF=0`; bắt đầu 2026-10-20 ~18:05 (+07), dự kiến ~21 phút; log `out/jobs/m6b11-a2.log`, trạng thái `out/jobs/m6b11-a2.status`; output `validation/m6b11-20261020/{A2a,A2b,A2c,A2d}/`.
 
 ## Vướng mắc / chờ kiến trúc sư
 
