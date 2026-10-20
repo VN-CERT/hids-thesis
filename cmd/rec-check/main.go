@@ -145,6 +145,7 @@ func printResidualGroup(label string, recs []recfmt.Record, skipGap bool, onlyGa
 		byTID[r.TID] = append(byTID[r.TID], r)
 	}
 	var abs []int64
+	clampedOver500 := 0
 	for _, list := range byTID {
 		sort.Slice(list, func(i, j int) bool { return list[i].TsEnter < list[j].TsEnter })
 		for i := 1; i < len(list); i++ {
@@ -171,6 +172,9 @@ func printResidualGroup(label string, recs []recfmt.Record, skipGap bool, onlyGa
 			if res < 0 {
 				res = -res
 			}
+			if res > 500 && cur.Flags&recfmt.FlagClamped != 0 {
+				clampedOver500++
+			}
 			abs = append(abs, res)
 		}
 	}
@@ -183,6 +187,7 @@ func printResidualGroup(label string, recs []recfmt.Record, skipGap bool, onlyGa
 	fmt.Printf("p50 %d\np99 %d\np99.9 %d\nmax %d\n", st.p50, st.p99, st.p999, st.max)
 	fmt.Printf("so khoang |phan du| > 1000 ns: %d\n", st.over1)
 	fmt.Printf("so khoang |phan du| > 10000 ns: %d\n", st.over10)
+	fmt.Printf("so khoang CLAMPED va |phan du| > 500 ns: %d / tong %d\n", clampedOver500, st.n)
 }
 
 func computeResidual(label string, abs []int64) residualStats {
