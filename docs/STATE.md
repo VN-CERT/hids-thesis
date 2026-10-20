@@ -13,7 +13,7 @@ Cập nhật lần cuối: 2026-10-20 17:50 (giờ máy)
 - **M5:** đóng (`m5h`).
 - **M6b-1:** đóng (`m6b1`, R028).
 - **M6b-1.1:** đóng (`m6b1.1`, R029). Kiến trúc sư đã trả lời mục 8 trong nhiệm vụ M6b-1.2.
-- **M6b-1.2:** đang làm — sửa hẹp đường chờ ring buffer (2 commit riêng), mở rộng bpftrace G3 (`@rq_sau_preempt_ns`), trích bản ghi phần dư S5 7979 ns, chạy lại cổng cuối, tag `m6b1.2`, R030 (`docs/tasks/M6b-1.2.md`).
+- **M6b-1.2:** đóng (`m6b1.2`, R030) — CPU collector còn ~1,4% lõi ở cấu hình 24 giờ. Chờ kiến trúc sư quyết 3 câu hỏi trong R030 mục 8 (lệch rq so với tổng bpftrace, G7b một lần mất 54193, phần dư S5 CLAMPED).
 
 ## Bước đã xong (M6b-1.1)
 

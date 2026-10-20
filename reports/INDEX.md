@@ -31,3 +31,4 @@
 | [R027](R027-m5-close-disk-extend.md) | 2026-10-09 15:10 | M5 | Mở rộng `/` với đĩa `sdc` (~3 TB) vào LVM `ubuntu-vg`. | Xong. |
 | [R028](R028-m6b1-longrun-gate.md) | 2026-10-19 17:40 | M6b-1 | Cổng G7/G3/G8/G9/G10 + pre24h ĐẠT; thu 24h xong (34.192.008 bản ghi, mất 0). | Xong, tag `m6b1`. |
 | [R029](R029-m6b1.1-cpu-records-per-sec-gate.md) | 2026-10-20 22:37 | M6b-1.1 | Chẩn đoán CPU ~10% lõi (sysmon Go + poll ring buffer 10 ms); sửa records_per_sec; cổng chạy lại đạt trừ lệch rq S3 >5%. | Xong phần đo/sửa, tag `m6b1.1`. Chờ kiến trúc sư quyết 2 câu hỏi (CPU ≤2%, lệch rq). |
+| [R030](R030-m6b1.2-rb-poll-rq-preempt-gate.md) | 2026-10-21 03:00 | M6b-1.2 | CPU xuống 1,4% lõi (proc bỏ deadline + `-rb-poll` 200ms); bpftrace cộng rq sau preempt nhưng S2/S3 vẫn lệch 7,8–11,0%; cổng cuối đạt trừ G7b một lần mất 54193. | Xong, tag `m6b1.2`. Chờ kiến trúc sư quyết 3 câu hỏi (lệch rq, G7b mất, phần dư CLAMPED). |
