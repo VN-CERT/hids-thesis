@@ -185,7 +185,11 @@ run_scenario() {
 	if [[ $name == S2 || $name == S3 || $name == S5 ]]; then
 		BTLOG="$prefix-bpftrace.log"
 		RQLATLOG="$prefix-runqlat.log"
-		bpftrace -e 'tracepoint:sched:sched_wakeup /args->pid == $1 && @w == 0/ { @w = nsecs; } tracepoint:sched:sched_switch { $now = nsecs; if (args->prev_pid == $1 && args->prev_state == 0) { @p = $now; } if (args->next_pid == $1) { $d = 0; if (@w != 0) { $d = $d + ($now - @w); @rq_sau_wakeup_ns = sum($now - @w); @so_lan = count(); @w = 0; } if (@p != 0) { $d = $d + ($now - @p); @rq_sau_preempt_ns = sum($now - @p); @so_lan_preempt = count(); @p = 0; } if ($d > 0) { @rq_tong_ns = sum($d); } } }' "$tid" >"$BTLOG" 2>&1 &
+		if [[ ${G3_BT_EVENTS:-0} == 1 ]]; then
+			bpftrace -e 'tracepoint:sched:sched_wakeup /args->pid == $1/ { $now = nsecs; printf("W %lu %d %d\n", $now, cpu, args->target_cpu); if (@w == 0) { @w = $now; } } tracepoint:sched:sched_switch { $now = nsecs; if (args->prev_pid == $1 && args->prev_state == 0) { @p = $now; } if (args->next_pid == $1) { printf("S %lu %d\n", $now, cpu); $d = 0; if (@w != 0) { $d = $d + ($now - @w); @rq_sau_wakeup_ns = sum($now - @w); @so_lan = count(); @w = 0; } if (@p != 0) { $d = $d + ($now - @p); @rq_sau_preempt_ns = sum($now - @p); @so_lan_preempt = count(); @p = 0; } if ($d > 0) { @rq_tong_ns = sum($d); } } }' "$tid" >"$BTLOG" 2>&1 &
+		else
+			bpftrace -e 'tracepoint:sched:sched_wakeup /args->pid == $1 && @w == 0/ { @w = nsecs; } tracepoint:sched:sched_switch { $now = nsecs; if (args->prev_pid == $1 && args->prev_state == 0) { @p = $now; } if (args->next_pid == $1) { $d = 0; if (@w != 0) { $d = $d + ($now - @w); @rq_sau_wakeup_ns = sum($now - @w); @so_lan = count(); @w = 0; } if (@p != 0) { $d = $d + ($now - @p); @rq_sau_preempt_ns = sum($now - @p); @so_lan_preempt = count(); @p = 0; } if ($d > 0) { @rq_tong_ns = sum($d); } } }' "$tid" >"$BTLOG" 2>&1 &
+		fi
 		bt_pid=$!
 		wait_bpftrace_attach "$BTLOG"
 		runqlat-bpfcc -p "$tid" >"$RQLATLOG" 2>&1 &
