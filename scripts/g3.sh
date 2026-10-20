@@ -56,7 +56,10 @@ wait_bpftrace_attach() {
 parse_bpftrace_log() {
 	local log=$1
 	BT_RQ_NS=$(grep '@rq_sau_wakeup_ns' "$log" | tail -1 | awk '{print $NF}')
-	BT_SO_LAN=$(grep '@so_lan' "$log" | tail -1 | awk '{print $NF}')
+	BT_SO_LAN=$(grep '@so_lan:' "$log" | tail -1 | awk '{print $NF}')
+	BT_PREEMPT_NS=$(grep '@rq_sau_preempt_ns' "$log" | tail -1 | awk '{print $NF}')
+	BT_TONG_NS=$(grep '@rq_tong_ns' "$log" | tail -1 | awk '{print $NF}')
+	BT_SO_LAN_PREEMPT=$(grep '@so_lan_preempt' "$log" | tail -1 | awk '{print $NF}')
 }
 
 schedstats_save() {
@@ -180,7 +183,7 @@ run_scenario() {
 	if [[ $name == S2 || $name == S3 || $name == S5 ]]; then
 		BTLOG="$prefix-bpftrace.log"
 		RQLATLOG="$prefix-runqlat.log"
-		bpftrace -e 'tracepoint:sched:sched_wakeup /args->pid == $1 && @w == 0/ { @w = nsecs; } tracepoint:sched:sched_switch /args->next_pid == $1 && @w != 0/ { @rq_sau_wakeup_ns = sum(nsecs - @w); @so_lan = count(); @w = 0; }' "$tid" >"$BTLOG" 2>&1 &
+		bpftrace -e 'tracepoint:sched:sched_wakeup /args->pid == $1 && @w == 0/ { @w = nsecs; } tracepoint:sched:sched_switch { if (args->prev_pid == $1 && args->prev_state == 0) { @p = nsecs; } if (args->next_pid == $1) { $d = 0; if (@w != 0) { $d = $d + (nsecs - @w); @rq_sau_wakeup_ns = sum(nsecs - @w); @so_lan = count(); @w = 0; } if (@p != 0) { $d = $d + (nsecs - @p); @rq_sau_preempt_ns = sum(nsecs - @p); @so_lan_preempt = count(); @p = 0; } if ($d > 0) { @rq_tong_ns = sum($d); } } }' "$tid" >"$BTLOG" 2>&1 &
 		bt_pid=$!
 		wait_bpftrace_attach "$BTLOG"
 		runqlat-bpfcc -p "$tid" >"$RQLATLOG" 2>&1 &
@@ -296,6 +299,8 @@ PY
 		kern_tot=$((d_exec + d_delay + d_sleep))
 		printf '%-20s %-15s %-15s %s\n' "rq" "${coll_rq:-?}" "${BT_RQ_NS:-?}" "bpftrace @rq_sau_wakeup_ns (cot 3: ${d_delay:-?} run_delay)" | tee -a "$ketqua"
 		printf '%-20s %-15s %-15s %s\n' "so_lan_wakeup" "—" "${BT_SO_LAN:-?}" "bpftrace @so_lan (cot 3: ${d_pcount:-?} Delta pcount)" | tee -a "$ketqua"
+		printf '%-20s %-15s %-15s %s\n' "rq_sau_preempt" "—" "${BT_PREEMPT_NS:-?}" "bpftrace @rq_sau_preempt_ns (so_lan_preempt: ${BT_SO_LAN_PREEMPT:-?})" | tee -a "$ketqua"
+		printf '%-20s %-15s %-15s %s\n' "rq" "${coll_rq:-?}" "${BT_TONG_NS:-?}" "bpftrace TONG @rq_sau_wakeup_ns + @rq_sau_preempt_ns" | tee -a "$ketqua"
 		printf '%-20s %-15s %-15s %s\n' "tong cpu+steal+irq+rq+vol | exec+run_delay+sleep" "${coll_tot:-?}" "${kern_tot:-?}" "collector | kernel" | tee -a "$ketqua"
 	fi
 
