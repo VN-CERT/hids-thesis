@@ -12,7 +12,8 @@ Cập nhật lần cuối: 2026-10-20 17:50 (giờ máy)
 
 - **M5:** đóng (`m5h`).
 - **M6b-1:** đóng (`m6b1`, R028).
-- **M6b-1.1:** đang làm — chẩn đoán CPU collector ~9,7% lõi, sửa `records_per_sec`, chạy lại cổng, tag `m6b1.1`, R029 (`docs/tasks/M6b-1.1.md`).
+- **M6b-1.1:** đóng (`m6b1.1`, R029). Kiến trúc sư đã trả lời mục 8 trong nhiệm vụ M6b-1.2.
+- **M6b-1.2:** đang làm — sửa hẹp đường chờ ring buffer (2 commit riêng), mở rộng bpftrace G3 (`@rq_sau_preempt_ns`), trích bản ghi phần dư S5 7979 ns, chạy lại cổng cuối, tag `m6b1.2`, R030 (`docs/tasks/M6b-1.2.md`).
 
 ## Bước đã xong (M6b-1.1)
 
