@@ -85,6 +85,9 @@ func run() error {
 	datadir := flag.String("datadir", "", "thu muc thu thap dai ngay (xoay file, proc/host TSV); de trong = che do cu")
 	rotate := flag.Duration("rotate", time.Hour, "chu ky xoay file wall clock khi -datadir duoc dat")
 	minFreeGB := flag.Float64("min-free-gb", 50, "ngung ghi .bin khi dung luong trong duoi nguong (GB)")
+	noProc := flag.Bool("no-proc", false, "tat luong proc (BPF proc_events) - co thu nghiem M6b-1.1")
+	noHost := flag.Bool("no-host", false, "tat luong host stats 1Hz - co thu nghiem M6b-1.1")
+	cgroupRefresh := flag.Duration("cgroup-refresh", time.Second, "chu ky quet lai cgroup (mac dinh 1s) - co thu nghiem M6b-1.1")
 	flag.Parse()
 
 	if os.Geteuid() != 0 {
@@ -125,6 +128,9 @@ func run() error {
 			discard:       *discard,
 			sysEnterHook:  *sysEnterHook,
 			zstdLevel:     *zstdLevel,
+			noProc:        *noProc,
+			noHost:        *noHost,
+			cgroupRefresh: *cgroupRefresh,
 		})
 	}
 

@@ -56,6 +56,8 @@ cat "$OUT/top-H.txt"
 if [[ ${DIAG_PERF:-1} == 1 ]]; then
 	perf record -F 99 -g -p "$CPID" -o "$OUT/perf.data" -- sleep 60 >"$OUT/perf-record.log" 2>&1 || true
 	perf report -i "$OUT/perf.data" --stdio --no-children 2>/dev/null | head -60 >"$OUT/perf-report.txt" || true
+	top -b -n1 -H -p "$CPID" | head -20 >"$OUT/top-H2.txt" || true
+	ps -T -o tid,pcpu,time,comm -p "$CPID" >"$OUT/ps-T.txt" || true
 fi
 
 wait "$CPID" || true

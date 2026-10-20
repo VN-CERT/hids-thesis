@@ -32,18 +32,22 @@ import (
 )
 
 type longRunOpts struct {
-	datadir      string
-	rotate       time.Duration
-	minFreeGB    float64
-	cgroupPaths  []string
-	tgids        []uint32
-	duration     time.Duration
-	ringbufMB    int
-	allowNoSteal bool
+	datadir       string
+	rotate        time.Duration
+	minFreeGB     float64
+	cgroupPaths   []string
+	tgids         []uint32
+	duration      time.Duration
+	ringbufMB     int
+	allowNoSteal  bool
 	stealFallback bool
-	discard      bool
-	sysEnterHook string
-	zstdLevel    int
+	discard       bool
+	sysEnterHook  string
+	zstdLevel     int
+	// Co thu nghiem chan doan CPU (M6b-1.1); mac dinh giu nguyen hanh vi.
+	noProc        bool
+	noHost        bool
+	cgroupRefresh time.Duration
 }
 
 type tsvZstWriter struct {
@@ -127,21 +131,21 @@ func (w *tsvZstWriter) close() error {
 }
 
 type segmentWriters struct {
-	tag          string
-	binPath      string
-	binFile      *os.File
-	zstdEnc      *zstd.Encoder
-	recordOut    io.Writer
-	bw           *bufio.Writer
-	asyncSink    *asyncRecordSink
-	periodic     *recfmt.PeriodicWriter
-	procW        *tsvZstWriter
-	hostW        *tsvZstWriter
-	binBytes     int64
-	procBytes    int64
-	hostBytes    int64
-	records      int64
-	header       []string
+	tag       string
+	binPath   string
+	binFile   *os.File
+	zstdEnc   *zstd.Encoder
+	recordOut io.Writer
+	bw        *bufio.Writer
+	asyncSink *asyncRecordSink
+	periodic  *recfmt.PeriodicWriter
+	procW     *tsvZstWriter
+	hostW     *tsvZstWriter
+	binBytes  int64
+	procBytes int64
+	hostBytes int64
+	records   int64
+	header    []string
 }
 
 type writerSet struct {
@@ -387,6 +391,9 @@ func runLongRun(o longRunOpts) error {
 	if o.rotate <= 0 {
 		return fmt.Errorf("-rotate phai > 0")
 	}
+	if o.cgroupRefresh <= 0 {
+		o.cgroupRefresh = time.Second
+	}
 	if err := os.MkdirAll(o.datadir, 0o755); err != nil {
 		return err
 	}
@@ -470,15 +477,18 @@ func runLongRun(o longRunOpts) error {
 	}
 	defer coll.Close()
 
-	procColl, err := procbpf.Load(procbpf.Config{SelfTGID: uint32(os.Getpid())})
-	if err != nil {
-		bpflog.Report(logPath, "khong nap duoc proc BPF", err)
-		return fmt.Errorf("nap proc BPF that bai, chi tiet o %s", logPath)
-	}
-	defer procColl.Close()
-	if len(cgroupIDs) > 0 {
-		if err := procColl.ReplaceCgroupFilter(cgroupIDs); err != nil {
-			return err
+	var procColl *procbpf.Collector
+	if !o.noProc {
+		procColl, err = procbpf.Load(procbpf.Config{SelfTGID: uint32(os.Getpid())})
+		if err != nil {
+			bpflog.Report(logPath, "khong nap duoc proc BPF", err)
+			return fmt.Errorf("nap proc BPF that bai, chi tiet o %s", logPath)
+		}
+		defer procColl.Close()
+		if len(cgroupIDs) > 0 {
+			if err := procColl.ReplaceCgroupFilter(cgroupIDs); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -529,6 +539,9 @@ func runLongRun(o longRunOpts) error {
 		fmt.Sprintf("datadir: %s", o.datadir),
 		fmt.Sprintf("rotate: %s", o.rotate),
 		fmt.Sprintf("min_free_gb: %.0f", o.minFreeGB),
+		fmt.Sprintf("no_proc: %v", o.noProc),
+		fmt.Sprintf("no_host: %v", o.noHost),
+		fmt.Sprintf("cgroup_refresh: %s", o.cgroupRefresh),
 	}
 	for _, name := range []string{"IRQ_TIME_ACCOUNTING", "PARAVIRT_TIME_ACCOUNTING", "SCHEDSTATS", "SCHED_INFO"} {
 		value, err := hostinfo.KernelConfig(name)
@@ -698,7 +711,10 @@ func runLongRun(o longRunOpts) error {
 				kernDelta := drops - prevKernelDrops
 				prevKernelDrops = drops
 
-				procD, _ := procColl.Drops()
+				var procD uint64
+				if procColl != nil {
+					procD, _ = procColl.Drops()
+				}
 				procDelta := procD - prevProcDrops
 				prevProcDrops = procD
 
@@ -723,8 +739,8 @@ func runLongRun(o longRunOpts) error {
 				cpuSec := 0.0
 				if err := unix.Getrusage(unix.RUSAGE_SELF, &ru); err == nil {
 					rss = int64(ru.Maxrss) * 1024
-					cpuSec = float64(ru.Utime.Sec)+float64(ru.Utime.Usec)/1e6 +
-						float64(ru.Stime.Sec)+float64(ru.Stime.Usec)/1e6
+					cpuSec = float64(ru.Utime.Sec) + float64(ru.Utime.Usec)/1e6 +
+						float64(ru.Stime.Sec) + float64(ru.Stime.Usec)/1e6
 				}
 
 				row := []string{
@@ -744,30 +760,32 @@ func runLongRun(o longRunOpts) error {
 	}()
 
 	stopHost := make(chan struct{})
-	go func() {
-		ticker := time.NewTicker(time.Second)
-		defer ticker.Stop()
-		for {
-			select {
-			case <-stopHost:
-				return
-			case <-ticker.C:
-				s, err := hostsample.ReadSample(ws.cgroups)
-				if err != nil {
-					bpflog.Note(os.Stderr, logPath, fmt.Sprintf("hostsample: %v", err))
-					continue
-				}
-				_ = ws.maybeRotate(time.Now(), header)
-				if err := ws.writeHostRow(s.RowTSV()); err != nil {
-					bpflog.Note(os.Stderr, logPath, fmt.Sprintf("ghi host: %v", err))
+	if !o.noHost {
+		go func() {
+			ticker := time.NewTicker(time.Second)
+			defer ticker.Stop()
+			for {
+				select {
+				case <-stopHost:
+					return
+				case <-ticker.C:
+					s, err := hostsample.ReadSample(ws.cgroups)
+					if err != nil {
+						bpflog.Note(os.Stderr, logPath, fmt.Sprintf("hostsample: %v", err))
+						continue
+					}
+					_ = ws.maybeRotate(time.Now(), header)
+					if err := ws.writeHostRow(s.RowTSV()); err != nil {
+						bpflog.Note(os.Stderr, logPath, fmt.Sprintf("ghi host: %v", err))
+					}
 				}
 			}
-		}
-	}()
+		}()
+	}
 
 	stopCgroup := make(chan struct{})
 	if len(o.cgroupPaths) > 0 {
-		go refreshCgroupBoth(coll, procColl, o.cgroupPaths, stopCgroup)
+		go refreshCgroupBoth(coll, procColl, o.cgroupPaths, stopCgroup, o.cgroupRefresh)
 	}
 
 	var timer <-chan time.Time
@@ -783,9 +801,13 @@ func runLongRun(o longRunOpts) error {
 		case <-timer:
 		}
 		_ = coll.Detach()
-		_ = procColl.Detach()
+		if procColl != nil {
+			_ = procColl.Detach()
+		}
 		_ = coll.Flush()
-		_ = procColl.Flush()
+		if procColl != nil {
+			_ = procColl.Flush()
+		}
 	}()
 
 	const readPoll = 10 * time.Millisecond
@@ -814,7 +836,11 @@ func runLongRun(o longRunOpts) error {
 
 	errCh := make(chan error, 2)
 	var readers sync.WaitGroup
-	readers.Add(2)
+	if procColl != nil {
+		readers.Add(2)
+	} else {
+		readers.Add(1)
+	}
 	go func() {
 		defer readers.Done()
 		var rec ringbuf.Record
@@ -862,36 +888,38 @@ func runLongRun(o longRunOpts) error {
 			return
 		}
 	}()
-	go func() {
-		defer readers.Done()
-		var procRec ringbuf.Record
-		var sinceFlush int64
-		for {
-			procColl.SetDeadline(time.Now().Add(readPoll))
-			perr := procColl.ReadInto(&procRec)
-			if perr == nil {
-				sinceFlush++
-				handleProcEvent(&procRec)
-				continue
-			}
-			if errors.Is(perr, os.ErrDeadlineExceeded) {
-				continue
-			}
-			if errors.Is(perr, ringbuf.ErrFlushed) {
-				if sinceFlush == 0 {
+	if procColl != nil {
+		go func() {
+			defer readers.Done()
+			var procRec ringbuf.Record
+			var sinceFlush int64
+			for {
+				procColl.SetDeadline(time.Now().Add(readPoll))
+				perr := procColl.ReadInto(&procRec)
+				if perr == nil {
+					sinceFlush++
+					handleProcEvent(&procRec)
+					continue
+				}
+				if errors.Is(perr, os.ErrDeadlineExceeded) {
+					continue
+				}
+				if errors.Is(perr, ringbuf.ErrFlushed) {
+					if sinceFlush == 0 {
+						return
+					}
+					sinceFlush = 0
+					_ = procColl.Flush()
+					continue
+				}
+				if errors.Is(perr, os.ErrClosed) {
 					return
 				}
-				sinceFlush = 0
-				_ = procColl.Flush()
-				continue
-			}
-			if errors.Is(perr, os.ErrClosed) {
+				errCh <- fmt.Errorf("doc proc ringbuf: %w", perr)
 				return
 			}
-			errCh <- fmt.Errorf("doc proc ringbuf: %w", perr)
-			return
-		}
-	}()
+		}()
+	}
 	readers.Wait()
 	select {
 	case err := <-errCh:
@@ -913,8 +941,11 @@ func runLongRun(o longRunOpts) error {
 	return nil
 }
 
-func refreshCgroupBoth(sc *syscallbpf.Collector, pc *procbpf.Collector, roots []string, stop <-chan struct{}) {
-	ticker := time.NewTicker(time.Second)
+func refreshCgroupBoth(sc *syscallbpf.Collector, pc *procbpf.Collector, roots []string, stop <-chan struct{}, interval time.Duration) {
+	if interval <= 0 {
+		interval = time.Second
+	}
+	ticker := time.NewTicker(interval)
 	defer ticker.Stop()
 	for {
 		select {
@@ -929,8 +960,10 @@ func refreshCgroupBoth(sc *syscallbpf.Collector, pc *procbpf.Collector, roots []
 			if err := sc.ReplaceCgroupFilter(ids); err != nil {
 				bpflog.Note(os.Stderr, logPath, fmt.Sprintf("cap nhat hids_cgroups: %v", err))
 			}
-			if err := pc.ReplaceCgroupFilter(ids); err != nil {
-				bpflog.Note(os.Stderr, logPath, fmt.Sprintf("cap nhat hids_proc_cgroups: %v", err))
+			if pc != nil {
+				if err := pc.ReplaceCgroupFilter(ids); err != nil {
+					bpflog.Note(os.Stderr, logPath, fmt.Sprintf("cap nhat hids_proc_cgroups: %v", err))
+				}
 			}
 		}
 	}

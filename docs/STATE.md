@@ -19,8 +19,8 @@ Cập nhật lần cuối: 2026-10-20 17:50 (giờ máy)
 
 ## Bước đang làm
 
-- A1: chạy collector đúng cấu hình 24 giờ trong 5 phút, ghi `top -H` và `perf record/report`.
-- Sau đó A2 (biến thể a–d), A3 (tối ưu việc định kỳ user-space), B, C, D.
+- A1 xong (commit e445f59, unit hids-m6b11-a1, exit=0): 5 phút đúng cấu hình 24h; CPU delta status 6.04/5.94/6.09 giây mỗi ~60 giây (≈10% một lõi); output `validation/m6b11-20261020/A1/` (top-H.txt, perf-report.txt, cpu-status-summary.txt, cpu-proc.tsv).
+- A2: đã thêm cờ thử nghiệm `-no-proc`, `-no-host`, `-cgroup-refresh` (mặc định giữ nguyên hành vi). Chuẩn bị chạy các biến thể 5 phút.
 
 ## Bước tiếp theo
 
@@ -28,7 +28,7 @@ Cập nhật lần cuối: 2026-10-20 17:50 (giờ máy)
 
 ## Việc đang chạy
 
-- (sắp chạy A1 bằng systemd-run)
+- (không có)
 
 ## Vướng mắc / chờ kiến trúc sư
 
