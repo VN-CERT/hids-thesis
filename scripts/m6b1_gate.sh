@@ -207,7 +207,8 @@ HPID=$!
 wait "$HPID" || true
 HOST=$(find "$HDIR" -name 'host-*.tsv.zst' | head -1)
 [[ -n $HOST ]] || fail "khong co host TSV"
-lines=$(zstdcat "$HOST" | tail -n +2 | wc -l)
+lines=0
+lines=$(zstdcat "$HOST" | tail -n +2 | wc -l) || lines=0
 echo "host lines: $lines"
 [[ "$lines" -ge 580 && "$lines" -le 620 ]] && pass "host ~600 dong" || fail "host lines=$lines"
 # cpu_user khong giam

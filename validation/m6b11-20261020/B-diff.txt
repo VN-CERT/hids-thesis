@@ -1,0 +1,54 @@
+diff --git a/cmd/hids-collect/longrun.go b/cmd/hids-collect/longrun.go
+index 559951e..1aea391 100644
+--- a/cmd/hids-collect/longrun.go
++++ b/cmd/hids-collect/longrun.go
+@@ -156,6 +156,9 @@ type writerSet struct {
+ 	hostHdr  []string
+ 	cgroups  []hostsample.CgroupTarget
+ 	statsFn  func() ([]recfmt.CPUStat, error)
++	// totalRecords cong don toan phien, khong reset khi xoay file
++	// (dung cho records_per_sec trong status.tsv; M6b-1.1 phan B).
++	totalRecords int64
+ }
+ 
+ func periodTag(t time.Time, rotate time.Duration) string {
+@@ -323,6 +326,7 @@ func (ws *writerSet) writeRecord(raw []byte) error {
+ 	}
+ 	if err == nil {
+ 		ws.seg.records++
++		ws.totalRecords++
+ 	}
+ 	return err
+ }
+@@ -719,13 +723,13 @@ func runLongRun(o longRunOpts) error {
+ 				prevProcDrops = procD
+ 
+ 				ws.mu.Lock()
+-				recs := int64(0)
+-				if ws.seg != nil {
+-					recs = ws.seg.records
+-				}
++				recs := ws.totalRecords
+ 				ws.mu.Unlock()
+ 				recDelta := recs - prevRecords
+ 				prevRecords = recs
++				if recDelta < 0 {
++					recDelta = 0
++				}
+ 				rps := float64(recDelta) / elapsed
+ 
+ 				skipped := diskSkipped.Load()
+diff --git a/scripts/m6b1_gate.sh b/scripts/m6b1_gate.sh
+index 36001f3..ee58802 100755
+--- a/scripts/m6b1_gate.sh
++++ b/scripts/m6b1_gate.sh
+@@ -207,7 +207,8 @@ HPID=$!
+ wait "$HPID" || true
+ HOST=$(find "$HDIR" -name 'host-*.tsv.zst' | head -1)
+ [[ -n $HOST ]] || fail "khong co host TSV"
+-lines=$(zstdcat "$HOST" | tail -n +2 | wc -l)
++lines=0
++lines=$(zstdcat "$HOST" | tail -n +2 | wc -l) || lines=0
+ echo "host lines: $lines"
+ [[ "$lines" -ge 580 && "$lines" -le 620 ]] && pass "host ~600 dong" || fail "host lines=$lines"
+ # cpu_user khong giam

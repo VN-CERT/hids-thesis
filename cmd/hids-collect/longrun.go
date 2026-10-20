@@ -156,6 +156,9 @@ type writerSet struct {
 	hostHdr  []string
 	cgroups  []hostsample.CgroupTarget
 	statsFn  func() ([]recfmt.CPUStat, error)
+	// totalRecords cong don toan phien, khong reset khi xoay file
+	// (dung cho records_per_sec trong status.tsv; M6b-1.1 phan B).
+	totalRecords int64
 }
 
 func periodTag(t time.Time, rotate time.Duration) string {
@@ -323,6 +326,7 @@ func (ws *writerSet) writeRecord(raw []byte) error {
 	}
 	if err == nil {
 		ws.seg.records++
+		ws.totalRecords++
 	}
 	return err
 }
@@ -719,13 +723,13 @@ func runLongRun(o longRunOpts) error {
 				prevProcDrops = procD
 
 				ws.mu.Lock()
-				recs := int64(0)
-				if ws.seg != nil {
-					recs = ws.seg.records
-				}
+				recs := ws.totalRecords
 				ws.mu.Unlock()
 				recDelta := recs - prevRecords
 				prevRecords = recs
+				if recDelta < 0 {
+					recDelta = 0
+				}
 				rps := float64(recDelta) / elapsed
 
 				skipped := diskSkipped.Load()
