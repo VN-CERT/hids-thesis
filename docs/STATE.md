@@ -32,7 +32,13 @@ Cập nhật lần cuối: 2026-10-20 17:50 (giờ máy)
 
 ## Việc đang chạy
 
-- **hids-m6b11-c2** — chạy lại `m6b1_pre24h.sh` (lấy G9b + host10m còn thiếu) rồi `m6b1_gate.sh` (lấy G8 + G10); output `validation/m6b11-20261020/C2/`; bắt đầu 2026-10-20 ~21:15 (+07), dự kiến ~50 phút.
+- **hids-m6b11-c3** — chạy lại `m6b1_gate.sh` lần nữa (lấy G8, G9, G10, host-stats còn thiếu); output `validation/m6b11-20261020/C3/`; bắt đầu 2026-10-20 ~21:40 (+07), dự kiến ~25 phút.
+
+## Kết quả C đợt 2 (unit hids-m6b11-c2)
+
+- pre24h exit=0, đạt toàn bộ: G7a (1000001, mat=0), G7b-nho (mat=seq_thieu=(perf-ban_ghi)=4211457), G3 recursion_misses=0, G5 max S1=0, S2=499, S3=499, S4=0, S5=499 (≤500), G9b (lo_hong=0, seq_thieu=0, kernel_mat=0), host 600 dòng, bộ đếm không giảm.
+- Lệch rq collector so với bpftrace đợt 2: S2=5.02%, S3=8.43%, S5=0.96% (đợt 1: S2=3.32%, S3=10.91%, S5=5.05%). Tiêu chí thêm ≤5%: S3 vượt cả hai đợt; S2/S5 lúc vượt lúc không.
+- gate đợt 2: G7a PASS; G3 đầy đủ (gồm G-real, G-irq, G7d) chạy xong; **G8 FAIL: exit collector=501, perf=502** (exec 501=501, fork 501=501). gate dừng tại G8 nên G9/G10/host-stats của gate chưa chạy.
 
 ## Kết quả C đợt 1 (unit hids-m6b11-c, binary 8faaec1)
 

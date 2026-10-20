@@ -1,0 +1,240 @@
+=== validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201408.bin (tong 9804 ban ghi) ===
+   cpu  ban_ghi  seq_min  seq_max  lo_hong  seq_thieu  seq_cuoi  mat
+     0      818        1      818        0          0       818    0
+     1      495        1      495        0          0       495    0
+     2      165        1      165        0          0       165    0
+     3      741        1      741        0          0       741    0
+     4      644        1      644        0          0       644    0
+     5      323        1      323        0          0       323    0
+     6     1410        1     1410        0          0      1410    0
+     7      681        1      681        0          0       681    0
+     8      313        1      313        0          0       313    0
+     9      807        1      807        0          0       807    0
+    10      469        1      469        0          0       469    0
+    11      109        1      109        0          0       109    0
+    12       40        1       40        0          0        40    0
+    13      214        1      214        0          0       214    0
+    14      202        1      202        0          0       202    0
+    15      184        1      184        0          0       184    0
+    16      510        1      510        0          0       510    0
+    17       61        1       61        0          0        61    0
+    18      389        1      389        0          0       389    0
+    19       61        1       61        0          0        61    0
+    21      459        1      459        0          0       459    0
+    22      227        1      227        0          0       227    0
+    23      482        1      482        0          0       482    0
+  TONG                                   0          0              0
+
+=== validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin (tong 47213 ban ghi) ===
+   cpu  ban_ghi  seq_min  seq_max  lo_hong  seq_thieu  seq_cuoi  mat
+     0     3746      819     4564        1        818      4564    0
+     1     2632      496     3127        1        495      3127    0
+     2     2639      166     2804        2        440      3079    0
+     3     2000      742     2741        1        741      2741    0
+     4     1573      645     2217        1        644      2217    0
+     5     1086      324     1409        1        323      1409    0
+     6     3988     1411     5398        1       1410      5398    0
+     7     4133      682     4814        1        681      4814    0
+     8     1279      314     1592        1        313      1592    0
+     9     4692      808     5499        1        807      5499    0
+    10     2838      470     3307        2        480      3318    0
+    11     1541      110     1650        1        109      1650    0
+    12     1878       41     1918        2         79      1957    0
+    13     1040      215     1254        2        215      1255    0
+    14     1669      203     1871        1        202      1871    0
+    15     1516      185     1700        1        184      1700    0
+    16     1762      511     2272        1        510      2272    0
+    17      797       62      858        1         61       858    0
+    18      517      390      906        2        411       928    0
+    19      580       62      641        1         61       641    0
+    20      591        1      591        1         11       602    0
+    21      916      460     1375        2        469      1385    0
+    22     1417      228     1644        1        227      1644    0
+    23     2383      483     2865        1        482      2865    0
+  TONG                                  30      10173              0
+
+=== validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin (tong 47592 ban ghi) ===
+   cpu  ban_ghi  seq_min  seq_max  lo_hong  seq_thieu  seq_cuoi  mat
+     0     2994     4565     7558        1       4564      7558    0
+     1     2343     3128     5470        1       3127      5470    0
+     2     3778     2805     6582        1       2804      6582    0
+     3     2331     2742     5072        1       2741      5072    0
+     4     2302     2218     4519        1       2217      4519    0
+     5     1112     1410     2521        1       1409      2521    0
+     6     2846     5399     8244        1       5398      8244    0
+     7     2058     4815     6872        1       4814      6872    0
+     8     4400     1593     5992        1       1592      5992    0
+     9     2922     5500     8421        1       5499      8421    0
+    10     2441     3308     5748        1       3307      5748    0
+    11     2136     1651     3786        1       1650      3786    0
+    12     2662     1919     4580        1       1918      4580    0
+    13      525     1255     1779        1       1254      1779    0
+    14     1554     1872     3425        1       1871      3425    0
+    15     1434     1701     3134        1       1700      3134    0
+    16     1507     2273     3779        1       2272      3779    0
+    17     1232      859     2090        1        858      2090    0
+    18      571      907     1477        1        906      1477    0
+    19     1102      642     1743        1        641      1743    0
+    20      700      592     1291        1        591      1291    0
+    21     1143     1376     2518        1       1375      2518    0
+    22     2203     1645     3847        1       1644      3847    0
+    23     1296     2866     4161        1       2865      4161    0
+  TONG                                  24      57017              0
+
+=== validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin (tong 47812 ban ghi) ===
+   cpu  ban_ghi  seq_min  seq_max  lo_hong  seq_thieu  seq_cuoi  mat
+     0     2279     7559     9837        1       7558      9837    0
+     1     3086     5471     8556        1       5470      8556    0
+     2     2490     6583     9072        1       6582      9072    0
+     3     2427     5073     7499        1       5072      7499    0
+     4     3496     4520     8015        1       4519      8015    0
+     5      285     2522     2806        1       2521      2806    0
+     6     1066     8245     9310        1       8244      9310    0
+     7     2037     6873     8909        1       6872      8909    0
+     8     4178     5993    10170        1       5992     10170    0
+     9     6131     8422    14552        1       8421     14552    0
+    10     1034     5749     6782        1       5748      6782    0
+    11     1660     3787     5446        1       3786      5446    0
+    12     2043     4581     6623        1       4580      6623    0
+    13     1375     1780     3154        1       1779      3154    0
+    14     2656     3426     6081        1       3425      6081    0
+    15     2200     3135     5334        1       3134      5334    0
+    16     2434     3780     6213        1       3779      6213    0
+    17      945     2091     3035        1       2090      3035    0
+    18      405     1478     1882        1       1477      1882    0
+    19      968     1744     2711        1       1743      2711    0
+    20     1459     1292     2750        1       1291      2750    0
+    21      293     2519     2811        1       2518      2811    0
+    22     1554     3848     5401        1       3847      5401    0
+    23     1311     4162     5472        1       4161      5472    0
+  TONG                                  24     104609              0
+
+=== validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201416.bin (tong 13940 ban ghi) ===
+   cpu  ban_ghi  seq_min  seq_max  lo_hong  seq_thieu  seq_cuoi  mat
+     0      499     9838    10336        1       9837     10336    0
+     1      877     8557     9433        1       8556      9433    0
+     2     1210     9073    10282        1       9072     10282    0
+     3     1383     7500     8882        1       7499      8882    0
+     4      585     8016     8600        1       8015      8600    0
+     5      514     2807     3320        1       2806      3320    0
+     6      386     9311     9696        1       9310      9696    0
+     7      309     8910     9218        1       8909      9218    0
+     8      497    10171    10667        1      10170     10667    0
+     9     2704    14553    17256        1      14552     17256    0
+    10      104     6783     6886        1       6782      6886    0
+    11     1177     5447     6623        1       5446      6623    0
+    12      256     6624     6879        1       6623      6879    0
+    13      367     3155     3521        1       3154      3521    0
+    14      785     6082     6866        1       6081      6866    0
+    15      170     5335     5504        1       5334      5504    0
+    16      534     6214     6747        1       6213      6747    0
+    17      141     3036     3176        1       3035      3176    0
+    18      191     1883     2073        1       1882      2073    0
+    19      211     2712     2922        1       2711      2922    0
+    20      720     2751     3470        1       2750      3470    0
+    21        0        -        -        1       2811      2811    0
+    22       25     5402     5426        1       5401      5426    0
+    23      295     5473     5767        1       5472      5767    0
+  TONG                                  24     152421              0
+
+ranh gioi file lien ke (seq theo CPU)
+   cpu                                                            file_truoc                                                              file_sau  seq_max_truoc  seq_min_sau  lo_hong  seq_thieu
+     0  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201408.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin            818          819        0          0
+     1  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201408.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin            495          496        0          0
+     2  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201408.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin            165          166        0          0
+     3  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201408.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin            741          742        0          0
+     4  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201408.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin            644          645        0          0
+     5  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201408.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin            323          324        0          0
+     6  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201408.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin           1410         1411        0          0
+     7  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201408.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin            681          682        0          0
+     8  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201408.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin            313          314        0          0
+     9  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201408.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin            807          808        0          0
+    10  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201408.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin            469          470        0          0
+    11  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201408.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin            109          110        0          0
+    12  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201408.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin             40           41        0          0
+    13  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201408.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin            214          215        0          0
+    14  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201408.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin            202          203        0          0
+    15  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201408.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin            184          185        0          0
+    16  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201408.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin            510          511        0          0
+    17  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201408.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin             61           62        0          0
+    18  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201408.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin            389          390        0          0
+    19  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201408.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin             61           62        0          0
+    20  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201408.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin              -            1        0          0
+    21  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201408.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin            459          460        0          0
+    22  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201408.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin            227          228        0          0
+    23  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201408.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin            482          483        0          0
+     0  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin           4564         4565        0          0
+     1  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin           3127         3128        0          0
+     2  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin           2804         2805        0          0
+     3  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin           2741         2742        0          0
+     4  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin           2217         2218        0          0
+     5  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin           1409         1410        0          0
+     6  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin           5398         5399        0          0
+     7  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin           4814         4815        0          0
+     8  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin           1592         1593        0          0
+     9  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin           5499         5500        0          0
+    10  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin           3307         3308        0          0
+    11  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin           1650         1651        0          0
+    12  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin           1918         1919        0          0
+    13  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin           1254         1255        0          0
+    14  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin           1871         1872        0          0
+    15  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin           1700         1701        0          0
+    16  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin           2272         2273        0          0
+    17  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin            858          859        0          0
+    18  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin            906          907        0          0
+    19  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin            641          642        0          0
+    20  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin            591          592        0          0
+    21  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin           1375         1376        0          0
+    22  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin           1644         1645        0          0
+    23  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201410.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin           2865         2866        0          0
+     0  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin           7558         7559        0          0
+     1  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin           5470         5471        0          0
+     2  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin           6582         6583        0          0
+     3  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin           5072         5073        0          0
+     4  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin           4519         4520        0          0
+     5  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin           2521         2522        0          0
+     6  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin           8244         8245        0          0
+     7  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin           6872         6873        0          0
+     8  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin           5992         5993        0          0
+     9  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin           8421         8422        0          0
+    10  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin           5748         5749        0          0
+    11  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin           3786         3787        0          0
+    12  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin           4580         4581        0          0
+    13  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin           1779         1780        0          0
+    14  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin           3425         3426        0          0
+    15  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin           3134         3135        0          0
+    16  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin           3779         3780        0          0
+    17  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin           2090         2091        0          0
+    18  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin           1477         1478        0          0
+    19  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin           1743         1744        0          0
+    20  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin           1291         1292        0          0
+    21  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin           2518         2519        0          0
+    22  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin           3847         3848        0          0
+    23  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin           4161         4162        0          0
+     0  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201416.bin           9837         9838        0          0
+     1  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201416.bin           8556         8557        0          0
+     2  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201416.bin           9072         9073        0          0
+     3  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201416.bin           7499         7500        0          0
+     4  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201416.bin           8015         8016        0          0
+     5  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201416.bin           2806         2807        0          0
+     6  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201416.bin           9310         9311        0          0
+     7  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201416.bin           8909         8910        0          0
+     8  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201416.bin          10170        10171        0          0
+     9  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201416.bin          14552        14553        0          0
+    10  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201416.bin           6782         6783        0          0
+    11  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201416.bin           5446         5447        0          0
+    12  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201416.bin           6623         6624        0          0
+    13  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201416.bin           3154         3155        0          0
+    14  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201416.bin           6081         6082        0          0
+    15  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201416.bin           5334         5335        0          0
+    16  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201416.bin           6213         6214        0          0
+    17  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201416.bin           3035         3036        0          0
+    18  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201416.bin           1882         1883        0          0
+    19  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201416.bin           2711         2712        0          0
+    20  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201416.bin           2750         2751        0          0
+    21  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201416.bin           2811            -        0          0
+    22  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201416.bin           5401         5402        0          0
+    23  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin  validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201416.bin           5472         5473        0          0
+  TONG                                                                                                                                                                                0          0
+
+tong lo hong ranh gioi: 0 | tong seq thieu ranh gioi: 0

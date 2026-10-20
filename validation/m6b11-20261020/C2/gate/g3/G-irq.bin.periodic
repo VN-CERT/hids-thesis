@@ -1,0 +1,37 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 8faaec1
+# record_size: 56
+# filter_tgids: 385276
+# filter_pid: 1
+# filter_cgroup: khong co
+# ringbuf_bytes: 67108864
+# rb_wake_bytes: 8388608
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: dmesg | [    0.000000] vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 1
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 0
+# start_mono_ns: 973931127069946
+# start_wall: 2026-10-20T21:29:45.810149231+07:00
+# duration: 30s
+# moi dong cach nhau 10s
+mono_ns,wall,dinh_ghi_delta,mat_delta,dinh_ghi_tong,mat_tong,irq_hard_delta_ns,irq_soft_delta_ns,irq_vec_delta_ns,soft_raw_delta_ns,irq_hard_tong_ns,irq_soft_tong_ns,irq_vec_tong_ns,soft_raw_tong_ns
+973931138654732,2026-10-20T21:29:45.821733044+07:00,0,0,0,0,0,417177,7606143,417177,0,417177,7606143,417177
+973941148529986,2026-10-20T21:29:55.831608062+07:00,0,0,0,0,911521,143476720,545389110,143731350,911521,143893897,552995253,144148527
+973951147903314,2026-10-20T21:30:05.830981355+07:00,0,0,0,0,1241540,125884749,489071712,126128728,2153061,269778646,1042066965,270277255
+973961148554580,2026-10-20T21:30:15.831632383+07:00,0,0,0,0,1414779,119151600,466399612,119440945,3567840,388930246,1508466577,389718200
+973961224440547,2026-10-20T21:30:15.907536536+07:00,0,0,0,0,0,219510,5437478,222091,3567840,389149756,1513904055,389940291

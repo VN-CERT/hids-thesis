@@ -1,0 +1,2 @@
+perf exec=501 fork=501 exit=502
+collector exec=501 fork=501 exit=501

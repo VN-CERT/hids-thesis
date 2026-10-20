@@ -1,0 +1,307 @@
+file: validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201414.bin
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 8faaec1
+# record_size: 56
+# filter_tgids: khong co
+# filter_pid: 0
+# filter_cgroup: /sys/fs/cgroup/system.slice/docker-7421d7ae79685498cdaf7b24ea4426cccb9531070b12a3265fdf9d1738fdb592.scope (goc id=6215) | /sys/fs/cgroup/system.slice/docker-319c38ff33aa4827288f68ca1236600174cf278175fd7d5d68657d48e2a6366f.scope (goc id=6136)
+# ringbuf_bytes: 67108864
+# rb_wake_bytes: 8388608
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: dmesg | [    0.000000] vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# datadir: validation/m6b11-20261020/C2/pre24h/g9b
+# rotate: 2m0s
+# min_free_gb: 50
+# no_proc: false
+# no_host: false
+# cgroup_refresh: 1s
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# start_mono_ns: 972720490929538
+# start_wall: 2026-10-20T21:09:35.174008114+07:00
+# duration: 7m0s
+# segment_tag: 202610201414
+
+tong so ban ghi trong file : 47812
+ts_enter nho nhat / lon nhat: 972985336382713 / 973105313729687 (ns, CLOCK_MONOTONIC)
+ban ghi co co FIRST        : 146
+ban ghi co co GAP_BEFORE   : 0
+
+so ban ghi theo tgid (148 tien trinh)
+    tgid  ban_ghi  FIRST  GAP_BEFORE      nguon_tgid
+    2869    28104      0           0           /proc
+    2500     5842      0           0           /proc
+  360351      369      1           0  ? (suy tu tid)
+  361292      366      1           0  ? (suy tu tid)
+  361614      366      1           0  ? (suy tu tid)
+  360982      365      1           0  ? (suy tu tid)
+  361061      365      1           0  ? (suy tu tid)
+  361539      365      1           0  ? (suy tu tid)
+  359984      364      1           0  ? (suy tu tid)
+  360673      364      1           0  ? (suy tu tid)
+  360905      364      1           0  ? (suy tu tid)
+  360502      363      1           0  ? (suy tu tid)
+  360825      363      1           0  ? (suy tu tid)
+  361692      363      1           0  ? (suy tu tid)
+  360426      362      1           0  ? (suy tu tid)
+  361216      362      1           0  ? (suy tu tid)
+  361446      362      1           0  ? (suy tu tid)
+  361769      362      1           0  ? (suy tu tid)
+  360060      361      1           0  ? (suy tu tid)
+  360198      361      1           0  ? (suy tu tid)
+  360286      360      1           0  ? (suy tu tid)
+  360596      359      1           0  ? (suy tu tid)
+  360131      358      1           0  ? (suy tu tid)
+  360750      358      1           0  ? (suy tu tid)
+  361138      358      1           0  ? (suy tu tid)
+  361370      358      1           0  ? (suy tu tid)
+  361062      198      1           0  ? (suy tu tid)
+  360906      190      1           0  ? (suy tu tid)
+  361693      183      1           0  ? (suy tu tid)
+  361770      173      1           0  ? (suy tu tid)
+  360061      169      1           0  ? (suy tu tid)
+  360353      166      1           0  ? (suy tu tid)
+  361540      166      1           0  ? (suy tu tid)
+  361293      163      1           0  ? (suy tu tid)
+  360983      157      1           0  ? (suy tu tid)
+  361217      156      1           0  ? (suy tu tid)
+  360503      155      1           0  ? (suy tu tid)
+  361139      151      1           0  ? (suy tu tid)
+  360294      150      1           0  ? (suy tu tid)
+  360427      145      1           0  ? (suy tu tid)
+  360674      140      1           0  ? (suy tu tid)
+  360751      137      1           0  ? (suy tu tid)
+  361447      137      1           0  ? (suy tu tid)
+  359986      136      1           0  ? (suy tu tid)
+  360597      135      1           0  ? (suy tu tid)
+  361615      129      1           0  ? (suy tu tid)
+  360137      126      1           0  ? (suy tu tid)
+  360206      111      1           0  ? (suy tu tid)
+  361371      110      1           0  ? (suy tu tid)
+  361675      108      1           0  ? (suy tu tid)
+  360826       79      1           0  ? (suy tu tid)
+  361696       37      1           0  ? (suy tu tid)
+  360504       36      1           0  ? (suy tu tid)
+  360296       34      1           0  ? (suy tu tid)
+  360430       34      1           0  ? (suy tu tid)
+  361771       33      1           0  ? (suy tu tid)
+  359994       32      1           0  ? (suy tu tid)
+  360065       32      1           0  ? (suy tu tid)
+  360209       32      1           0  ? (suy tu tid)
+  361618       32      1           0  ? (suy tu tid)
+  360677       30      1           0  ? (suy tu tid)
+  361220       30      1           0  ? (suy tu tid)
+  361543       30      1           0  ? (suy tu tid)
+  360909       29      1           0  ? (suy tu tid)
+  361065       29      1           0  ? (suy tu tid)
+  360356       28      1           0  ? (suy tu tid)
+  361450       28      1           0  ? (suy tu tid)
+  360140       27      1           0  ? (suy tu tid)
+  361142       27      1           0  ? (suy tu tid)
+  360600       26      1           0  ? (suy tu tid)
+  360827       25      1           0  ? (suy tu tid)
+  361296       25      1           0  ? (suy tu tid)
+  360752       22      1           0  ? (suy tu tid)
+  360986       22      1           0  ? (suy tu tid)
+  360984       21      1           0  ? (suy tu tid)
+  361372       20      1           0  ? (suy tu tid)
+  360754       17      1           0  ? (suy tu tid)
+  361374       17      1           0  ? (suy tu tid)
+  360357       15      1           0  ? (suy tu tid)
+  361297       15      1           0  ? (suy tu tid)
+  360829       13      1           0  ? (suy tu tid)
+  360207       12      1           0  ? (suy tu tid)
+  361449       12      1           0  ? (suy tu tid)
+  361616       12      1           0  ? (suy tu tid)
+  359991       11      1           0  ? (suy tu tid)
+  359997       11      1           0  ? (suy tu tid)
+  360063       11      1           0  ? (suy tu tid)
+  360141       11      1           0  ? (suy tu tid)
+  360295       11      1           0  ? (suy tu tid)
+  360354       11      1           0  ? (suy tu tid)
+  360355       11      1           0  ? (suy tu tid)
+  360429       11      1           0  ? (suy tu tid)
+  360431       11      1           0  ? (suy tu tid)
+  360505       11      1           0  ? (suy tu tid)
+  360599       11      1           0  ? (suy tu tid)
+  360675       11      1           0  ? (suy tu tid)
+  360830       11      1           0  ? (suy tu tid)
+  360908       11      1           0  ? (suy tu tid)
+  360987       11      1           0  ? (suy tu tid)
+  361063       11      1           0  ? (suy tu tid)
+  361064       11      1           0  ? (suy tu tid)
+  361218       11      1           0  ? (suy tu tid)
+  361294       11      1           0  ? (suy tu tid)
+  361542       11      1           0  ? (suy tu tid)
+  361544       11      1           0  ? (suy tu tid)
+  361694       11      1           0  ? (suy tu tid)
+  361695       11      1           0  ? (suy tu tid)
+  361774       11      1           0  ? (suy tu tid)
+  359987       10      1           0  ? (suy tu tid)
+  360062       10      1           0  ? (suy tu tid)
+  360067       10      1           0  ? (suy tu tid)
+  360138       10      1           0  ? (suy tu tid)
+  360142       10      1           0  ? (suy tu tid)
+  360208       10      1           0  ? (suy tu tid)
+  360210       10      1           0  ? (suy tu tid)
+  360297       10      1           0  ? (suy tu tid)
+  360358       10      1           0  ? (suy tu tid)
+  360428       10      1           0  ? (suy tu tid)
+  360506       10      1           0  ? (suy tu tid)
+  360507       10      1           0  ? (suy tu tid)
+  360598       10      1           0  ? (suy tu tid)
+  360601       10      1           0  ? (suy tu tid)
+  360676       10      1           0  ? (suy tu tid)
+  360678       10      1           0  ? (suy tu tid)
+  360753       10      1           0  ? (suy tu tid)
+  360755       10      1           0  ? (suy tu tid)
+  360828       10      1           0  ? (suy tu tid)
+  360907       10      1           0  ? (suy tu tid)
+  360910       10      1           0  ? (suy tu tid)
+  360985       10      1           0  ? (suy tu tid)
+  361066       10      1           0  ? (suy tu tid)
+  361140       10      1           0  ? (suy tu tid)
+  361141       10      1           0  ? (suy tu tid)
+  361143       10      1           0  ? (suy tu tid)
+  361219       10      1           0  ? (suy tu tid)
+  361221       10      1           0  ? (suy tu tid)
+  361295       10      1           0  ? (suy tu tid)
+  361298       10      1           0  ? (suy tu tid)
+  361373       10      1           0  ? (suy tu tid)
+  361375       10      1           0  ? (suy tu tid)
+  361448       10      1           0  ? (suy tu tid)
+  361451       10      1           0  ? (suy tu tid)
+  361541       10      1           0  ? (suy tu tid)
+  361617       10      1           0  ? (suy tu tid)
+  361619       10      1           0  ? (suy tu tid)
+  361697       10      1           0  ? (suy tu tid)
+  361772       10      1           0  ? (suy tu tid)
+  361773       10      1           0  ? (suy tu tid)
+    TONG    47812    146           0                
+
+so ban ghi theo tid (171 thread, in 40 dong dau)
+     tid  tgid  ban_ghi
+    2500  2500     5842
+    3091  2869     1226
+    3094  2869     1226
+    3111  2869     1226
+    3120  2869     1226
+    3142  2869     1226
+    3171  2869     1226
+    3172  2869     1226
+    3174  2869     1226
+    3176  2869     1226
+    3093  2869     1225
+    3101  2869     1225
+    3108  2869     1225
+    3115  2869     1225
+    3136  2869     1225
+    3139  2869     1225
+    3147  2869     1225
+    3151  2869     1218
+    3098  2869     1215
+    3107  2869     1215
+    3160  2869     1215
+    3100  2869     1211
+    3096  2869     1210
+    3125  2869     1203
+  360351     ?      369
+  361292     ?      366
+  361614     ?      366
+  360982     ?      365
+  361061     ?      365
+  361539     ?      365
+  359984     ?      364
+  360673     ?      364
+  360905     ?      364
+  360502     ?      363
+  360825     ?      363
+  361692     ?      363
+  360426     ?      362
+  361216     ?      362
+  361446     ?      362
+  361769     ?      362
+
+top 20 syscall_nr (tong cong 67 gia tri khac nhau)
+  syscall_nr  ban_ghi
+         232    17066
+           1    11376
+          35     3145
+           0     2148
+           3     2075
+         281     1584
+           2     1399
+         157     1368
+         202     1090
+          72     1063
+          39      538
+           5      456
+           9      388
+         138      312
+         257      312
+         233      288
+         437      288
+          12      264
+          15      260
+         234      260
+
+theo tung CPU (cpu lay tu bit8..15 cua flags; seq_cuoi va mat lay tu .stats)
+   cpu  ban_ghi  seq_min  seq_max  lo_hong  seq_thieu  seq_cuoi  mat
+     0     2279     7559     9837        1       7558      9837    0
+     1     3086     5471     8556        1       5470      8556    0
+     2     2490     6583     9072        1       6582      9072    0
+     3     2427     5073     7499        1       5072      7499    0
+     4     3496     4520     8015        1       4519      8015    0
+     5      285     2522     2806        1       2521      2806    0
+     6     1066     8245     9310        1       8244      9310    0
+     7     2037     6873     8909        1       6872      8909    0
+     8     4178     5993    10170        1       5992     10170    0
+     9     6131     8422    14552        1       8421     14552    0
+    10     1034     5749     6782        1       5748      6782    0
+    11     1660     3787     5446        1       3786      5446    0
+    12     2043     4581     6623        1       4580      6623    0
+    13     1375     1780     3154        1       1779      3154    0
+    14     2656     3426     6081        1       3425      6081    0
+    15     2200     3135     5334        1       3134      5334    0
+    16     2434     3780     6213        1       3779      6213    0
+    17      945     2091     3035        1       2090      3035    0
+    18      405     1478     1882        1       1477      1882    0
+    19      968     1744     2711        1       1743      2711    0
+    20     1459     1292     2750        1       1291      2750    0
+    21      293     2519     2811        1       2518      2811    0
+    22     1554     3848     5401        1       3847      5401    0
+    23     1311     4162     5472        1       4161      5472    0
+  TONG    47812                         24     104609    152421    0
+
+y nghia cac cot:
+  ban_ghi   so ban ghi cua CPU do co trong file (tinh tren toan bo file,
+            khong phu thuoc -tgid/-nr/-from-mono/-to-mono)
+  seq_min   seq nho nhat doc duoc; bang 1 neu khong mat ban ghi nao o dau
+  lo_hong   so doan seq lien tuc bi thieu (ke ca doan dau tu 1 den seq_min
+            va doan cuoi tu seq_max den seq_cuoi)
+  seq_thieu tong so seq bi thieu; so nay doi chieu truc tiep voi cot mat
+  seq_cuoi  so lan dinh ghi tren CPU do, doc tu kernel luc collector dung
+  mat       bo dem bpf_ringbuf_reserve that bai, doc tu kernel
+
+doi chieu seq (toan cuc)
+  so lan dinh ghi (tong seq_cuoi cua moi CPU): 152421
+  so ban ghi collector doc duoc             : 47812
+  so ban ghi dem duoc trong file            : 47812
+  tong bo dem mat (ring buffer day)         : 0
+  tong so seq bi thieu theo CPU             : 104609
+  dinh ghi - ban ghi trong file             : 104609

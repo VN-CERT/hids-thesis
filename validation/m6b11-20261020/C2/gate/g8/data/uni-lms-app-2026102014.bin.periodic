@@ -1,0 +1,44 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 8faaec1
+# record_size: 56
+# filter_tgids: khong co
+# filter_pid: 0
+# filter_cgroup: /sys/fs/cgroup/hids-test8 (goc id=185961)
+# ringbuf_bytes: 67108864
+# rb_wake_bytes: 8388608
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: dmesg | [    0.000000] vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# datadir: validation/m6b11-20261020/C2/gate/g8/data
+# rotate: 1h0m0s
+# min_free_gb: 50
+# no_proc: false
+# no_host: false
+# cgroup_refresh: 1s
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 0
+# start_mono_ns: 973976566762908
+# start_wall: 2026-10-20T21:30:31.249841843+07:00
+# duration: 2m0s
+# segment_tag: 2026102014
+# moi dong cach nhau 10s
+mono_ns,wall,dinh_ghi_delta,mat_delta,dinh_ghi_tong,mat_tong,irq_hard_delta_ns,irq_soft_delta_ns,irq_vec_delta_ns,soft_raw_delta_ns,irq_hard_tong_ns,irq_soft_tong_ns,irq_vec_tong_ns,soft_raw_tong_ns
+973976576232772,2026-10-20T21:30:31.259311812+07:00,0,0,0,0,16484,3325513,16652520,3328434,16484,3325513,16652520,3328434
+973986577186016,2026-10-20T21:30:41.260264073+07:00,27605,0,27605,0,443028,163097900,819375416,163636437,459512,166423413,836027936,166964871
+973996577050067,2026-10-20T21:30:51.260127984+07:00,0,0,27605,0,254518,106035370,634132412,106323630,714030,272458783,1470160348,273288501
+974006576619405,2026-10-20T21:31:01.259697062+07:00,0,0,27605,0,330558,101173238,577755741,101346404,1044588,373632021,2047916089,374634905
+974006796401869,2026-10-20T21:31:01.479479821+07:00,0,0,27605,0,0,6124534,25287039,6130130,1044588,379756555,2073203128,380765035

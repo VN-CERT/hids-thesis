@@ -1,0 +1,190 @@
+file: validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201408.bin
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 8faaec1
+# record_size: 56
+# filter_tgids: khong co
+# filter_pid: 0
+# filter_cgroup: /sys/fs/cgroup/system.slice/docker-7421d7ae79685498cdaf7b24ea4426cccb9531070b12a3265fdf9d1738fdb592.scope (goc id=6215) | /sys/fs/cgroup/system.slice/docker-319c38ff33aa4827288f68ca1236600174cf278175fd7d5d68657d48e2a6366f.scope (goc id=6136)
+# ringbuf_bytes: 67108864
+# rb_wake_bytes: 8388608
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: dmesg | [    0.000000] vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# datadir: validation/m6b11-20261020/C2/pre24h/g9b
+# rotate: 2m0s
+# min_free_gb: 50
+# no_proc: false
+# no_host: false
+# cgroup_refresh: 1s
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# start_mono_ns: 972720490929538
+# start_wall: 2026-10-20T21:09:35.174008114+07:00
+# duration: 7m0s
+# segment_tag: 202610201408
+
+tong so ban ghi trong file : 9804
+ts_enter nho nhat / lon nhat: 972720419702197 / 972745313258704 (ns, CLOCK_MONOTONIC)
+ban ghi co co FIRST        : 55
+ban ghi co co GAP_BEFORE   : 0
+
+so ban ghi theo tgid (32 tien trinh)
+    tgid  ban_ghi  FIRST  GAP_BEFORE      nguon_tgid
+    2869     5815     24           0           /proc
+    2500     1210      1           0           /proc
+  355679      364      1           0  ? (suy tu tid)
+  355736      363      1           0  ? (suy tu tid)
+  355442      362      1           0  ? (suy tu tid)
+  355557      362      1           0  ? (suy tu tid)
+  355834      361      1           0  ? (suy tu tid)
+  355682      177      1           0  ? (suy tu tid)
+  355566      137      1           0  ? (suy tu tid)
+  355443      129      1           0  ? (suy tu tid)
+  355839      112      1           0  ? (suy tu tid)
+  355743      107      1           0  ? (suy tu tid)
+  355450       30      1           0  ? (suy tu tid)
+  355687       30      1           0  ? (suy tu tid)
+  355746       28      1           0  ? (suy tu tid)
+  355843       28      1           0  ? (suy tu tid)
+  355567       25      1           0  ? (suy tu tid)
+  355570       16      1           0  ? (suy tu tid)
+  355444       12      1           0  ? (suy tu tid)
+  355685       12      1           0  ? (suy tu tid)
+  355745       12      1           0  ? (suy tu tid)
+  355840       12      1           0  ? (suy tu tid)
+  355447       10      1           0  ? (suy tu tid)
+  355452       10      1           0  ? (suy tu tid)
+  355568       10      1           0  ? (suy tu tid)
+  355571       10      1           0  ? (suy tu tid)
+  355683       10      1           0  ? (suy tu tid)
+  355689       10      1           0  ? (suy tu tid)
+  355744       10      1           0  ? (suy tu tid)
+  355747       10      1           0  ? (suy tu tid)
+  355841       10      1           0  ? (suy tu tid)
+  355844       10      1           0  ? (suy tu tid)
+    TONG     9804     55           0                
+
+so ban ghi theo tid (55 thread, in 40 dong dau)
+     tid  tgid  ban_ghi
+    2500  2500     1210
+  355679     ?      364
+  355736     ?      363
+  355442     ?      362
+  355557     ?      362
+  355834     ?      361
+    3111  2869      255
+    3115  2869      255
+    3120  2869      255
+    3136  2869      255
+    3139  2869      255
+    3142  2869      255
+    3147  2869      255
+    3171  2869      255
+    3172  2869      255
+    3174  2869      255
+    3176  2869      255
+    3101  2869      254
+    3108  2869      254
+    3151  2869      254
+    3160  2869      254
+    3107  2869      252
+    3091  2869      251
+    3093  2869      250
+    3094  2869      250
+    3098  2869      248
+    3096  2869      247
+    3100  2869      247
+    3125  2869      244
+  355682     ?      177
+  355566     ?      137
+  355443     ?      129
+  355839     ?      112
+  355743     ?      107
+  355450     ?       30
+  355687     ?       30
+  355746     ?       28
+  355843     ?       28
+  355567     ?       25
+  355570     ?       16
+
+top 20 syscall_nr (tong cong 59 gia tri khac nhau)
+  syscall_nr  ban_ghi
+         232     3530
+           1     2355
+          35      575
+           0      430
+           3      430
+         281      326
+           2      290
+         157      285
+         202      223
+          72      220
+          39      111
+           5       95
+           9       80
+         138       65
+         257       65
+         233       60
+         437       60
+          15       56
+         234       56
+          12       55
+
+theo tung CPU (cpu lay tu bit8..15 cua flags; seq_cuoi va mat lay tu .stats)
+   cpu  ban_ghi  seq_min  seq_max  lo_hong  seq_thieu  seq_cuoi  mat
+     0      818        1      818        0          0       818    0
+     1      495        1      495        0          0       495    0
+     2      165        1      165        0          0       165    0
+     3      741        1      741        0          0       741    0
+     4      644        1      644        0          0       644    0
+     5      323        1      323        0          0       323    0
+     6     1410        1     1410        0          0      1410    0
+     7      681        1      681        0          0       681    0
+     8      313        1      313        0          0       313    0
+     9      807        1      807        0          0       807    0
+    10      469        1      469        0          0       469    0
+    11      109        1      109        0          0       109    0
+    12       40        1       40        0          0        40    0
+    13      214        1      214        0          0       214    0
+    14      202        1      202        0          0       202    0
+    15      184        1      184        0          0       184    0
+    16      510        1      510        0          0       510    0
+    17       61        1       61        0          0        61    0
+    18      389        1      389        0          0       389    0
+    19       61        1       61        0          0        61    0
+    21      459        1      459        0          0       459    0
+    22      227        1      227        0          0       227    0
+    23      482        1      482        0          0       482    0
+  TONG     9804                          0          0      9804    0
+
+y nghia cac cot:
+  ban_ghi   so ban ghi cua CPU do co trong file (tinh tren toan bo file,
+            khong phu thuoc -tgid/-nr/-from-mono/-to-mono)
+  seq_min   seq nho nhat doc duoc; bang 1 neu khong mat ban ghi nao o dau
+  lo_hong   so doan seq lien tuc bi thieu (ke ca doan dau tu 1 den seq_min
+            va doan cuoi tu seq_max den seq_cuoi)
+  seq_thieu tong so seq bi thieu; so nay doi chieu truc tiep voi cot mat
+  seq_cuoi  so lan dinh ghi tren CPU do, doc tu kernel luc collector dung
+  mat       bo dem bpf_ringbuf_reserve that bai, doc tu kernel
+
+doi chieu seq (toan cuc)
+  so lan dinh ghi (tong seq_cuoi cua moi CPU): 9804
+  so ban ghi collector doc duoc             : 9804
+  so ban ghi dem duoc trong file            : 9804
+  tong bo dem mat (ring buffer day)         : 0
+  tong so seq bi thieu theo CPU             : 0
+  dinh ghi - ban ghi trong file             : 0

@@ -1,0 +1,21 @@
+--- S2: validation/m6b11-20261020/C2/pre24h/g3/S2-ketqua.txt ---
+@rq_sau_wakeup_ns: 19308956
+@so_lan: 501
+@w: 0
+rq                   20277883        19308956        bpftrace @rq_sau_wakeup_ns (cot 3: 7628180 run_delay)
+LECH_RQ_S2: collector=20277883 bpftrace=19308956 lech=5.02% (tieu chi them: <=5%)
+so_lan_wakeup        —             501             bpftrace @so_lan (cot 3: 501 Delta pcount)
+--- S3: validation/m6b11-20261020/C2/pre24h/g3/S3-ketqua.txt ---
+@rq_sau_wakeup_ns: 9264077
+@so_lan: 501
+@w: 0
+rq                   10045306        9264077         bpftrace @rq_sau_wakeup_ns (cot 3: 1127588 run_delay)
+LECH_RQ_S3: collector=10045306 bpftrace=9264077 lech=8.43% (tieu chi them: <=5%)
+so_lan_wakeup        —             501             bpftrace @so_lan (cot 3: 502 Delta pcount)
+--- S5: validation/m6b11-20261020/C2/pre24h/g3/S5-ketqua.txt ---
+@rq_sau_wakeup_ns: 44033453
+@so_lan: 601
+@w: 0
+rq                   44457882        44033453        bpftrace @rq_sau_wakeup_ns (cot 3: 41399368 run_delay)
+LECH_RQ_S5: collector=44457882 bpftrace=44033453 lech=0.96% (tieu chi them: <=5%)
+so_lan_wakeup        —             601             bpftrace @so_lan (cot 3: 601 Delta pcount)

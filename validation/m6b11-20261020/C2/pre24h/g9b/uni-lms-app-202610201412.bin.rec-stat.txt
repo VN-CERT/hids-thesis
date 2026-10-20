@@ -1,0 +1,305 @@
+file: validation/m6b11-20261020/C2/pre24h/g9b/uni-lms-app-202610201412.bin
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 8faaec1
+# record_size: 56
+# filter_tgids: khong co
+# filter_pid: 0
+# filter_cgroup: /sys/fs/cgroup/system.slice/docker-7421d7ae79685498cdaf7b24ea4426cccb9531070b12a3265fdf9d1738fdb592.scope (goc id=6215) | /sys/fs/cgroup/system.slice/docker-319c38ff33aa4827288f68ca1236600174cf278175fd7d5d68657d48e2a6366f.scope (goc id=6136)
+# ringbuf_bytes: 67108864
+# rb_wake_bytes: 8388608
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: dmesg | [    0.000000] vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# datadir: validation/m6b11-20261020/C2/pre24h/g9b
+# rotate: 2m0s
+# min_free_gb: 50
+# no_proc: false
+# no_host: false
+# cgroup_refresh: 1s
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# start_mono_ns: 972720490929538
+# start_wall: 2026-10-20T21:09:35.174008114+07:00
+# duration: 7m0s
+# segment_tag: 202610201412
+
+tong so ban ghi trong file : 47592
+ts_enter nho nhat / lon nhat: 972865314076243 / 972985313899721 (ns, CLOCK_MONOTONIC)
+ban ghi co co FIRST        : 141
+ban ghi co co GAP_BEFORE   : 0
+
+so ban ghi theo tgid (146 tien trinh)
+    tgid  ban_ghi  FIRST  GAP_BEFORE      nguon_tgid
+    2869    28133      0           0           /proc
+    2500     5859      0           0           /proc
+  359231      366      1           0  ? (suy tu tid)
+  359019      365      1           0  ? (suy tu tid)
+  359648      365      1           0  ? (suy tu tid)
+  358486      364      1           0  ? (suy tu tid)
+  359541      364      1           0  ? (suy tu tid)
+  358669      363      1           0  ? (suy tu tid)
+  358919      363      1           0  ? (suy tu tid)
+  359302      363      1           0  ? (suy tu tid)
+  359466      363      1           0  ? (suy tu tid)
+  358056      362      1           0  ? (suy tu tid)
+  358223      362      1           0  ? (suy tu tid)
+  358312      362      1           0  ? (suy tu tid)
+  358398      362      1           0  ? (suy tu tid)
+  359778      362      1           0  ? (suy tu tid)
+  359862      362      1           0  ? (suy tu tid)
+  358567      361      1           0  ? (suy tu tid)
+  358766      361      1           0  ? (suy tu tid)
+  359389      361      1           0  ? (suy tu tid)
+  359713      361      1           0  ? (suy tu tid)
+  359089      360      1           0  ? (suy tu tid)
+  358844      359      1           0  ? (suy tu tid)
+  359162      359      1           0  ? (suy tu tid)
+  358173      340      1           0  ? (suy tu tid)
+  357889      318      0           0  ? (suy tu tid)
+  359544      189      1           0  ? (suy tu tid)
+  359468      187      1           0  ? (suy tu tid)
+  358925      180      1           0  ? (suy tu tid)
+  359309      180      1           0  ? (suy tu tid)
+  359779      178      1           0  ? (suy tu tid)
+  358180      158      1           0  ? (suy tu tid)
+  358850      158      1           0  ? (suy tu tid)
+  358670      156      1           0  ? (suy tu tid)
+  358492      154      1           0  ? (suy tu tid)
+  358574      153      1           0  ? (suy tu tid)
+  359023      150      1           0  ? (suy tu tid)
+  359652      150      1           0  ? (suy tu tid)
+  358402      147      1           0  ? (suy tu tid)
+  359240      147      1           0  ? (suy tu tid)
+  358318      145      1           0  ? (suy tu tid)
+  359874      139      1           0  ? (suy tu tid)
+  359095      137      1           0  ? (suy tu tid)
+  358226      132      1           0  ? (suy tu tid)
+  359173      132      1           0  ? (suy tu tid)
+  359714      130      1           0  ? (suy tu tid)
+  358767      126      1           0  ? (suy tu tid)
+  358062      114      1           0  ? (suy tu tid)
+  359395      112      1           0  ? (suy tu tid)
+  357893       40      0           0  ? (suy tu tid)
+  359244       35      1           0  ? (suy tu tid)
+  358320       34      1           0  ? (suy tu tid)
+  359547       34      1           0  ? (suy tu tid)
+  358495       33      1           0  ? (suy tu tid)
+  358676       32      1           0  ? (suy tu tid)
+  358066       31      1           0  ? (suy tu tid)
+  359656       31      1           0  ? (suy tu tid)
+  358405       30      1           0  ? (suy tu tid)
+  359782       30      1           0  ? (suy tu tid)
+  358928       29      1           0  ? (suy tu tid)
+  359031       29      1           0  ? (suy tu tid)
+  359098       29      1           0  ? (suy tu tid)
+  359717       29      1           0  ? (suy tu tid)
+  358183       28      1           0  ? (suy tu tid)
+  358229       28      1           0  ? (suy tu tid)
+  359397       28      1           0  ? (suy tu tid)
+  359472       28      1           0  ? (suy tu tid)
+  359877       28      1           0  ? (suy tu tid)
+  358771       27      1           0  ? (suy tu tid)
+  359176       27      1           0  ? (suy tu tid)
+  358856       23      1           0  ? (suy tu tid)
+  357894       22      1           0  ? (suy tu tid)
+  358576       21      1           0  ? (suy tu tid)
+  359310       21      1           0  ? (suy tu tid)
+  358578       20      1           0  ? (suy tu tid)
+  359312       19      1           0  ? (suy tu tid)
+  358857       18      1           0  ? (suy tu tid)
+  359398       16      1           0  ? (suy tu tid)
+  358181       13      1           0  ? (suy tu tid)
+  359242       13      1           0  ? (suy tu tid)
+  358065       12      1           0  ? (suy tu tid)
+  358494       12      1           0  ? (suy tu tid)
+  358768       12      1           0  ? (suy tu tid)
+  359241       12      1           0  ? (suy tu tid)
+  359878       12      1           0  ? (suy tu tid)
+  357895       11      1           0  ? (suy tu tid)
+  357897       11      0           0  ? (suy tu tid)
+  358319       11      1           0  ? (suy tu tid)
+  358403       11      1           0  ? (suy tu tid)
+  358404       11      1           0  ? (suy tu tid)
+  358579       11      1           0  ? (suy tu tid)
+  358926       11      1           0  ? (suy tu tid)
+  358927       11      1           0  ? (suy tu tid)
+  358929       11      1           0  ? (suy tu tid)
+  359024       11      1           0  ? (suy tu tid)
+  359027       11      1           0  ? (suy tu tid)
+  359096       11      1           0  ? (suy tu tid)
+  359100       11      1           0  ? (suy tu tid)
+  359174       11      1           0  ? (suy tu tid)
+  359175       11      1           0  ? (suy tu tid)
+  359313       11      1           0  ? (suy tu tid)
+  359470       11      1           0  ? (suy tu tid)
+  359473       11      1           0  ? (suy tu tid)
+  359546       11      1           0  ? (suy tu tid)
+  359548       11      1           0  ? (suy tu tid)
+  359718       11      1           0  ? (suy tu tid)
+  359783       11      1           0  ? (suy tu tid)
+  357899       10      1           0  ? (suy tu tid)
+  358067       10      1           0  ? (suy tu tid)
+  358069       10      1           0  ? (suy tu tid)
+  358182       10      1           0  ? (suy tu tid)
+  358184       10      1           0  ? (suy tu tid)
+  358227       10      1           0  ? (suy tu tid)
+  358228       10      1           0  ? (suy tu tid)
+  358231       10      1           0  ? (suy tu tid)
+  358321       10      1           0  ? (suy tu tid)
+  358325       10      1           0  ? (suy tu tid)
+  358407       10      1           0  ? (suy tu tid)
+  358493       10      1           0  ? (suy tu tid)
+  358496       10      1           0  ? (suy tu tid)
+  358577       10      1           0  ? (suy tu tid)
+  358671       10      1           0  ? (suy tu tid)
+  358672       10      1           0  ? (suy tu tid)
+  358677       10      1           0  ? (suy tu tid)
+  358769       10      1           0  ? (suy tu tid)
+  358772       10      1           0  ? (suy tu tid)
+  358853       10      1           0  ? (suy tu tid)
+  358859       10      1           0  ? (suy tu tid)
+  359034       10      1           0  ? (suy tu tid)
+  359097       10      1           0  ? (suy tu tid)
+  359177       10      1           0  ? (suy tu tid)
+  359245       10      1           0  ? (suy tu tid)
+  359311       10      1           0  ? (suy tu tid)
+  359396       10      1           0  ? (suy tu tid)
+  359399       10      1           0  ? (suy tu tid)
+  359471       10      1           0  ? (suy tu tid)
+  359545       10      1           0  ? (suy tu tid)
+  359654       10      1           0  ? (suy tu tid)
+  359655       10      1           0  ? (suy tu tid)
+  359657       10      1           0  ? (suy tu tid)
+  359715       10      1           0  ? (suy tu tid)
+  359716       10      1           0  ? (suy tu tid)
+  359780       10      1           0  ? (suy tu tid)
+  359781       10      1           0  ? (suy tu tid)
+  359875       10      1           0  ? (suy tu tid)
+  359876       10      1           0  ? (suy tu tid)
+    TONG    47592    141           0                
+
+so ban ghi theo tid (169 thread, in 40 dong dau)
+     tid  tgid  ban_ghi
+    2500  2500     5859
+    3091  2869     1227
+    3093  2869     1227
+    3094  2869     1227
+    3101  2869     1227
+    3108  2869     1227
+    3111  2869     1227
+    3120  2869     1227
+    3136  2869     1227
+    3139  2869     1227
+    3142  2869     1227
+    3147  2869     1227
+    3171  2869     1227
+    3172  2869     1227
+    3174  2869     1227
+    3176  2869     1227
+    3115  2869     1226
+    3107  2869     1220
+    3151  2869     1220
+    3160  2869     1219
+    3098  2869     1218
+    3096  2869     1212
+    3100  2869     1211
+    3125  2869     1197
+  359231     ?      366
+  359019     ?      365
+  359648     ?      365
+  358486     ?      364
+  359541     ?      364
+  358669     ?      363
+  358919     ?      363
+  359302     ?      363
+  359466     ?      363
+  358056     ?      362
+  358223     ?      362
+  358312     ?      362
+  358398     ?      362
+  359778     ?      362
+  359862     ?      362
+  358567     ?      361
+
+top 20 syscall_nr (tong cong 59 gia tri khac nhau)
+  syscall_nr  ban_ghi
+         232    17099
+           1    11381
+          35     3087
+           0     2080
+           3     2066
+         281     1583
+           2     1395
+         157     1349
+         202     1078
+          72     1054
+          39      522
+           5      455
+           9      385
+         138      312
+         257      311
+         437      288
+         233      283
+          15      258
+         234      258
+          12      256
+
+theo tung CPU (cpu lay tu bit8..15 cua flags; seq_cuoi va mat lay tu .stats)
+   cpu  ban_ghi  seq_min  seq_max  lo_hong  seq_thieu  seq_cuoi  mat
+     0     2994     4565     7558        1       4564      7558    0
+     1     2343     3128     5470        1       3127      5470    0
+     2     3778     2805     6582        1       2804      6582    0
+     3     2331     2742     5072        1       2741      5072    0
+     4     2302     2218     4519        1       2217      4519    0
+     5     1112     1410     2521        1       1409      2521    0
+     6     2846     5399     8244        1       5398      8244    0
+     7     2058     4815     6872        1       4814      6872    0
+     8     4400     1593     5992        1       1592      5992    0
+     9     2922     5500     8421        1       5499      8421    0
+    10     2441     3308     5748        1       3307      5748    0
+    11     2136     1651     3786        1       1650      3786    0
+    12     2662     1919     4580        1       1918      4580    0
+    13      525     1255     1779        1       1254      1779    0
+    14     1554     1872     3425        1       1871      3425    0
+    15     1434     1701     3134        1       1700      3134    0
+    16     1507     2273     3779        1       2272      3779    0
+    17     1232      859     2090        1        858      2090    0
+    18      571      907     1477        1        906      1477    0
+    19     1102      642     1743        1        641      1743    0
+    20      700      592     1291        1        591      1291    0
+    21     1143     1376     2518        1       1375      2518    0
+    22     2203     1645     3847        1       1644      3847    0
+    23     1296     2866     4161        1       2865      4161    0
+  TONG    47592                         24      57017    104609    0
+
+y nghia cac cot:
+  ban_ghi   so ban ghi cua CPU do co trong file (tinh tren toan bo file,
+            khong phu thuoc -tgid/-nr/-from-mono/-to-mono)
+  seq_min   seq nho nhat doc duoc; bang 1 neu khong mat ban ghi nao o dau
+  lo_hong   so doan seq lien tuc bi thieu (ke ca doan dau tu 1 den seq_min
+            va doan cuoi tu seq_max den seq_cuoi)
+  seq_thieu tong so seq bi thieu; so nay doi chieu truc tiep voi cot mat
+  seq_cuoi  so lan dinh ghi tren CPU do, doc tu kernel luc collector dung
+  mat       bo dem bpf_ringbuf_reserve that bai, doc tu kernel
+
+doi chieu seq (toan cuc)
+  so lan dinh ghi (tong seq_cuoi cua moi CPU): 104609
+  so ban ghi collector doc duoc             : 47592
+  so ban ghi dem duoc trong file            : 47592
+  tong bo dem mat (ring buffer day)         : 0
+  tong so seq bi thieu theo CPU             : 57017
+  dinh ghi - ban ghi trong file             : 57017
