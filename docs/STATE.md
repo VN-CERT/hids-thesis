@@ -36,6 +36,14 @@ Cập nhật lần cuối: 2026-10-20 17:50 (giờ máy)
 
 - (không có)
 
+## Dọn trước M6b-1.2 (xong 2026-10-20)
+
+- Đã ghi nhận lọc lịch sử lần 2 ở mục trên (bảng đối chiếu `docs/commit-map-loc-2.txt`, dùng TAG).
+- `.gitignore` đã thêm `hey.csv`; không commit log/dữ liệu thô (`pgbench.log`, `pglog.*`, `perf.data`, `hey.csv`, `*.bin`, `*.bin.zst`).
+- Đã commit `validation/m6b1-20261010/`, `validation/m6b1-20261019/`, `validation/m6b1-pre24h-20261019/` (150 file, chỉ kết quả tóm tắt). File > 10 MB trong các thư mục này chỉ gồm 3 file `.bin` (1.7 GB, 1.7 GB, 9.4 GB ở `m6b1-20261019/g9|g10/`) — dữ liệu thô, đã bị `.gitignore` loại, không commit.
+- `make build` tạo lại đúng `internal/syscallbpf/sysenter_x86_bpfel.o` (151576 B) và `internal/procbpf/procevents_x86_bpfel.o` (41200 B) từ nguồn BPF (sha256 ở mục sha256 của R029); đã commit cả hai.
+- Đã `git push github --all` (master `50b3668..d2b461a`) và `git push github --tags` (Everything up-to-date); remote khớp local: master `d2b461a`, tag `m6b1` `59c0211`, tag `m6b1.1` `0f7f948`.
+
 ## Kết quả C đợt 3 (unit hids-m6b11-c3)
 
 - gate exit=0, đạt toàn bộ: G7a, G3 đầy đủ, G8 (exec/fork/exit khớp perf, `/true` = 500), G9 (rec-chain lo_hong=0, seq_thieu=0), G10 (PAUSE_DISK, RESUME_DISK, bo_vi_dia=17282608, kernel mat=0), host ~600 dòng, cpu_user không giảm. Sau chạy: `bpftool prog show | grep -c hids_` = 0, không còn collector.
