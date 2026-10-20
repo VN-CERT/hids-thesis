@@ -55,11 +55,13 @@ wait_bpftrace_attach() {
 
 parse_bpftrace_log() {
 	local log=$1
-	BT_RQ_NS=$(grep '@rq_sau_wakeup_ns' "$log" | tail -1 | awk '{print $NF}')
-	BT_SO_LAN=$(grep '@so_lan:' "$log" | tail -1 | awk '{print $NF}')
-	BT_PREEMPT_NS=$(grep '@rq_sau_preempt_ns' "$log" | tail -1 | awk '{print $NF}')
-	BT_TONG_NS=$(grep '@rq_tong_ns' "$log" | tail -1 | awk '{print $NF}')
-	BT_SO_LAN_PREEMPT=$(grep '@so_lan_preempt' "$log" | tail -1 | awk '{print $NF}')
+	BT_RQ_NS=$(grep '^@rq_sau_wakeup_ns:' "$log" | tail -1 | awk '{print $NF}')
+	BT_SO_LAN=$(grep '^@so_lan:' "$log" | tail -1 | awk '{print $NF}')
+	BT_PREEMPT_NS=$(grep '^@rq_sau_preempt_ns:' "$log" | tail -1 | awk '{print $NF}')
+	BT_TONG_NS=$(grep '^@rq_tong_ns:' "$log" | tail -1 | awk '{print $NF}')
+	BT_SO_LAN_PREEMPT=$(grep '^@so_lan_preempt:' "$log" | tail -1 | awk '{print $NF}')
+	BT_PREEMPT_NS=${BT_PREEMPT_NS:-0}
+	BT_SO_LAN_PREEMPT=${BT_SO_LAN_PREEMPT:-0}
 }
 
 schedstats_save() {
@@ -183,7 +185,7 @@ run_scenario() {
 	if [[ $name == S2 || $name == S3 || $name == S5 ]]; then
 		BTLOG="$prefix-bpftrace.log"
 		RQLATLOG="$prefix-runqlat.log"
-		bpftrace -e 'tracepoint:sched:sched_wakeup /args->pid == $1 && @w == 0/ { @w = nsecs; } tracepoint:sched:sched_switch { if (args->prev_pid == $1 && args->prev_state == 0) { @p = nsecs; } if (args->next_pid == $1) { $d = 0; if (@w != 0) { $d = $d + (nsecs - @w); @rq_sau_wakeup_ns = sum(nsecs - @w); @so_lan = count(); @w = 0; } if (@p != 0) { $d = $d + (nsecs - @p); @rq_sau_preempt_ns = sum(nsecs - @p); @so_lan_preempt = count(); @p = 0; } if ($d > 0) { @rq_tong_ns = sum($d); } } }' "$tid" >"$BTLOG" 2>&1 &
+		bpftrace -e 'tracepoint:sched:sched_wakeup /args->pid == $1 && @w == 0/ { @w = nsecs; } tracepoint:sched:sched_switch { $now = nsecs; if (args->prev_pid == $1 && args->prev_state == 0) { @p = $now; } if (args->next_pid == $1) { $d = 0; if (@w != 0) { $d = $d + ($now - @w); @rq_sau_wakeup_ns = sum($now - @w); @so_lan = count(); @w = 0; } if (@p != 0) { $d = $d + ($now - @p); @rq_sau_preempt_ns = sum($now - @p); @so_lan_preempt = count(); @p = 0; } if ($d > 0) { @rq_tong_ns = sum($d); } } }' "$tid" >"$BTLOG" 2>&1 &
 		bt_pid=$!
 		wait_bpftrace_attach "$BTLOG"
 		runqlat-bpfcc -p "$tid" >"$RQLATLOG" 2>&1 &
