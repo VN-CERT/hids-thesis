@@ -1,0 +1,27 @@
+=== validation/m6b11-20261020/C3/gate/g9/uni-lms-app-202610201502.bin (tong 152814504 ban ghi) ===
+   cpu    ban_ghi  seq_min    seq_max  lo_hong  seq_thieu   seq_cuoi  mat
+     8  152814504        1  152814504        1     131090  152945594    0
+  TONG                                       1     131090               0
+
+=== validation/m6b11-20261020/C3/gate/g9/uni-lms-app-202610201504.bin (tong 43703624 ban ghi) ===
+   cpu   ban_ghi    seq_min    seq_max  lo_hong  seq_thieu   seq_cuoi      mat
+     8  43703624  152814505  200000001       52  156296377  200000001  3481873
+  TONG                                       52  156296377             3481873
+
+=== validation/m6b11-20261020/C3/gate/g9/uni-lms-app-202610201506.bin (tong 0 ban ghi) ===
+   cpu  ban_ghi  seq_min  seq_max  lo_hong  seq_thieu   seq_cuoi      mat
+     8        0        -        -        1  200000001  200000001  3481873
+  TONG                                   1  200000001             3481873
+
+=== validation/m6b11-20261020/C3/gate/g9/uni-lms-app-202610201508.bin (tong 0 ban ghi) ===
+   cpu  ban_ghi  seq_min  seq_max  lo_hong  seq_thieu   seq_cuoi      mat
+     8        0        -        -        1  200000001  200000001  3481873
+  TONG                                   1  200000001             3481873
+
+ranh gioi file lien ke (seq theo CPU)
+   cpu                                                         file_truoc                                                           file_sau  seq_max_truoc  seq_min_sau  lo_hong  seq_thieu
+     8  validation/m6b11-20261020/C3/gate/g9/uni-lms-app-202610201502.bin  validation/m6b11-20261020/C3/gate/g9/uni-lms-app-202610201504.bin      152814504    152814505        0          0
+     8  validation/m6b11-20261020/C3/gate/g9/uni-lms-app-202610201504.bin  validation/m6b11-20261020/C3/gate/g9/uni-lms-app-202610201506.bin      200000001            -        0          0
+  TONG                                                                                                                                                                          0          0
+
+tong lo hong ranh gioi: 0 | tong seq thieu ranh gioi: 0

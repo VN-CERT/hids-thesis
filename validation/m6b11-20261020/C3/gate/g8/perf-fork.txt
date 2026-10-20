@@ -1,0 +1,7 @@
+
+ Performance counter stats for 'system wide':
+
+               501      sched:sched_process_fork         hids-test8                                            
+
+      30.008604363 seconds time elapsed
+

@@ -1,0 +1,44 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 8faaec1
+# record_size: 56
+# filter_tgids: 437843
+# filter_pid: 1
+# filter_cgroup: khong co
+# ringbuf_bytes: 67108864
+# rb_wake_bytes: 8388608
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: dmesg | [    0.000000] vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# datadir: validation/m6b11-20261020/C3/gate/g10
+# rotate: 1h0m0s
+# min_free_gb: 50
+# no_proc: false
+# no_host: false
+# cgroup_refresh: 1s
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 0
+# start_mono_ns: 976351446374051
+# start_wall: 2026-10-20T22:10:06.129452161+07:00
+# duration: 1m30s
+# segment_tag: 2026102015
+# moi dong cach nhau 10s
+mono_ns,wall,dinh_ghi_delta,mat_delta,dinh_ghi_tong,mat_tong,irq_hard_delta_ns,irq_soft_delta_ns,irq_vec_delta_ns,soft_raw_delta_ns,irq_hard_tong_ns,irq_soft_tong_ns,irq_vec_tong_ns,soft_raw_tong_ns
+976351458988192,2026-10-20T22:10:06.14206633+07:00,0,0,0,0,20596,2759675,20261590,2778947,20596,2759675,20261590,2778947
+976361459395516,2026-10-20T22:10:16.14247407+07:00,12095837,0,12095837,0,5001902,257954943,1594394042,258883616,5022498,260714618,1614655632,261662563
+976371459831055,2026-10-20T22:10:26.142909008+07:00,17282109,0,29377946,0,570727,192013664,1302961752,192393226,5593225,452728282,2917617384,454055789
+976381459974820,2026-10-20T22:10:36.143052792+07:00,15418947,0,44796893,0,780332,220469382,1546729926,220947944,6373557,673197664,4464347310,675003733
+976383608891526,2026-10-20T22:10:38.291969186+07:00,3341443,0,48138336,0,144380,40657997,307771174,40722425,6517937,713855661,4772118484,715726158

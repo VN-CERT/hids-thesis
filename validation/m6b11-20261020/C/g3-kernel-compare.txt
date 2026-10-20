@@ -1,0 +1,54 @@
+===== S1 =====
+--- bang doi chieu ---
+thanh_phan           collector       tham_chieu      nguon
+cpu+steal+irq        3070787941      3070785831      Delta schedstat field1 sum_exec_runtime
+rq                   37047           31264           Delta schedstat field2 run_delay
+rq (wait_sum)        37047           31264           Delta wait_sum /proc/sched
+vol                  91552000        91554700        Delta sum_sleep_runtime
+vol (D_SLEEP)        0               0               Delta sum_block_runtime
+--- log collector (cuoi) ---
+===== S2 =====
+--- bang doi chieu ---
+thanh_phan           collector       tham_chieu      nguon
+cpu+steal+irq        12236880        24154273        Delta schedstat field1 sum_exec_runtime
+rq                   27895412        17123738        Delta schedstat field2 run_delay
+rq (wait_sum)        27895412        17123700        Delta wait_sum /proc/sched
+vol                  3061063000      3059910000      Delta sum_sleep_runtime
+vol (D_SLEEP)        0               0               Delta sum_block_runtime
+rq                   27895412        26997774        bpftrace @rq_sau_wakeup_ns (cot 3: 17123738 run_delay)
+so_lan_wakeup        —             501             bpftrace @so_lan (cot 3: 501 Delta pcount)
+tong cpu+steal+irq+rq+vol | exec+run_delay+sleep 3101195292      3101188011      collector | kernel
+--- log collector (cuoi) ---
+===== S3 =====
+--- bang doi chieu ---
+thanh_phan           collector       tham_chieu      nguon
+cpu+steal+irq        1230217703      1240295321      Delta schedstat field1 sum_exec_runtime
+rq                   9097657         134033          Delta schedstat field2 run_delay
+rq (wait_sum)        9097657         134033          Delta wait_sum /proc/sched
+vol                  1992326000      1991210000      Delta sum_sleep_runtime
+vol (D_SLEEP)        0               0               Delta sum_block_runtime
+rq                   9097657         8202976         bpftrace @rq_sau_wakeup_ns (cot 3: 134033 run_delay)
+so_lan_wakeup        —             501             bpftrace @so_lan (cot 3: 502 Delta pcount)
+tong cpu+steal+irq+rq+vol | exec+run_delay+sleep 3231641360      3231639354      collector | kernel
+--- log collector (cuoi) ---
+===== S4 =====
+--- bang doi chieu ---
+thanh_phan           collector       tham_chieu      nguon
+cpu+steal+irq        3097233867      3097380834      Delta schedstat field1 sum_exec_runtime
+rq                   3096816185      3096671814      Delta schedstat field2 run_delay
+rq (wait_sum)        3096816185      3096670000      Delta wait_sum /proc/sched
+vol                  90704000        90692700        Delta sum_sleep_runtime
+vol (D_SLEEP)        0               0               Delta sum_block_runtime
+--- log collector (cuoi) ---
+===== S5 =====
+--- bang doi chieu ---
+thanh_phan           collector       tham_chieu      nguon
+cpu+steal+irq        74779789        79735062        Delta schedstat field1 sum_exec_runtime
+rq                   8258402         2401892         Delta schedstat field2 run_delay
+rq (wait_sum)        8258402         2401890         Delta wait_sum /proc/sched
+vol                  780455000       781351000       Delta sum_sleep_runtime
+vol (D_SLEEP)        321291000       322183000       Delta sum_block_runtime
+rq                   8258402         7861678         bpftrace @rq_sau_wakeup_ns (cot 3: 2401892 run_delay)
+so_lan_wakeup        —             601             bpftrace @so_lan (cot 3: 601 Delta pcount)
+tong cpu+steal+irq+rq+vol | exec+run_delay+sleep 863493191       863487954       collector | kernel
+--- log collector (cuoi) ---
