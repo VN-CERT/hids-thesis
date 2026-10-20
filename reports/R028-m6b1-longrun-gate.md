@@ -1,10 +1,10 @@
 # R028 — M6b-1: tính năng thu dài ngày + cổng kiểm
 
 1. **Số báo cáo:** R028  
-   **Ngày giờ:** 2026-10-19 17:40 (UTC+7)  
+   **Ngày giờ:** 2026-10-19 17:40 (UTC+7); bổ sung bảng 24 giờ 2026-10-20 17:45  
    **Mốc:** M6b-1  
    **Git:** HEAD `e8ad30b` (binary 24h); pre24h đo bằng `1a88508` — `git diff --stat 1a88508 e8ad30b -- bpf cmd internal go.mod go.sum Makefile` **rỗng** (chỉ thêm script/STATE).  
-   **Tag `m6b1`:** chưa gắn — chờ xong job 24h rồi gắn.
+   **Tag `m6b1`:** gắn trên commit chứa bản R028 này (sau khi điền bảng 24 giờ).
 
 2. **Mục tiêu**  
    Siết cổng (xoá SKIP); chạy lại G7a / G7b-nho / G3 S1–S5 / G9b / host-stats trên binary có sửa SIGTERM; khởi động thu 24h; báo cáo.
@@ -149,38 +149,73 @@ PASS: host bo dem tich luy khong giam
 
 (Dữ liệu: `validation/m6b1-pre24h-20261019/host10m/`. Lần gate cũ cũng có 600 dòng MONOTONIC_OK; script gate exit=1 vì lỗi bash `lines` unbound — không đổi tiêu chí.)
 
-### Bảng 24 giờ
+### Bảng 24 giờ — ĐÃ XONG
 
-**CHƯA XONG.** Job `hidsrun-24h` bắt đầu 2026-10-19T17:38:14+07:00, đích `/srv/hids-data/uni-lms-app/`, container **hscd_redis** + **qdrant**, binary `e8ad30b`, READY.
+Job `hidsrun-24h`: bắt đầu 2026-10-19T17:38:14+07:00, kết thúc 2026-10-20T17:38:14+07:00; đích `/srv/hids-data/uni-lms-app/`; container **hscd_redis** + **qdrant**; binary `e8ad30b`; READY lúc bắt đầu. Kết thúc bằng `timeout --signal=TERM 86400` nên mã thoát của job là `124`; log collector có dòng `ket thuc longrun end_mono_ns=960041797041342 disk_skipped=0` (dừng sạch). Sau khi thoát: `bpftool prog list | grep -ci hids` = 0, map = 0, `/sys/fs/bpf` = 0.
 
-Bảng từng giờ sẽ ghi vào `out/jobs/m6b1-24h.hourly.tsv` (cột: wall, bin_bytes, proc_bytes, host_bytes, recs_per_s, kernel_drops, disk_skipped, free_gb, rss_bytes, cpu_seconds, proc_drops).  
-**Tiến độ:** 0/24 — dự kiến xong ~2026-10-20 17:38. Log: `out/jobs/m6b1-24h.log`.
+**Tổng 24 giờ (đo từ file đích):**
 
-| giờ (wall) | bin sau nén | proc sau nén | host sau nén | tỉ lệ nén | rec/s | mất | RSS | CPU collector |
-|---|---|---|---|---|---|---|---|---|
-| (chờ dữ liệu hourly) | | | | | | | | |
+```
+tong ban ghi .bin (cong so_ban_ghi_doc_duoc cua 25 segment): 34192008
+bin:  537065050 byte sau nen | payload chua nen 34192008 x 56 = 1914752448 byte | ti le 1914752448/537065050 = 3.57
+proc: 1187266 byte sau nen | 7925565 byte chua nen (119918 dong ke ca 25 dong header) | ti le 6.68
+host: 5201114 byte sau nen | 20575521 byte chua nen (86421 dong ke ca 25 dong header) | ti le 3.96
+status.tsv: 1426 dong du lieu | tong kernel_drops_delta = 0 | tong proc_drops_delta = 0 | disk_skipped cuoi = 0
+RSS cuoi: 202956800 byte (193.6 MiB) | CPU collector cuoi: 8361.764 s
+```
+
+Bảng dưới lấy từ `out/jobs/m6b1-24h.hourly.tsv` (23 dòng) cộng dòng cuối lúc kết thúc job (dòng 24). Dung lượng là **luỹ kế**, số trong ngoặc là **delta của giờ đó**. `rec/s` là giá trị ở phút cuối của giờ đó trong `status.tsv`. Cột “mất kernel” là delta 60 giây cuối của giờ; tổng cả 24 giờ bằng 0 (xem tổng trên).
+
+| # | wall (+07) | bin nén luỹ kế (delta) MB | proc nén luỹ kế (delta) KB | host nén luỹ kế (delta) KB | tỉ lệ nén bin (ước tính*) | rec/s | mất kernel | RSS MiB | CPU collector luỹ kế (delta) s |
+|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 2026-10-19T18:38:16+07:00 | 22.2 (22.2) | 45.9 (45.9) | 211.1 (211.1) | 3.58 | 390.8 | 0 | 188.0 | 350.2 (350.2) |
+| 2 | 2026-10-19T19:38:16+07:00 | 44.6 (22.4) | 96.2 (50.3) | 429.0 (217.9) | 3.53 | 393.1 | 0 | 188.0 | 694.7 (344.5) |
+| 3 | 2026-10-19T20:38:16+07:00 | 67.0 (22.4) | 145.8 (49.5) | 647.9 (218.9) | 3.60 | 397.6 | 0 | 188.0 | 1045.8 (351.1) |
+| 4 | 2026-10-19T21:38:16+07:00 | 89.4 (22.4) | 195.7 (49.9) | 866.8 (218.9) | 3.53 | 396.9 | 0 | 188.0 | 1390.7 (344.9) |
+| 5 | 2026-10-19T22:38:16+07:00 | 111.8 (22.4) | 245.8 (50.1) | 1085.0 (218.3) | 3.54 | 395.6 | 0 | 188.0 | 1735.8 (345.0) |
+| 6 | 2026-10-19T23:38:16+07:00 | 134.2 (22.4) | 295.2 (49.4) | 1302.9 (217.9) | 3.60 | 390.7 | 0 | 192.6 | 2085.6 (349.8) |
+| 7 | 2026-10-20T00:38:16+07:00 | 156.6 (22.4) | 344.8 (49.6) | 1519.2 (216.2) | 3.54 | 393.7 | 0 | 192.6 | 2430.8 (345.2) |
+| 8 | 2026-10-20T01:38:16+07:00 | 178.9 (22.4) | 394.9 (50.1) | 1735.4 (216.2) | 3.59 | 397.6 | 0 | 192.6 | 2782.7 (351.8) |
+| 9 | 2026-10-20T02:38:16+07:00 | 201.3 (22.4) | 444.4 (49.5) | 1951.7 (216.3) | 3.54 | 397.4 | 0 | 192.6 | 3127.6 (345.0) |
+| 10 | 2026-10-20T03:38:16+07:00 | 223.7 (22.4) | 494.2 (49.8) | 2164.6 (212.9) | 3.60 | 396.0 | 0 | 192.6 | 3478.7 (351.0) |
+| 11 | 2026-10-20T04:38:16+07:00 | 246.1 (22.4) | 543.1 (48.9) | 2378.8 (214.2) | 3.55 | 397.7 | 0 | 193.0 | 3825.4 (346.7) |
+| 12 | 2026-10-20T05:38:17+07:00 | 268.5 (22.4) | 592.6 (49.5) | 2594.9 (216.1) | 3.54 | 394.2 | 0 | 193.0 | 4171.6 (346.2) |
+| 13 | 2026-10-20T06:38:17+07:00 | 290.9 (22.4) | 642.2 (49.5) | 2809.1 (214.2) | 3.61 | 395.1 | 0 | 193.0 | 4523.7 (352.1) |
+| 14 | 2026-10-20T07:38:17+07:00 | 313.2 (22.4) | 691.5 (49.3) | 3024.2 (215.1) | 3.55 | 392.7 | 0 | 193.0 | 4869.6 (345.9) |
+| 15 | 2026-10-20T08:38:17+07:00 | 335.6 (22.3) | 741.5 (50.1) | 3237.9 (213.8) | 3.59 | 395.7 | 0 | 193.0 | 5221.1 (351.5) |
+| 16 | 2026-10-20T09:38:17+07:00 | 357.9 (22.4) | 790.8 (49.3) | 3456.4 (218.5) | 3.55 | 393.2 | 0 | 193.4 | 5567.4 (346.3) |
+| 17 | 2026-10-20T10:38:17+07:00 | 380.3 (22.4) | 839.8 (49.0) | 3675.3 (218.9) | 3.54 | 396.2 | 0 | 193.4 | 5918.7 (351.2) |
+| 18 | 2026-10-20T11:38:17+07:00 | 402.6 (22.4) | 889.8 (49.9) | 3891.8 (216.6) | 3.60 | 393.0 | 0 | 193.6 | 6264.6 (345.9) |
+| 19 | 2026-10-20T12:38:17+07:00 | 425.0 (22.3) | 939.2 (49.4) | 4109.9 (218.1) | 3.55 | 392.0 | 0 | 193.6 | 6609.7 (345.1) |
+| 20 | 2026-10-20T13:38:17+07:00 | 447.4 (22.4) | 989.2 (50.0) | 4327.5 (217.7) | 3.59 | 393.1 | 0 | 193.6 | 6959.7 (350.1) |
+| 21 | 2026-10-20T14:38:17+07:00 | 469.8 (22.4) | 1038.4 (49.2) | 4544.2 (216.6) | 3.54 | 385.0 | 0 | 193.6 | 7306.5 (346.8) |
+| 22 | 2026-10-20T15:38:17+07:00 | 492.2 (22.4) | 1079.7 (41.3) | 4761.3 (217.1) | 3.59 | 392.9 | 0 | 193.6 | 7659.5 (353.0) |
+| 23 | 2026-10-20T16:38:17+07:00 | 514.5 (22.3) | 1128.1 (48.3) | 4977.8 (216.6) | 3.54 | 395.0 | 0 | 193.6 | 8008.2 (348.7) |
+| 24 | 2026-10-20T17:38:14+07:00 | 537.1 (22.6) | 1187.3 (59.2) | 5201.1 (223.3) | 3.51 | 394.5 | 0 | 193.6 | 8361.8 (353.5) |
+
+\* Tỉ lệ nén bin từng giờ là **ước tính**: (số bản ghi trong giờ suy từ `status.tsv` × 56 byte) / (delta byte `.bin` sau nén của giờ). Tỉ lệ toàn cục ở khối tổng trên tính trực tiếp từ tổng số bản ghi của 25 segment.
 
 6. **File dữ liệu**  
    - `/root/hids/validation/m6b1-pre24h-20261019/`  
    - `/root/hids/validation/m6b1-20261019/` (G8, G9a, G10)  
-   - `/srv/hids-data/uni-lms-app/` (24h đang ghi)  
-   - `/root/hids/out/jobs/m6b1-pre24h.log`, `m6b1-24h.log`, `m6b1-24h.status`
+   - `/srv/hids-data/uni-lms-app/` (dữ liệu 24 giờ: 25 segment mỗi luồng `.bin` / `proc-*.tsv.zst` / `host-*.tsv.zst`, kèm `status.tsv`)  
+   - `/root/hids/out/jobs/m6b1-pre24h.log`, `m6b1-24h.log`, `m6b1-24h.status`, `m6b1-24h.hourly.tsv`
 
 7. **Quyết định đã tự đưa ra**  
    - Pre24h dùng `g3.sh m5d` (chỉ S1–S5) đúng yêu cầu mục 1.  
    - G9b chọn 2 container theo `docker stats` CPU cao nhất tại thời điểm chạy.  
    - Binary 24h = HEAD sau khi thêm script chạy 24h; mã collector/BPF không đổi so với pre24h (`1a88508`).  
-   - Chưa gắn tag `m6b1` cho đến khi bảng 24 giờ đủ.
+   - Dòng 24 của bảng giờ lấy lúc job kết thúc, vì vòng báo giờ của script chưa kịp ghi dòng thứ 24 trước khi tiến trình chính thoát.
 
 8. **Cần kiến trúc sư quyết định**  
-   - (Không — chờ đủ bảng 24 giờ rồi gắn tag / bổ sung R028 nếu cần.)
+   - (Không.)
 
 9. **Việc người dùng cần làm tay**  
-   - (Không)
+   - (Không.)
 
 10. **Lỗi còn tồn tại / việc tiếp theo**  
-    - Hoàn tất `hidsrun-24h`, điền bảng 24 giờ vào R028 (hoặc R029 nếu không sửa R028), gắn tag `m6b1`.  
-    - Gate cũ `m6b1_gate.sh` còn lỗi `set -u` khi biến `lines` (đã ghi nhận; chưa sửa trong lần này để tránh đụng script cổng ngoài yêu cầu xoá SKIP).
+    - `status.tsv` của lần thu 24 giờ có **24 dòng `records_per_sec` âm** (một dòng tại mỗi lần xoay file): bộ đếm bản ghi của segment mới bắt đầu lại từ 0, trong khi giá trị trước vẫn là tổng của segment cũ, nên hiệu ra âm. Các dòng khác bình thường; bộ đếm mất kernel vẫn bằng 0. Cần kiến trúc sư quyết định có sửa cách tính `records_per_sec` trong `status.tsv` trước M6b-2 hay không — lần này chỉ ghi nhận, không tự sửa.  
+    - Gate cũ `m6b1_gate.sh` còn lỗi `set -u` khi biến `lines` ở bước host-stats (đã ghi nhận; không đổi tiêu chí).
 
 ---
 
