@@ -1,0 +1,16 @@
+Moc thoi gian cac muc trong lan pre24h 2026-10-19 (validation/m6b1-pre24h-20261019/)
+Nguon: header start_wall trong file .bin/.stats, mtime file ket qua, pre24h.log.
+
+- G7a:        start_wall 2026-10-19T17:13:53+07:00 (pre24h.log dong 125)
+- G7b-nho:    start_wall 2026-10-19T17:14:03+07:00 (pre24h.log dong 505)
+- G3 S1:      segment start_wall 2026-10-19T17:14:31.926+07:00 (g3/S1.bin.stats)
+- G3 S1..S5:  file ket qua mtime 17:14:35 -> 17:15:07 (+07)
+- G9b:        segment dau start_wall 2026-10-19T17:15:15.636+07:00 (g9b/uni-lms-app-202610191014.bin)
+              g9b-targets.txt mtime 17:15:10; thu muc g9b mtime 17:22:16
+- host10m:    segment start_wall 2026-10-19T17:22:19.819+07:00 (host10m/uni-lms-app-2026101910.bin)
+              status dong cuoi 17:31:27; ket thuc 17:32:19
+
+Nhan xet: cac muc chay tuan tu, khong chong nhau trong cung job pre24h:
+G3 ket thuc 17:15:07 < G9b bat dau 17:15:15 < G9b ket thuc ~17:22:16 < host10m bat dau 17:22:19.
+Ten segment G9b "1014" la moc bucket xoay 2 phut (UTC 10:14-10:16), khong phai gio bat dau;
+gio bat dau thuc la 17:15:15+07 = 10:15:15 UTC, nam trong bucket 1014.

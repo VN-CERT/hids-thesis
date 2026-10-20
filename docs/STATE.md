@@ -32,7 +32,15 @@ Cập nhật lần cuối: 2026-10-20 17:50 (giờ máy)
 
 ## Việc đang chạy
 
-- **hids-m6b11-c** — phần C: `scripts/m6b11_gate.sh` (pre24h: G7a, G7b-nho, G3, G9b, host10m → gate: G7a, G3, G8, G9, G10, host-stats → chạy 1 giờ cấu hình 24h); binary commit `8faaec1`; bắt đầu 2026-10-20 ~20:10 (+07), dự kiến ~2 giờ; log `validation/m6b11-20261020/C/gate-c.log`, trạng thái `validation/m6b11-20261020/C/gate-c.status`; output `validation/m6b11-20261020/C/`.
+- **hids-m6b11-c2** — chạy lại `m6b1_pre24h.sh` (lấy G9b + host10m còn thiếu) rồi `m6b1_gate.sh` (lấy G8 + G10); output `validation/m6b11-20261020/C2/`; bắt đầu 2026-10-20 ~21:15 (+07), dự kiến ~50 phút.
+
+## Kết quả C đợt 1 (unit hids-m6b11-c, binary 8faaec1)
+
+- G7a PASS (ban_ghi=1000001 mat=0); G7b-nho PASS (mat=seq_thieu=(perf-ban_ghi)=3288965).
+- G3 (pre24h): recursion_misses=0; G5 max S1=0, S2=500, S3=500, S4=0, **S5=7979 ns → FAIL tiêu chí ≤500** (1/1502 khoảng >1000 ns). pre24h dừng tại đây (chưa chạy G9b, host10m).
+- rq collector lệch bpftrace: S2=3.32%, **S3=10.91%**, **S5=5.05%** (tiêu chí thêm ≤5%: S3, S5 vượt). File: `validation/m6b11-20261020/C/g3-bpftrace-compare.txt`.
+- gate.sh đợt 1: G3 lỗi do `wl` tự kiểm hiệu chuẩn lệch >5% rồi thoát sớm (không phải tiêu chí collector); G8/G10 chưa chạy.
+- Chạy 1 giờ (C/run1h): CPU 9.87% một lõi (346.816s/3513s), RSS cuối 193638400 B, records_per_sec min 385.72 max 408.32, **số dòng âm = 0** (kể cả qua xoay file 14:00Z), kernel drops = 0, proc drops = 0.
 
 ## Vướng mắc / chờ kiến trúc sư
 
