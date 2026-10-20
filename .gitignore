@@ -3,3 +3,6 @@ bin/
 __pycache__/
 *.bin
 *.bin.zst
+pgbench.log
+pglog.*
+perf.data
