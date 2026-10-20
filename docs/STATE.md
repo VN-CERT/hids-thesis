@@ -5,7 +5,8 @@ Cập nhật lần cuối: 2026-10-20 17:50 (giờ máy)
 ## Lịch sử git và tham chiếu phiên bản
 
 - Lịch sử git đã được **viết lại** để loại mọi file `*.bin`. Hash cũ: `docs/commit-map-loc-bin.txt`.
-- Tham chiếu bằng **TAG mốc**; dữ liệu `*.bin` / `*.bin.zst` không vào git.
+- Lịch sử đã **lọc lần 2** (2026-10-20): loại các file > 95 MB (log thô `pgbench.log` của m5f/m5h; bản sao giữ ở `/srv/hids-data/validation-raw/`). Hash các commit sau `ff99545` đã đổi; bảng đối chiếu ở `docs/commit-map-loc-2.txt`.
+- Tham chiếu bằng **TAG mốc**, không dùng hash; dữ liệu `*.bin` / `*.bin.zst` không vào git.
 
 ## Mốc hiện tại và mục tiêu
 
