@@ -1,0 +1,462 @@
+file: validation/m6b1-pre24h-20261019/g9b/uni-lms-app-202610191018.bin
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 1a88508
+# record_size: 56
+# filter_tgids: khong co
+# filter_pid: 0
+# filter_cgroup: /sys/fs/cgroup/system.slice/docker-8c3714b54a78a41abae2560c64289c1ec4f973499a2a4cba0a0ac5ea2d5aa9f3.scope (goc id=6373) | /sys/fs/cgroup/system.slice/docker-7421d7ae79685498cdaf7b24ea4426cccb9531070b12a3265fdf9d1738fdb592.scope (goc id=6215)
+# ringbuf_bytes: 67108864
+# rb_wake_bytes: 8388608
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: dmesg | [    0.000000] vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# datadir: validation/m6b1-pre24h-20261019/g9b
+# rotate: 2m0s
+# min_free_gb: 50
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# start_mono_ns: 872260953480896
+# start_wall: 2026-10-19T17:15:15.636559739+07:00
+# duration: 7m0s
+# segment_tag: 202610191018
+
+tong so ban ghi trong file : 45625
+ts_enter nho nhat / lon nhat: 872425397628706 / 872545297091793 (ns, CLOCK_MONOTONIC)
+ban ghi co co FIRST        : 300
+ban ghi co co GAP_BEFORE   : 0
+
+so ban ghi theo tgid (306 tien trinh)
+     tgid  ban_ghi  FIRST  GAP_BEFORE      nguon_tgid
+     2500     5842      0           0           /proc
+  3165641      508      1           0  ? (suy tu tid)
+  3164709      507      1           0  ? (suy tu tid)
+  3164800      507      1           0  ? (suy tu tid)
+  3165403      506      1           0  ? (suy tu tid)
+  3165178      505      1           0  ? (suy tu tid)
+  3165565      505      1           0  ? (suy tu tid)
+  3166255      505      1           0  ? (suy tu tid)
+  3164557      504      1           0  ? (suy tu tid)
+  3164949      504      1           0  ? (suy tu tid)
+  3165024      504      1           0  ? (suy tu tid)
+  3165100      504      1           0  ? (suy tu tid)
+  3165254      504      1           0  ? (suy tu tid)
+  3165484      504      1           0  ? (suy tu tid)
+  3165808      504      1           0  ? (suy tu tid)
+  3165882      504      1           0  ? (suy tu tid)
+  3166105      504      1           0  ? (suy tu tid)
+  3164875      503      1           0  ? (suy tu tid)
+  3165733      503      1           0  ? (suy tu tid)
+  3166180      503      1           0  ? (suy tu tid)
+  3164631      502      1           0  ? (suy tu tid)
+  3166031      501      1           0  ? (suy tu tid)
+  3165329      500      1           0  ? (suy tu tid)
+  3165956      500      1           0  ? (suy tu tid)
+     2514      485      0           0           /proc
+  3164563      390      1           0  ? (suy tu tid)
+  3164637      390      1           0  ? (suy tu tid)
+  3164715      390      1           0  ? (suy tu tid)
+  3164806      390      1           0  ? (suy tu tid)
+  3164881      390      1           0  ? (suy tu tid)
+  3164955      390      1           0  ? (suy tu tid)
+  3165030      390      1           0  ? (suy tu tid)
+  3165106      390      1           0  ? (suy tu tid)
+  3165185      390      1           0  ? (suy tu tid)
+  3165261      390      1           0  ? (suy tu tid)
+  3165335      390      1           0  ? (suy tu tid)
+  3165409      390      1           0  ? (suy tu tid)
+  3165490      390      1           0  ? (suy tu tid)
+  3165571      390      1           0  ? (suy tu tid)
+  3165647      390      1           0  ? (suy tu tid)
+  3165739      390      1           0  ? (suy tu tid)
+  3165814      390      1           0  ? (suy tu tid)
+  3165888      390      1           0  ? (suy tu tid)
+  3165963      390      1           0  ? (suy tu tid)
+  3166037      390      1           0  ? (suy tu tid)
+  3166111      390      1           0  ? (suy tu tid)
+  3166186      390      1           0  ? (suy tu tid)
+  3166261      390      1           0  ? (suy tu tid)
+  3164695      375      1           0  ? (suy tu tid)
+  3165628      375      1           0  ? (suy tu tid)
+  3165621      365      1           0  ? (suy tu tid)
+  3165938      365      1           0  ? (suy tu tid)
+  3166237      365      1           0  ? (suy tu tid)
+  3164857      364      1           0  ? (suy tu tid)
+  3164913      364      1           0  ? (suy tu tid)
+  3165062      364      1           0  ? (suy tu tid)
+  3165159      364      1           0  ? (suy tu tid)
+  3165688      364      1           0  ? (suy tu tid)
+  3166012      364      1           0  ? (suy tu tid)
+  3166160      364      1           0  ? (suy tu tid)
+  3164595      363      1           0  ? (suy tu tid)
+  3165789      363      1           0  ? (suy tu tid)
+  3166311      363      1           0  ? (suy tu tid)
+  3165006      362      1           0  ? (suy tu tid)
+  3165217      362      1           0  ? (suy tu tid)
+  3165311      362      1           0  ? (suy tu tid)
+  3165524      361      1           0  ? (suy tu tid)
+  3165863      361      1           0  ? (suy tu tid)
+  3166087      361      1           0  ? (suy tu tid)
+  3164688      360      1           0  ? (suy tu tid)
+  3164747      359      1           0  ? (suy tu tid)
+  3165367      359      1           0  ? (suy tu tid)
+  3165460      359      1           0  ? (suy tu tid)
+  3166106      191      1           0  ? (suy tu tid)
+  3165025      189      1           0  ? (suy tu tid)
+  3165689      184      1           0  ? (suy tu tid)
+  3165939      183      1           0  ? (suy tu tid)
+  3165007      180      1           0  ? (suy tu tid)
+  3165160      179      1           0  ? (suy tu tid)
+  3164950      173      1           0  ? (suy tu tid)
+  3166238      172      1           0  ? (suy tu tid)
+  3165218      170      1           0  ? (suy tu tid)
+  3165368      169      1           0  ? (suy tu tid)
+  3165063      166      1           0  ? (suy tu tid)
+  3164596      162      1           0  ? (suy tu tid)
+  3166032      162      1           0  ? (suy tu tid)
+  3164748      161      1           0  ? (suy tu tid)
+  3166013      160      1           0  ? (suy tu tid)
+  3165179      159      1           0  ? (suy tu tid)
+  3165957      158      1           0  ? (suy tu tid)
+  3165461      157      1           0  ? (suy tu tid)
+  3164914      155      1           0  ? (suy tu tid)
+  3165790      152      1           0  ? (suy tu tid)
+  3165864      152      1           0  ? (suy tu tid)
+  3165312      151      1           0  ? (suy tu tid)
+  3164689      148      1           0  ? (suy tu tid)
+  3165485      147      1           0  ? (suy tu tid)
+  3165622      147      1           0  ? (suy tu tid)
+  3165101      146      1           0  ? (suy tu tid)
+  3165404      145      1           0  ? (suy tu tid)
+  3164558      141      1           0  ? (suy tu tid)
+  3166088      140      1           0  ? (suy tu tid)
+  3165809      139      1           0  ? (suy tu tid)
+  3165883      139      1           0  ? (suy tu tid)
+  3165330      138      1           0  ? (suy tu tid)
+  3166256      137      1           0  ? (suy tu tid)
+  3164858      135      1           0  ? (suy tu tid)
+  3166181      130      1           0  ? (suy tu tid)
+  3164876      129      1           0  ? (suy tu tid)
+  3165734      124      1           0  ? (suy tu tid)
+  3166312      120      1           0  ? (suy tu tid)
+  3165566      113      1           0  ? (suy tu tid)
+  3166161      112      1           0  ? (suy tu tid)
+  3164632      111      1           0  ? (suy tu tid)
+  3165255      109      1           0  ? (suy tu tid)
+  3164710      107      1           0  ? (suy tu tid)
+  3165525      106      1           0  ? (suy tu tid)
+  3165642       95      1           0  ? (suy tu tid)
+  3164801       84      1           0  ? (suy tu tid)
+  3164861       34      1           0  ? (suy tu tid)
+  3165028       34      1           0  ? (suy tu tid)
+  3165941       34      1           0  ? (suy tu tid)
+  3166164       33      1           0  ? (suy tu tid)
+  3164917       32      1           0  ? (suy tu tid)
+  3165258       32      1           0  ? (suy tu tid)
+  3165645       32      1           0  ? (suy tu tid)
+  3165690       32      1           0  ? (suy tu tid)
+  3165867       32      1           0  ? (suy tu tid)
+  3166315       32      1           0  ? (suy tu tid)
+  3164750       31      1           0  ? (suy tu tid)
+  3165010       31      1           0  ? (suy tu tid)
+  3165221       31      1           0  ? (suy tu tid)
+  3165812       31      1           0  ? (suy tu tid)
+  3166016       31      1           0  ? (suy tu tid)
+  3166035       31      1           0  ? (suy tu tid)
+  3166259       31      1           0  ? (suy tu tid)
+  3164599       30      1           0  ? (suy tu tid)
+  3165182       30      1           0  ? (suy tu tid)
+  3165371       30      1           0  ? (suy tu tid)
+  3165407       30      1           0  ? (suy tu tid)
+  3165488       30      1           0  ? (suy tu tid)
+  3165625       30      1           0  ? (suy tu tid)
+  3165736       30      1           0  ? (suy tu tid)
+  3166089       30      1           0  ? (suy tu tid)
+  3164713       29      1           0  ? (suy tu tid)
+  3164804       29      1           0  ? (suy tu tid)
+  3165333       29      1           0  ? (suy tu tid)
+  3165793       29      1           0  ? (suy tu tid)
+  3166109       29      1           0  ? (suy tu tid)
+  3164879       28      1           0  ? (suy tu tid)
+  3165464       28      1           0  ? (suy tu tid)
+  3165528       28      1           0  ? (suy tu tid)
+  3166184       28      1           0  ? (suy tu tid)
+     3165       26      0           0           /proc
+  3165569       26      1           0  ? (suy tu tid)
+  3164559       25      1           0  ? (suy tu tid)
+  3164635       25      1           0  ? (suy tu tid)
+     3122       24      0           0           /proc
+     3164       24      0           0           /proc
+  3164690       24      1           0  ? (suy tu tid)
+  3165884       23      1           0  ? (suy tu tid)
+  3166240       23      1           0  ? (suy tu tid)
+  3165103       22      1           0  ? (suy tu tid)
+  3165161       22      1           0  ? (suy tu tid)
+  3165314       22      1           0  ? (suy tu tid)
+  3164952       21      1           0  ? (suy tu tid)
+  3165064       21      1           0  ? (suy tu tid)
+  3166241       21      1           0  ? (suy tu tid)
+  3165066       20      1           0  ? (suy tu tid)
+  3165959       20      1           0  ? (suy tu tid)
+  3165163       19      1           0  ? (suy tu tid)
+  3165104       18      1           0  ? (suy tu tid)
+  3165315       18      1           0  ? (suy tu tid)
+  3165405       18      1           0  ? (suy tu tid)
+  3165886       18      1           0  ? (suy tu tid)
+  3165960       18      1           0  ? (suy tu tid)
+  3164953       17      1           0  ? (suy tu tid)
+  3164692       16      1           0  ? (suy tu tid)
+  3164561       15      1           0  ? (suy tu tid)
+  3164803       13      1           0  ? (suy tu tid)
+  3165568       13      1           0  ? (suy tu tid)
+  3165644       13      1           0  ? (suy tu tid)
+  3164633       12      1           0  ? (suy tu tid)
+  3164691       12      1           0  ? (suy tu tid)
+  3164877       12      1           0  ? (suy tu tid)
+  3164951       12      1           0  ? (suy tu tid)
+  3165008       12      1           0  ? (suy tu tid)
+  3165256       12      1           0  ? (suy tu tid)
+  3165313       12      1           0  ? (suy tu tid)
+  3165462       12      1           0  ? (suy tu tid)
+  3165624       12      1           0  ? (suy tu tid)
+  3164560       11      1           0  ? (suy tu tid)
+  3164562       11      1           0  ? (suy tu tid)
+  3164711       11      1           0  ? (suy tu tid)
+  3164749       11      1           0  ? (suy tu tid)
+  3164751       11      1           0  ? (suy tu tid)
+  3164805       11      1           0  ? (suy tu tid)
+  3164860       11      1           0  ? (suy tu tid)
+  3164915       11      1           0  ? (suy tu tid)
+  3164916       11      1           0  ? (suy tu tid)
+  3165026       11      1           0  ? (suy tu tid)
+  3165027       11      1           0  ? (suy tu tid)
+  3165065       11      1           0  ? (suy tu tid)
+  3165105       11      1           0  ? (suy tu tid)
+  3165162       11      1           0  ? (suy tu tid)
+  3165180       11      1           0  ? (suy tu tid)
+  3165183       11      1           0  ? (suy tu tid)
+  3165219       11      1           0  ? (suy tu tid)
+  3165220       11      1           0  ? (suy tu tid)
+  3165331       11      1           0  ? (suy tu tid)
+  3165369       11      1           0  ? (suy tu tid)
+  3165370       11      1           0  ? (suy tu tid)
+  3165486       11      1           0  ? (suy tu tid)
+  3165489       11      1           0  ? (suy tu tid)
+  3165567       11      1           0  ? (suy tu tid)
+  3165570       11      1           0  ? (suy tu tid)
+  3165626       11      1           0  ? (suy tu tid)
+  3165643       11      1           0  ? (suy tu tid)
+  3165737       11      1           0  ? (suy tu tid)
+  3165791       11      1           0  ? (suy tu tid)
+  3165811       11      1           0  ? (suy tu tid)
+  3165866       11      1           0  ? (suy tu tid)
+  3165940       11      1           0  ? (suy tu tid)
+  3165958       11      1           0  ? (suy tu tid)
+  3166015       11      1           0  ? (suy tu tid)
+  3166017       11      1           0  ? (suy tu tid)
+  3166034       11      1           0  ? (suy tu tid)
+  3166090       11      1           0  ? (suy tu tid)
+  3166107       11      1           0  ? (suy tu tid)
+  3166108       11      1           0  ? (suy tu tid)
+  3166163       11      1           0  ? (suy tu tid)
+  3166185       11      1           0  ? (suy tu tid)
+  3166242       11      1           0  ? (suy tu tid)
+  3166257       11      1           0  ? (suy tu tid)
+  3166260       11      1           0  ? (suy tu tid)
+  3166314       11      1           0  ? (suy tu tid)
+  3166316       11      1           0  ? (suy tu tid)
+  3164597       10      1           0  ? (suy tu tid)
+  3164598       10      1           0  ? (suy tu tid)
+  3164600       10      1           0  ? (suy tu tid)
+  3164634       10      1           0  ? (suy tu tid)
+  3164636       10      1           0  ? (suy tu tid)
+  3164693       10      1           0  ? (suy tu tid)
+  3164712       10      1           0  ? (suy tu tid)
+  3164714       10      1           0  ? (suy tu tid)
+  3164802       10      1           0  ? (suy tu tid)
+  3164859       10      1           0  ? (suy tu tid)
+  3164862       10      1           0  ? (suy tu tid)
+  3164878       10      1           0  ? (suy tu tid)
+  3164880       10      1           0  ? (suy tu tid)
+  3164918       10      1           0  ? (suy tu tid)
+  3164954       10      1           0  ? (suy tu tid)
+  3165009       10      1           0  ? (suy tu tid)
+  3165011       10      1           0  ? (suy tu tid)
+  3165029       10      1           0  ? (suy tu tid)
+  3165067       10      1           0  ? (suy tu tid)
+  3165102       10      1           0  ? (suy tu tid)
+  3165164       10      1           0  ? (suy tu tid)
+  3165181       10      1           0  ? (suy tu tid)
+  3165222       10      1           0  ? (suy tu tid)
+  3165257       10      1           0  ? (suy tu tid)
+  3165259       10      1           0  ? (suy tu tid)
+  3165316       10      1           0  ? (suy tu tid)
+  3165332       10      1           0  ? (suy tu tid)
+  3165334       10      1           0  ? (suy tu tid)
+  3165372       10      1           0  ? (suy tu tid)
+  3165406       10      1           0  ? (suy tu tid)
+  3165408       10      1           0  ? (suy tu tid)
+  3165463       10      1           0  ? (suy tu tid)
+  3165465       10      1           0  ? (suy tu tid)
+  3165487       10      1           0  ? (suy tu tid)
+  3165526       10      1           0  ? (suy tu tid)
+  3165527       10      1           0  ? (suy tu tid)
+  3165529       10      1           0  ? (suy tu tid)
+  3165623       10      1           0  ? (suy tu tid)
+  3165646       10      1           0  ? (suy tu tid)
+  3165691       10      1           0  ? (suy tu tid)
+  3165692       10      1           0  ? (suy tu tid)
+  3165693       10      1           0  ? (suy tu tid)
+  3165735       10      1           0  ? (suy tu tid)
+  3165738       10      1           0  ? (suy tu tid)
+  3165792       10      1           0  ? (suy tu tid)
+  3165794       10      1           0  ? (suy tu tid)
+  3165810       10      1           0  ? (suy tu tid)
+  3165813       10      1           0  ? (suy tu tid)
+  3165865       10      1           0  ? (suy tu tid)
+  3165868       10      1           0  ? (suy tu tid)
+  3165885       10      1           0  ? (suy tu tid)
+  3165887       10      1           0  ? (suy tu tid)
+  3165942       10      1           0  ? (suy tu tid)
+  3165943       10      1           0  ? (suy tu tid)
+  3165961       10      1           0  ? (suy tu tid)
+  3166014       10      1           0  ? (suy tu tid)
+  3166033       10      1           0  ? (suy tu tid)
+  3166036       10      1           0  ? (suy tu tid)
+  3166091       10      1           0  ? (suy tu tid)
+  3166092       10      1           0  ? (suy tu tid)
+  3166110       10      1           0  ? (suy tu tid)
+  3166162       10      1           0  ? (suy tu tid)
+  3166165       10      1           0  ? (suy tu tid)
+  3166182       10      1           0  ? (suy tu tid)
+  3166183       10      1           0  ? (suy tu tid)
+  3166239       10      1           0  ? (suy tu tid)
+  3166258       10      1           0  ? (suy tu tid)
+  3166313       10      1           0  ? (suy tu tid)
+     3167        2      0           0           /proc
+     TONG    45625    300           0                
+
+so ban ghi theo tid (306 thread, in 40 dong dau)
+      tid  tgid  ban_ghi
+     2500  2500     5842
+  3165641     ?      508
+  3164709     ?      507
+  3164800     ?      507
+  3165403     ?      506
+  3165178     ?      505
+  3165565     ?      505
+  3166255     ?      505
+  3164557     ?      504
+  3164949     ?      504
+  3165024     ?      504
+  3165100     ?      504
+  3165254     ?      504
+  3165484     ?      504
+  3165808     ?      504
+  3165882     ?      504
+  3166105     ?      504
+  3164875     ?      503
+  3165733     ?      503
+  3166180     ?      503
+  3164631     ?      502
+  3166031     ?      501
+  3165329     ?      500
+  3165956     ?      500
+     2514  2514      485
+  3164563     ?      390
+  3164637     ?      390
+  3164715     ?      390
+  3164806     ?      390
+  3164881     ?      390
+  3164955     ?      390
+  3165030     ?      390
+  3165106     ?      390
+  3165185     ?      390
+  3165261     ?      390
+  3165335     ?      390
+  3165409     ?      390
+  3165490     ?      390
+  3165571     ?      390
+  3165647     ?      390
+
+top 20 syscall_nr (tong cong 77 gia tri khac nhau)
+  syscall_nr  ban_ghi
+          35     5908
+          19     4325
+           3     3413
+           9     3200
+           0     2982
+         157     2647
+           2     2416
+          72     2363
+         202     2123
+         281     1828
+          11     1709
+          39     1157
+           5     1129
+          14      694
+         233      648
+         138      598
+         257      598
+          12      554
+         437      552
+          15      532
+
+theo tung CPU (cpu lay tu bit8..15 cua flags; seq_cuoi va mat lay tu .stats)
+   cpu  ban_ghi  seq_min  seq_max  lo_hong  seq_thieu  seq_cuoi  mat
+     0     2301     3198     5498        1       3197      5498    0
+     1     2437     3172     5608        1       3171      5608    0
+     2     3093     1750     4842        1       1749      4842    0
+     3      781     2622     3402        1       2621      3402    0
+     4     3541     1996     5536        1       1995      5536    0
+     5     1695     2413     4107        1       2412      4107    0
+     6     2102     2083     4184        1       2082      4184    0
+     7     2295     3558     5852        1       3557      5852    0
+     8     1468     1696     3163        1       1695      3163    0
+     9     1734     2653     4386        1       2652      4386    0
+    10     1670     3636     5305        1       3635      5305    0
+    11     1262     1765     3026        1       1764      3026    0
+    12     1509     1805     3313        1       1804      3313    0
+    13     1229     1870     3098        1       1869      3098    0
+    14     1629     2687     4315        1       2686      4315    0
+    15     1763     2070     3832        1       2069      3832    0
+    16     1346     3220     4565        1       3219      4565    0
+    17     1951     1384     3334        1       1383      3334    0
+    18     1414     2355     3768        1       2354      3768    0
+    19      827     2343     3169        1       2342      3169    0
+    20      714     1918     2631        1       1917      2631    0
+    21     2309     5580     7888        1       5579      7888    0
+    22     4005     5589     9593        1       5588      9593    0
+    23     2550     2970     5519        1       2969      5519    0
+  TONG    45625                         24      64309    109934    0
+
+y nghia cac cot:
+  ban_ghi   so ban ghi cua CPU do co trong file (tinh tren toan bo file,
+            khong phu thuoc -tgid/-nr/-from-mono/-to-mono)
+  seq_min   seq nho nhat doc duoc; bang 1 neu khong mat ban ghi nao o dau
+  lo_hong   so doan seq lien tuc bi thieu (ke ca doan dau tu 1 den seq_min
+            va doan cuoi tu seq_max den seq_cuoi)
+  seq_thieu tong so seq bi thieu; so nay doi chieu truc tiep voi cot mat
+  seq_cuoi  so lan dinh ghi tren CPU do, doc tu kernel luc collector dung
+  mat       bo dem bpf_ringbuf_reserve that bai, doc tu kernel
+
+doi chieu seq (toan cuc)
+  so lan dinh ghi (tong seq_cuoi cua moi CPU): 109934
+  so ban ghi collector doc duoc             : 45625
+  so ban ghi dem duoc trong file            : 45625
+  tong bo dem mat (ring buffer day)         : 0
+  tong so seq bi thieu theo CPU             : 64309
+  dinh ghi - ban ghi trong file             : 64309

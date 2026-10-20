@@ -1,0 +1,28 @@
+invalid value "120" for flag -duration: parse error
+Usage of ./bin/hids-collect:
+  -allow-no-stealclock
+    	chay tiep khi so dong "vmware-stealtime" trong kernel log khac so CPU; khi do steal = 0
+  -cgroup value
+    	thu muc cgroup can theo doi, lap lai duoc
+  -datadir string
+    	thu muc thu thap dai ngay (xoay file, proc/host TSV); de trong = che do cu
+  -discard
+    	doc ring buffer nhung khong ghi ban ghi ra file (do overhead ghi dia)
+  -duration duration
+    	thoi gian thu thap, 0 = den khi nhan SIGINT/SIGTERM
+  -min-free-gb float
+    	ngung ghi .bin khi dung luong trong duoi nguong (GB) (default 50)
+  -out string
+    	file .bin ket qua, de trong thi tu dat ten out/hids-<YYYYmmdd-HHMMSS>.bin
+  -pid value
+    	tgid can theo doi, lap lai duoc
+  -ringbuf-mb int
+    	kich thuoc ring buffer tinh bang MiB, phai la luy thua cua 2 (default 64)
+  -rotate duration
+    	chu ky xoay file wall clock khi -datadir duoc dat (default 1h0m0s)
+  -steal-fallback
+    	dung rq->prev_steal_time thay cho vmw_steal_time; moi ban ghi mang co STEAL_FALLBACK
+  -sys-enter-hook string
+    	diem gan sys_enter: tracepoint (mac dinh) hoac fentry (x64_sys_call) (default "tracepoint")
+  -zstd-level int
+    	muc nen zstd luong (1-3); 0 = khong nen (default 2)

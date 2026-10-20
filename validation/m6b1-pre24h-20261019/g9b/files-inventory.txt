@@ -1,0 +1,21 @@
+so file .bin: 5
+so file proc: 5
+so file host: 5
+--- .bin (doc het qua rec-stat, in tong ban ghi) ---
+FILE bin validation/m6b1-pre24h-20261019/g9b/uni-lms-app-202610191014.bin bytes=203945 tong_ban_ghi=16510 decompress_read_ok=1
+FILE bin validation/m6b1-pre24h-20261019/g9b/uni-lms-app-202610191016.bin bytes=578797 tong_ban_ghi=47799 decompress_read_ok=1
+FILE bin validation/m6b1-pre24h-20261019/g9b/uni-lms-app-202610191018.bin bytes=552859 tong_ban_ghi=45625 decompress_read_ok=1
+FILE bin validation/m6b1-pre24h-20261019/g9b/uni-lms-app-202610191020.bin bytes=577162 tong_ban_ghi=47685 decompress_read_ok=1
+FILE bin validation/m6b1-pre24h-20261019/g9b/uni-lms-app-202610191022.bin bytes=76992 tong_ban_ghi=6372 decompress_read_ok=1
+--- proc (zstdcat toan bo) ---
+FILE proc validation/m6b1-pre24h-20261019/g9b/proc-202610191014.tsv.zst bytes=1579 lines=142 zstdcat_ok=1
+FILE proc validation/m6b1-pre24h-20261019/g9b/proc-202610191016.tsv.zst bytes=4197 lines=417 zstdcat_ok=1
+FILE proc validation/m6b1-pre24h-20261019/g9b/proc-202610191018.tsv.zst bytes=3970 lines=395 zstdcat_ok=1
+FILE proc validation/m6b1-pre24h-20261019/g9b/proc-202610191020.tsv.zst bytes=4146 lines=415 zstdcat_ok=1
+FILE proc validation/m6b1-pre24h-20261019/g9b/proc-202610191022.tsv.zst bytes=732 lines=55 zstdcat_ok=1
+--- host (zstdcat toan bo) ---
+FILE host validation/m6b1-pre24h-20261019/g9b/host-202610191014.tsv.zst bytes=2377 lines=45 zstdcat_ok=1
+FILE host validation/m6b1-pre24h-20261019/g9b/host-202610191016.tsv.zst bytes=5961 lines=121 zstdcat_ok=1
+FILE host validation/m6b1-pre24h-20261019/g9b/host-202610191018.tsv.zst bytes=6200 lines=121 zstdcat_ok=1
+FILE host validation/m6b1-pre24h-20261019/g9b/host-202610191020.tsv.zst bytes=6121 lines=121 zstdcat_ok=1
+FILE host validation/m6b1-pre24h-20261019/g9b/host-202610191022.tsv.zst bytes=1125 lines=17 zstdcat_ok=1
