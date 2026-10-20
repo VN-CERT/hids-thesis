@@ -32,7 +32,7 @@ Cập nhật lần cuối: 2026-10-20 17:50 (giờ máy)
 ## Bước đang làm (M6b-1.2)
 
 - Câu 1.1 xong (commit riêng "bộ đọc proc bỏ deadline"): đo sau sửa — idle 1.98% lõi (trước 4.4%), cấu hình 24 giờ ~6.9% lõi (trước ~9.9%). Output `validation/m6b12-20261020/after1-idle/`, `after1-24h/`.
-- Câu 1.2: đang thêm cờ `-rb-poll` (mặc định 200ms) cho bộ đọc syscall, cả chế độ `-datadir` và `-out`.
+- Câu 1.2 xong (commit riêng "cờ -rb-poll mặc định 200ms"): đo sau sửa — idle 0.25% lõi, cấu hình 24 giờ 1.34–1.46% lõi. Tổng kết câu 1: trước sửa idle 4.4% / 24h ~9.9%; sau 1.1 idle 1.98% / 24h ~6.9%; sau 1.2 idle 0.25% / 24h ~1.4%. Output `validation/m6b12-20261020/after2-idle/`, `after2-24h/`.
 - Tiếp theo: đường CPU theo tốc độ (1k/10k/100k/500k, mỗi mức 2 phút), câu 2 (bpftrace `@rq_sau_preempt_ns`, G3 lúc dừng container và lúc container chạy), trích bản ghi phần dư S5 7979, cổng cuối (G7a, G7b, G7b-nho, G8, G9a, G9b, G10, 1 giờ), tag `m6b1.2`, R030.
 
 ## Bước tiếp theo
