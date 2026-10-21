@@ -63,8 +63,15 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 ## Việc đang chạy
 
-- Unit `hids-m6c-rest` (bắt đầu 2026-10-21 11:26): chạy tuần tự G11 chính thức (`out/jobs/m6c-g11.log`) → cổng 3 G8/G9a/G9b/G10 (`out/jobs/m6c-gates3.log`) → cổng 4 đường CPU + G7-cap (`out/jobs/m6c-gates4.log`) → E4p (`out/jobs/m6c-e4p.log`) → bộ overhead mục 4 (`out/jobs/m6c-overhead-driver.log`, tiến độ trong `out/jobs/m6c-overhead.status`). Dự kiến xong ~15:30. Xong thì có `out/jobs/m6c-rest.status`.
-- M6c tiến độ: cổng 1 XONG (file cũ 56B: 1003=1003=1003; G7a on/off mất 0; G7b khớp tuyệt đối 5/5 lần, mất 7,8–18,8%; G7b-nho khớp 6770559). Cổng 2 chạy lại XONG: G3 `-pmu on` ×3 + `-pmu off` ×1 đều exit 0, G5 max ≤ 500, CLAMPED 0/tổng, recursion_misses 0. Lệch rq so với bpftrace TỔNG: pmu on collector THẤP hơn 16–41%; pmu off cao hơn 3,6–8,8% (báo nguyên văn, chờ kiến trúc sư). Đã sửa đồng bộ Go `irqState.Gen` theo BPF mới (commit `c5bdac8`) và hai cổng `wait_go` của wl trong script G11/E4p.
+- (không có) — mọi unit M6c đã xong. Sau cùng: `bpftool prog show | grep -c hids_` = 0, không còn collector, 12 container chạy.
+
+## M6c: ĐÓNG (R032)
+
+- Bản ghi 64 byte + PMU xong: recfmt 48/56/64, loader `-pmu auto|on|off`, header `pmu:`, host `pmu_inst_delta`/`pmu_cyc_delta`, rec-export `inst,cyc,pmu_ok`, rec-stat tỉ lệ PMU. Đồng bộ Go `irqState.Gen`.
+- Cổng: file cũ 1003=1003=1003; G7a on/off mất 0; G7b khớp tuyệt đối (mất 6,5–18,8%); G7b-nhỏ khớp 6770559; G3 ×4 phần dư ≤500, CLAMPED 0/tổng, recursion 0; G11 lệch inst 43 (≈0%), cyc ≤0,0002%, cờ PMU 100%; G8/G9a/G9b/G10 PASS (host lines=471 là lỗi đếm một đoạn xoay của pre24h, tổng thật 602).
+- Overhead cuối (mỗi ô 10 lượt): T1 C0 184, C1 3746, C1n 797, C2 243 ns/syscall; T4 C1 −27,0%, C1n −8,5%; T3 C1 −69,4% TPS; T4-R50 C1 độ trễ sụp (p99 335 ms). Đường CPU (-pmu on): 1.5k→1,87%, 10k→4,43%, 99k→23,62%, đạt tối đa ~207k/s ở mức đích 500k (CPU 47,97%, drops 0). G7-cap: 267k/528k/874k bản ghi/giây (1/2/4 proc), mất 0.
+- E4p đủ 9 ô: CPI 1,71 (L0) → 3,05–3,25 (L12) → 5,04–5,68 (L22); GHz hiệu dụng 1,90–1,97 không đổi; inst giảm theo L do wl hiệu chuẩn lại dưới tải.
+- Chờ kiến trúc sư: (1) chấp nhận chi phí PMU? (2) lệch rq G3 đổi chiều theo PMU (on: thấp hơn 16–41%; off: cao hơn 3,6–8,8%); (3) sửa cách đếm host lines của pre24h? Tag `m6c`, R032.
 
 ## Kết quả cổng cuối M6b-1.2 (binary fa60c56)
 
