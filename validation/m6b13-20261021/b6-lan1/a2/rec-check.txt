@@ -1,0 +1,39 @@
+so ban ghi trong cua so: 1001
+tid: 526146
+cua so ts_enter: (29430179820185, 29432977078519]
+co              so_ban_ghi
+FIRST           0
+GAP_BEFORE      0
+D_SLEEP         0
+MIGRATED        0
+OVERFLOW        0
+STEAL_FALLBACK  0
+CLAMPED         0
+--- tong thanh phan (ns) ---
+cpu 1217772212
+steal 135806
+irq 15998475
+rq 10083827
+vol 1553261000
+steal_off 5941756
+cpu+steal+irq 1233906493
+--- G5 phan du |tat ca (tru FIRST)| (ns) ---
+so khoang: 1000
+p50 0
+p99 488
+p99.9 500
+max 500
+so khoang |phan du| > 1000 ns: 0
+so khoang |phan du| > 10000 ns: 0
+so khoang CLAMPED va |phan du| > 500 ns: 0 / tong 1000
+--- G5 phan du |khong GAP_BEFORE| (ns) ---
+so khoang: 1000
+p50 0
+p99 488
+p99.9 500
+max 500
+so khoang |phan du| > 1000 ns: 0
+so khoang |phan du| > 10000 ns: 0
+so khoang CLAMPED va |phan du| > 500 ns: 0 / tong 1000
+--- G5 phan du |co GAP_BEFORE| (ns) ---
+so khoang: 0

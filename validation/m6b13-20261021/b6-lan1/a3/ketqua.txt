@@ -1,0 +1,11 @@
+wl pid=527171 tid=527171
+thu tu: bpftrace toi gian TRUOC, collector SAU
+bpftool_hids_count_sau=0
+cua so ts_enter: (29437933047780, 29440754070585]
+collector_rq_ns=9259520
+bpftrace_rq_sau_wakeup_ns=9181288
+bpftrace_so_lan_wakeup=502
+lech_ns=78232
+lech_phan_tram=0.8521
+lech_us_moi_wakeup=0.1558
+bin: out/m6b13-b6-a3-071115.bin
