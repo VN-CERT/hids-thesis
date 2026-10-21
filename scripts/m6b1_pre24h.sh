@@ -198,7 +198,13 @@ wait_ready "$HDIR/run.log" || fail "host10m khong READY"
 wait "$HPID" || true
 HOST=$(find "$HDIR" -name 'host-*.tsv.zst' | head -1)
 [[ -n ${HOST:-} ]] || fail "khong co host TSV"
-lines=$(zstdcat "$HOST" | tail -n +2 | wc -l)
+# M6c-1 1c: dem TONG moi doan host-*.tsv.zst (lan chay 10 phut co the vat qua
+# moc xoay file theo gio), tru dong tieu de cua tung doan.
+lines=0
+while IFS= read -r hf; do
+	n=$(zstdcat "$hf" | tail -n +2 | wc -l)
+	lines=$((lines + n))
+done < <(find "$HDIR" -name 'host-*.tsv.zst' | sort)
 echo "host lines: $lines" | tee "$HDIR/lines.txt"
 [[ "$lines" -ge 580 && "$lines" -le 620 ]] && pass "host ~600 dong ($lines)" || fail "host lines=$lines"
 zstdcat "$HOST" | tail -n +2 | awk -F'\t' '
