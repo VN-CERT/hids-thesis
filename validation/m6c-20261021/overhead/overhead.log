@@ -1,0 +1,26 @@
+[2026-10-21T12:22:47+07:00] m6c overhead bat dau, RUNS=10, out=validation/m6c-20261021/overhead
+8b05464db597cfc471dc7af24ce651ef905751ebd80ec463b3863b7dd0263c35  bpf/sys_enter.bpf.c
+8c390002870f3ea8ace38a241f803bb5e7ec6c2413fdd403f757de24a6a1be25  analysis/m6c_stats.py
+39d892e5524de1cb49ace593b152c5b303d99c056e110f0a072d344c8270c7ec  bpf/proc_events.bpf.c
+9f0b4cde1c2e1c6aa560c041eaefaef1a40e5c7d9fc292db1d77dfc971d046cd  analysis/m5f_parse.py
+962d209
+[2026-10-21T12:23:14+07:00] T1
+T1 C0 run1: 190.95 ns/syscall (burst 1.909500198s)
+ban_ghi=10000001 ban_ghi_giay=281924.1 mat=0
+T1 C1 run1: 3547.50 ns/syscall (burst 35.474987912s)
+ban_ghi=10000001 ban_ghi_giay=1255208.1 mat=0
+T1 C1n run1: 797.24 ns/syscall (burst 7.972385087s)
+T1 C2 run1: 243.61 ns/syscall (burst 2.436142498s)
+T1 C0 run2: 181.33 ns/syscall (burst 1.8133126s)
+ban_ghi=10000001 ban_ghi_giay=280561.1 mat=0
+T1 C1 run2: 3564.71 ns/syscall (burst 35.647079163s)
+ban_ghi=10000001 ban_ghi_giay=1271171.6 mat=0
+T1 C1n run2: 787.18 ns/syscall (burst 7.871806606s)
+T1 C2 run2: 238.37 ns/syscall (burst 2.383659018s)
+T1 C0 run3: 184.77 ns/syscall (burst 1.847730128s)
+ban_ghi=10000001 ban_ghi_giay=261448.2 mat=0
+T1 C1 run3: 3825.35 ns/syscall (burst 38.25353685s)
+ban_ghi=10000001 ban_ghi_giay=1198158.4 mat=0
+T1 C1n run3: 835.14 ns/syscall (burst 8.351373119s)
+T1 C2 run3: 247.79 ns/syscall (burst 2.477939047s)
+T1 C0 run4: 182.22 ns/syscall (burst 1.822208037s)

@@ -1,0 +1,66 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 294b872-dirty
+# record_size: 64
+# filter_tgids: khong co
+# filter_pid: 0
+# filter_cgroup: /sys/fs/cgroup/hids-rate (goc id=23252)
+# ringbuf_bytes: 67108864
+# rb_wake_bytes: 8388608
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: dmesg | [    0.000000] vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# datadir: validation/m6c-20261021/gates4/rate-100000/data
+# rotate: 1h0m0s
+# min_free_gb: 50
+# no_proc: false
+# no_host: false
+# cgroup_refresh: 1s
+# rb_poll: 200ms
+# pmu: on
+# pmu_events: instructions:u,cycles:u
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# start_mono_ns: 6872519212353
+# start_wall: 2026-10-21T12:13:02.822370457+07:00
+# duration: 2m30s
+# segment_tag: 2026102105
+# so_ban_ghi_doc_duoc: 11856321
+cpu,seq_cuoi,mat
+0,200306,0
+1,501261,0
+2,800770,0
+3,599912,0
+4,467,0
+5,0,0
+6,100495,0
+7,300349,0
+8,500547,0
+9,200260,0
+10,199956,0
+11,200375,0
+12,100083,0
+13,10308,0
+14,7447,0
+15,706555,0
+16,103547,0
+17,301374,0
+18,1710001,0
+19,1204139,0
+20,2204095,0
+21,1001754,0
+22,401773,0
+23,500547,0

@@ -1,2 +1,20 @@
 === G11 S1: wl cpu 10000 300 (CPU 20), perf stat -e instructions:u,cycles:u ===
 wl pid=214456
+--- perf stat (nguyen van) ---
+# started on Wed Oct 21 11:26:29 2026
+
+
+ Performance counter stats for thread id '214456':
+
+     4,809,756,172      instructions:u                   #    0.80  insn per cycle            
+     5,990,469,100      cycles:u                                                              
+
+       4.028921489 seconds time elapsed
+
+cua so: 4079817221968 .. 4082877483122
+collector: ban ghi trong cua so=301 khong_FIRST=301 co_PMU=301
+ti le PMU (khong-FIRST): 301/301 = 100.0000%
+tong inst collector = 4809756129
+tong cyc collector = 5990460440
+CPU 20: PMU 301/301 = 100.00%
+du lieu: out/m6c-g11-S1-112624.bin

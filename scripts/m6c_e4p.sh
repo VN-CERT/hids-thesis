@@ -77,16 +77,26 @@ run_one() {
 	python3 - "$dir/export.csv" "$wl_pid" >>"$dir/ketqua.txt" <<'PY'
 import csv, statistics, sys
 path, tid = sys.argv[1], int(sys.argv[2])
-rows = []
+# Khoang dot ket thuc bang syscall ngu cua wl: glibc hien tai dung
+# clock_nanosleep (230) thay vi nanosleep (35). Chon nr co 500 ban ghi.
+from collections import Counter
+allrows = []
 with open(path) as f:
     for r in csv.DictReader(f):
-        if int(r["tid"]) != tid or int(r["syscall_nr"]) != 35:
-            continue
+        if int(r["tid"]) == tid:
+            allrows.append(r)
+cnt = Counter(int(r["syscall_nr"]) for r in allrows if not int(r["flags"]) & 1)
+burn_nr = 230 if cnt.get(230, 0) >= cnt.get(35, 0) else 35
+print(f"so ban ghi theo syscall (khong FIRST): {dict(cnt)}; chon khoang dot nr={burn_nr}")
+rows = []
+for r in allrows:
+    if int(r["syscall_nr"]) != burn_nr:
+        continue
         if int(r["flags"]) & 1:  # bo FIRST
             continue
         rows.append(r)
 ok = [r for r in rows if int(r["pmu_ok"]) == 1]
-print(f"khoang dot (nr=35, khong FIRST): {len(rows)}, co PMU: {len(ok)}")
+print(f"khoang dot (nr={burn_nr}, khong FIRST): {len(rows)}, co PMU: {len(ok)}")
 if ok:
     cpu = [int(r["cpu_ns"]) for r in ok]
     inst = [int(r["inst"]) for r in ok]
