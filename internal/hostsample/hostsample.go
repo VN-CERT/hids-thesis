@@ -14,8 +14,8 @@ type CgroupTarget struct {
 
 // PressureSome gia tri avg10 va total cua dong "some".
 type PressureSome struct {
-	Avg10  string
-	Total  string
+	Avg10   string
+	Total   string
 	Present bool
 }
 
@@ -33,21 +33,21 @@ type CgroupSample struct {
 
 // Sample mot dong host stats.
 type Sample struct {
-	MonoNs   uint64
-	Wall     time.Time
-	CPUUser  uint64
-	CPUNice  uint64
-	CPUSys   uint64
-	CPUIdle  uint64
+	MonoNs    uint64
+	Wall      time.Time
+	CPUUser   uint64
+	CPUNice   uint64
+	CPUSys    uint64
+	CPUIdle   uint64
 	CPUIOWait uint64
-	CPUIrq   uint64
-	CPUSoft  uint64
-	CPUSteal uint64
-	Load1    string
-	PressCPU PressureSome
-	PressMem PressureSome
-	PressIO  PressureSome
-	Cgroups  []CgroupSample
+	CPUIrq    uint64
+	CPUSoft   uint64
+	CPUSteal  uint64
+	Load1     string
+	PressCPU  PressureSome
+	PressMem  PressureSome
+	PressIO   PressureSome
+	Cgroups   []CgroupSample
 	// M6c: delta bo dem PMU user tren moi CPU trong 1 giay; "na" khi PMU tat.
 	PMUInstDelta string
 	PMUCycDelta  string
