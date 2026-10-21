@@ -63,7 +63,8 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 ## Việc đang chạy
 
-- (không có) — mọi unit M6b-1.3 đã xong: `hids-m6b13-a3` (phần A), `hids-m6b13-b2` (B2), `hids-m6b13-b6` (B6). Sau cùng: `bpftool prog show | grep -c hids_` = 0, không còn collector, 12 container chạy.
+- Unit `hids-m6c-rest` (bắt đầu 2026-10-21 11:26): chạy tuần tự G11 chính thức (`out/jobs/m6c-g11.log`) → cổng 3 G8/G9a/G9b/G10 (`out/jobs/m6c-gates3.log`) → cổng 4 đường CPU + G7-cap (`out/jobs/m6c-gates4.log`) → E4p (`out/jobs/m6c-e4p.log`) → bộ overhead mục 4 (`out/jobs/m6c-overhead-driver.log`, tiến độ trong `out/jobs/m6c-overhead.status`). Dự kiến xong ~15:30. Xong thì có `out/jobs/m6c-rest.status`.
+- M6c tiến độ: cổng 1 XONG (file cũ 56B: 1003=1003=1003; G7a on/off mất 0; G7b khớp tuyệt đối 5/5 lần, mất 7,8–18,8%; G7b-nho khớp 6770559). Cổng 2 chạy lại XONG: G3 `-pmu on` ×3 + `-pmu off` ×1 đều exit 0, G5 max ≤ 500, CLAMPED 0/tổng, recursion_misses 0. Lệch rq so với bpftrace TỔNG: pmu on collector THẤP hơn 16–41%; pmu off cao hơn 3,6–8,8% (báo nguyên văn, chờ kiến trúc sư). Đã sửa đồng bộ Go `irqState.Gen` theo BPF mới (commit `c5bdac8`) và hai cổng `wait_go` của wl trong script G11/E4p.
 
 ## Kết quả cổng cuối M6b-1.2 (binary fa60c56)
 
