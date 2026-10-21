@@ -8,7 +8,7 @@ cd "$(dirname "$0")/.." || exit 1
 [[ $EUID -eq 0 ]] || { echo "can root" >&2; exit 1; }
 OUTROOT="${1:?can thu muc output}"
 mkdir -p "$OUTROOT"
-WL=./tools/wl
+WL=./bin/wl
 COLLECT=./bin/hids-collect
 
 wait_ready() {

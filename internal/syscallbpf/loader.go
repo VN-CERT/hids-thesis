@@ -86,6 +86,7 @@ type irqState struct {
 	OddNs          uint64
 	OddCnt         uint32
 	Pad            uint32
+	Gen            uint64 // M6c: tang moi lan mot irq ket thuc (kiem tra nhat quan)
 }
 
 // Collector giu chuong trinh BPF da nap, cac link va bo doc ring buffer.

@@ -9,7 +9,7 @@ cd "$(dirname "$0")/.." || exit 1
 OUTROOT="${1:?can thu muc output}"
 EVENTS="${2:-instructions:u,cycles:u}"
 mkdir -p "$OUTROOT"
-WL=./tools/wl
+WL=./bin/wl
 COLLECT=./bin/hids-collect
 G3WIN=./scripts/g3_window.py
 WL_CPU=20
