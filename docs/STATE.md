@@ -70,7 +70,11 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 - Nhiệm vụ: `docs/tasks/M6c-1.md`. Thứ tự: 1 → 2 → 3 → 5 → 4 → 6. Báo cáo R033, tag `m6c.1`.
 - LƯU Ý: `tools/coreclk.c` sha256 thực tế `3d2c9005…` KHÁC giá trị trong nhiệm vụ (`88ef821e…`) → theo lệnh "sai → DỪNG", KHÔNG dùng coreclk (mục 5b dừng, ghi vào R033 mục 8). Nội dung file đúng mô tả coreclk; không sửa.
 - Phần 1 XONG: 1a `-pmu off|host|on` mặc định host (commit `d2db255`), 1b STEALCHECK thử lại 3 cửa sổ, 1c pre24h đếm tổng đoạn host, 1d bản sao `m6c1_overhead.sh`/`m6c1_e4p.sh`/`g3_swap.sh` (READY 20s + KHONG_READY chạy lại; production `-pmu host`; wrk gốc `/usr/bin/wrk`; pgtest theo M5h). `make build` xong.
-- Tiếp theo: phần 2 (G7a ×4, G3 mặc định, hostcheck), phần 3 (g3_swap 4 lần + ghép mốc thời gian), phần 5 (E4p giao thức gốc; 5b DỪNG vì hash coreclk), phần 4 (overhead production, đêm), R033.
+- Cập nhật: `tools/coreclk.c` đã được người dùng thay bằng bản đúng `88ef821e…` (commit "M6c-1: tools/coreclk.c ban kien truc su 88ef821e") → mục 5b ĐƯỢC làm. Bản cũ trong repo lúc bắt đầu là `3d2c9005…` (ghi vào R033 mục 7).
+- Phần 2 XONG: G7a ×4 mất 0, header `pmu:` host/on/off/host(mặc định) đúng; G3 mặc định host: phần dư max ≤ 500 ns, CLAMPED 0/tổng, recursion_misses = 0 (27 chương trình × S1–S5); hostcheck host = số, off = `na`. Lệch rq G3 so với bpftrace TONG (S2 10,56%, S3 26,33%, S5 7,64%) là đối tượng chẩn đoán của phần 3, không phải tiêu chí phần 2.
+- Phần 3 XONG (dữ liệu `validation/m6c1-20261021/part3/`, file `pair3d.txt` + `pair3d-swap.txt`): thứ tự thường + on: trung vị hiệu (bpftrace − collector) S2 = +7,769 µs; off: −1,403 µs; thứ tự đảo: on +0,451 µs, off +0,382 µs (S2). Đã sửa 2 lỗi của bản sao: STEALCHECK in `nguong_ns=0` khi lệch âm lớn nhất (commit 1b-fix, đã build lại) và `g3_swap.sh` thừa ký tự `\&\&` khiến lượt swap đầu không chạy kịch bản nào (đã chạy lại).
+- Phần 5a DỪNG theo điều kiện DỪNG của đề: E4 gốc (`scripts/m4.sh`) khởi động KHÁC mô tả — hiệu chuẩn ở bước `calibrate` riêng trên máy rảnh (dòng 487), lúc chạy `e4_workers` (dòng 308) thì stress-ng chạy TRƯỚC (dòng 315), `sleep 2` (dòng 318), rồi wl mới chạy với `-loops` đọc `mem_steps` từ file (không hiệu chuẩn lại). Câu hỏi ghi ở R033 mục 8; `scripts/m6c1_e4p.sh` đã chuẩn bị theo thứ tự kiến trúc sư mô tả nhưng CHƯA chạy.
+- Việc đang chạy: coreclk 5b (unit `hids-m6c1clk`, log `out/jobs/m6c1clk.log`). Tiếp theo: phần 4 (unit đêm, `scripts/m6c1_part4.sh`), đếm STEALCHECK toàn nhiệm vụ, R033, tag `m6c.1`, push.
 
 ## M6c: ĐÓNG (R032)
 
