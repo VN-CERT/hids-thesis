@@ -1,0 +1,12 @@
+CANH BAO: binary build tu cay lam viec con thay doi chua commit (git_commit=294b872-dirty).
+CANH BAO: du lieu ghi ra khong tai lap duoc tu git. Commit truoc khi do that.
+stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+stealclock_evidence: journalctl
+doi chieu vmw_steal_time voi rq->prev_steal_time trong 3s...
+doi chieu xong: lech lon nhat 262857 ns tren 24 CPU, nguong max(2000000 ns, 1%)
+mo segment 2026102104 -> validation/m6b1-pre24h-20261021/host10m/uni-lms-app-2026102104.bin
+longrun datadir=validation/m6b1-pre24h-20261021/host10m rotate=1h0m0s min_free_gb=50
+loc pid: 257214 | loc cgroup: khong co | ring buffer: 64 MiB
+READY
+mo segment 2026102105 -> validation/m6b1-pre24h-20261021/host10m/uni-lms-app-2026102105.bin
+ket thuc longrun end_mono_ns=6560707955002 disk_skipped=0

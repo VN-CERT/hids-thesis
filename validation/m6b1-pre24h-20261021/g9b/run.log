@@ -1,0 +1,14 @@
+CANH BAO: binary build tu cay lam viec con thay doi chua commit (git_commit=294b872-dirty).
+CANH BAO: du lieu ghi ra khong tai lap duoc tu git. Commit truoc khi do that.
+stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+stealclock_evidence: journalctl
+doi chieu vmw_steal_time voi rq->prev_steal_time trong 3s...
+doi chieu xong: lech lon nhat 346255 ns tren 24 CPU, nguong max(2000000 ns, 1%)
+mo segment 202610210450 -> validation/m6b1-pre24h-20261021/g9b/uni-lms-app-202610210450.bin
+longrun datadir=validation/m6b1-pre24h-20261021/g9b rotate=2m0s min_free_gb=50
+loc pid: khong co | loc cgroup: /sys/fs/cgroup/system.slice/docker-7421d7ae79685498cdaf7b24ea4426cccb9531070b12a3265fdf9d1738fdb592.scope (goc id=22128) | /sys/fs/cgroup/system.slice/docker-319c38ff33aa4827288f68ca1236600174cf278175fd7d5d68657d48e2a6366f.scope (goc id=21812) | ring buffer: 64 MiB
+READY
+mo segment 202610210452 -> validation/m6b1-pre24h-20261021/g9b/uni-lms-app-202610210452.bin
+mo segment 202610210454 -> validation/m6b1-pre24h-20261021/g9b/uni-lms-app-202610210454.bin
+mo segment 202610210456 -> validation/m6b1-pre24h-20261021/g9b/uni-lms-app-202610210456.bin
+ket thuc longrun end_mono_ns=5956333167821 disk_skipped=0

@@ -3,13 +3,13 @@ CANH BAO: du lieu ghi ra khong tai lap duoc tu git. Commit truoc khi do that.
 stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
 stealclock_evidence: journalctl
 doi chieu vmw_steal_time voi rq->prev_steal_time trong 3s...
-doi chieu xong: lech lon nhat 612660 ns tren 24 CPU, nguong max(2000000 ns, 1%)
-ghi vao out/m6c-e4p-L0-3-142600.bin
-loc pid: 522395 | loc cgroup: khong co | ring buffer: 64 MiB
+doi chieu xong: lech lon nhat 165351 ns tren 24 CPU, nguong max(2000000 ns, 1%)
+ghi vao out/m6c-e4p-L0-3-143018.bin
+loc pid: 549877 | loc cgroup: khong co | ring buffer: 64 MiB
 READY
-ban ghi doc duoc: 0 | so lan dinh ghi: 0 | mat: 0
-irq cong don (ns): hard 0 | soft 2180503 | vector 18094086 | tong 20274589
-soft_raw cong don (ns): 2184952 (ke ca hard/vector long ben trong, de so voi softirqs-bpfcc)
+ban ghi doc duoc: 1010 | so lan dinh ghi: 1010 | mat: 0
+irq cong don (ns): hard 748813 | soft 364365169 | vector 1259907255 | tong 1625021237
+soft_raw cong don (ns): 364767321 (ke ca hard/vector long ben trong, de so voi softirqs-bpfcc)
 irq bat thuong: 0 khoang, 0 ns | loai con dang hoat dong: 0
 recursion_misses (bpf_prog_info), tong 0 tren 31 chuong trinh:
   hids_irq_call_function_entry             0
@@ -43,6 +43,6 @@ recursion_misses (bpf_prog_info), tong 0 tren 31 chuong trinh:
   hids_sched_wakeup_new                    0
   hids_sys_enter                           0
   hids_sys_enter_fentry                    0
-thoi gian chay: 0.074 s | CPU collector: user 0.291 s, sys 0.460 s (getrusage RUSAGE_SELF)
-kich thuoc file: 1167 byte
-du lieu: out/m6c-e4p-L0-3-142600.bin | thong ke: out/m6c-e4p-L0-3-142600.bin.stats | theo doi: out/m6c-e4p-L0-3-142600.bin.periodic
+thoi gian chay: 10.877 s | CPU collector: user 0.294 s, sys 0.503 s (getrusage RUSAGE_SELF)
+kich thuoc file: 65807 byte
+du lieu: out/m6c-e4p-L0-3-143018.bin | thong ke: out/m6c-e4p-L0-3-143018.bin.stats | theo doi: out/m6c-e4p-L0-3-143018.bin.periodic

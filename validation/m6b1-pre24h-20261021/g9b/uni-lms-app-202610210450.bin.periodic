@@ -1,0 +1,50 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 294b872-dirty
+# record_size: 64
+# filter_tgids: khong co
+# filter_pid: 0
+# filter_cgroup: /sys/fs/cgroup/system.slice/docker-7421d7ae79685498cdaf7b24ea4426cccb9531070b12a3265fdf9d1738fdb592.scope (goc id=22128) | /sys/fs/cgroup/system.slice/docker-319c38ff33aa4827288f68ca1236600174cf278175fd7d5d68657d48e2a6366f.scope (goc id=21812)
+# ringbuf_bytes: 67108864
+# rb_wake_bytes: 8388608
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: dmesg | [    0.000000] vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# datadir: validation/m6b1-pre24h-20261021/g9b
+# rotate: 2m0s
+# min_free_gb: 50
+# no_proc: false
+# no_host: false
+# cgroup_refresh: 1s
+# rb_poll: 200ms
+# pmu: on
+# pmu_events: instructions:u,cycles:u
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# start_mono_ns: 5536294594733
+# start_wall: 2026-10-21T11:50:46.597751962+07:00
+# duration: 7m0s
+# segment_tag: 202610210450
+# moi dong cach nhau 10s
+mono_ns,wall,dinh_ghi_delta,mat_delta,dinh_ghi_tong,mat_tong,irq_hard_delta_ns,irq_soft_delta_ns,irq_vec_delta_ns,soft_raw_delta_ns,irq_hard_tong_ns,irq_soft_tong_ns,irq_vec_tong_ns,soft_raw_tong_ns
+5536303680627,2026-10-21T11:50:46.606837429+07:00,4,0,4,0,0,1702782,14910726,1703756,0,1702782,14910726,1703756
+5546304535420,2026-10-21T11:50:56.607692498+07:00,4003,0,4007,0,541187,102033768,451398723,102266898,541187,103736550,466309449,103970654
+5556305121647,2026-10-21T11:51:06.608278769+07:00,3945,0,7952,0,514682,97436761,431712838,97748836,1055869,201173311,898022287,201719490
+5566304329874,2026-10-21T11:51:16.607487079+07:00,4014,0,11966,0,564776,100319251,436180414,100528746,1620645,301492562,1334202701,302248236
+5576304830775,2026-10-21T11:51:26.607988031+07:00,3940,0,15906,0,557891,101603770,493301261,101881420,2178536,403096332,1827503962,404129656
+5586304364444,2026-10-21T11:51:36.607521635+07:00,4024,0,19930,0,465913,103688951,438668494,104097564,2644449,506785283,2266172456,508227220
+5596304696085,2026-10-21T11:51:46.60785348+07:00,3950,0,23880,0,529831,101220897,430120170,101373746,3174280,608006180,2696292626,609600966
+5606305276030,2026-10-21T11:51:56.608432593+07:00,4026,0,27906,0,585128,102637360,433647083,102786087,3759408,710643540,3129939709,712387053

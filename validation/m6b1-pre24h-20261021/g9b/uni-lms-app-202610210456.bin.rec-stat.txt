@@ -1,0 +1,294 @@
+file: validation/m6b1-pre24h-20261021/g9b/uni-lms-app-202610210456.bin
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 294b872-dirty
+# record_size: 64
+# filter_tgids: khong co
+# filter_pid: 0
+# filter_cgroup: /sys/fs/cgroup/system.slice/docker-7421d7ae79685498cdaf7b24ea4426cccb9531070b12a3265fdf9d1738fdb592.scope (goc id=22128) | /sys/fs/cgroup/system.slice/docker-319c38ff33aa4827288f68ca1236600174cf278175fd7d5d68657d48e2a6366f.scope (goc id=21812)
+# ringbuf_bytes: 67108864
+# rb_wake_bytes: 8388608
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: dmesg | [    0.000000] vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# datadir: validation/m6b1-pre24h-20261021/g9b
+# rotate: 2m0s
+# min_free_gb: 50
+# no_proc: false
+# no_host: false
+# cgroup_refresh: 1s
+# rb_poll: 200ms
+# pmu: on
+# pmu_events: instructions:u,cycles:u
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# start_mono_ns: 5536294594733
+# start_wall: 2026-10-21T11:50:46.597751962+07:00
+# duration: 7m0s
+# segment_tag: 202610210456
+
+tong so ban ghi trong file : 42450
+ts_enter nho nhat / lon nhat: 5849521346699 / 5956281479599 (ns, CLOCK_MONOTONIC)
+ban ghi co co FIRST        : 129
+ban ghi co co GAP_BEFORE   : 0
+ti le ban ghi khong-FIRST co co PMU: 42321/42321 = 100.0000%
+
+so ban ghi theo tgid (131 tien trinh)
+    tgid  ban_ghi  FIRST  GAP_BEFORE      nguon_tgid
+  182853    24955      0           0           /proc
+  183205     5195      0           0           /proc
+  274753      373      1           0  ? (suy tu tid)
+  272906      367      1           0  ? (suy tu tid)
+  273004      367      1           0  ? (suy tu tid)
+  274033      366      1           0  ? (suy tu tid)
+  274349      366      1           0  ? (suy tu tid)
+  273213      365      1           0  ? (suy tu tid)
+  273617      365      1           0  ? (suy tu tid)
+  273730      365      1           0  ? (suy tu tid)
+  272776      364      1           0  ? (suy tu tid)
+  273828      364      1           0  ? (suy tu tid)
+  273940      363      1           0  ? (suy tu tid)
+  273315      362      1           0  ? (suy tu tid)
+  273414      362      1           0  ? (suy tu tid)
+  274656      362      1           0  ? (suy tu tid)
+  273101      361      1           0  ? (suy tu tid)
+  273515      361      1           0  ? (suy tu tid)
+  274148      361      1           0  ? (suy tu tid)
+  274456      361      1           0  ? (suy tu tid)
+  274852      361      1           0  ? (suy tu tid)
+  274248      360      1           0  ? (suy tu tid)
+  274552      359      1           0  ? (suy tu tid)
+  272777      205      1           0  ? (suy tu tid)
+  274854      173      1           0  ? (suy tu tid)
+  273623      169      1           0  ? (suy tu tid)
+  274039      168      1           0  ? (suy tu tid)
+  274150      162      1           0  ? (suy tu tid)
+  274459      162      1           0  ? (suy tu tid)
+  273107      160      1           0  ? (suy tu tid)
+  273830      158      1           0  ? (suy tu tid)
+  272911      157      1           0  ? (suy tu tid)
+  273217      157      1           0  ? (suy tu tid)
+  273416      157      1           0  ? (suy tu tid)
+  273732      156      1           0  ? (suy tu tid)
+  273519      153      1           0  ? (suy tu tid)
+  273316      150      1           0  ? (suy tu tid)
+  274558      150      1           0  ? (suy tu tid)
+  274659      143      1           0  ? (suy tu tid)
+  273005      134      1           0  ? (suy tu tid)
+  274249      134      1           0  ? (suy tu tid)
+  274757      132      1           0  ? (suy tu tid)
+  273942      124      1           0  ? (suy tu tid)
+  274355      117      1           0  ? (suy tu tid)
+  273995      111      1           0  ? (suy tu tid)
+  274357       38      1           0  ? (suy tu tid)
+  272779       37      1           0  ? (suy tu tid)
+  273737       36      1           0  ? (suy tu tid)
+  274762       33      1           0  ? (suy tu tid)
+  274151       32      1           0  ? (suy tu tid)
+  274662       32      1           0  ? (suy tu tid)
+  273222       31      1           0  ? (suy tu tid)
+  273419       31      1           0  ? (suy tu tid)
+  274042       31      1           0  ? (suy tu tid)
+  273318       30      1           0  ? (suy tu tid)
+  274561       30      1           0  ? (suy tu tid)
+  273522       29      1           0  ? (suy tu tid)
+  274252       29      1           0  ? (suy tu tid)
+  274461       27      1           0  ? (suy tu tid)
+  272912       24      1           0  ? (suy tu tid)
+  273625       23      1           0  ? (suy tu tid)
+  273009       22      1           0  ? (suy tu tid)
+  273831       22      1           0  ? (suy tu tid)
+  273947       22      1           0  ? (suy tu tid)
+  274857       21      1           0  ? (suy tu tid)
+  273108       20      1           0  ? (suy tu tid)
+  273626       20      1           0  ? (suy tu tid)
+  273110       19      1           0  ? (suy tu tid)
+  273834       19      1           0  ? (suy tu tid)
+  274855       19      1           0  ? (suy tu tid)
+  273008       18      1           0  ? (suy tu tid)
+  272916       16      1           0  ? (suy tu tid)
+  273952       16      1           0  ? (suy tu tid)
+  274463       16      1           0  ? (suy tu tid)
+  273006       12      1           0  ? (suy tu tid)
+  273521       12      1           0  ? (suy tu tid)
+  272914       11      1           0  ? (suy tu tid)
+  273220       11      1           0  ? (suy tu tid)
+  273319       11      1           0  ? (suy tu tid)
+  273418       11      1           0  ? (suy tu tid)
+  273524       11      1           0  ? (suy tu tid)
+  273624       11      1           0  ? (suy tu tid)
+  273733       11      1           0  ? (suy tu tid)
+  274040       11      1           0  ? (suy tu tid)
+  274043       11      1           0  ? (suy tu tid)
+  274152       11      1           0  ? (suy tu tid)
+  274250       11      1           0  ? (suy tu tid)
+  274465       11      1           0  ? (suy tu tid)
+  274559       11      1           0  ? (suy tu tid)
+  274560       11      1           0  ? (suy tu tid)
+  274660       11      1           0  ? (suy tu tid)
+  274856       11      1           0  ? (suy tu tid)
+  272780       10      1           0  ? (suy tu tid)
+  272781       10      1           0  ? (suy tu tid)
+  272915       10      1           0  ? (suy tu tid)
+  272917       10      1           0  ? (suy tu tid)
+  273007       10      1           0  ? (suy tu tid)
+  273010       10      1           0  ? (suy tu tid)
+  273109       10      1           0  ? (suy tu tid)
+  273111       10      1           0  ? (suy tu tid)
+  273218       10      1           0  ? (suy tu tid)
+  273223       10      1           0  ? (suy tu tid)
+  273320       10      1           0  ? (suy tu tid)
+  273322       10      1           0  ? (suy tu tid)
+  273417       10      1           0  ? (suy tu tid)
+  273420       10      1           0  ? (suy tu tid)
+  273525       10      1           0  ? (suy tu tid)
+  273627       10      1           0  ? (suy tu tid)
+  273734       10      1           0  ? (suy tu tid)
+  273739       10      1           0  ? (suy tu tid)
+  273833       10      1           0  ? (suy tu tid)
+  273835       10      1           0  ? (suy tu tid)
+  273944       10      1           0  ? (suy tu tid)
+  273948       10      1           0  ? (suy tu tid)
+  273949       10      1           0  ? (suy tu tid)
+  274041       10      1           0  ? (suy tu tid)
+  274154       10      1           0  ? (suy tu tid)
+  274155       10      1           0  ? (suy tu tid)
+  274253       10      1           0  ? (suy tu tid)
+  274254       10      1           0  ? (suy tu tid)
+  274356       10      1           0  ? (suy tu tid)
+  274358       10      1           0  ? (suy tu tid)
+  274359       10      1           0  ? (suy tu tid)
+  274562       10      1           0  ? (suy tu tid)
+  274661       10      1           0  ? (suy tu tid)
+  274663       10      1           0  ? (suy tu tid)
+  274758       10      1           0  ? (suy tu tid)
+  274760       10      1           0  ? (suy tu tid)
+  274763       10      1           0  ? (suy tu tid)
+  274764       10      1           0  ? (suy tu tid)
+  274858       10      1           0  ? (suy tu tid)
+    TONG    42450    129           0                
+
+so ban ghi theo tid (154 thread, in 40 dong dau)
+     tid    tgid  ban_ghi
+  183205  183205     5195
+  183020  182853     1093
+  183029  182853     1093
+  183042  182853     1093
+  183052  182853     1093
+  183075  182853     1093
+  183015  182853     1092
+  183061  182853     1092
+  182976  182853     1088
+  182981  182853     1088
+  182985  182853     1088
+  183008  182853     1086
+  183037  182853     1086
+  183080  182853     1085
+  183043  182853     1081
+  182964  182853     1080
+  182983  182853     1080
+  183032  182853     1079
+  183045  182853     1079
+  183048  182853     1079
+  183068  182853     1079
+  182945  182853     1074
+  182995  182853     1074
+  182999  182853     1074
+  274753       ?      373
+  272906       ?      367
+  273004       ?      367
+  274033       ?      366
+  274349       ?      366
+  273213       ?      365
+  273617       ?      365
+  273730       ?      365
+  272776       ?      364
+  273828       ?      364
+  273940       ?      363
+  273315       ?      362
+  273414       ?      362
+  274656       ?      362
+  273101       ?      361
+  273515       ?      361
+
+top 20 syscall_nr (tong cong 67 gia tri khac nhau)
+  syscall_nr  ban_ghi
+         232    15127
+           1    10128
+          35     2848
+           0     1906
+           3     1835
+         281     1402
+           2     1242
+         157     1197
+         202     1002
+          72      928
+          39      479
+           5      399
+           9      339
+         138      273
+         257      273
+         233      252
+         437      252
+          15      232
+         234      232
+          12      231
+
+theo tung CPU (cpu lay tu bit8..15 cua flags; seq_cuoi va mat lay tu .stats)
+   cpu  ban_ghi  seq_min  seq_max  lo_hong  seq_thieu  seq_cuoi  mat
+     0     3090     7434    10523        1       7433     10523    0
+     1     2447     7782    10228        1       7781     10228    0
+     2     2837     3596     6432        1       3595      6432    0
+     3     1321     2717     4037        1       2716      4037    0
+     4      543     2334     2876        1       2333      2876    0
+     5      897     1209     2105        1       1208      2105    0
+     6     1677     3378     5054        1       3377      5054    0
+     7     1499     3860     5358        1       3859      5358    0
+     8     2067     7623     9689        1       7622      9689    0
+     9      677     2786     3462        1       2785      3462    0
+    10     1474     3999     5472        1       3998      5472    0
+    11      663     6913     7575        1       6912      7575    0
+    12     1906     2788     4693        1       2787      4693    0
+    13      211     8162     8372        1       8161      8372    0
+    14     1202     4127     5328        1       4126      5328    0
+    15     1887     5602     7488        1       5601      7488    0
+    16     2387     3674     6060        1       3673      6060    0
+    17     1439     3669     5107        1       3668      5107    0
+    18     1575     2797     4371        1       2796      4371    0
+    19     2270     5996     8265        1       5995      8265    0
+    20     1225     7347     8571        1       7346      8571    0
+    21     3279    10530    13808        1      10529     13808    0
+    22     3346     9637    12982        1       9636     12982    0
+    23     2531     6067     8597        1       6066      8597    0
+  TONG    42450                         24     124003    166453    0
+
+y nghia cac cot:
+  ban_ghi   so ban ghi cua CPU do co trong file (tinh tren toan bo file,
+            khong phu thuoc -tgid/-nr/-from-mono/-to-mono)
+  seq_min   seq nho nhat doc duoc; bang 1 neu khong mat ban ghi nao o dau
+  lo_hong   so doan seq lien tuc bi thieu (ke ca doan dau tu 1 den seq_min
+            va doan cuoi tu seq_max den seq_cuoi)
+  seq_thieu tong so seq bi thieu; so nay doi chieu truc tiep voi cot mat
+  seq_cuoi  so lan dinh ghi tren CPU do, doc tu kernel luc collector dung
+  mat       bo dem bpf_ringbuf_reserve that bai, doc tu kernel
+
+doi chieu seq (toan cuc)
+  so lan dinh ghi (tong seq_cuoi cua moi CPU): 166453
+  so ban ghi collector doc duoc             : 42450
+  so ban ghi dem duoc trong file            : 42450
+  tong bo dem mat (ring buffer day)         : 0
+  tong so seq bi thieu theo CPU             : 124003
+  dinh ghi - ban ghi trong file             : 124003
