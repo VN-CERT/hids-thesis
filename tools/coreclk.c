@@ -40,46 +40,46 @@
 
 static inline uint64_t now_ns(void)
 {
-	struct timespec ts;
+        struct timespec ts;
 
-	clock_gettime(CLOCK_MONOTONIC, &ts);
-	return (uint64_t)ts.tv_sec * 1000000000ull + (uint64_t)ts.tv_nsec;
+        clock_gettime(CLOCK_MONOTONIC, &ts);
+        return (uint64_t)ts.tv_sec * 1000000000ull + (uint64_t)ts.tv_nsec;
 }
 
 /* 8 lenh imul phu thuoc nhau tren cung mot thanh ghi; y le nen x luon doi. */
-#define IMUL8(x, y)                                                     \
-	__asm__ volatile("imul %1, %0\n\timul %1, %0\n\timul %1, %0\n\t"   \
-			 "imul %1, %0\n\timul %1, %0\n\timul %1, %0\n\t"   \
-			 "imul %1, %0\n\timul %1, %0"                      \
-			 : "+r"(x)                                         \
-			 : "r"(y))
+#define IMUL8(x, y) \
+        __asm__ volatile("imul %1, %0\n\timul %1, %0\n\timul %1, %0\n\t" \
+                         "imul %1, %0\n\timul %1, %0\n\timul %1, %0\n\t" \
+                         "imul %1, %0\n\timul %1, %0" \
+                         : "+r"(x) \
+                         : "r"(y))
 
 int main(int argc, char **argv)
 {
-	uint64_t loops = 100000000ull;
-	uint64_t x = 1, y = 3, t0, t1, n;
+        uint64_t loops = 100000000ull;
+        uint64_t x = 1, y = 3, t0, t1, n;
 
-	if (argc > 1) {
-		loops = strtoull(argv[1], NULL, 10);
-		if (loops == 0) {
-			fprintf(stderr, "so_vong phai > 0\n");
-			return 2;
-		}
-	}
+        if (argc > 1) {
+                loops = strtoull(argv[1], NULL, 10);
+                if (loops == 0) {
+                        fprintf(stderr, "so_vong phai > 0\n");
+                        return 2;
+                }
+        }
 
-	/* Lam nong: de loi len tan so on dinh truoc khi do. */
-	for (uint64_t i = 0; i < 2000000ull; i++)
-		IMUL8(x, y);
+        /* Lam nong: de loi len tan so on dinh truoc khi do. */
+        for (uint64_t i = 0; i < 2000000ull; i++)
+                IMUL8(x, y);
 
-	t0 = now_ns();
-	for (uint64_t i = 0; i < loops; i++)
-		IMUL8(x, y);
-	t1 = now_ns();
+        t0 = now_ns();
+        for (uint64_t i = 0; i < loops; i++)
+                IMUL8(x, y);
+        t1 = now_ns();
 
-	n = loops * 8ull;
-	printf("so_imul=%llu chu_ky_ky_vong=%llu thoi_gian_ns=%llu GHz_wall=%.4f kiem=%llu\n",
-	       (unsigned long long)n, (unsigned long long)(3ull * n),
-	       (unsigned long long)(t1 - t0),
-	       3.0 * (double)n / (double)(t1 - t0), (unsigned long long)x);
-	return 0;
+        n = loops * 8ull;
+        printf("so_imul=%llu chu_ky_ky_vong=%llu thoi_gian_ns=%llu GHz_wall=%.4f kiem=%llu\n",
+               (unsigned long long)n, (unsigned long long)(3ull * n),
+               (unsigned long long)(t1 - t0),
+               3.0 * (double)n / (double)(t1 - t0), (unsigned long long)x);
+        return 0;
 }
