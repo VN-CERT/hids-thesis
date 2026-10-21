@@ -80,6 +80,23 @@ wait_wl_on_read() {
 	die "pid $pid khong cho tren read() sau 120 giay"
 }
 
+# Sau khi ghi '.', cho wl ROI pipe_read (bat dau burst) roi quay lai pipe_read
+# (burst xong). wait_wl_on_read don thuan khong phan biet hai trang thai nay.
+wait_burst() {
+	local pid=$1 i w left=0
+	for ((i = 0; i < 1000; i++)); do
+		w=$(cat "/proc/$pid/wchan" 2>/dev/null) || return 1
+		if [[ $w != pipe_read ]]; then
+			left=1
+			break
+		fi
+		kill -0 "$pid" 2>/dev/null || return 1
+		sleep 0.01
+	done
+	[[ $left -eq 1 ]] || echo "CANH BAO: wl khong roi pipe_read sau '.' (pid=$pid)"
+	wait_wl_on_read "$pid"
+}
+
 run_once() {
 	local cfg=$1 rep=$2
 	local ts prefix bin fifo wl_pid cpid bt_pid rundir
@@ -133,9 +150,9 @@ run_once() {
 	esac
 
 	printf '.' >&9
-	wait_wl_on_read "$wl_pid"
+	wait_burst "$wl_pid"
 	printf '.' >&9
-	wait_wl_on_read "$wl_pid"
+	wait_burst "$wl_pid"
 
 	kill -INT "$bt_pid" 2>/dev/null
 	wait "$bt_pid" 2>/dev/null || true
