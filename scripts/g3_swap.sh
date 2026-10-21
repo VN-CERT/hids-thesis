@@ -501,24 +501,24 @@ main() {
 	schedstats_save
 	case "$subset" in
 	m5d)
-		want_scenario S1 \&\& run_scenario S1 cpu 10000 300
-		want_scenario S2 \&\& run_scenario S2 sleep 5000 500
-		want_scenario S3 \&\& run_scenario S3 mixed 2000 3000 500
-		want_scenario S4 \&\& run_scenario S4 cpu 10000 300
-		want_scenario S5 \&\& run_scenario S5 io 300
+		want_scenario S1 && run_scenario S1 cpu 10000 300
+		want_scenario S2 && run_scenario S2 sleep 5000 500
+		want_scenario S3 && run_scenario S3 mixed 2000 3000 500
+		want_scenario S4 && run_scenario S4 cpu 10000 300
+		want_scenario S5 && run_scenario S5 io 300
 		;;
 	m32)
-		want_scenario S1 \&\& run_scenario S1 cpu 10000 300
-		want_scenario S4 \&\& run_scenario S4 cpu 10000 300
-		want_scenario S5 \&\& run_scenario S5 io 300
+		want_scenario S1 && run_scenario S1 cpu 10000 300
+		want_scenario S4 && run_scenario S4 cpu 10000 300
+		want_scenario S5 && run_scenario S5 io 300
 		part_g_real
 		;;
 	"" | all)
-		want_scenario S1 \&\& run_scenario S1 cpu 10000 300
-		want_scenario S2 \&\& run_scenario S2 sleep 5000 500
-		want_scenario S3 \&\& run_scenario S3 mixed 2000 3000 500
-		want_scenario S4 \&\& run_scenario S4 cpu 10000 300
-		want_scenario S5 \&\& run_scenario S5 io 300
+		want_scenario S1 && run_scenario S1 cpu 10000 300
+		want_scenario S2 && run_scenario S2 sleep 5000 500
+		want_scenario S3 && run_scenario S3 mixed 2000 3000 500
+		want_scenario S4 && run_scenario S4 cpu 10000 300
+		want_scenario S5 && run_scenario S5 io 300
 		part_g_real
 		part_g_irq
 		part_g7d
