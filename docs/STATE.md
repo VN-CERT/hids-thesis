@@ -50,9 +50,16 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 - M6b-1.3 ĐÓNG: R031 viết xong, tag `m6b1.3`, chờ kiến trúc sư trả lời mục 8 của R031 (mở nhiệm vụ riêng về mất G7b? đóng câu lệch rq theo B6? đo lại b2?).
 - Sự cố lúc chạy phần A đợt 1: sửa `scripts/g3.sh` (B1) trong lúc job G7b đang chạy làm cây git bẩn → các lần chạy sau bị g7.sh từ chối; đã chạy lại toàn bộ hai mẻ với cây sạch. Lần relaunch đầu hỏng vì systemd-run sai thư mục làm việc (đường dẫn tương đối); đã sửa bằng `cd /root/hids` trong lệnh.
 
+## Bước đang làm (M6c)
+
+- Nhiệm vụ: `docs/tasks/M6c.md` (PMU trong bản ghi 64 byte + sửa cuộc đua ngắt của kiến trúc sư + bộ overhead cuối). File kiến trúc sư đã đặt sẵn: `bpf/sys_enter.bpf.c` (sha256 `8b05464…`, đã commit cùng nhiệm vụ ở `12749a9`), `analysis/m6c_stats.py` (`8c39000…`). `kernel.perf_event_paranoid = 1` (đạt ≤ 1, không đổi sysctl).
+- Đã xong: đặc tả 64 byte + bit7 PMU trong `.cursor/rules/hids.mdc`; recfmt 48/56/64 (`RecordSize=64`, `RecordSize56`, `FlagPMU`, `Inst`/`Cyc`); loader `-pmu auto|on|off` (perf_event_open per CPU online, fd vào `hids_pmu_inst`/`hids_pmu_cyc` tại index = cpu id, `hids_pmu_on`); header `pmu: on|off` + `pmu_events:`; host TSV thêm `pmu_inst_delta`/`pmu_cyc_delta` ở cuối; rec-export thêm `inst,cyc,pmu_ok` ở cuối; rec-stat tỉ lệ PMU không-FIRST; `scripts/bin_header.py` nhận 64. Commit `6eb65d7` + gofmt `hostsample`.
+- Smoke: `-pmu on` 100% bản ghi không-FIRST có cờ PMU (1.140.933 bản ghi); `-pmu off` 0%. File 56 byte cũ đọc được bằng rec-stat/rec-check mới.
+- Tiếp theo: build từ commit sạch → cổng (đọc lại file cũ, G7a ×2, G7b ×3, G7b-nho, G3 ×3 on + ×1 off, G11, G8/G9a/G9b/G10) → bộ overhead mục 4 → E4p → R032, tag `m6c`.
+
 ## Bước tiếp theo
 
-- Theo đúng thứ tự trong `docs/tasks/M6b-1.3.md`. Mục nào không đạt: dừng, dán nguyên văn.
+- Theo đúng thứ tự trong `docs/tasks/M6c.md`. Mục nào không đạt: dừng, dán nguyên văn.
 
 ## Việc đang chạy
 
