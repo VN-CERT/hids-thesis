@@ -1,6 +1,6 @@
 # Trạng thái dự án HIDS
 
-Cập nhật lần cuối: 2026-10-21 07:06 (giờ máy)
+Cập nhật lần cuối: 2026-10-21 07:10 (giờ máy)
 
 ## Lịch sử git và tham chiếu phiên bản
 
@@ -50,7 +50,8 @@ Cập nhật lần cuối: 2026-10-21 07:06 (giờ máy)
 
 ## Việc đang chạy
 
-- Unit `hids-m6b13-a3` (khởi động 2026-10-21 07:02:36 +07): chạy lại hai mẻ G7b phần A (200ms rồi 50ms, mỗi mẻ 5 lần). Mẻ 200ms xong 07:05:03; mẻ 50ms đang chạy (run4/5 tại thời điểm cập nhật). Log: `out/jobs/m6b13-a1.log`, `out/jobs/m6b13-a2.log`; trạng thái: `out/jobs/m6b13-a.status`; kết quả: `validation/m6b13-20261021/g7b-200ms/summary.txt`, `validation/m6b13-20261021/g7b-50ms/summary.txt`.
+- Unit `hids-m6b13-a3` XONG (07:02:36–07:07:30): phần A hoàn tất (kết quả ở mục M6b-1.3 bên trên; commit `7ac5412`).
+- Unit `hids-m6b13-b2` (khởi động 2026-10-21 07:09:02 +07): `G3_BT_EVENTS=1 bash scripts/m6b12_g3.sh stop validation/m6b13-20261021/b2-g3-events` — G3 S1–S5 lúc DỪNG container, bpftrace in từng sự kiện W/S/P (phục vụ B3'). Log: `out/jobs/m6b13-b2.log` và `validation/m6b13-20261021/b2-g3-events/g3-run.log`; trạng thái: `out/jobs/m6b13-b2.status`. Dự kiến ~10 phút.
 
 ## Kết quả cổng cuối M6b-1.2 (binary fa60c56)
 
