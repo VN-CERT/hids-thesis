@@ -78,9 +78,12 @@ run_one() {
 	perf_pid=$!
 	sleep 1
 
+	# wl co hai cong wait_go: '.' thu nhat qua marker getuid, '.' thu hai chay burst.
+	printf '.' >&9
+	wait_wl_on_read "$wl_pid"
 	printf '.' >&9
 	wait_wl_burst_done "$wl_pid"
-	# wl da xong burst va quay lai doc FIFO: dung perf stat va collector.
+	# wl da xong burst va quay lai doc FIFO (cho cong thoat): dung perf stat va collector.
 	kill -INT "$perf_pid" 2>/dev/null; wait "$perf_pid" 2>/dev/null || true
 	kill -INT "$cpid" 2>/dev/null; wait "$cpid" 2>/dev/null || true
 	printf '.' >&9

@@ -58,6 +58,9 @@ run_one() {
 	local cpid=$!
 	wait_ready "$dir/collect.log"
 	wait_wchan "$wl_pid" eq
+	# wl co hai cong wait_go: '.' 1 qua marker getuid, '.' 2 chay burst.
+	printf '.' >&9
+	wait_wchan "$wl_pid" eq
 	printf '.' >&9
 	wait_wchan "$wl_pid" ne
 	wait_wchan "$wl_pid" eq
