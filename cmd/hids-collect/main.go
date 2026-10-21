@@ -35,6 +35,13 @@ const logPath = "out/hids-collect.log"
 
 type stringList []string
 
+func pmuEventsLine(mode string) string {
+	if mode == "off" {
+		return "pmu_events: khong co (pmu off)"
+	}
+	return "pmu_events: instructions:u,cycles:u"
+}
+
 func (s *stringList) String() string     { return strings.Join(*s, ",") }
 func (s *stringList) Set(v string) error { *s = append(*s, v); return nil }
 
@@ -89,7 +96,7 @@ func run() error {
 	noHost := flag.Bool("no-host", false, "tat luong host stats 1Hz - co thu nghiem M6b-1.1")
 	cgroupRefresh := flag.Duration("cgroup-refresh", time.Second, "chu ky quet lai cgroup (mac dinh 1s) - co thu nghiem M6b-1.1")
 	rbPoll := flag.Duration("rb-poll", 200*time.Millisecond, "deadline moi lan cho doc ring buffer syscall (mac dinh 200ms; xoay file co the tre toi da bang gia tri nay)")
-	pmu := flag.String("pmu", "auto", "M6c: doc bo dem PMU user (instructions/cycles) moi CPU: auto|on|off")
+	pmu := flag.String("pmu", "host", "che do PMU: off|host (mac dinh, production: chi luong host doc tong)|on (thi nghiem: BPF doc theo ban ghi); auto = bi danh cua host")
 	flag.Parse()
 
 	if os.Geteuid() != 0 {
@@ -114,8 +121,8 @@ func run() error {
 	if *rbPoll <= 0 {
 		return fmt.Errorf("-rb-poll phai > 0")
 	}
-	if *pmu != "auto" && *pmu != "on" && *pmu != "off" {
-		return fmt.Errorf("-pmu phai la auto, on hoac off, nhan %q", *pmu)
+	if *pmu != "auto" && *pmu != "host" && *pmu != "on" && *pmu != "off" {
+		return fmt.Errorf("-pmu phai la off, host, on (hoac auto = host), nhan %q", *pmu)
 	}
 	if len(cgroupPaths) == 0 && len(tgids) == 0 {
 		return fmt.Errorf("can it nhat mot -pid hoac mot -cgroup")
@@ -231,10 +238,7 @@ func run() error {
 	if coll.PMUWarning() != "" {
 		fmt.Fprintf(os.Stderr, "CANH BAO: %s\n", coll.PMUWarning())
 	}
-	pmuState := "off"
-	if coll.PMUOn() {
-		pmuState = "on"
-	}
+	pmuState := coll.PMUMode()
 
 	f, err := os.Create(outPath)
 	if err != nil {
@@ -299,7 +303,7 @@ func run() error {
 		fmt.Sprintf("sys_enter_hook: %s", *sysEnterHook),
 		fmt.Sprintf("zstd_level: %d", *zstdLevel),
 		fmt.Sprintf("pmu: %s", pmuState),
-		"pmu_events: instructions:u,cycles:u",
+		pmuEventsLine(pmuState),
 		fmt.Sprintf("start_mono_ns: %d", startMono),
 		fmt.Sprintf("start_wall: %s", startWall.Format(time.RFC3339Nano)),
 		fmt.Sprintf("duration: %s", durationText(*duration)),

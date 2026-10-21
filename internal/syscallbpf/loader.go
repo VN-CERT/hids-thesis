@@ -104,8 +104,22 @@ type Collector struct {
 	pmuSkipped []int       // CPU offline luc mo, bo qua
 }
 
-// PMUOn cho biet BPF co doc bo dem PMU khong.
+// PMUOn cho biet BPF co doc bo dem PMU theo ban ghi khong (chi che do "on").
 func (c *Collector) PMUOn() bool { return c.pmuOn }
+
+// PMUMode tra ve che do PMU thuc te: off, host hoac on.
+func (c *Collector) PMUMode() string {
+	if c.pmuOn {
+		return "on"
+	}
+	if len(c.pmuInstFDs) > 0 {
+		return "host"
+	}
+	return "off"
+}
+
+// PMUCounters cho biet co fd PMU de luong host doc tong (host hoac on).
+func (c *Collector) PMUCounters() bool { return len(c.pmuInstFDs) > 0 }
 
 // PMUWarning tra ve canh bao khi -pmu auto phai tat PMU, rong neu khong co.
 func (c *Collector) PMUWarning() string { return c.pmuWarning }
@@ -115,7 +129,7 @@ func (c *Collector) PMUSkippedCPUs() []int { return c.pmuSkipped }
 
 // PMUTotals doc cac fd PMU va tra ve tong so lenh / chu ky user tren moi CPU.
 func (c *Collector) PMUTotals() (inst, cyc uint64, err error) {
-	if !c.pmuOn {
+	if !c.PMUCounters() {
 		return 0, 0, errors.New("PMU dang tat")
 	}
 	for _, fd := range c.pmuInstFDs {
@@ -284,10 +298,13 @@ func Load(cfg Config) (*Collector, error) {
 	if len(cfg.TGIDs) > 0 {
 		filterPID = 1
 	}
-	// M6c PMU: mo bo dem truoc khi nap BPF vi hids_pmu_on la bien cau hinh.
+	// PMU: mo bo dem truoc khi nap BPF vi hids_pmu_on la bien cau hinh.
+	// Che do (M6c-1): off = khong mo; host (mac dinh, "auto" la bi danh) = mo fd
+	// cho luong host doc nhung KHONG nap map, hids_pmu_on=0; on = nap map,
+	// hids_pmu_on=1 (BPF doc PMU theo ban ghi, che do thi nghiem).
 	pmuMode := cfg.PMU
-	if pmuMode == "" {
-		pmuMode = "auto"
+	if pmuMode == "" || pmuMode == "auto" {
+		pmuMode = "host"
 	}
 	var pmuInstFDs, pmuCycFDs map[int]int
 	var pmuSkipped []int
@@ -299,10 +316,13 @@ func Load(cfg Config) (*Collector, error) {
 			if pmuMode == "on" {
 				return nil, fmt.Errorf("-pmu on: %w", perr)
 			}
-			pmuWarning = fmt.Sprintf("PMU tat (-pmu auto): %v", perr)
+			// host: ha ve off, khong tu choi chay.
+			pmuWarning = fmt.Sprintf("PMU ha ve off (-pmu host): %v", perr)
 		} else {
 			pmuInstFDs, pmuCycFDs, pmuSkipped = instFDs, cycFDs, skipped
-			pmuOn = 1
+			if pmuMode == "on" {
+				pmuOn = 1
+			}
 		}
 	}
 	pmuCleanup := func() {

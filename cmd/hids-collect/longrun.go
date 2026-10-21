@@ -559,14 +559,10 @@ func runLongRun(o longRunOpts) error {
 	if coll.PMUWarning() != "" {
 		fmt.Fprintf(os.Stderr, "CANH BAO: %s\n", coll.PMUWarning())
 	}
-	pmuState := "off"
-	if coll.PMUOn() {
-		pmuState = "on"
+	header = append(header, fmt.Sprintf("pmu: %s", coll.PMUMode()))
+	if coll.PMUMode() != "off" {
+		header = append(header, "pmu_events: instructions:u,cycles:u")
 	}
-	header = append(header,
-		fmt.Sprintf("pmu: %s", pmuState),
-		"pmu_events: instructions:u,cycles:u",
-	)
 	for _, name := range []string{"IRQ_TIME_ACCOUNTING", "PARAVIRT_TIME_ACCOUNTING", "SCHEDSTATS", "SCHED_INFO"} {
 		value, err := hostinfo.KernelConfig(name)
 		if err != nil {
@@ -789,7 +785,7 @@ func runLongRun(o longRunOpts) error {
 			ticker := time.NewTicker(time.Second)
 			defer ticker.Stop()
 			var prevPMUInst, prevPMUCyc uint64
-			if coll.PMUOn() {
+			if coll.PMUCounters() {
 				prevPMUInst, prevPMUCyc, _ = coll.PMUTotals()
 			}
 			for {
@@ -802,7 +798,7 @@ func runLongRun(o longRunOpts) error {
 						bpflog.Note(os.Stderr, logPath, fmt.Sprintf("hostsample: %v", err))
 						continue
 					}
-					if coll.PMUOn() {
+					if coll.PMUCounters() {
 						inst, cyc, perr := coll.PMUTotals()
 						if perr == nil {
 							s.PMUInstDelta = strconv.FormatUint(inst-prevPMUInst, 10)
