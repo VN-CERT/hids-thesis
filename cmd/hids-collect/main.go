@@ -576,7 +576,11 @@ func checkSteal(nrCPUs int, tscKHz uint64, allowNoStealclock, forceFallback bool
 		}
 		nguong := uint64(0)
 		for _, c := range cmp.PerCPU {
-			if c.DiffNs == cmp.MaxDiff {
+			d := c.DiffNs
+			if d < 0 {
+				d = -d
+			}
+			if d == cmp.MaxDiff {
 				nguong = c.LimitNs
 				break
 			}
