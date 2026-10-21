@@ -35,12 +35,27 @@ run_one() {
 	local L=$1 run=$2
 	local dir="$OUTROOT/L$L/run$run"
 	mkdir -p "$dir"
+	# wl tu kiem mem co the truot vi nhieu tan so/steal; thu lai toi da 5 lan
+	# (day la tu kiem cua workload, khong phai tieu chi do).
+	local attempt
+	for attempt in 1 2 3 4 5; do
+		run_attempt "$L" "$run" "$attempt" "$dir"
+		if grep -q "khoang dot (nr=" "$dir/ketqua.txt" && ! grep -q "khoang dot (nr=230, khong FIRST): 0" "$dir/ketqua.txt"; then
+			return 0
+		fi
+		echo "E4p L=$L run=$run attempt=$attempt: wl tu kiem truot hoac 0 khoang, thu lai" >&2
+	done
+	echo "E4p L=$L run=$run: het 5 lan thu" >&2
+}
+
+run_attempt() {
+	local L=$1 run=$2 attempt=$3 dir="$4"
 	local ts prefix bin fifo
 	ts=$(date +%H%M%S)
 	prefix="out/m6c-e4p-L$L-$run-$ts"
 	bin="$prefix.bin"
 	fifo="$prefix.fifo"
-	echo "=== E4p L=$L run=$run ===" | tee "$dir/ketqua.txt"
+	echo "=== E4p L=$L run=$run attempt=$attempt ===" | tee "$dir/ketqua.txt"
 
 	local stress_pid=""
 	if ((L > 0)); then
@@ -92,9 +107,9 @@ rows = []
 for r in allrows:
     if int(r["syscall_nr"]) != burn_nr:
         continue
-        if int(r["flags"]) & 1:  # bo FIRST
-            continue
-        rows.append(r)
+    if int(r["flags"]) & 1:  # bo FIRST
+        continue
+    rows.append(r)
 ok = [r for r in rows if int(r["pmu_ok"]) == 1]
 print(f"khoang dot (nr={burn_nr}, khong FIRST): {len(rows)}, co PMU: {len(ok)}")
 if ok:
