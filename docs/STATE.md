@@ -65,6 +65,13 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 - (không có) — mọi unit M6c đã xong. Sau cùng: `bpftool prog show | grep -c hids_` = 0, không còn collector, 12 container chạy.
 
+## Bước đang làm (M6c-1)
+
+- Nhiệm vụ: `docs/tasks/M6c-1.md`. Thứ tự: 1 → 2 → 3 → 5 → 4 → 6. Báo cáo R033, tag `m6c.1`.
+- LƯU Ý: `tools/coreclk.c` sha256 thực tế `3d2c9005…` KHÁC giá trị trong nhiệm vụ (`88ef821e…`) → theo lệnh "sai → DỪNG", KHÔNG dùng coreclk (mục 5b dừng, ghi vào R033 mục 8). Nội dung file đúng mô tả coreclk; không sửa.
+- Phần 1 XONG: 1a `-pmu off|host|on` mặc định host (commit `d2db255`), 1b STEALCHECK thử lại 3 cửa sổ, 1c pre24h đếm tổng đoạn host, 1d bản sao `m6c1_overhead.sh`/`m6c1_e4p.sh`/`g3_swap.sh` (READY 20s + KHONG_READY chạy lại; production `-pmu host`; wrk gốc `/usr/bin/wrk`; pgtest theo M5h). `make build` xong.
+- Tiếp theo: phần 2 (G7a ×4, G3 mặc định, hostcheck), phần 3 (g3_swap 4 lần + ghép mốc thời gian), phần 5 (E4p giao thức gốc; 5b DỪNG vì hash coreclk), phần 4 (overhead production, đêm), R033.
+
 ## M6c: ĐÓNG (R032)
 
 - Bản ghi 64 byte + PMU xong: recfmt 48/56/64, loader `-pmu auto|on|off`, header `pmu:`, host `pmu_inst_delta`/`pmu_cyc_delta`, rec-export `inst,cyc,pmu_ok`, rec-stat tỉ lệ PMU. Đồng bộ Go `irqState.Gen`.
