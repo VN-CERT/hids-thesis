@@ -23,7 +23,7 @@ wait_ready() {
 	exit 1
 }
 
-nproc=2
+nproc=${G7_CAP_NPROC:-2}
 mode=zstd-default
 ts=$(date +%Y%m%d-%H%M%S)
 prefix="$OUT/${mode}-p${nproc}-${ts}"

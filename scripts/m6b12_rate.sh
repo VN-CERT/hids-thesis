@@ -15,7 +15,7 @@ mkdir -p "$CG"
 echo "rate_target=$RATE start=$(date -Is)" | tee "$OUT/run-meta.txt"
 git rev-parse --short HEAD | tee -a "$OUT/run-meta.txt"
 
-./bin/hids-collect -datadir "$OUT/data" -cgroup "$CG" -duration 150s -min-free-gb 50 \
+./bin/hids-collect -datadir "$OUT/data" -cgroup "$CG" ${HIDS_COLLECT_EXTRA:-} -duration 150s -min-free-gb 50 \
 	>"$OUT/collect.log" 2>&1 &
 PID=$!
 echo "collector_pid=$PID" | tee -a "$OUT/run-meta.txt"
