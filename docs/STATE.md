@@ -1,6 +1,6 @@
 # Trạng thái dự án HIDS
 
-Cập nhật lần cuối: 2026-10-21 07:10 (giờ máy)
+Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 ## Lịch sử git và tham chiếu phiên bản
 
@@ -13,7 +13,8 @@ Cập nhật lần cuối: 2026-10-21 07:10 (giờ máy)
 - **M5:** đóng (`m5h`).
 - **M6b-1:** đóng (`m6b1`, R028).
 - **M6b-1.1:** đóng (`m6b1.1`, R029). Kiến trúc sư đã trả lời mục 8 trong nhiệm vụ M6b-1.2.
-- **M6b-1.2:** đóng (`m6b1.2`, R030) — CPU collector còn ~1,4% lõi ở cấu hình 24 giờ. Chờ kiến trúc sư quyết 3 câu hỏi trong R030 mục 8 (lệch rq so với tổng bpftrace, G7b một lần mất 54193, phần dư S5 CLAMPED).
+- **M6b-1.2:** đóng (`m6b1.2`, R030) — CPU collector còn ~1,4% lõi ở cấu hình 24 giờ.
+- **M6b-1.3:** đóng (`m6b1.3`, R031) — phần A giữ mặc định `-rb-poll` 200ms; B3'/B6 cho thấy lệch rq phụ thuộc thứ tự gắn công cụ. Chờ kiến trúc sư quyết 3 câu hỏi trong R031 mục 8.
 
 ## Bước đã xong (M6b-1.1)
 
@@ -41,7 +42,12 @@ Cập nhật lần cuối: 2026-10-21 07:10 (giờ máy)
 - Giả thuyết kiến trúc sư về phần dư CLAMPED (không sửa ở nhiệm vụ này, sẽ sửa trong M6c bằng BPF của kiến trúc sư): trong `hids_sys_enter`, chương trình đọc `bpf_ktime_get_ns()` TRƯỚC rồi mới đọc tổng irq; ngắt xảy ra giữa hai lần đọc (ở sys_enter ngắt không bị khoá, khác sched_switch/sched_wakeup) bị tính vào khoảng trước trong khi Δt không chứa nó → irq > Δt → CLAMPED, phần dư = irq − Δt.
 - Việc đang làm: thêm dòng đếm CLAMPED + phần dư >500 vào G3 (chỉ đếm); phần A (G7b 5+5 lần, CPU với `-rb-poll` 50ms); phần B (bpftrace in từng sự kiện, ghép wakeup, đọc code BPF); R031, tag `m6b1.3`.
 - BỔ SUNG kiến trúc sư (đã lưu nguyên văn vào `docs/tasks/M6b-1.3.md`): bỏ cách ghép B3–B4 theo thứ tự; thay bằng B3' ghép theo MỐC THỜI GIAN (cặp (W_i,S_i) → khoảng collector chứa S_i; phần lọc: khoảng chứa đúng một cặp wakeup và không preempt — preempt theo khoảng đếm từ sự kiện bpftrace mở rộng). Thêm B6 (phép đo CHÍNH): S3, 3 lần × 3 cấu hình (a) bpftrace tối giản gắn TRƯỚC collector, (b) bpftrace tối giản gắn SAU collector, (c) bpftrace mở rộng + in sự kiện; container DỪNG, một collector; báo lệch % và µs/wakeup. Script phụ `scripts/m6b13_b6.sh` nếu g3.sh không hỗ trợ thứ tự gắn.
-- Phần A kết quả sơ bộ: G7b 200ms 5 lần — mất ở run1 (1803381) và run3 (662330), 3 lần còn lại mất 0 → nhánh "200ms mất = 0 cả 5" KHÔNG thỏa. G7b 50ms: mất cả 4 lần đầu (498060, 3235913, 1673411, 2733705). CPU `-rb-poll` 50ms: idle 0,60% lõi; cấu hình 24 giờ 3,06–3,12% lõi (> 2%) → dù 50ms có sạch cũng không đủ điều kiện đổi mặc định. Kết luận phần A theo nhiệm vụ: trường hợp "các trường hợp khác" — báo số liệu, KHÔNG đổi gì.
+- Phần A XONG: G7b 200ms mất 2/5 lần (1803381, 662330); G7b 50ms mất 5/5 lần; CPU `-rb-poll` 50ms idle 0,60%, cấu hình 24 giờ 3,06–3,12% lõi → trường hợp "các trường hợp khác": giữ mặc định 200ms, không đổi gì. Commit `7ac5412`.
+- B1/B1' XONG: g3.sh chế độ sự kiện (`G3_BT_EVENTS=1`) in W/S/P. Commit `acc68f2`, `8553179`-era; dòng đếm CLAMPED trong rec-check hiện diện ở kết quả B2 (0 ở mọi kịch bản lần này).
+- B2+B3' XONG: G3 dừng container lệch rq S2 2,22%, S3 2,20%, S5 1,63%; ghép theo mốc thời gian (`scripts/m6b13_pair.py`): d = rq_ns − (S−W) S2 mean +1227 ns (n=501), S3 mean +879 ns (n=501), S5 n=8 mean +343 ns; mọi wakeup cùng CPU, không MIGRATED. Commit `e623d83`.
+- B6 XONG (phép đo chính): (a) bpftrace tối giản gắn trước: lệch 0,18–0,50% (+0,07–0,10 µs/wakeup); (b) tối giản gắn sau: 10,45% và 8,82% (+1,81, +1,43 µs/wakeup), lần b2 bất thường (tổng bpftrace 19187349658 ns); (c) mở rộng: 2,38–2,82% (+0,93–1,08 µs/wakeup). Lệch phụ thuộc thứ tự gắn. Commit `ce5269e`.
+- B5 XONG (đọc code): mark_wakeup lấy `bpf_ktime_get_ns()` TRƯỚC khi tra task storage (dòng 670/673); hids_sched_switch gọi read_now SAU khi tra storage prev (612/614) và next (633/636), mốc dùng chung.
+- M6b-1.3 ĐÓNG: R031 viết xong, tag `m6b1.3`, chờ kiến trúc sư trả lời mục 8 của R031 (mở nhiệm vụ riêng về mất G7b? đóng câu lệch rq theo B6? đo lại b2?).
 - Sự cố lúc chạy phần A đợt 1: sửa `scripts/g3.sh` (B1) trong lúc job G7b đang chạy làm cây git bẩn → các lần chạy sau bị g7.sh từ chối; đã chạy lại toàn bộ hai mẻ với cây sạch. Lần relaunch đầu hỏng vì systemd-run sai thư mục làm việc (đường dẫn tương đối); đã sửa bằng `cd /root/hids` trong lệnh.
 
 ## Bước tiếp theo
@@ -50,8 +56,7 @@ Cập nhật lần cuối: 2026-10-21 07:10 (giờ máy)
 
 ## Việc đang chạy
 
-- Unit `hids-m6b13-a3` XONG (07:02:36–07:07:30): phần A hoàn tất (kết quả ở mục M6b-1.3 bên trên; commit `7ac5412`).
-- Unit `hids-m6b13-b2` (khởi động 2026-10-21 07:09:02 +07): `G3_BT_EVENTS=1 bash scripts/m6b12_g3.sh stop validation/m6b13-20261021/b2-g3-events` — G3 S1–S5 lúc DỪNG container, bpftrace in từng sự kiện W/S/P (phục vụ B3'). Log: `out/jobs/m6b13-b2.log` và `validation/m6b13-20261021/b2-g3-events/g3-run.log`; trạng thái: `out/jobs/m6b13-b2.status`. Dự kiến ~10 phút.
+- (không có) — mọi unit M6b-1.3 đã xong: `hids-m6b13-a3` (phần A), `hids-m6b13-b2` (B2), `hids-m6b13-b6` (B6). Sau cùng: `bpftool prog show | grep -c hids_` = 0, không còn collector, 12 container chạy.
 
 ## Kết quả cổng cuối M6b-1.2 (binary fa60c56)
 
