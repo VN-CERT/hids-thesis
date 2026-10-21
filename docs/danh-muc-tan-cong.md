@@ -63,7 +63,31 @@ Mục đích: kẻ tấn công biết có bộ phát hiện theo thời gian và
 ## 4. Dựng lại kịch bản công khai (để so với dữ liệu gốc)
 
 - Dựng lại các kịch bản CVE của LID-DS 2021 trong lab, chạy kèm collector của ta, để có tấn công CVE thật kèm phân rã thời gian, đối chiếu được với bản ghi gốc của LID-DS.
-- **Việc treo:** xác minh danh sách CVE cụ thể trên repo LID-DS 2021 trước khi chốt (không chép từ trí nhớ).
+- **Đã xác minh (21/10/2026)** trên repo chính thức [LID-DS/LID-DS](https://github.com/LID-DS/LID-DS) — wiki [Scenarios](https://github.com/LID-DS/LID-DS/wiki/Scenarios) và `README.md` của từng thư mục `scenarios/<tên>` (bản đọc tại commit `5b8e414`). LID-DS 2021 có **15 kịch bản**, trong đó **9 kịch bản gắn CVE cụ thể, 6 kịch bản không có CVE** (chỉ gắn CWE hoặc không gắn mã nào). Không chép từ trí nhớ.
+
+| # | Kịch bản (thư mục `scenarios/`) | Loại | CVE / CWE | Dịch vụ / thành phần nạn nhân | Mô tả ngắn theo README gốc |
+|---|---|---|---|---|---|
+| 1 | Bruteforce_CWE-307 | simple | CWE-307 (không CVE) | web app Apache2 + WordPress template, endpoint POST đăng nhập | brute-force đăng nhập bằng Metasploit |
+| 2 | CVE-2012-2122 | simple | CVE-2012-2122 | MySQL (image vulhub) | lỗi kiểm tra kết quả `memcmp` → đăng nhập root bằng mật khẩu sai với xác suất nhất định khi thử lặp lại |
+| 3 | CVE-2014-0160 | simple | CVE-2014-0160 (Heartbleed) | OpenSSL 1.0.1 (< 1.0.1g), web app như mục 1 | gói Heartbeat chế tạo riêng → over-read, rò bộ nhớ tiến trình; khai thác bằng Metasploit |
+| 4 | CWE-89-SQL-injection | simple | CWE-89 (không CVE) | DVWA | SQL injection bằng sqlmap (sau đăng nhập, qua `/vulnerabilities/sqli`) |
+| 5 | EPS_CWE-434 | simple | CWE-434 (không CVE) | dịch vụ chuyển đổi EPS → SVG | upload file EPS nguy hiểm không kiểm tra → thực thi mã (lệnh `wget`) trên nạn nhân |
+| 6 | PHP_CWE-434 | simple | CWE-434 (không CVE) | DVWA | upload file PHP độc hại không hạn chế, rồi mở `vulnerabilities/upload/evil_script.php` để thực thi |
+| 7 | ZipSlip | simple | không CVE (README không gắn CWE) | Ubuntu 16.04, trình giải nén Java tự viết | upload zip chứa đường dẫn `../` → ghi đè file ngoài thư mục đích (Zip Slip) |
+| 8 | CVE-2017-12635_6 | multi | CVE-2017-12635 + CVE-2017-12636 | CouchDB (image vulhub) | chuỗi: quét cổng (nmap) → brute-force (hydra/rockyou) → CVE-2017-12635 nâng quyền admin (lỗi parser JSON về `roles`) → CVE-2017-12636 RCE qua cấu hình query-server, mở reverse shell |
+| 9 | CVE-2019-5418 | simple | CVE-2019-5418 | Rails (Action View) | thao túng header qua controller lỗi → đọc nội dung file tùy ý (`/etc/passwd`) |
+| 10 | CVE-2017-7529 | simple | CVE-2017-7529 | nginx 1.6.3 (Ubuntu 14.04) | tràn số nguyên ở module range filter → rò dữ liệu bộ nhớ qua request `Range` chế tạo riêng |
+| 11 | CVE-2018-3760 | simple | CVE-2018-3760 | Sprockets (Rails 5.0.7, image vulhub) | path traversal bằng `/%252e%252e/` → đọc file ngoài root ứng dụng (`/etc/passwd`) |
+| 12 | CVE-2020-9484 | simple | CVE-2020-9484 | Apache Tomcat + PersistenceManager/FileStore | deserialization qua session file do kẻ tấn công kiểm soát (payload ysoserial) → RCE |
+| 13 | CVE-2020-23839 | multi | CVE-2020-23839 | GetSimple CMS 3.3.16 (Apache2) | reflected XSS ở trang login admin → đánh cắp phiên/đăng nhập → chèn webshell PHP qua `admin/edit-theme.php` → reverse shell |
+| 14 | Juice-Shop (`scenarios/Juice-Shop`) | multi | không CVE cụ thể | OWASP Juice Shop (cổng 3000) | nhiều lỗ hổng web; phần exploit của repo chỉ triển khai 3 biến thể SQL injection: `SQLInjectionSchema`, `SQLInjectionCred`, `SQLInjectionUser` |
+| 15 | CVE-2020-13942 | multi | CVE-2020-13942 | Apache Unomi 1.5.1 + Elasticsearch 7.4.2 | injection OGNL/MVEL → RCE, tạo file trong `/tmp` (2 biến thể: `ognl`, `mvel`) |
+
+Ghi chú cho lab tấn công sau này (chỉ để dựng đúng, chưa chạy ở nhiệm vụ này):
+
+- Chỉ 9/15 kịch bản là “tấn công CVE thật” theo đúng nghĩa (mục 2, 3, 8, 9, 10, 11, 12, 13, 15 — trong đó mục 8 dùng 2 CVE nối chuỗi). Khi báo cáo phải tách nhóm này khỏi nhóm CWE/không-mã (mục 1, 4, 5, 6, 7, 14), không gọi chung cả 15 là “kịch bản CVE”.
+- Ba kịch bản multi có tham số biến thể lúc chạy: CVE-2017-12635_6 (chuỗi đầy đủ hay không / có cần user hợp lệ), CVE-2020-13942 (`ognl` | `mvel`), Juice-Shop (3 biến thể SQLi trên).
+- Đếm lại theo wiki gốc: 11 simple + 4 multi (CVE-2017-12635_6, CVE-2020-23839, Juice-Shop, CVE-2020-13942) = 15.
 
 ## 5. Ghi nhãn mỗi lần chạy (bắt buộc)
 

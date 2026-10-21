@@ -1,0 +1,6 @@
+NHIỆM VỤ LAB-0b — chuẩn bị tải benign chống nhiễu trên máy nạn nhân. Lưu vào docs/tasks/LAB-0b.md, nhánh lab-collector. KHÔNG đụng máy 192.168.77.20, KHÔNG cài hay chạy công cụ tấn công. Mọi lệnh ssh/scp giữa các máy dùng cổng 22022.
+1. Dựng lại container lab0-postgres với tham số chống nhiễu: image postgres:16, cổng 15432->5432, thêm sau tên image: -c checkpoint_timeout=30min -c max_wal_size=8GB -c autovacuum=off. Chạy pgbench -i -s 50. Ghi lệnh docker đầy đủ vào báo cáo.
+2. Cài wrk2 nếu chưa có (apt-get build-essential libssl-dev zlib1g-dev git; git clone https://github.com/giltene/wrk2 /opt/wrk2; cd /opt/wrk2 && make; cp wrk /usr/local/bin/wrk2). Viết hai script tải cố định, CHƯA chạy: một cho postgres (pgbench -R <TPS> -c 16 -j 4 -T <giây> -l --log-prefix=<thư mục>/pglog), một cho nginx (taskset wrk2 -t4 -c64 -R <RPS> -d<giây>s --latency http://127.0.0.1:18080/<file 4KiB>). Mỗi script nhận TPS/RPS và thời lượng làm tham số.
+3. Trước mỗi lượt pgbench, script phải chạy VACUUM; rồi CHECKPOINT; qua docker exec. Ghi điều này trong script.
+4. Xác nhận nginx lab0-nginx trả đúng 4096 byte: curl -s -o /dev/null -w '%{http_code} %{size_download}\n' http://127.0.0.1:18080/<file>.
+5. Viết LAB-0b-ketqua.txt (lệnh docker, tên script, kết quả curl), commit lên lab-collector, push. DỪNG.

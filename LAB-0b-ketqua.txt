@@ -1,0 +1,69 @@
+LAB-0b — KET QUA CHUAN BI TAI BENIGN CHONG NHIEU
+May: hids-collector (nan nhan, 192.168.77.10). Nhanh: lab-collector
+Khong dung may 192.168.77.20. Khong cai/chay cong cu tan cong.
+Nhiem vu goc: docs/tasks/LAB-0b.md
+
+================================================================
+1. DUNG LAI lab0-postgres VOI THAM SO CHONG NHIEU — DAT
+================================================================
+Lenh docker day du:
+docker run -d --name lab0-postgres -e POSTGRES_PASSWORD=hids-lab0 -e POSTGRES_DB=postgres -p 15432:5432 postgres:16 -c checkpoint_timeout=30min -c max_wal_size=8GB -c autovacuum=off
+
+Kiem chung tham so trong container (psql show):
+checkpoint_timeout = 30min
+max_wal_size       = 8GB
+autovacuum         = off
+
+Chay pgbench -i -s 50:
+docker exec -e PGPASSWORD=hids-lab0 lab0-postgres pgbench -i -s 50 -U postgres -h 127.0.0.1 postgres
+-> done in 5.70 s; select count(*) from pgbench_accounts = 5000000
+
+================================================================
+2. CAI wrk2 VA HAI SCRIPT TAI CO DINH (CHUA CHAY) — DAT
+================================================================
+Cai wrk2 (neu chua co — may nay chua co):
+apt-get install -y build-essential libssl-dev zlib1g-dev git
+git clone https://github.com/giltene/wrk2 /opt/wrk2
+cd /opt/wrk2 && make
+cp /opt/wrk2/wrk /usr/local/bin/wrk2
+-> wrk 4.0.0 [epoll] (/usr/local/bin/wrk2)
+
+Hai script tai co dinh, CHUA chay (chi bash -n va goi khong tham so de in cach dung):
+1. scripts/lab0-load-postgres.sh <TPS> <thoi_luong_giay> [thu_muc_log]
+   Co dinh: pgbench -R <TPS> -c 16 -j 4 -T <giay> -l --log-prefix=<thu_muc_log>/pglog
+   (pgbench chay tu host toi 127.0.0.1:15432; thu_muc_log mac dinh /srv/hids-data/hids-collector/pgbench-logs)
+2. scripts/lab0-load-nginx.sh <RPS> <thoi_luong_giay>
+   Co dinh: taskset -c 0-3 wrk2 -t4 -c64 -R <RPS> -d<giay>s --latency http://127.0.0.1:18080/file4k.bin
+
+Moi script nhan TPS/RPS va thoi luong lam tham so, tu kiem tra tham so la so nguyen duong.
+
+================================================================
+3. VACUUM + CHECKPOINT TRUOC MOI LUOT pgbench — CO TRONG SCRIPT
+================================================================
+Trong scripts/lab0-load-postgres.sh, truoc lenh pgbench, dung hai lenh rieng qua docker exec, dung thu tu:
+docker exec -e PGPASSWORD=... lab0-postgres psql -U postgres -h 127.0.0.1 -v ON_ERROR_STOP=1 -c 'VACUUM;' postgres
+docker exec -e PGPASSWORD=... lab0-postgres psql -U postgres -h 127.0.0.1 -v ON_ERROR_STOP=1 -c 'CHECKPOINT;' postgres
+
+================================================================
+4. XAC NHAN nginx lab0-nginx TRA DUNG 4096 BYTE — DAT
+================================================================
+$ curl -s -o /dev/null -w '%{http_code} %{size_download}\n' http://127.0.0.1:18080/file4k.bin
+200 4096
+
+Trang thai container luc ket thuc:
+lab0-postgres   postgres:16   0.0.0.0:15432->5432/tcp   Up
+lab0-nginx      nginx:1.24    0.0.0.0:18080->80/tcp      Up
+
+================================================================
+5. KET LUAN
+================================================================
+LAB-0b DAT. Hai script tai chua chay luot tai nao. Dung tai day (DUNG).
+
+================================================================
+PHU LUC (viec doc tai lieu kem theo): CVE CUA LID-DS 2021
+================================================================
+Da tra tren GitHub LID-DS/LID-DS (wiki Scenarios + README cua tung scenarios/, commit 5b8e414)
+va dien chi tiet vao docs/danh-muc-tan-cong.md muc 4: 15 kich ban = 11 simple + 4 multi.
+9 kich ban gan CVE: CVE-2012-2122, CVE-2014-0160, CVE-2017-12635+CVE-2017-12636 (1 kich ban),
+CVE-2019-5418, CVE-2017-7529, CVE-2018-3760, CVE-2020-9484, CVE-2020-23839, CVE-2020-13942.
+6 kich ban khong CVE: Bruteforce_CWE-307, CWE-89-SQL-injection, EPS_CWE-434, PHP_CWE-434, ZipSlip, Juice-Shop.
