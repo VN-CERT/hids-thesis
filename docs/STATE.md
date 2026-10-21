@@ -1,6 +1,6 @@
 # Trạng thái dự án HIDS
 
-Cập nhật lần cuối: 2026-10-20 17:50 (giờ máy)
+Cập nhật lần cuối: 2026-10-21 07:06 (giờ máy)
 
 ## Lịch sử git và tham chiếu phiên bản
 
@@ -40,6 +40,9 @@ Cập nhật lần cuối: 2026-10-20 17:50 (giờ máy)
 - Nhiệm vụ: `docs/tasks/M6b-1.3.md` (trả lời mục 8 R030). Kiến trúc sư đã ĐÓNG câu CPU của R029 (1,4% lõi đạt).
 - Giả thuyết kiến trúc sư về phần dư CLAMPED (không sửa ở nhiệm vụ này, sẽ sửa trong M6c bằng BPF của kiến trúc sư): trong `hids_sys_enter`, chương trình đọc `bpf_ktime_get_ns()` TRƯỚC rồi mới đọc tổng irq; ngắt xảy ra giữa hai lần đọc (ở sys_enter ngắt không bị khoá, khác sched_switch/sched_wakeup) bị tính vào khoảng trước trong khi Δt không chứa nó → irq > Δt → CLAMPED, phần dư = irq − Δt.
 - Việc đang làm: thêm dòng đếm CLAMPED + phần dư >500 vào G3 (chỉ đếm); phần A (G7b 5+5 lần, CPU với `-rb-poll` 50ms); phần B (bpftrace in từng sự kiện, ghép wakeup, đọc code BPF); R031, tag `m6b1.3`.
+- BỔ SUNG kiến trúc sư (đã lưu nguyên văn vào `docs/tasks/M6b-1.3.md`): bỏ cách ghép B3–B4 theo thứ tự; thay bằng B3' ghép theo MỐC THỜI GIAN (cặp (W_i,S_i) → khoảng collector chứa S_i; phần lọc: khoảng chứa đúng một cặp wakeup và không preempt — preempt theo khoảng đếm từ sự kiện bpftrace mở rộng). Thêm B6 (phép đo CHÍNH): S3, 3 lần × 3 cấu hình (a) bpftrace tối giản gắn TRƯỚC collector, (b) bpftrace tối giản gắn SAU collector, (c) bpftrace mở rộng + in sự kiện; container DỪNG, một collector; báo lệch % và µs/wakeup. Script phụ `scripts/m6b13_b6.sh` nếu g3.sh không hỗ trợ thứ tự gắn.
+- Phần A kết quả sơ bộ: G7b 200ms 5 lần — mất ở run1 (1803381) và run3 (662330), 3 lần còn lại mất 0 → nhánh "200ms mất = 0 cả 5" KHÔNG thỏa. G7b 50ms: mất cả 4 lần đầu (498060, 3235913, 1673411, 2733705). CPU `-rb-poll` 50ms: idle 0,60% lõi; cấu hình 24 giờ 3,06–3,12% lõi (> 2%) → dù 50ms có sạch cũng không đủ điều kiện đổi mặc định. Kết luận phần A theo nhiệm vụ: trường hợp "các trường hợp khác" — báo số liệu, KHÔNG đổi gì.
+- Sự cố lúc chạy phần A đợt 1: sửa `scripts/g3.sh` (B1) trong lúc job G7b đang chạy làm cây git bẩn → các lần chạy sau bị g7.sh từ chối; đã chạy lại toàn bộ hai mẻ với cây sạch. Lần relaunch đầu hỏng vì systemd-run sai thư mục làm việc (đường dẫn tương đối); đã sửa bằng `cd /root/hids` trong lệnh.
 
 ## Bước tiếp theo
 
@@ -47,7 +50,7 @@ Cập nhật lần cuối: 2026-10-20 17:50 (giờ máy)
 
 ## Việc đang chạy
 
-- (không có)
+- Unit `hids-m6b13-a3` (khởi động 2026-10-21 07:02:36 +07): chạy lại hai mẻ G7b phần A (200ms rồi 50ms, mỗi mẻ 5 lần). Mẻ 200ms xong 07:05:03; mẻ 50ms đang chạy (run4/5 tại thời điểm cập nhật). Log: `out/jobs/m6b13-a1.log`, `out/jobs/m6b13-a2.log`; trạng thái: `out/jobs/m6b13-a.status`; kết quả: `validation/m6b13-20261021/g7b-200ms/summary.txt`, `validation/m6b13-20261021/g7b-50ms/summary.txt`.
 
 ## Kết quả cổng cuối M6b-1.2 (binary fa60c56)
 
