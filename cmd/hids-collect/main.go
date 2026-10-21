@@ -561,10 +561,34 @@ func checkSteal(nrCPUs int, tscKHz uint64, allowNoStealclock, forceFallback bool
 		return stealModeFallback, status, evidence, nil
 	}
 
-	fmt.Fprintf(os.Stderr, "doi chieu vmw_steal_time voi rq->prev_steal_time trong %s...\n", stealcheck.SettleTime)
-	cmp, err := stealcheck.CompareStealPaths(nrCPUs, tscKHz)
-	if err != nil {
-		return "", "", evidence, fmt.Errorf("khong doi chieu duoc hai duong do steal: %w", err)
+	// Thu lai toi da 3 cua so 3s lien tiep truoc khi tu choi chay.
+	// Ly do: rq->prev_steal_time chi duoi kip mot tick moi tick
+	// (steal_account_process_time kep min(steal, maxtime)) va CPU idle NOHZ
+	// khong tick, nen mot dot steal vai ms lam cua so ngan lech gia; cua so
+	// dai (G1 10 phut) khong bi anh huong. Nguong khong doi: max(2ms, 1%).
+	var cmp stealcheck.Compare
+	for lan := 1; lan <= 3; lan++ {
+		fmt.Fprintf(os.Stderr, "doi chieu vmw_steal_time voi rq->prev_steal_time trong %s (lan %d)...\n", stealcheck.SettleTime, lan)
+		var cerr error
+		cmp, cerr = stealcheck.CompareStealPaths(nrCPUs, tscKHz)
+		if cerr != nil {
+			return "", "", evidence, fmt.Errorf("khong doi chieu duoc hai duong do steal: %w", cerr)
+		}
+		nguong := uint64(0)
+		for _, c := range cmp.PerCPU {
+			if c.DiffNs == cmp.MaxDiff {
+				nguong = c.LimitNs
+				break
+			}
+		}
+		ketQua := "LECH"
+		if cmp.OK() {
+			ketQua = "DAT"
+		}
+		fmt.Fprintf(os.Stderr, "STEALCHECK lan=%d lech_ns=%d nguong_ns=%d ket_qua=%s\n", lan, cmp.MaxDiff, nguong, ketQua)
+		if cmp.OK() {
+			break
+		}
 	}
 	fmt.Fprintf(os.Stderr, "doi chieu xong: lech lon nhat %d ns tren %d CPU, nguong max(%d ns, %.0f%%)\n",
 		cmp.MaxDiff, len(cmp.PerCPU), stealcheck.ToleranceNs, stealcheck.ToleranceRel*100)
