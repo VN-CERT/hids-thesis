@@ -1,0 +1,4 @@
+variant=after-50ms start=2026-10-21T06:50:44+07:00
+extra_args: -rb-poll 50ms
+collector_pid=490203
+end=2026-10-21T06:55:48+07:00
