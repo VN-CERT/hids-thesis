@@ -1,0 +1,11 @@
+Running as unit: hids-m6c-t4fix-t4-C2-2.scope; invocation ID: 996670e8fd4a4f56bbc3b6982453ba6b
+CANH BAO: binary build tu cay lam viec con thay doi chua commit (git_commit=294b872-dirty).
+CANH BAO: du lieu ghi ra khong tai lap duoc tu git. Commit truoc khi do that.
+stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+stealclock_evidence: journalctl
+doi chieu vmw_steal_time voi rq->prev_steal_time trong 3s...
+doi chieu xong: lech lon nhat 2586046 ns tren 24 CPU, nguong max(2000000 ns, 1%)
+hids-collect: vmw_steal_time lech qua nguong so voi rq->prev_steal_time trong 3s dau:
+   cpu         vmw_ns    rq_steal_ns      lech_ns    nguong_ns
+     0       13201388       10615342      2586046      2000000
+Chay lai voi -steal-fallback de dung rq->prev_steal_time

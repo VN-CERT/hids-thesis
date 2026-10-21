@@ -1,0 +1,22 @@
+stress-ng: info:  [498155] setting to a 5 mins, 0 secs run per stressor
+stress-ng: info:  [498155] dispatching hogs: 12 stream
+stress-ng: info:  [498175] stream: stressor loosely based on a variant of the STREAM benchmark code
+stress-ng: info:  [498175] stream: do NOT submit any of these results to the STREAM benchmark results
+stress-ng: info:  [498175] stream: Using cache size of 43008K
+stress-ng: info:  [498180] stream: memory rate: 4469.51 MB read/sec, 2979.68 MB write/sec, 390.55 double precision Mflop/sec (instance 5)
+stress-ng: info:  [498185] stream: memory rate: 4633.79 MB read/sec, 3089.19 MB write/sec, 404.91 double precision Mflop/sec (instance 10)
+stress-ng: info:  [498176] stream: memory rate: 4492.47 MB read/sec, 2994.98 MB write/sec, 392.56 double precision Mflop/sec (instance 1)
+stress-ng: info:  [498175] stream: memory rate: 4530.91 MB read/sec, 3020.61 MB write/sec, 395.92 double precision Mflop/sec (instance 0)
+stress-ng: info:  [498178] stream: memory rate: 4518.09 MB read/sec, 3012.06 MB write/sec, 394.80 double precision Mflop/sec (instance 3)
+stress-ng: info:  [498179] stream: memory rate: 4580.64 MB read/sec, 3053.76 MB write/sec, 400.26 double precision Mflop/sec (instance 4)
+stress-ng: info:  [498182] stream: memory rate: 4449.76 MB read/sec, 2966.51 MB write/sec, 388.83 double precision Mflop/sec (instance 7)
+stress-ng: info:  [498177] stream: memory rate: 4517.44 MB read/sec, 3011.63 MB write/sec, 394.74 double precision Mflop/sec (instance 2)
+stress-ng: info:  [498181] stream: memory rate: 4237.87 MB read/sec, 2825.25 MB write/sec, 370.31 double precision Mflop/sec (instance 6)
+stress-ng: info:  [498184] stream: memory rate: 4320.61 MB read/sec, 2880.40 MB write/sec, 377.54 double precision Mflop/sec (instance 9)
+stress-ng: info:  [498183] stream: memory rate: 4491.50 MB read/sec, 2994.33 MB write/sec, 392.47 double precision Mflop/sec (instance 8)
+stress-ng: info:  [498186] stream: memory rate: 4629.22 MB read/sec, 3086.15 MB write/sec, 404.51 double precision Mflop/sec (instance 11)
+stress-ng: info:  [498155] skipped: 0
+stress-ng: info:  [498155] passed: 12: stream (12)
+stress-ng: info:  [498155] failed: 0
+stress-ng: info:  [498155] metrics untrustworthy: 0
+stress-ng: info:  [498155] successful run completed in 6.18 secs

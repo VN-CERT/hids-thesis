@@ -1,0 +1,11 @@
+stress-ng: info:  [500221] setting to a 5 mins, 0 secs run per stressor
+stress-ng: info:  [500221] dispatching hogs: 22 stream
+stress-ng: info:  [500223] stream: stressor loosely based on a variant of the STREAM benchmark code
+stress-ng: info:  [500223] stream: do NOT submit any of these results to the STREAM benchmark results
+stress-ng: info:  [500223] stream: Using cache size of 43008K
+stress-ng: info:  [500223] stream: run duration too short to reliably determine memory rate
+stress-ng: info:  [500221] skipped: 0
+stress-ng: info:  [500221] passed: 0
+stress-ng: info:  [500221] failed: 0
+stress-ng: info:  [500221] metrics untrustworthy: 0
+stress-ng: info:  [500221] successful run completed in 1.31 secs

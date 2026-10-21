@@ -1,0 +1,42 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 294b872-dirty
+# record_size: 64
+# filter_tgids: khong co
+# filter_pid: 0
+# filter_cgroup: /sys/fs/cgroup/system.slice/docker-52f0b156ee464854cbd63c251fc6ce93205dc761fe4565102cec9a1f52f10d1a.scope (goc id=36129)
+# ringbuf_bytes: 67108864
+# rb_wake_bytes: 8388608
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: dmesg | [    0.000000] vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# pmu: on
+# pmu_events: instructions:u,cycles:u
+# start_mono_ns: 15644087772652
+# start_wall: 2026-10-21T14:39:14.390929711+07:00
+# duration: 3m0s
+# moi dong cach nhau 10s
+mono_ns,wall,dinh_ghi_delta,mat_delta,dinh_ghi_tong,mat_tong,irq_hard_delta_ns,irq_soft_delta_ns,irq_vec_delta_ns,soft_raw_delta_ns,irq_hard_tong_ns,irq_soft_tong_ns,irq_vec_tong_ns,soft_raw_tong_ns
+15644093221784,2026-10-21T14:39:14.396378737+07:00,0,0,0,0,0,265796,5462800,266951,0,265796,5462800,266951
+15654094093178,2026-10-21T14:39:24.397249497+07:00,3688752,0,3688752,0,683909,16641875615,7685332392,16822869442,683909,16642141411,7690795192,16823136393
+15664094200645,2026-10-21T14:39:34.397356889+07:00,4672016,0,8360768,0,378520,16317933451,6814374795,16471536751,1062429,32960074862,14505169987,33294673144
+15674094215757,2026-10-21T14:39:44.397373028+07:00,4509513,0,12870281,0,1609630,16149788783,6720496203,16298501858,2672059,49109863645,21225666190,49593175002
+15684093234915,2026-10-21T14:39:54.396391193+07:00,4553643,0,17423924,0,742992,16197611884,6763508046,16352018192,3415051,65307475529,27989174236,65945193194
+15694094160636,2026-10-21T14:40:04.3973169+07:00,4546372,0,21970296,0,888675,16109534106,6696923059,16258101985,4303726,81417009635,34686097295,82203295179
+15704094164772,2026-10-21T14:40:14.397321282+07:00,4448284,0,26418580,0,1076444,16115774755,6695912148,16263248813,5380170,97532784390,41382009443,98466543992
+15704212942532,2026-10-21T14:40:14.516099494+07:00,11238,0,26429818,0,0,39041872,18216682,39520864,5380170,97571826262,41400226125,98506064856

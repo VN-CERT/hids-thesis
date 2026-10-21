@@ -24,3 +24,536 @@ ban_ghi=10000001 ban_ghi_giay=1198158.4 mat=0
 T1 C1n run3: 835.14 ns/syscall (burst 8.351373119s)
 T1 C2 run3: 247.79 ns/syscall (burst 2.477939047s)
 T1 C0 run4: 182.22 ns/syscall (burst 1.822208037s)
+ban_ghi=10000001 ban_ghi_giay=254774.1 mat=0
+T1 C1 run4: 3925.51 ns/syscall (burst 39.25508037s)
+ban_ghi=10000001 ban_ghi_giay=1251987.6 mat=0
+T1 C1n run4: 799.28 ns/syscall (burst 7.99281327s)
+T1 C2 run4: 244.92 ns/syscall (burst 2.449240781s)
+T1 C0 run5: 187.33 ns/syscall (burst 1.873345831s)
+ban_ghi=10000001 ban_ghi_giay=279075.2 mat=0
+T1 C1 run5: 3583.76 ns/syscall (burst 35.837613884s)
+ban_ghi=10000001 ban_ghi_giay=1271555.5 mat=0
+T1 C1n run5: 786.82 ns/syscall (burst 7.868166676s)
+T1 C2 run5: 240.05 ns/syscall (burst 2.400450783s)
+T1 C0 run6: 182.55 ns/syscall (burst 1.825517567s)
+ban_ghi=10000001 ban_ghi_giay=271770.1 mat=0
+T1 C1 run6: 3680.05 ns/syscall (burst 36.800502055s)
+ban_ghi=10000001 ban_ghi_giay=1292907.0 mat=0
+T1 C1n run6: 773.77 ns/syscall (burst 7.737700471s)
+T1 C2 run6: 240.70 ns/syscall (burst 2.407043804s)
+T1 C0 run7: 183.17 ns/syscall (burst 1.831745956s)
+ban_ghi=10000001 ban_ghi_giay=270928.5 mat=0
+T1 C1 run7: 3691.49 ns/syscall (burst 36.914887472s)
+ban_ghi=10000001 ban_ghi_giay=1256971.0 mat=0
+T1 C1n run7: 796.17 ns/syscall (burst 7.961676904s)
+T1 C2 run7: 238.26 ns/syscall (burst 2.382617921s)
+T1 C0 run8: 182.90 ns/syscall (burst 1.829014005s)
+ban_ghi=10000001 ban_ghi_giay=276090.5 mat=0
+T1 C1 run8: 3622.43 ns/syscall (burst 36.22427955s)
+ban_ghi=10000001 ban_ghi_giay=1273320.9 mat=0
+T1 C1n run8: 785.81 ns/syscall (burst 7.858130453s)
+T1 C2 run8: 249.89 ns/syscall (burst 2.498924615s)
+T1 C0 run9: 184.02 ns/syscall (burst 1.840215743s)
+ban_ghi=10000001 ban_ghi_giay=251923.6 mat=0
+T1 C1 run9: 3970.01 ns/syscall (burst 39.70005797s)
+ban_ghi=10000001 ban_ghi_giay=1236183.0 mat=0
+T1 C1n run9: 809.53 ns/syscall (burst 8.095266181s)
+T1 C2 run9: 242.00 ns/syscall (burst 2.420026032s)
+T1 C0 run10: 184.04 ns/syscall (burst 1.840372882s)
+ban_ghi=10000001 ban_ghi_giay=247189.8 mat=0
+T1 C1 run10: 4045.87 ns/syscall (burst 40.458737159s)
+ban_ghi=10000001 ban_ghi_giay=1247510.5 mat=0
+T1 C1n run10: 802.04 ns/syscall (burst 8.020393693s)
+T1 C2 run10: 245.65 ns/syscall (burst 2.45650438s)
+[2026-10-21T12:34:58+07:00] T4 kich tran
+T4 C0 run1:  req/s
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4 C1 run1:  req/s
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4 C1n run1:  req/s
+T4 C2 run1:  req/s
+T4 C0 run2:  req/s
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4 C1 run2:  req/s
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4 C1n run2:  req/s
+T4 C2 run2:  req/s
+T4 C0 run3:  req/s
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4 C1 run3:  req/s
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4 C1n run3:  req/s
+T4 C2 run3:  req/s
+T4 C0 run4:  req/s
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4 C1 run4:  req/s
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4 C1n run4:  req/s
+T4 C2 run4:  req/s
+T4 C0 run5:  req/s
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4 C1 run5:  req/s
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4 C1n run5:  req/s
+T4 C2 run5:  req/s
+T4 C0 run6:  req/s
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4 C1 run6:  req/s
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4 C1n run6:  req/s
+T4 C2 run6:  req/s
+T4 C0 run7:  req/s
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4 C1 run7:  req/s
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4 C1n run7:  req/s
+T4 C2 run7:  req/s
+T4 C0 run8:  req/s
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4 C1 run8:  req/s
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4 C1n run8:  req/s
+T4 C2 run8:  req/s
+T4 C0 run9:  req/s
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4 C1 run9:  req/s
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4 C1n run9:  req/s
+T4 C2 run9:  req/s
+T4 C0 run10:  req/s
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4 C1 run10:  req/s
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4 C1n run10:  req/s
+T4 C2 run10:  req/s
+[2026-10-21T12:43:37+07:00] T3 kich tran
+T3 C0 run1: 3122.3262 tps
+ban_ghi=15376340 ban_ghi_giay=254846.4 mat=0
+T3 C1 run1: 949.1331 tps
+[2026-10-21T12:47:05+07:00] LOI: collector khong READY: validation/m6c-20261021/overhead/T3/C2/run1/collect.log
+T3 C2 run1: 3112.2371 tps
+T3 C0 run2: 3088.3307 tps
+ban_ghi=15364266 ban_ghi_giay=254761.1 mat=0
+T3 C1 run2: 950.3097 tps
+[2026-10-21T12:51:44+07:00] LOI: collector khong READY: validation/m6c-20261021/overhead/T3/C2/run2/collect.log
+T3 C2 run2: 3088.2457 tps
+T3 C0 run3: 3139.5853 tps
+ban_ghi=15496751 ban_ghi_giay=256862.1 mat=0
+T3 C1 run3: 951.5616 tps
+T3 C2 run3: 3009.6956 tps
+T3 C0 run4: 3127.2271 tps
+ban_ghi=15289314 ban_ghi_giay=253317.5 mat=0
+T3 C1 run4: 945.6688 tps
+T3 C2 run4: 3000.5604 tps
+T3 C0 run5: 3136.0408 tps
+ban_ghi=15476412 ban_ghi_giay=256549.8 mat=0
+T3 C1 run5: 955.8582 tps
+T3 C2 run5: 3043.0427 tps
+T3 C0 run6: 3110.8985 tps
+ban_ghi=15407782 ban_ghi_giay=255381.1 mat=0
+T3 C1 run6: 952.1540 tps
+T3 C2 run6: 2951.1955 tps
+T3 C0 run7: 2990.8426 tps
+ban_ghi=15360506 ban_ghi_giay=254966.2 mat=0
+T3 C1 run7: 950.1652 tps
+T3 C2 run7: 2990.1992 tps
+T3 C0 run8: 3151.6123 tps
+ban_ghi=15357989 ban_ghi_giay=254777.2 mat=0
+T3 C1 run8: 947.5191 tps
+T3 C2 run8: 3004.0300 tps
+T3 C0 run9: 3105.3573 tps
+ban_ghi=15422053 ban_ghi_giay=255553.3 mat=0
+T3 C1 run9: 952.8499 tps
+T3 C2 run9: 3082.3840 tps
+T3 C0 run10: 3107.0760 tps
+[2026-10-21T13:21:43+07:00] LOI: collector khong READY: validation/m6c-20261021/overhead/T3/C1/run10/collect.log
+ban_ghi=0 ban_ghi_giay=? mat=?
+T3 C1 run10: 3133.6880 tps
+T3 C2 run10: 3025.7489 tps
+Traceback (most recent call last):
+  File "<stdin>", line 3, in <module>
+  File "/usr/lib/python3.12/statistics.py", line 617, in median
+    raise StatisticsError("no median for empty data")
+statistics.StatisticsError: no median for empty data
+[2026-10-21T13:24:09+07:00] C0 kich tran dot nay: T3 median=3116.61235 tps, T4 median= req/s
+[2026-10-21T13:24:09+07:00] T3-R25
+T3-R25 C0 run1 xong
+ban_ghi=11448976 ban_ghi_giay=189921.1 mat=0
+T3-R25 C1 run1 xong
+T3-R25 C2 run1 xong
+T3-R25 C0 run2 xong
+ban_ghi=11263791 ban_ghi_giay=186778.5 mat=0
+T3-R25 C1 run2 xong
+T3-R25 C2 run2 xong
+T3-R25 C0 run3 xong
+ban_ghi=11394746 ban_ghi_giay=189026.0 mat=0
+T3-R25 C1 run3 xong
+[2026-10-21T13:35:06+07:00] LOI: collector khong READY: validation/m6c-20261021/overhead/T3-R25/C2/run3/collect.log
+T3-R25 C2 run3 xong
+T3-R25 C0 run4 xong
+ban_ghi=11390720 ban_ghi_giay=189069.6 mat=0
+T3-R25 C1 run4 xong
+T3-R25 C2 run4 xong
+T3-R25 C0 run5 xong
+ban_ghi=11382624 ban_ghi_giay=188785.5 mat=0
+T3-R25 C1 run5 xong
+T3-R25 C2 run5 xong
+T3-R25 C0 run6 xong
+ban_ghi=11297582 ban_ghi_giay=187450.8 mat=0
+T3-R25 C1 run6 xong
+T3-R25 C2 run6 xong
+T3-R25 C0 run7 xong
+ban_ghi=11413716 ban_ghi_giay=189217.4 mat=0
+T3-R25 C1 run7 xong
+T3-R25 C2 run7 xong
+T3-R25 C0 run8 xong
+ban_ghi=11516225 ban_ghi_giay=191163.6 mat=0
+T3-R25 C1 run8 xong
+T3-R25 C2 run8 xong
+T3-R25 C0 run9 xong
+ban_ghi=11560328 ban_ghi_giay=191630.4 mat=0
+T3-R25 C1 run9 xong
+T3-R25 C2 run9 xong
+T3-R25 C0 run10 xong
+ban_ghi=11459433 ban_ghi_giay=190023.0 mat=0
+T3-R25 C1 run10 xong
+T3-R25 C2 run10 xong
+[2026-10-21T14:02:42+07:00] T4-R25
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R25 C0 run1 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4-R25 C1 run1 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R25 C2 run1 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R25 C0 run2 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4-R25 C1 run2 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R25 C2 run2 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R25 C0 run3 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4-R25 C1 run3 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R25 C2 run3 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R25 C0 run4 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4-R25 C1 run4 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R25 C2 run4 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R25 C0 run5 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4-R25 C1 run5 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R25 C2 run5 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R25 C0 run6 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4-R25 C1 run6 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+[2026-10-21T14:07:17+07:00] LOI: collector khong READY: validation/m6c-20261021/overhead/T4-R25/C2/run6/collect.log
+T4-R25 C2 run6 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R25 C0 run7 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4-R25 C1 run7 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R25 C2 run7 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R25 C0 run8 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4-R25 C1 run8 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R25 C2 run8 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R25 C0 run9 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+[2026-10-21T14:09:50+07:00] LOI: collector khong READY: validation/m6c-20261021/overhead/T4-R25/C1/run9/collect.log
+ban_ghi=0 ban_ghi_giay=? mat=?
+T4-R25 C1 run9 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+[2026-10-21T14:10:54+07:00] LOI: collector khong READY: validation/m6c-20261021/overhead/T4-R25/C2/run9/collect.log
+T4-R25 C2 run9 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R25 C0 run10 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4-R25 C1 run10 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R25 C2 run10 xong
+[2026-10-21T14:11:43+07:00] T4-R50
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R50 C0 run1 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4-R50 C1 run1 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R50 C2 run1 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R50 C0 run2 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4-R50 C1 run2 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R50 C2 run2 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R50 C0 run3 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4-R50 C1 run3 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R50 C2 run3 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R50 C0 run4 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4-R50 C1 run4 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R50 C2 run4 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R50 C0 run5 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4-R50 C1 run5 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R50 C2 run5 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R50 C0 run6 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4-R50 C1 run6 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R50 C2 run6 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R50 C0 run7 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4-R50 C1 run7 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R50 C2 run7 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R50 C0 run8 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4-R50 C1 run8 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R50 C2 run8 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R50 C0 run9 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4-R50 C1 run9 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R50 C2 run9 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R50 C0 run10 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+ban_ghi=0 ban_ghi_giay=? mat=0
+T4-R50 C1 run10 xong
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: int() argument after * must be an iterable, not float
+T4-R50 C2 run10 xong
+[2026-10-21T14:18:15+07:00] tong hop TSV
+tsv xong
+===== validation/m6c-20261021/overhead/T1.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T1	C0	10	184.3280	2.8521	182.2879	186.3681	0.0000	-	-	-
+T1	C1	10	3745.6680	182.5139	3615.1145	3876.2215	1932.0668	1872.1722	1994.6941	0.0001
+T1	C1n	10	797.2980	16.6901	785.3595	809.2365	332.5431	325.9759	339.2025	0.0001
+T1	C2	10	243.1240	3.9474	240.3004	245.9476	31.8975	30.0581	33.5910	0.0001
+===== validation/m6c-20261021/overhead/T3.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T3	C0	10	3107.9297	45.2030	3075.5957	3140.2637	0.0000	-	-	-
+T3	C1	10	1168.8908	690.3652	675.0676	1662.7140	-62.3901	-69.5971	-48.1345	0.0001
+T3	C2	10	3030.7339	50.3654	2994.7072	3066.7606	-2.4838	-3.6776	-1.1345	0.0024
+===== validation/m6c-20261021/overhead/T4.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+===== validation/m6c-20261021/overhead/T3-R25-cgroupcpu.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T3-R25	C0	10	85420275.4000	587841.0557	84999788.4564	85840762.3436	0.0000	-	-	-
+T3-R25	C1	10	155801529.9000	1207355.5964	154937899.7408	156665160.0592	82.3941	81.2619	83.4853	0.0001
+T3-R25	C2	10	86596505.1000	529784.3380	86217546.5450	86975463.6550	1.3770	0.8325	1.9156	0.0003
+===== validation/m6c-20261021/overhead/T3-R25-lat_avg.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T3-R25	C0	10	2.4837	0.0354	2.4584	2.5090	0.0000	-	-	-
+T3-R25	C1	10	8.8162	0.2948	8.6053	9.0270	254.9589	247.4646	262.6916	0.0001
+T3-R25	C2	10	2.5246	0.0355	2.4993	2.5500	1.6471	0.4809	2.9062	0.0157
+===== validation/m6c-20261021/overhead/T3-R25-p50.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T3-R25	C0	10	2.2571	0.0126	2.2481	2.2661	0.0000	-	-	-
+T3-R25	C1	10	6.7456	0.1796	6.6171	6.8741	198.8614	193.9785	203.6587	0.0001
+T3-R25	C2	10	2.3003	0.0183	2.2872	2.3134	1.9140	1.3364	2.4825	0.0001
+===== validation/m6c-20261021/overhead/T3-R25-p99.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T3-R25	C0	10	5.4746	0.1455	5.3705	5.5787	0.0000	-	-	-
+T3-R25	C1	10	32.3044	2.1748	30.7487	33.8601	490.0778	466.2841	516.6270	0.0001
+T3-R25	C2	10	5.6531	0.1775	5.5261	5.7801	3.2605	0.8006	5.7976	0.0250
+===== validation/m6c-20261021/overhead/T4-R25-cgroupcpu.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T4-R25	C0	10	0.0000	0.0000	0.0000	0.0000	0.0000	-	-	-
+Traceback (most recent call last):
+  File "/root/hids/analysis/m6c_stats.py", line 129, in <module>
+    main(sys.argv[1])
+  File "/root/hids/analysis/m6c_stats.py", line 122, in main
+    extra = [f(pct(x, c0)), f(plo), f(phi), f(perm_p(x, c0, rng))]
+               ^^^^^^^^^^
+  File "/root/hids/analysis/m6c_stats.py", line 56, in pct
+    return (mean(a) / mean(b) - 1.0) * 100.0
+            ~~~~~~~~^~~~~~~~~
+ZeroDivisionError: float division by zero
+===== validation/m6c-20261021/overhead/T4-R25-lat_avg.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+===== validation/m6c-20261021/overhead/T4-R25-p50.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+===== validation/m6c-20261021/overhead/T4-R25-p99.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+===== validation/m6c-20261021/overhead/T4-R50-cgroupcpu.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T4-R50	C0	10	0.0000	0.0000	0.0000	0.0000	0.0000	-	-	-
+Traceback (most recent call last):
+  File "/root/hids/analysis/m6c_stats.py", line 129, in <module>
+    main(sys.argv[1])
+  File "/root/hids/analysis/m6c_stats.py", line 122, in main
+    extra = [f(pct(x, c0)), f(plo), f(phi), f(perm_p(x, c0, rng))]
+               ^^^^^^^^^^
+  File "/root/hids/analysis/m6c_stats.py", line 56, in pct
+    return (mean(a) / mean(b) - 1.0) * 100.0
+            ~~~~~~~~^~~~~~~~~
+ZeroDivisionError: float division by zero
+===== validation/m6c-20261021/overhead/T4-R50-lat_avg.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+===== validation/m6c-20261021/overhead/T4-R50-p50.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+===== validation/m6c-20261021/overhead/T4-R50-p99.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+[2026-10-21T14:18:19+07:00] m6c overhead XONG

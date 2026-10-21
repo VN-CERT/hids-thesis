@@ -1,0 +1,40 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 294b872-dirty
+# record_size: 64
+# filter_tgids: 340879
+# filter_pid: 1
+# filter_cgroup: khong co
+# ringbuf_bytes: 67108864
+# rb_wake_bytes: 8388608
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: dmesg | [    0.000000] vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# pmu: on
+# pmu_events: instructions:u,cycles:u
+# start_mono_ns: 8120446427831
+# start_wall: 2026-10-21T12:33:50.749585018+07:00
+# duration: 1m0s
+# moi dong cach nhau 10s
+mono_ns,wall,dinh_ghi_delta,mat_delta,dinh_ghi_tong,mat_tong,irq_hard_delta_ns,irq_soft_delta_ns,irq_vec_delta_ns,soft_raw_delta_ns,irq_hard_tong_ns,irq_soft_tong_ns,irq_vec_tong_ns,soft_raw_tong_ns
+8120457801616,2026-10-21T12:33:50.760959156+07:00,0,0,0,0,0,633327,7112661,637858,0,633327,7112661,637858
+8130467781991,2026-10-21T12:34:00.770939129+07:00,2103777,0,2103777,0,1033619,98749732,529379151,99005178,1033619,99383059,536491812,99643036
+8140467187097,2026-10-21T12:34:10.770344278+07:00,2073131,0,4176908,0,1018268,94877062,483593832,95305195,2051887,194260121,1020085644,194948231
+8150467353142,2026-10-21T12:34:20.770510162+07:00,2702539,0,6879447,0,923065,84046301,422056151,84389737,2974952,278306422,1442141795,279337968
+8160467599193,2026-10-21T12:34:30.770756422+07:00,2981646,0,9861093,0,738886,77626298,416224676,77798870,3713838,355932720,1858366471,357136838
+8160985244517,2026-10-21T12:34:31.288400992+07:00,138908,0,10000001,0,37567,5035454,55615190,5055382,3751405,360968174,1913981661,362192220
