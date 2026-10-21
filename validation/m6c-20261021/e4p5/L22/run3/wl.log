@@ -1,0 +1,13 @@
+544413
+wl: tu kiem mem 1/5 mono=11928 us thread_cpu=7528 us
+wl: tu kiem mem 2/5 mono=7450 us thread_cpu=7348 us
+wl: tu kiem mem 3/5 mono=7411 us thread_cpu=7315 us
+wl: tu kiem mem 4/5 mono=7263 us thread_cpu=7265 us
+wl: tu kiem mem 5/5 mono=7498 us thread_cpu=7382 us
+wl: dieu chinh mem_steps=91993 (trung binh 8310 us)
+wl: tu kiem mem 1/5 mono=9003 us thread_cpu=8957 us
+wl: tu kiem mem 2/5 mono=8807 us thread_cpu=8811 us
+wl: tu kiem mem 3/5 mono=8635 us thread_cpu=8638 us
+wl: tu kiem mem 4/5 mono=10089 us thread_cpu=8866 us
+wl: tu kiem mem 5/5 mono=8902 us thread_cpu=8904 us
+wl: LOI tu kiem mem: mono lech qua 5% so voi 10 ms

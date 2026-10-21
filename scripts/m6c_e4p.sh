@@ -38,7 +38,7 @@ run_one() {
 	# wl tu kiem mem co the truot vi nhieu tan so/steal; thu lai toi da 5 lan
 	# (day la tu kiem cua workload, khong phai tieu chi do).
 	local attempt
-	for attempt in 1 2 3 4 5; do
+	for attempt in $(seq 1 "${M6C_E4P_ATTEMPTS:-5}"); do
 		run_attempt "$L" "$run" "$attempt" "$dir"
 		if grep -q "khoang dot (nr=" "$dir/ketqua.txt" && ! grep -q "khoang dot (nr=230, khong FIRST): 0" "$dir/ketqua.txt"; then
 			return 0
@@ -129,9 +129,15 @@ PY
 	cat "$dir/ketqua.txt"
 }
 
-for L in 0 12 22; do
-	for run in 1 2 3; do
-		run_one "$L" "$run"
+if [[ -n "${M6C_E4P_CELLS:-}" ]]; then
+	for cell in $M6C_E4P_CELLS; do
+		run_one "${cell%%:*}" "${cell##*:}"
 	done
-done
+else
+	for L in 0 12 22; do
+		for run in 1 2 3; do
+			run_one "$L" "$run"
+		done
+	done
+fi
 echo "E4p xong: $OUTROOT"
