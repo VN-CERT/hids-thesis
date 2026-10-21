@@ -25,13 +25,14 @@ Collector eBPF đo khoảng thời gian giữa hai syscall liên tiếp của t�
 - Lỗi verifier/libbpf phải in nguyên văn ra stderr và ghi vào out/<tên>.log.
 - Kết thúc mỗi nhiệm vụ: báo cáo ngắn gồm việc đã làm, lệnh build, lệnh chạy, phương án đã dùng (nếu có dự phòng), lỗi còn tồn tại. Commit và gắn tag git theo mốc (m1, m2, ...).
 
-# Đặc tả bản ghi syscall (M6a; cố định 56 byte, little-endian; file cũ 48 byte vẫn đọc được)
-ts_enter u64 ns (bpf_ktime_get_ns tại sys_enter) | cgroup_id u64 | tid u32 | seq u32 (tăng dần theo CPU) | syscall_nr u16 | flags u16 | cpu_ns u32 | steal_ns u32 | irq_ns u32 | rq_ns u32 | vol_us u32 | steal_off_ns u32 | reserved u32 (= 0)
+# Đặc tả bản ghi syscall (M6c; cố định 64 byte, little-endian; file cũ 48 và 56 byte vẫn đọc được theo record_size trong header)
+ts_enter u64 ns (bpf_ktime_get_ns tại sys_enter) | cgroup_id u64 | tid u32 | seq u32 (tăng dần theo CPU) | syscall_nr u16 | flags u16 | cpu_ns u32 | steal_ns u32 | irq_ns u32 | rq_ns u32 | vol_us u32 | steal_off_ns u32 | inst u32 | cyc u32 | reserved u32 (= 0)
+inst/cyc (M6c): số lệnh / số chu kỳ CHẾ ĐỘ USER (exclude_kernel=1, exclude_hv=1) trong các đoạn ON-CPU của khoảng, đọc từ bộ đếm PMU per-CPU. Không gồm phần chạy trong kernel (syscall, irq, BPF), nên không chứa chi phí của collector. Tràn u32 thì bão hoà và bật OVERFLOW (bit4).
 steal_off_ns: steal trên vCPU liên quan khi thread OFF-CPU trong khoảng; không nằm trong tổng Δt (chồng lên vol/rq), chỉ đo bổ sung.
 Các thành phần thuộc khoảng từ sys_enter trước đó của cùng tid tới sys_enter hiện tại; mỗi thành phần được đo độc lập (không suy ra từ Δt trừ các phần khác).
 
 # Bảng flags (kiến trúc sư chốt, cố định từ M3)
-bit0 FIRST (bản ghi đầu tiên của thread kể từ khi collector chạy) | bit1 GAP_BEFORE | bit2 D_SLEEP | bit3 MIGRATED | bit4 OVERFLOW | bit5 STEAL_FALLBACK | bit6 CLAMPED | bit7 = 0 | bit8–15 = số CPU lúc sys_enter (bpf_get_smp_processor_id() & 0xff)
+bit0 FIRST (bản ghi đầu tiên của thread kể từ khi collector chạy) | bit1 GAP_BEFORE | bit2 D_SLEEP | bit3 MIGRATED | bit4 OVERFLOW | bit5 STEAL_FALLBACK | bit6 CLAMPED | bit7 PMU (M6c: 1 khi inst và cyc hợp lệ cho CẢ khoảng; 0 thì không dùng inst/cyc) | bit8–15 = số CPU lúc sys_enter (bpf_get_smp_processor_id() & 0xff)
 
 # Định nghĩa 5 thành phần của Δt (kiến trúc sư chốt ở M3, cố định)
 - Một khoảng = từ sys_enter trước của cùng thread tới sys_enter hiện tại. Bản ghi phát ra tại sys_enter hiện tại mang các thành phần của khoảng đó.

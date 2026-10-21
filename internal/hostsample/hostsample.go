@@ -48,6 +48,9 @@ type Sample struct {
 	PressMem PressureSome
 	PressIO  PressureSome
 	Cgroups  []CgroupSample
+	// M6c: delta bo dem PMU user tren moi CPU trong 1 giay; "na" khi PMU tat.
+	PMUInstDelta string
+	PMUCycDelta  string
 }
 
 // HeaderTSV tra ve dong tieu de cot (tab-separated).
@@ -67,6 +70,8 @@ func HeaderTSV(cgroups []CgroupTarget) []string {
 			p+"_memory_current", p+"_cpu_pressure_total", p+"_memory_pressure_total",
 		)
 	}
+	// M6c: hai cot PMU o CUOI dong.
+	cols = append(cols, "pmu_inst_delta", "pmu_cyc_delta")
 	return cols
 }
 
@@ -94,5 +99,13 @@ func (s Sample) RowTSV() []string {
 			cg.MemoryCurrent, cg.CPUPressTotal, cg.MemPressureTot,
 		)
 	}
+	inst, cyc := s.PMUInstDelta, s.PMUCycDelta
+	if inst == "" {
+		inst = "na"
+	}
+	if cyc == "" {
+		cyc = "na"
+	}
+	row = append(row, inst, cyc)
 	return row
 }

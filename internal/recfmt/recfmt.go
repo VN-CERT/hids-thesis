@@ -1,6 +1,6 @@
 // Package recfmt dinh nghia dinh dang file .bin do hids-collect ghi ra:
 // phan dau la cac dong van ban bat dau bang '#', ket thuc bang dong "#END",
-// sau do la cac ban ghi nhi phan 48 hoac 56 byte noi tiep nhau (little-endian).
+// sau do la cac ban ghi nhi phan 48, 56 hoac 64 byte noi tiep nhau (little-endian).
 package recfmt
 
 import (
@@ -12,8 +12,11 @@ import (
 	"strings"
 )
 
-// RecordSize la kich thuoc ban ghi moi (M6a), theo dac ta trong hids.mdc.
-const RecordSize = 56
+// RecordSize la kich thuoc ban ghi moi (M6c), theo dac ta trong hids.mdc.
+const RecordSize = 64
+
+// RecordSize56 la kich thuoc ban ghi M6a.
+const RecordSize56 = 56
 
 // LegacyRecordSize la kich thuoc ban ghi truoc M6a.
 const LegacyRecordSize = 48
@@ -30,7 +33,8 @@ const (
 	FlagOverflow      uint16 = 1 << 4 // M3
 	FlagStealFallback uint16 = 1 << 5 // M3
 	FlagClamped       uint16 = 1 << 6 // M3
-	// bit7 = 0, bit8..15 = so CPU luc sys_enter.
+	FlagPMU           uint16 = 1 << 7 // M6c: inst/cyc hop le cho ca khoang
+	// bit8..15 = so CPU luc sys_enter.
 	FlagCPUShift        = 8
 	FlagCPUMask  uint16 = 0xff << FlagCPUShift
 )
@@ -52,6 +56,8 @@ type Record struct {
 	RqNs       uint32
 	VolUs      uint32
 	StealOffNs uint32
+	Inst       uint32 // M6c: so lenh che do user trong cac doan ON-CPU (chi khi FlagPMU)
+	Cyc        uint32 // M6c: so chu ky che do user trong cac doan ON-CPU (chi khi FlagPMU)
 	Reserved   uint32
 }
 
@@ -70,21 +76,28 @@ func RecordSizeFromHeader(h Header) (int, error) {
 	if err != nil {
 		return 0, fmt.Errorf("record_size khong hop le: %q", raw)
 	}
-	if n != LegacyRecordSize && n != RecordSize {
-		return 0, fmt.Errorf("record_size %d: chi ho tro %d hoac %d", n, LegacyRecordSize, RecordSize)
+	if n != LegacyRecordSize && n != RecordSize56 && n != RecordSize {
+		return 0, fmt.Errorf("record_size %d: chi ho tro %d, %d hoac %d", n, LegacyRecordSize, RecordSize56, RecordSize)
 	}
 	return n, nil
 }
 
-// Decode doc mot ban ghi tu dung size byte (48 hoac 56).
+// validRecordSize cho biet size co nam trong ba kich thuoc da chot khong.
+func validRecordSize(n int) bool {
+	return n == LegacyRecordSize || n == RecordSize56 || n == RecordSize
+}
+
+// Decode doc mot ban ghi tu dung size byte (48, 56 hoac 64).
 func Decode(b []byte) (Record, error) {
 	switch len(b) {
 	case LegacyRecordSize:
 		return decode48(b)
-	case RecordSize:
+	case RecordSize56:
 		return decode56(b)
+	case RecordSize:
+		return decode64(b)
 	default:
-		return Record{}, fmt.Errorf("ban ghi dai %d byte, phai %d hoac %d byte", len(b), LegacyRecordSize, RecordSize)
+		return Record{}, fmt.Errorf("ban ghi dai %d byte, phai %d, %d hoac %d byte", len(b), LegacyRecordSize, RecordSize56, RecordSize)
 	}
 }
 
@@ -111,6 +124,18 @@ func decode56(b []byte) (Record, error) {
 	}
 	r.StealOffNs = binary.LittleEndian.Uint32(b[48:52])
 	r.Reserved = binary.LittleEndian.Uint32(b[52:56])
+	return r, nil
+}
+
+func decode64(b []byte) (Record, error) {
+	r, err := decode56(b[:RecordSize56])
+	if err != nil {
+		return r, err
+	}
+	// Ban 64 byte: inst/cyc the cho cho reserved cua ban 56, them reserved moi.
+	r.Inst = binary.LittleEndian.Uint32(b[52:56])
+	r.Cyc = binary.LittleEndian.Uint32(b[56:60])
+	r.Reserved = binary.LittleEndian.Uint32(b[60:64])
 	return r, nil
 }
 
@@ -152,11 +177,11 @@ func ReadHeader(r *bufio.Reader) (Header, error) {
 }
 
 // ForEach doc het cac ban ghi con lai va goi fn cho tung ban ghi.
-// recordSize phai la LegacyRecordSize hoac RecordSize (lay tu header).
+// recordSize phai la LegacyRecordSize, RecordSize56 hoac RecordSize (lay tu header).
 // Tra ve so ban ghi doc duoc va so byte thua o cuoi file (neu co).
 func ForEach(r io.Reader, recordSize int, fn func(Record) error) (int64, int, error) {
-	if recordSize != LegacyRecordSize && recordSize != RecordSize {
-		return 0, 0, fmt.Errorf("recordSize %d: chi ho tro %d hoac %d", recordSize, LegacyRecordSize, RecordSize)
+	if !validRecordSize(recordSize) {
+		return 0, 0, fmt.Errorf("recordSize %d: chi ho tro %d, %d hoac %d", recordSize, LegacyRecordSize, RecordSize56, RecordSize)
 	}
 	buf := make([]byte, recordSize*4096)
 	var count int64

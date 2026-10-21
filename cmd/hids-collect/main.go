@@ -1,5 +1,5 @@
 // hids-collect gan hids_sys_enter vao tp_btf/sys_enter, loc theo pid/cgroup va
-// ghi cac ban ghi 56 byte ra file .bin. Can chay bang root.
+// ghi cac ban ghi 64 byte ra file .bin. Can chay bang root.
 package main
 
 import (
@@ -89,6 +89,7 @@ func run() error {
 	noHost := flag.Bool("no-host", false, "tat luong host stats 1Hz - co thu nghiem M6b-1.1")
 	cgroupRefresh := flag.Duration("cgroup-refresh", time.Second, "chu ky quet lai cgroup (mac dinh 1s) - co thu nghiem M6b-1.1")
 	rbPoll := flag.Duration("rb-poll", 200*time.Millisecond, "deadline moi lan cho doc ring buffer syscall (mac dinh 200ms; xoay file co the tre toi da bang gia tri nay)")
+	pmu := flag.String("pmu", "auto", "M6c: doc bo dem PMU user (instructions/cycles) moi CPU: auto|on|off")
 	flag.Parse()
 
 	if os.Geteuid() != 0 {
@@ -113,6 +114,9 @@ func run() error {
 	if *rbPoll <= 0 {
 		return fmt.Errorf("-rb-poll phai > 0")
 	}
+	if *pmu != "auto" && *pmu != "on" && *pmu != "off" {
+		return fmt.Errorf("-pmu phai la auto, on hoac off, nhan %q", *pmu)
+	}
 	if len(cgroupPaths) == 0 && len(tgids) == 0 {
 		return fmt.Errorf("can it nhat mot -pid hoac mot -cgroup")
 	}
@@ -136,6 +140,7 @@ func run() error {
 			noHost:        *noHost,
 			cgroupRefresh: *cgroupRefresh,
 			rbPoll:        *rbPoll,
+			pmu:           *pmu,
 		})
 	}
 
@@ -216,12 +221,20 @@ func run() error {
 		StealFallback: stealMode == stealModeFallback,
 		StealOff:      stealMode == stealModeOff,
 		SysEnterHook:  *sysEnterHook,
+		PMU:           *pmu,
 	})
 	if err != nil {
 		bpflog.Report(logPath, "khong nap duoc chuong trinh BPF cua collector", err)
 		return fmt.Errorf("nap BPF that bai, chi tiet o %s", logPath)
 	}
 	defer coll.Close()
+	if coll.PMUWarning() != "" {
+		fmt.Fprintf(os.Stderr, "CANH BAO: %s\n", coll.PMUWarning())
+	}
+	pmuState := "off"
+	if coll.PMUOn() {
+		pmuState = "on"
+	}
 
 	f, err := os.Create(outPath)
 	if err != nil {
@@ -285,6 +298,8 @@ func run() error {
 		fmt.Sprintf("discard: %v", *discard),
 		fmt.Sprintf("sys_enter_hook: %s", *sysEnterHook),
 		fmt.Sprintf("zstd_level: %d", *zstdLevel),
+		fmt.Sprintf("pmu: %s", pmuState),
+		"pmu_events: instructions:u,cycles:u",
 		fmt.Sprintf("start_mono_ns: %d", startMono),
 		fmt.Sprintf("start_wall: %s", startWall.Format(time.RFC3339Nano)),
 		fmt.Sprintf("duration: %s", durationText(*duration)),

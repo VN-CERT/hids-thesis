@@ -50,6 +50,8 @@ type longRunOpts struct {
 	cgroupRefresh time.Duration
 	// Deadline cho doc ring buffer syscall (M6b-1.2 cau 1.2); mac dinh 200ms.
 	rbPoll time.Duration
+	// M6c: che do PMU auto|on|off.
+	pmu string
 }
 
 type tsvZstWriter struct {
@@ -479,6 +481,7 @@ func runLongRun(o longRunOpts) error {
 		StealFallback: stealMode == stealModeFallback,
 		StealOff:      stealMode == stealModeOff,
 		SysEnterHook:  o.sysEnterHook,
+		PMU:           o.pmu,
 	})
 	if err != nil {
 		bpflog.Report(logPath, "khong nap duoc syscall BPF", err)
@@ -553,6 +556,17 @@ func runLongRun(o longRunOpts) error {
 		fmt.Sprintf("cgroup_refresh: %s", o.cgroupRefresh),
 		fmt.Sprintf("rb_poll: %s", o.rbPoll),
 	}
+	if coll.PMUWarning() != "" {
+		fmt.Fprintf(os.Stderr, "CANH BAO: %s\n", coll.PMUWarning())
+	}
+	pmuState := "off"
+	if coll.PMUOn() {
+		pmuState = "on"
+	}
+	header = append(header,
+		fmt.Sprintf("pmu: %s", pmuState),
+		"pmu_events: instructions:u,cycles:u",
+	)
 	for _, name := range []string{"IRQ_TIME_ACCOUNTING", "PARAVIRT_TIME_ACCOUNTING", "SCHEDSTATS", "SCHED_INFO"} {
 		value, err := hostinfo.KernelConfig(name)
 		if err != nil {
@@ -774,6 +788,10 @@ func runLongRun(o longRunOpts) error {
 		go func() {
 			ticker := time.NewTicker(time.Second)
 			defer ticker.Stop()
+			var prevPMUInst, prevPMUCyc uint64
+			if coll.PMUOn() {
+				prevPMUInst, prevPMUCyc, _ = coll.PMUTotals()
+			}
 			for {
 				select {
 				case <-stopHost:
@@ -783,6 +801,14 @@ func runLongRun(o longRunOpts) error {
 					if err != nil {
 						bpflog.Note(os.Stderr, logPath, fmt.Sprintf("hostsample: %v", err))
 						continue
+					}
+					if coll.PMUOn() {
+						inst, cyc, perr := coll.PMUTotals()
+						if perr == nil {
+							s.PMUInstDelta = strconv.FormatUint(inst-prevPMUInst, 10)
+							s.PMUCycDelta = strconv.FormatUint(cyc-prevPMUCyc, 10)
+							prevPMUInst, prevPMUCyc = inst, cyc
+						}
 					}
 					_ = ws.maybeRotate(time.Now(), header)
 					if err := ws.writeHostRow(s.RowTSV()); err != nil {

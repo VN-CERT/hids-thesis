@@ -1,17 +1,21 @@
 package syscallbpf
 
 import (
+	"encoding/binary"
 	"errors"
 	"fmt"
 	"os"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
+	"unsafe"
 
 	"github.com/cilium/ebpf"
 	"github.com/cilium/ebpf/link"
 	"github.com/cilium/ebpf/ringbuf"
 	"github.com/cilium/ebpf/rlimit"
+	"golang.org/x/sys/unix"
 
 	"hids/internal/percpuksym"
 	"hids/internal/recfmt"
@@ -48,6 +52,7 @@ type Config struct {
 	StealFallback bool     // dung rq->prev_steal_time thay vi vmw_steal_time
 	StealOff      bool     // khong do steal (khong co stealclock)
 	SysEnterHook  string   // tracepoint (mac dinh) hoac fentry (x64_sys_call)
+	PMU           string   // M6c: auto (mac dinh), on hoac off
 }
 
 // IRQStat la so lieu irq cua mot CPU.
@@ -85,12 +90,157 @@ type irqState struct {
 
 // Collector giu chuong trinh BPF da nap, cac link va bo doc ring buffer.
 type Collector struct {
-	coll        *ebpf.Collection
-	links       []link.Link
-	mainLink    link.Link
-	mainHook    string
-	reader      *ringbuf.Reader
-	irqTPs      []string
+	coll       *ebpf.Collection
+	links      []link.Link
+	mainLink   link.Link
+	mainHook   string
+	reader     *ringbuf.Reader
+	irqTPs     []string
+	pmuOn      bool
+	pmuWarning string
+	pmuInstFDs map[int]int // cpu -> fd PERF_COUNT_HW_INSTRUCTIONS (user)
+	pmuCycFDs  map[int]int // cpu -> fd PERF_COUNT_HW_CPU_CYCLES (user)
+	pmuSkipped []int       // CPU offline luc mo, bo qua
+}
+
+// PMUOn cho biet BPF co doc bo dem PMU khong.
+func (c *Collector) PMUOn() bool { return c.pmuOn }
+
+// PMUWarning tra ve canh bao khi -pmu auto phai tat PMU, rong neu khong co.
+func (c *Collector) PMUWarning() string { return c.pmuWarning }
+
+// PMUSkippedCPUs tra ve cac CPU offline luc mo bo dem (bo qua).
+func (c *Collector) PMUSkippedCPUs() []int { return c.pmuSkipped }
+
+// PMUTotals doc cac fd PMU va tra ve tong so lenh / chu ky user tren moi CPU.
+func (c *Collector) PMUTotals() (inst, cyc uint64, err error) {
+	if !c.pmuOn {
+		return 0, 0, errors.New("PMU dang tat")
+	}
+	for _, fd := range c.pmuInstFDs {
+		v, err := readPMUValue(fd)
+		if err != nil {
+			return 0, 0, err
+		}
+		inst += v
+	}
+	for _, fd := range c.pmuCycFDs {
+		v, err := readPMUValue(fd)
+		if err != nil {
+			return 0, 0, err
+		}
+		cyc += v
+	}
+	return inst, cyc, nil
+}
+
+// readPMUValue doc mot bo dem: read_format co TOTAL_TIME_ENABLED|RUNNING
+// nen 24 byte dau la {value, time_enabled, time_running}; chi lay value.
+func readPMUValue(fd int) (uint64, error) {
+	var buf [24]byte
+	if _, err := unix.Read(fd, buf[:]); err != nil {
+		return 0, fmt.Errorf("doc fd PMU %d: %w", fd, err)
+	}
+	return binary.LittleEndian.Uint64(buf[0:8]), nil
+}
+
+func closePMUFDs(fds map[int]int) {
+	for _, fd := range fds {
+		_ = unix.Close(fd)
+	}
+}
+
+// Hang so UAPI tu linux/perf_event.h (kiem chung voi /usr/include/linux/perf_event.h).
+const (
+	perfTypeHardware        = 0                   // PERF_TYPE_HARDWARE
+	perfCountHWCPUCycles    = 0                   // PERF_COUNT_HW_CPU_CYCLES
+	perfCountHWInstructions = 1                   // PERF_COUNT_HW_INSTRUCTIONS
+	perfFormatTotalTime     = (1 << 0) | (1 << 1) // TOTAL_TIME_ENABLED | TOTAL_TIME_RUNNING
+	// Bit trong perf_event_attr.flags: exclude_kernel = bit5, exclude_hv = bit6
+	// (disabled = bit0, giu 0 = bat ngay).
+	perfBitsExcludeKernelHV = (1 << 5) | (1 << 6)
+)
+
+// onlineCPUIDs doc danh sach CPU online tu /sys/devices/system/cpu/online.
+func onlineCPUIDs() ([]int, error) {
+	raw, err := os.ReadFile("/sys/devices/system/cpu/online")
+	if err != nil {
+		return nil, fmt.Errorf("doc cpu online: %w", err)
+	}
+	var ids []int
+	for _, part := range strings.Split(strings.TrimSpace(string(raw)), ",") {
+		lo, hi, ok := strings.Cut(part, "-")
+		a, err := strconv.Atoi(lo)
+		if err != nil {
+			return nil, fmt.Errorf("cpu online khong hop le: %q", part)
+		}
+		b := a
+		if ok {
+			if b, err = strconv.Atoi(hi); err != nil {
+				return nil, fmt.Errorf("cpu online khong hop le: %q", part)
+			}
+		}
+		for i := a; i <= b; i++ {
+			ids = append(ids, i)
+		}
+	}
+	return ids, nil
+}
+
+// openPMUCounters mo hai bo dem user tren moi CPU online. Tra ve fd theo CPU
+// va danh sach CPU phai bo qua vi dang offline (khong con online luc mo).
+func openPMUCounters() (instFDs, cycFDs map[int]int, skipped []int, err error) {
+	cpus, err := onlineCPUIDs()
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	possible, perr := os.ReadFile("/sys/devices/system/cpu/possible")
+	if perr != nil {
+		return nil, nil, nil, fmt.Errorf("doc cpu possible: %w", perr)
+	}
+	_ = possible
+	instFDs = make(map[int]int)
+	cycFDs = make(map[int]int)
+	fail := func(format string, args ...any) (map[int]int, map[int]int, []int, error) {
+		closePMUFDs(instFDs)
+		closePMUFDs(cycFDs)
+		return nil, nil, nil, fmt.Errorf(format, args...)
+	}
+	for _, cpu := range cpus {
+		// CPU co the vua offline sau khi doc danh sach: kiem tra lai.
+		if _, err := os.Stat(fmt.Sprintf("/sys/devices/system/cpu/cpu%d/online", cpu)); err != nil && cpu != 0 {
+			if f, ferr := os.ReadFile(fmt.Sprintf("/sys/devices/system/cpu/cpu%d/online", cpu)); ferr != nil || strings.TrimSpace(string(f)) != "1" {
+				skipped = append(skipped, cpu)
+				continue
+			}
+		}
+		instFD, err := openPMUOne(cpu, perfCountHWInstructions)
+		if err != nil {
+			return fail("mo PMU instructions tren CPU %d: %w", cpu, err)
+		}
+		instFDs[cpu] = instFD
+		cycFD, err := openPMUOne(cpu, perfCountHWCPUCycles)
+		if err != nil {
+			return fail("mo PMU cycles tren CPU %d: %w", cpu, err)
+		}
+		cycFDs[cpu] = cycFD
+	}
+	return instFDs, cycFDs, skipped, nil
+}
+
+func openPMUOne(cpu int, config uint64) (int, error) {
+	attr := unix.PerfEventAttr{
+		Type:        perfTypeHardware,
+		Config:      config,
+		Read_format: perfFormatTotalTime,
+		Bits:        perfBitsExcludeKernelHV,
+	}
+	attr.Size = uint32(unsafe.Sizeof(attr))
+	fd, err := unix.PerfEventOpen(&attr, -1, cpu, -1, 0)
+	if err != nil {
+		return -1, err
+	}
+	return fd, nil
 }
 
 // Load nap chuong trinh, nap cau hinh loc vao map va gan vao cac tracepoint.
@@ -133,22 +283,51 @@ func Load(cfg Config) (*Collector, error) {
 	if len(cfg.TGIDs) > 0 {
 		filterPID = 1
 	}
+	// M6c PMU: mo bo dem truoc khi nap BPF vi hids_pmu_on la bien cau hinh.
+	pmuMode := cfg.PMU
+	if pmuMode == "" {
+		pmuMode = "auto"
+	}
+	var pmuInstFDs, pmuCycFDs map[int]int
+	var pmuSkipped []int
+	pmuOn := uint8(0)
+	pmuWarning := ""
+	if pmuMode != "off" {
+		instFDs, cycFDs, skipped, perr := openPMUCounters()
+		if perr != nil {
+			if pmuMode == "on" {
+				return nil, fmt.Errorf("-pmu on: %w", perr)
+			}
+			pmuWarning = fmt.Sprintf("PMU tat (-pmu auto): %v", perr)
+		} else {
+			pmuInstFDs, pmuCycFDs, pmuSkipped = instFDs, cycFDs, skipped
+			pmuOn = 1
+		}
+	}
+	pmuCleanup := func() {
+		closePMUFDs(pmuInstFDs)
+		closePMUFDs(pmuCycFDs)
+	}
+
 	rbWakeBytes := uint64(cfg.RingbufBytes) / 8
 	vars := map[string]any{
-		"hids_self_tgid":       cfg.SelfTGID,
-		"hids_filter_cgroup":   filterCgroup,
-		"hids_filter_pid":      filterPID,
-		"hids_rb_wake_bytes":   rbWakeBytes,
-		"hids_tsc_khz":         cfg.TSCKHz,
-		"hids_steal_fallback":  boolToU8(cfg.StealFallback),
-		"hids_steal_off":       boolToU8(cfg.StealOff),
+		"hids_self_tgid":      cfg.SelfTGID,
+		"hids_filter_cgroup":  filterCgroup,
+		"hids_filter_pid":     filterPID,
+		"hids_rb_wake_bytes":  rbWakeBytes,
+		"hids_tsc_khz":        cfg.TSCKHz,
+		"hids_steal_fallback": boolToU8(cfg.StealFallback),
+		"hids_steal_off":      boolToU8(cfg.StealOff),
+		"hids_pmu_on":         pmuOn,
 	}
 	for name, val := range vars {
 		v := spec.Variables[name]
 		if v == nil {
+			pmuCleanup()
 			return nil, fmt.Errorf("khong tim thay bien %s trong ELF", name)
 		}
 		if err := v.Set(val); err != nil {
+			pmuCleanup()
 			return nil, fmt.Errorf("dat %s: %w", name, err)
 		}
 	}
@@ -157,16 +336,38 @@ func Load(cfg Config) (*Collector, error) {
 		Programs: ebpf.ProgramOptions{LogLevel: ebpf.LogLevelBranch},
 	})
 	if err != nil {
+		pmuCleanup()
 		return nil, err
 	}
 
-	c := &Collector{coll: coll}
+	c := &Collector{
+		coll:       coll,
+		pmuOn:      pmuOn == 1,
+		pmuWarning: pmuWarning,
+		pmuInstFDs: pmuInstFDs,
+		pmuCycFDs:  pmuCycFDs,
+		pmuSkipped: pmuSkipped,
+	}
 	ok := false
 	defer func() {
 		if !ok {
 			c.Close()
 		}
 	}()
+
+	// M6c: nap fd PMU vao map tai chi so = so CPU (PERF_EVENT_ARRAY).
+	if pmuOn == 1 {
+		for cpu, fd := range pmuInstFDs {
+			if err := coll.Maps["hids_pmu_inst"].Put(uint32(cpu), uint32(fd)); err != nil {
+				return nil, fmt.Errorf("nap fd PMU inst CPU %d: %w", cpu, err)
+			}
+		}
+		for cpu, fd := range pmuCycFDs {
+			if err := coll.Maps["hids_pmu_cyc"].Put(uint32(cpu), uint32(fd)); err != nil {
+				return nil, fmt.Errorf("nap fd PMU cyc CPU %d: %w", cpu, err)
+			}
+		}
+	}
 
 	one := uint8(1)
 	for _, tgid := range cfg.TGIDs {
@@ -465,5 +666,9 @@ func (c *Collector) Close() error {
 		c.coll.Close()
 		c.coll = nil
 	}
+	closePMUFDs(c.pmuInstFDs)
+	closePMUFDs(c.pmuCycFDs)
+	c.pmuInstFDs = nil
+	c.pmuCycFDs = nil
 	return firstErr
 }
