@@ -86,7 +86,10 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 - Phần 2 XONG: STEALCHECK theo TỔNG mọi CPU (|Σvmw − Σrq| ≤ max(5 ms, 1% Σvmw)), bảng per-CPU mỗi cửa sổ; G7a ×1 mất 0; G3 ×1: G5 max ≤ 500, CLAMPED 0/tổng, recursion_misses = 0 trên 31 chương trình. Dữ liệu `validation/m6c2-20261022/part23/`.
 - Phần 3 XONG: `scripts/freq_stamp.sh`; CPU 12 trung vị 1,9359 GHz, CPU 20 trung vị 1,9349 GHz (máy rảnh, container dừng). Quy ước đã ghi vào `.cursor/rules/hids.mdc`.
 - Phần 4 XONG: E4p cơ chế gốc đủ 9/9 ô, attempt 1, 500/500 khoảng mỗi ô; inst 14170548–14170579 ở mọi mức; dấu tần số L=22 là 2,5239 GHz (khác L0/L12 ~1,93 — câu 8.1 của R034).
-- M6c-2 ĐÓNG: R034 viết xong, tag `m6c.2`, đã push. Việc đang chạy: (không có) — unit `hids-*` trống, `bpftool prog show | grep -c hids_` = 0, 12 container chạy. Chờ kiến trúc sư trả lời 2 câu hỏi mục 8 của R034.
+- M6c-2 ĐÓNG: R034 viết xong, tag `m6c.2`, đã push. Việc đang chạy: (không có) — unit `hids-*` trống, `bpftool prog show | grep -c hids_` = 0, 12 container chạy.
+- Trả lời của kiến trúc sư về R034 mục 8 (nhận 2026-10-22, ghi nguyên văn):
+  1. Không đo lại L=22; so sánh giữa các mức bằng cyc, CPI, inst (không phụ thuộc tần số); cpu_ns luôn kèm GHz hiệu dụng của mức đó; việc tần số nhảy 1,93→2,52 GHz là phát hiện: turbo có nhưng host dùng chung nên lúc có lúc không; quy ước bổ sung: freq_stamp trước VÀ sau mỗi khối đo, lệch >2% thì ghi chú khối đó.
+  2. Câu 8.2 của R033 đóng: inst không đổi với cơ chế -loops. Ghi nhận lỗi trong tools/wl.c self_test_mem_10ms: biến sum không được cộng dồn nên nhánh điều chỉnh mem_steps là mã chết; không sửa trong nhiệm vụ nào hiện tại.
 
 ## M6c: ĐÓNG (R032)
 
