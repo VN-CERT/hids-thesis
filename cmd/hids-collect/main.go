@@ -562,10 +562,12 @@ func checkSteal(nrCPUs int, tscKHz uint64, allowNoStealclock, forceFallback bool
 	}
 
 	// Thu lai toi da 3 cua so 3s lien tiep truoc khi tu choi chay.
-	// Ly do: rq->prev_steal_time chi duoi kip mot tick moi tick
-	// (steal_account_process_time kep min(steal, maxtime)) va CPU idle NOHZ
-	// khong tick, nen mot dot steal vai ms lam cua so ngan lech gia; cua so
-	// dai (G1 10 phut) khong bi anh huong. Nguong khong doi: max(2ms, 1%).
+	// Tieu chi (M6c-2, quyet dinh 8.4 cua R033): theo TONG moi CPU online,
+	// dat khi |tong_vmw - tong_rq| <= max(5 ms, 1% x tong_vmw). Ly do:
+	// kernel chi cong steal vao rq->prev_steal_time tai tick hoac khi thoat
+	// idle qua ranh gioi jiffy, nen mot CPU gan nhu ranh nhung thuc day lien
+	// tuc co the cham vai ms so voi dong ho vmw trong vai giay; tong tren
+	// moi CPU khong lech co he thong; phep kiem goc la G1 10 phut (0,08%).
 	var cmp stealcheck.Compare
 	for lan := 1; lan <= 3; lan++ {
 		fmt.Fprintf(os.Stderr, "doi chieu vmw_steal_time voi rq->prev_steal_time trong %s (lan %d)...\n", stealcheck.SettleTime, lan)
@@ -574,28 +576,28 @@ func checkSteal(nrCPUs int, tscKHz uint64, allowNoStealclock, forceFallback bool
 		if cerr != nil {
 			return "", "", evidence, fmt.Errorf("khong doi chieu duoc hai duong do steal: %w", cerr)
 		}
-		nguong := uint64(0)
+		// Bang per-CPU day du vao log moi cua so, kem dong tong.
+		fmt.Fprintf(os.Stderr, "  %4s %14s %14s %12s %12s\n", "cpu", "vmw_ns", "rq_steal_ns", "lech_ns", "nguong_ns")
 		for _, c := range cmp.PerCPU {
-			d := c.DiffNs
-			if d < 0 {
-				d = -d
-			}
-			if d == cmp.MaxDiff {
-				nguong = c.LimitNs
-				break
-			}
+			fmt.Fprintf(os.Stderr, "  %4d %14d %14d %12d %12d\n", c.CPU, c.VmwNs, c.RqNs, c.DiffNs, c.LimitNs)
 		}
+		lechTong := cmp.SumDiffNs
+		if lechTong < 0 {
+			lechTong = -lechTong
+		}
+		fmt.Fprintf(os.Stderr, "  %4s %14d %14d %12d %12d\n", "TONG", cmp.SumVmwNs, cmp.SumRqNs, cmp.SumDiffNs, cmp.SumLimitNs)
 		ketQua := "LECH"
 		if cmp.OK() {
 			ketQua = "DAT"
 		}
-		fmt.Fprintf(os.Stderr, "STEALCHECK lan=%d lech_ns=%d nguong_ns=%d ket_qua=%s\n", lan, cmp.MaxDiff, nguong, ketQua)
+		fmt.Fprintf(os.Stderr, "STEALCHECK lan=%d tong_vmw_ns=%d tong_rq_ns=%d lech_ns=%d nguong_ns=%d cpu_lech_max=%d:%d ket_qua=%s\n",
+			lan, cmp.SumVmwNs, cmp.SumRqNs, lechTong, cmp.SumLimitNs, cmp.MaxCPU, cmp.MaxDiff, ketQua)
 		if cmp.OK() {
 			break
 		}
 	}
-	fmt.Fprintf(os.Stderr, "doi chieu xong: lech lon nhat %d ns tren %d CPU, nguong max(%d ns, %.0f%%)\n",
-		cmp.MaxDiff, len(cmp.PerCPU), stealcheck.ToleranceNs, stealcheck.ToleranceRel*100)
+	fmt.Fprintf(os.Stderr, "doi chieu xong: |tong_vmw - tong_rq| = %d ns, nguong max(%d ns, %.0f%% x tong_vmw); cpu lech max %d: %d ns\n",
+		cmp.SumDiffNs, stealcheck.SumToleranceNs, stealcheck.ToleranceRel*100, cmp.MaxCPU, cmp.MaxDiff)
 
 	if !cmp.OK() {
 		var b strings.Builder

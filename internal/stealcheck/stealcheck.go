@@ -22,8 +22,12 @@ const SettleTime = 3 * time.Second
 
 // Nguong lech cho phep giua hai duong do steal.
 const (
-	ToleranceNs  = 2_000_000 // 2 ms
+	ToleranceNs  = 2_000_000 // 2 ms (nguong per-CPU, chi dung cho bang doi chieu)
 	ToleranceRel = 0.01      // 1%
+	// SumToleranceNs la nguong tuyet doi cho tieu chi TONG moi CPU
+	// (M6c-2, quyet dinh 8.4 cua R033): dat khi
+	// |tong_vmw - tong_rq| <= max(SumToleranceNs, ToleranceRel * tong_vmw).
+	SumToleranceNs = 5_000_000 // 5 ms
 )
 
 // StealClock la ket qua kiem stealclock (journal hoac chung minh runtime).
@@ -142,13 +146,25 @@ type Compare struct {
 	Window   time.Duration
 	TSCKHz   uint64
 	PerCPU   []CPUCompare
-	Bad      []int // cac CPU vuot nguong
+	Bad      []int // cac CPU vuot nguong per-CPU (chi de in bang)
 	MaxDiff  int64
 	Mechanis string // co che doc da dung
+	// Tieu chi tong (M6c-2): tong muc tang tren moi CPU online.
+	SumVmwNs   uint64
+	SumRqNs    uint64
+	SumDiffNs  int64 // SumVmwNs - SumRqNs
+	SumLimitNs uint64
+	MaxCPU     int // CPU co |lech| per-CPU lon nhat
 }
 
-// OK cho biet moi CPU deu trong nguong.
-func (c Compare) OK() bool { return len(c.Bad) == 0 }
+// OK cho biet tieu chi TONG dat: |SumVmwNs - SumRqNs| <= SumLimitNs.
+func (c Compare) OK() bool {
+	d := c.SumDiffNs
+	if d < 0 {
+		d = -d
+	}
+	return uint64(d) <= c.SumLimitNs
+}
 
 // CompareStealPaths chup bo dem steal hai lan cach nhau SettleTime va so muc
 // tang cua vmw_steal_time voi muc tang cua rq->prev_steal_time tren tung CPU.
@@ -217,8 +233,16 @@ func CompareStealPaths(nrCPUs int, tscKHz uint64) (Compare, error) {
 		}
 		if abs > out.MaxDiff {
 			out.MaxDiff = abs
+			out.MaxCPU = i
 		}
+		out.SumVmwNs += vmw
+		out.SumRqNs += rq
 		out.PerCPU = append(out.PerCPU, cc)
+	}
+	out.SumDiffNs = int64(out.SumVmwNs) - int64(out.SumRqNs)
+	out.SumLimitNs = SumToleranceNs
+	if rel := uint64(float64(out.SumVmwNs) * ToleranceRel); rel > out.SumLimitNs {
+		out.SumLimitNs = rel
 	}
 
 	return out, nil
