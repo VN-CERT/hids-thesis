@@ -63,6 +63,9 @@ type sysEnterHidsTstate struct {
 	PmuBad       uint8
 	_            [1]byte
 	PendingFlags uint16
+	PmuLive      uint8
+	_            [3]byte
+	PmuCtr       uint32
 }
 
 // Names of all BPF objects in the ELF.
@@ -112,6 +115,7 @@ const (
 	sysEnterVarHidsFilterCgroup                = "hids_filter_cgroup"
 	sysEnterVarHidsFilterPid                   = "hids_filter_pid"
 	sysEnterVarHidsPmuOn                       = "hids_pmu_on"
+	sysEnterVarHidsPmuSample                   = "hids_pmu_sample"
 	sysEnterVarHidsRbWakeBytes                 = "hids_rb_wake_bytes"
 	sysEnterVarHidsSelfTgid                    = "hids_self_tgid"
 	sysEnterVarHidsStealFallback               = "hids_steal_fallback"
@@ -216,6 +220,7 @@ type sysEnterVariableSpecs struct {
 	HidsFilterCgroup  *ebpf.VariableSpec `ebpf:"hids_filter_cgroup"`
 	HidsFilterPid     *ebpf.VariableSpec `ebpf:"hids_filter_pid"`
 	HidsPmuOn         *ebpf.VariableSpec `ebpf:"hids_pmu_on"`
+	HidsPmuSample     *ebpf.VariableSpec `ebpf:"hids_pmu_sample"`
 	HidsRbWakeBytes   *ebpf.VariableSpec `ebpf:"hids_rb_wake_bytes"`
 	HidsSelfTgid      *ebpf.VariableSpec `ebpf:"hids_self_tgid"`
 	HidsStealFallback *ebpf.VariableSpec `ebpf:"hids_steal_fallback"`
@@ -275,6 +280,7 @@ type sysEnterVariables struct {
 	HidsFilterCgroup  *ebpf.Variable `ebpf:"hids_filter_cgroup"`
 	HidsFilterPid     *ebpf.Variable `ebpf:"hids_filter_pid"`
 	HidsPmuOn         *ebpf.Variable `ebpf:"hids_pmu_on"`
+	HidsPmuSample     *ebpf.Variable `ebpf:"hids_pmu_sample"`
 	HidsRbWakeBytes   *ebpf.Variable `ebpf:"hids_rb_wake_bytes"`
 	HidsSelfTgid      *ebpf.Variable `ebpf:"hids_self_tgid"`
 	HidsStealFallback *ebpf.Variable `ebpf:"hids_steal_fallback"`

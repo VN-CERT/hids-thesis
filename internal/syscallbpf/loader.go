@@ -102,13 +102,17 @@ type Collector struct {
 	pmuInstFDs map[int]int // cpu -> fd PERF_COUNT_HW_INSTRUCTIONS (user)
 	pmuCycFDs  map[int]int // cpu -> fd PERF_COUNT_HW_CPU_CYCLES (user)
 	pmuSkipped []int       // CPU offline luc mo, bo qua
+	pmuSample  uint32      // K cua che do sample=K (0 = khong lay mau)
 }
 
 // PMUOn cho biet BPF co doc bo dem PMU theo ban ghi khong (chi che do "on").
 func (c *Collector) PMUOn() bool { return c.pmuOn }
 
-// PMUMode tra ve che do PMU thuc te: off, host hoac on.
+// PMUMode tra ve che do PMU thuc te: off, host, on hoac sample=K.
 func (c *Collector) PMUMode() string {
+	if c.pmuSample > 0 {
+		return fmt.Sprintf("sample=%d", c.pmuSample)
+	}
 	if c.pmuOn {
 		return "on"
 	}
@@ -306,6 +310,17 @@ func Load(cfg Config) (*Collector, error) {
 	if pmuMode == "" || pmuMode == "auto" {
 		pmuMode = "host"
 	}
+	// sample=K (M6c-3): nhu on nhung BPF chi doc PMU o 1 trong K khoang.
+	var pmuSample uint32
+	pmuIsOnLike := pmuMode == "on"
+	if strings.HasPrefix(pmuMode, "sample=") {
+		k, kerr := strconv.ParseUint(strings.TrimPrefix(pmuMode, "sample="), 10, 32)
+		if kerr != nil || k < 2 || k > 1000 {
+			return nil, fmt.Errorf("-pmu sample=K: K phai la so nguyen 2..1000, nhan %q", cfg.PMU)
+		}
+		pmuSample = uint32(k)
+		pmuIsOnLike = true
+	}
 	var pmuInstFDs, pmuCycFDs map[int]int
 	var pmuSkipped []int
 	pmuOn := uint8(0)
@@ -313,15 +328,17 @@ func Load(cfg Config) (*Collector, error) {
 	if pmuMode != "off" {
 		instFDs, cycFDs, skipped, perr := openPMUCounters()
 		if perr != nil {
-			if pmuMode == "on" {
-				return nil, fmt.Errorf("-pmu on: %w", perr)
+			if pmuIsOnLike {
+				return nil, fmt.Errorf("-pmu %s: %w", pmuMode, perr)
 			}
 			// host: ha ve off, khong tu choi chay.
 			pmuWarning = fmt.Sprintf("PMU ha ve off (-pmu host): %v", perr)
 		} else {
 			pmuInstFDs, pmuCycFDs, pmuSkipped = instFDs, cycFDs, skipped
-			if pmuMode == "on" {
+			if pmuIsOnLike {
 				pmuOn = 1
+			} else {
+				pmuSample = 0
 			}
 		}
 	}
@@ -340,6 +357,7 @@ func Load(cfg Config) (*Collector, error) {
 		"hids_steal_fallback": boolToU8(cfg.StealFallback),
 		"hids_steal_off":      boolToU8(cfg.StealOff),
 		"hids_pmu_on":         pmuOn,
+		"hids_pmu_sample":     pmuSample,
 	}
 	for name, val := range vars {
 		v := spec.Variables[name]
@@ -364,6 +382,7 @@ func Load(cfg Config) (*Collector, error) {
 	c := &Collector{
 		coll:       coll,
 		pmuOn:      pmuOn == 1,
+		pmuSample:  pmuSample,
 		pmuWarning: pmuWarning,
 		pmuInstFDs: pmuInstFDs,
 		pmuCycFDs:  pmuCycFDs,
