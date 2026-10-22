@@ -13,11 +13,11 @@ COLLECT=./bin/hids-collect
 
 wait_ready() {
 	local log=$1 i
-	for ((i = 0; i < 3000; i++)); do
+	for ((i = 0; i < 2000; i++)); do
 		grep -qx READY "$log" 2>/dev/null && return 0
 		sleep 0.01
 	done
-	echo "collector khong READY" >&2; exit 1
+	echo "KHONG_READY (cho 20s)" >&2; return 1
 }
 wait_wchan() { # <pid> <want: eq|ne> — cho wchan pipe_read theo dieu kien
 	local pid=$1 want=$2 i w
@@ -68,7 +68,12 @@ run_attempt() {
 	sleep 0.5
 	"$COLLECT" -pid "$wl_pid" -zstd-level 0 -pmu on -out "$bin" 2>"$dir/collect.log" &
 	local cpid=$!
-	wait_ready "$dir/collect.log"
+	if ! wait_ready "$dir/collect.log"; then
+		kill "$wl_pid" "$cpid" 2>/dev/null; wait "$wl_pid" 2>/dev/null || true
+		exec 9>&-
+		echo "KHONG_READY: bo attempt nay, run_one se thu lai" >&2
+		return 1
+	fi
 	wait_wchan "$wl_pid" eq
 	if ((L > 0)); then
 		stress-ng --stream "$L" --taskset 0-19,21-23 --timeout 300 >"$dir/stress.log" 2>&1 &
