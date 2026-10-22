@@ -96,7 +96,10 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 - Nhiệm vụ: `docs/tasks/M6c-3.md`. Báo cáo R035, tag `m6c.3`. BPF mới của kiến trúc sư `9994b03f…` (lấy mẫu PMU), đã commit và build đạt.
 - Phần 2 XONG (commit `30b221b`): `-pmu sample=K` (K 2…1000; nạp `hids_pmu_sample`, header `pmu: sample=K`); STEALCHECK in thêm dòng `STEALCHECK canh_bao cpu=<n> lech_ns=<...>` khi tổng đạt nhưng một CPU lệch > 50 ms.
 - Phần 3 XONG: G7a ×4 mất 0, header đúng 4 chế độ; G3 sample=20 (phần dư ≤ 500, CLAMPED 0, recursion 0, PMU 4,97–4,99%) và on (PMU 100%); G11 lệch inst 43, cyc 7761, cờ 100%; G11s đạt (sample20: 15 khoảng, inst +0,79%, cyc +1,55%; sample50: 6 khoảng, +0,77%/+1,04%); T1: C0 186,5 / host 817,9 / sample50 805,7 / sample20 952,9 / on 3766,5 ns/syscall; pre24h10 sample=20: CPU 0,80% lõi, RSS 183730176 B, drops 0, host 600 dòng, PMU 4,9883%. Hai lần G3 đầu hỏng do wrapper/driver cùng dừng container và wl trượt tự kiểm — đã chạy lại nguyên trạng.
-- M6c-3 ĐÓNG: R035 viết xong, tag `m6c.3`, đã push. Việc đang chạy: (không có) — unit `hids-*` trống, `bpftool prog show | grep -c hids_` = 0, 12 container chạy. Chờ kiến trúc sư chốt K cho LAB-1 (câu 8.1 của R035).
+- M6c-3 ĐÓNG: R035 viết xong, tag `m6c.3`, đã push. Việc đang chạy: (không có) — unit `hids-*` trống, `bpftool prog show | grep -c hids_` = 0, 12 container chạy.
+- Trả lời của kiến trúc sư về R035 mục 8 (nhận 2026-10-22, ghi nguyên văn):
+  1. K = 20 cho LAB-1 và thu dữ liệu Bài 2 (`-pmu sample=20`); chi phí đo được +135 ns/syscall so với host ở vi mô xấu nhất, tức ≈1,5% CPU ở tải PostgreSQL kịch trần (436k bản ghi/giây trên 4 CPU) — chấp nhận. Mặc định production vẫn host.
+  2. Không đo lại cặp host/sample=50. Ghi nhận chưa giải thích: theo số đếm lần đọc (một khoảng lấy mẫu = 2 lần pmu_read = 4 RDPMC ≈ 5,9 µs cho mỗi K syscall) thì kỳ vọng sample=20 ≈ +295 ns, sample=50 ≈ +118 ns; đo được +135 và −12, đều thấp hơn kỳ vọng ~160 ns. Không ảnh hưởng quyết định. G11s lần sau chạy wl với -loops cố định cho cả hai lần.
 
 ## M6c: ĐÓNG (R032)
 

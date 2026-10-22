@@ -195,3 +195,8 @@ Không có. Mọi job đã xong, 12 container đã khởi động lại, kernel 
 - Không có cổng nào không đạt: G7a ×4 mất 0; G3 sample=20 và on đều phần dư ≤ 500 ns, CLAMPED 0/tổng, recursion_misses 0; G11 lệch inst 43 (≈0%), cyc 7761 (≈0,00013%), cờ 100%; G11s đạt tiêu chí inst ≤ 1%, cyc ≤ 3% ở cả sample=20 và sample=50; chạy thử 10 phút: drops 0, host lines 600, tỉ lệ PMU 4,9883%.
 - Dòng `STEALCHECK canh_bao` chưa xuất hiện lần nào trong nhiệm vụ (không có CPU nào lệch > 50 ms khi tổng đạt); mã đã có và biên dịch trong binary, chờ lần khởi động nào có CPU lệch lớn để thấy dòng thật.
 - Đề xuất: chờ kiến trúc sư chốt K (câu 8.1) rồi mở nhiệm vụ thu dữ liệu; không tự mở rộng phạm vi.
+
+## Phụ lục — Trả lời của kiến trúc sư về mục 8 (nhận 2026-10-22, ghi nguyên văn)
+
+1. K = 20 cho LAB-1 và thu dữ liệu Bài 2 (`-pmu sample=20`); chi phí đo được +135 ns/syscall so với host ở vi mô xấu nhất, tức ≈1,5% CPU ở tải PostgreSQL kịch trần (436k bản ghi/giây trên 4 CPU) — chấp nhận. Mặc định production vẫn host.
+2. Không đo lại cặp host/sample=50. Ghi nhận chưa giải thích: theo số đếm lần đọc (một khoảng lấy mẫu = 2 lần pmu_read = 4 RDPMC ≈ 5,9 µs cho mỗi K syscall) thì kỳ vọng sample=20 ≈ +295 ns, sample=50 ≈ +118 ns; đo được +135 và −12, đều thấp hơn kỳ vọng ~160 ns. Không ảnh hưởng quyết định. G11s lần sau chạy wl với -loops cố định cho cả hai lần.
