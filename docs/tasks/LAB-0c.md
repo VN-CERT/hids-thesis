@@ -1,23 +1,23 @@
-NHIỆM VỤ LAB-0c — máy 201 (nạn nhân): cập nhật mã lên tag m6c.2 (mặc định `-pmu host`, STEALCHECK theo tổng, dấu tần số) và kiểm lại cổng trên máy nạn nhân. Lưu nguyên văn vào docs/tasks/LAB-0c.md. Báo cáo theo dãy báo cáo của lab (như LAB-0b). Không mở LAB-1 trong nhiệm vụ này.
+NHIỆM VỤ LAB-0c — máy 201 (nạn nhân): cập nhật collector lên tag m6c.3 và kiểm lại cổng trước khi thu dữ liệu lab. Lưu nguyên văn docs/tasks/LAB-0c.md, nhánh lab-collector. KHÔNG đụng 192.168.77.20, KHÔNG cài công cụ tấn công, KHÔNG mở LAB-1. Mọi ssh/scp cổng 22022. Chỉ bắt đầu khi máy test đã có tag m6c.3 (R035 xong).
 
 File của kiến trúc sư (KHÔNG sửa; kiểm sha256 sau khi kéo mã và trước khi build, in vào báo cáo):
- - bpf/sys_enter.bpf.c   = 8b05464db597cfc471dc7af24ce651ef905751ebd80ec463b3863b7dd0263c35
+ - bpf/sys_enter.bpf.c   = 9994b03f359ee5205354515f80bd4dd67f4919daca6b585702f4dc54796648c0
  - bpf/proc_events.bpf.c = 39d892e5524de1cb49ace593b152c5b303d99c056e110f0a072d344c8270c7ec
  - analysis/m5f_parse.py = 9f0b4cde1c2e1c6aa560c041eaefaef1a40e5c7d9fc292db1d77dfc971d046cd
  - analysis/m6c_stats.py = 8c390002870f3ea8ace38a241f803bb5e7ec6c2413fdd403f757de24a6a1be25
  - tools/coreclk.c       = 88ef821eb062855b0189af1568d25e310b53f1e0c1e29e35e360282515d97706
-Sha sai, build lỗi, verifier lỗi, cổng không đạt: DỪNG, dán nguyên văn. Không sửa tiêu chí. Báo cáo chỉ in số và output nguyên văn.
+Sha sai, build/verifier lỗi, cổng không đạt, xung đột git: DỪNG, dán nguyên văn. Không sửa tiêu chí. Báo cáo chỉ in số.
 
-0. Điều kiện: không có collector nào đang chạy trên 201 (nếu có unit 24 giờ từ LAB-0b thì dừng và ghi lại). Máy yên như LAB-0b đã làm khi chạy cổng. Kernel phải sạch trước khi bắt đầu: `bpftool prog show | grep -c hids_` = 0.
+0. Điều kiện: không collector nào đang chạy trên 201 (có unit từ LAB-0b thì dừng, ghi lại); `bpftool prog show | grep -c hids_` = 0; máy yên như LAB-0b khi chạy cổng; `kernel.perf_event_paranoid` ≤ 1 (sysctl -w nếu cần).
 
-1. Kéo mã: `git fetch --all --tags`, `git checkout m6c.2`, in `git describe --tags` (phải là `m6c.2`) và `git rev-parse HEAD`. Kiểm sha256 5 file. `make build`. In dòng header `pmu:` của một file .bin thử (bước 3) để xác nhận mặc định.
+1. Kéo mã: `cd /root/collector && git fetch origin --tags && git checkout lab-collector && git merge --no-edit m6c.3` (giữ các commit riêng của nhánh lab; xung đột → DỪNG). In `git describe --tags`, `git rev-parse HEAD`, `git log --oneline -3`. Kiểm sha256 5 file. `make build`.
 
-2. Dấu tần số: `bash scripts/freq_stamp.sh <cpu>` trên CPU của ứng dụng nạn nhân chính và trên CPU 0 (nếu không rõ CPU ứng dụng, dùng CPU 0 và CPU cuối). In nguyên văn (3 giá trị + trung vị + thời điểm). Ghi vào báo cáo số vCPU, model CPU (`lscpu`), kernel (`uname -r`), và vPMC có hay không (xem bước 3).
+2. Thông tin máy và vPMC: `lscpu` (model, số vCPU), `uname -r`, `perf stat -e cycles:u,instructions:u -a -- sleep 1` (ra số = có vPMC; "<not supported>" = không có, ghi lại, vẫn tiếp tục). `bash scripts/freq_stamp.sh <cpu>` trên CPU của ứng dụng nạn nhân chính và CPU 0 (không rõ thì CPU 0 và CPU cuối). In nguyên văn.
 
-3. G7a ×2, không truyền `-pmu` (mặc định): perf = bản ghi, mất = 0. In header của file .bin: `pmu: host` nếu 201 có vPMC; nếu collector in cảnh báo mở perf fd lỗi và hạ về `pmu: off` thì dán nguyên văn cảnh báo (không phải lỗi; 201 không bật vPMC thì vẫn chạy).
+3. G7a ×3 (-zstd-level 0): không truyền `-pmu` (mặc định, header phải `pmu: host`), `-pmu sample=20`, `-pmu on` → perf = bản ghi, mất 0. Nếu 201 không có vPMC: collector phải tự hạ `host` → `off` với cảnh báo (dán nguyên văn), còn `sample=20`/`on` phải từ chối chạy (dán nguyên văn) — khi đó LAB-1 sẽ chạy `host`.
 
-4. G3 S1–S5 ×1 (wl + bpftrace như LAB-0b): phần dư ≤ 500 ns ở mọi kịch bản; dòng "so khoang CLAMPED va |phan du| > 500 ns" = 0 / tổng; recursion_misses = 0; bảng đối chiếu kernel (schedstat) in nguyên văn. Lệch rq so với bpftrace tổng KHÔNG phải tiêu chí (chỉ in). In 5 dòng STEALCHECK của 5 lần khởi động (dạng mới: `tong_vmw_ns ... ket_qua=DAT|LECH`).
+4. G3 S1–S5 ×1 với `-pmu sample=20` (hoặc mặc định nếu không có vPMC): phần dư ≤ 500 ns; "CLAMPED & |dư| > 500 ns" = 0 / tổng; recursion_misses = 0; bảng kernel nguyên văn; tỉ lệ cờ PMU ≈ 5%. Lệch rq so bpftrace tổng chỉ in, không phải tiêu chí. In 5 dòng STEALCHECK (dạng tổng).
 
-5. Chạy thử cấu hình 24 giờ trong 10 phút, đúng dòng lệnh `-datadir` của LAB-0b (chỉ khác thời lượng): sau khi xong in CPU collector % một lõi (cửa sổ ổn định), RSS, kernel drops, proc drops, số dòng host (cộng mọi đoạn host-*.tsv.zst, kỳ vọng ≈600), và hai cột cuối của 3 dòng host cuối (số nếu `pmu: host`, `na` nếu off). Sau đó dừng collector; KHÔNG bật lại collector 24 giờ (chờ LAB-1).
+5. Chạy thử cấu hình 24 giờ 10 phút, đúng dòng lệnh `-datadir` của LAB-0b, thêm `-pmu sample=20` (hoặc mặc định nếu không vPMC): CPU collector % một lõi (cửa sổ ổn định), RSS, kernel drops, proc drops, số dòng host (cộng mọi đoạn, ≈ 600), hai cột PMU của 3 dòng host cuối, tỉ lệ cờ PMU trong .bin. Sau đó dừng collector; KHÔNG bật lại (chờ LAB-1).
 
-6. Kết thúc: `systemctl list-units 'hids-*' 'hidsrun-*' --state=active` trống; `bpftool prog show | grep -c hids_` = 0; ứng dụng nạn nhân chạy bình thường. Viết báo cáo (mục: đã làm, output nguyên văn, file đã tạo, quyết định tự đưa ra, câu hỏi cho kiến trúc sư), commit theo quy ước của lab, DỪNG.
+6. Kết thúc: unit `hids-*`/`hidsrun-*` trống; `bpftool prog show | grep -c hids_` = 0; ứng dụng nạn nhân chạy bình thường. Viết LAB-0c-ketqua.txt (đã làm, output nguyên văn, file tạo, quyết định tự đưa ra, câu hỏi), commit nhánh lab-collector, push. DỪNG.
