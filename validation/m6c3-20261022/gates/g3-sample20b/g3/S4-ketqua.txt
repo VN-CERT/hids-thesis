@@ -1,0 +1,96 @@
+=== S4: wl cpu 10000 300 (CPU 20) ===
+wl pid=2027715 tid=2027715
+stress-ng pid=2027725
+--- moc A schedstat (sum_exec_runtime run_delay pcount) ---
+257376996 2571587 4
+--- moc A /proc/2027715/sched ---
+sum_sleep_runtime                            :          4356.971223
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             2.571587
+iowait_sum                                   :             0.000000
+--- moc B schedstat ---
+3232953944 2974945253 996
+--- moc B /proc/2027715/sched ---
+sum_sleep_runtime                            :          4445.620027
+sum_block_runtime                            :             0.000000
+wait_sum                                     :          2974.945253
+iowait_sum                                   :             0.000000
+cua so ts_enter: (103011577102562, 103017613617331]
+--- rec-check ---
+so ban ghi trong cua so: 301
+tid: 2027715
+cua so ts_enter: (103011577102562, 103017613617331]
+co              so_ban_ghi
+FIRST           0
+GAP_BEFORE      0
+D_SLEEP         0
+MIGRATED        0
+OVERFLOW        0
+STEAL_FALLBACK  0
+CLAMPED         0
+--- tong thanh phan (ns) ---
+cpu 2948723630
+steal 242403
+irq 26412376
+rq 2972478562
+vol 88658000
+steal_off 360583
+cpu+steal+irq 2975378409
+--- G5 phan du |tat ca (tru FIRST)| (ns) ---
+so khoang: 300
+p50 0
+p99 0
+p99.9 0
+max 0
+so khoang |phan du| > 1000 ns: 0
+so khoang |phan du| > 10000 ns: 0
+so khoang CLAMPED va |phan du| > 500 ns: 0 / tong 300
+--- G5 phan du |khong GAP_BEFORE| (ns) ---
+so khoang: 300
+p50 0
+p99 0
+p99.9 0
+max 0
+so khoang |phan du| > 1000 ns: 0
+so khoang |phan du| > 10000 ns: 0
+so khoang CLAMPED va |phan du| > 500 ns: 0 / tong 300
+--- G5 phan du |co GAP_BEFORE| (ns) ---
+so khoang: 0
+--- bang doi chieu ---
+thanh_phan           collector       tham_chieu      nguon
+cpu+steal+irq        2975378409      2975576948      Delta schedstat field1 sum_exec_runtime
+rq                   2972478562      2972373666      Delta schedstat field2 run_delay
+rq (wait_sum)        2972478562      2972370000      Delta wait_sum /proc/sched
+vol                  88658000        88648800        Delta sum_sleep_runtime
+vol (D_SLEEP)        0               0               Delta sum_block_runtime
+--- log collector (cuoi) ---
+  hids_irq_deferred_error_apic_entry       0
+  hids_irq_deferred_error_apic_exit        0
+  hids_irq_error_apic_entry                0
+  hids_irq_error_apic_exit                 0
+  hids_irq_irq_handler_entry               0
+  hids_irq_irq_handler_exit                0
+  hids_irq_irq_work_entry                  0
+  hids_irq_irq_work_exit                   0
+  hids_irq_local_timer_entry               0
+  hids_irq_local_timer_exit                0
+  hids_irq_reschedule_entry                0
+  hids_irq_reschedule_exit                 0
+  hids_irq_softirq_entry                   0
+  hids_irq_softirq_exit                    0
+  hids_irq_spurious_apic_entry             0
+  hids_irq_spurious_apic_exit              0
+  hids_irq_thermal_apic_entry              0
+  hids_irq_thermal_apic_exit               0
+  hids_irq_threshold_apic_entry            0
+  hids_irq_threshold_apic_exit             0
+  hids_irq_x86_platform_ipi_entry          0
+  hids_irq_x86_platform_ipi_exit           0
+  hids_sched_switch                        0
+  hids_sched_wakeup                        0
+  hids_sched_wakeup_new                    0
+  hids_sys_enter                           0
+  hids_sys_enter_fentry                    0
+thoi gian chay: 6.178 s | CPU collector: user 0.337 s, sys 0.622 s (getrusage RUSAGE_SELF)
+kich thuoc file: 20600 byte
+du lieu: out/g3-S4-145517.bin | thong ke: out/g3-S4-145517.bin.stats | theo doi: out/g3-S4-145517.bin.periodic

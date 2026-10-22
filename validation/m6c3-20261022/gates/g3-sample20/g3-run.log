@@ -1,0 +1,72 @@
+=== m6b12_g3 mode=stop start=2026-10-22T14:31:49+07:00 ===
+3f5a08a
+9994b03f359ee5205354515f80bd4dd67f4919daca6b585702f4dc54796648c0  bpf/sys_enter.bpf.c
+39d892e5524de1cb49ace593b152c5b303d99c056e110f0a072d344c8270c7ec  bpf/proc_events.bpf.c
+9f0b4cde1c2e1c6aa560c041eaefaef1a40e5c7d9fc292db1d77dfc971d046cd  analysis/m5f_parse.py
+--- bpftool prog show | grep -c hids_ (phai = 0) ---
+bpftool_hids_count=0
+khong co collector
+container dang chay truoc: 
+docker: 'docker stop' requires at least 1 argument
+
+Usage:  docker stop [OPTIONS] CONTAINER [CONTAINER...]
+
+See 'docker stop --help' for more information
+=== m6b12_g3 mode=stop start=2026-10-22T14:49:33+07:00 ===
+3f5a08a
+9994b03f359ee5205354515f80bd4dd67f4919daca6b585702f4dc54796648c0  bpf/sys_enter.bpf.c
+39d892e5524de1cb49ace593b152c5b303d99c056e110f0a072d344c8270c7ec  bpf/proc_events.bpf.c
+9f0b4cde1c2e1c6aa560c041eaefaef1a40e5c7d9fc292db1d77dfc971d046cd  analysis/m5f_parse.py
+--- bpftool prog show | grep -c hids_ (phai = 0) ---
+bpftool_hids_count=0
+khong co collector
+container dang chay truoc: hscd_backend hscd_worker hscd_frontend frontend huey backend postgres caddy qdrant atelier3d-web hscd_postgres hscd_redis
+hscd_backend
+hscd_worker
+hscd_frontend
+frontend
+huey
+backend
+postgres
+caddy
+qdrant
+atelier3d-web
+hscd_postgres
+hscd_redis
+da dung container: 0 con chay
+=== S1: wl cpu 10000 300 (CPU 20) ===
+wl pid=2008375 tid=2008375
+--- moc A schedstat (sum_exec_runtime run_delay pcount) ---
+?
+--- moc A /proc/2008375/sched ---
+khong doc duoc /proc/2008375/sched
+--- moc B schedstat ---
+?
+--- moc B /proc/2008375/sched ---
+khong doc duoc /proc/2008375/sched
+khong tim thay getuid cho tid 2008375
+g3: S1: khong tim cua so
+g3_exit=1
+hscd_backend
+hscd_worker
+hscd_frontend
+frontend
+huey
+backend
+postgres
+caddy
+qdrant
+atelier3d-web
+hscd_postgres
+hscd_redis
+container dang chay sau: hscd_backend hscd_worker hscd_frontend frontend huey backend postgres caddy qdrant atelier3d-web hscd_postgres hscd_redis 
+=== trich xuat bpftrace + lech rq so voi TONG ===
+--- S2: validation/m6c3-20261022/gates/g3-sample20/g3/S2-ketqua.txt ---
+(khong co file ket qua)
+--- S3: validation/m6c3-20261022/gates/g3-sample20/g3/S3-ketqua.txt ---
+(khong co file ket qua)
+--- S5: validation/m6c3-20261022/gates/g3-sample20/g3/S5-ketqua.txt ---
+(khong co file ket qua)
+=== G5 max + recursion_misses ===
+S1-ketqua.txt: g5_max_ns=None
+=== m6b12_g3 xong 2026-10-22T14:49:53+07:00 g3_exit=1 ===

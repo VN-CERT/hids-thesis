@@ -1,0 +1,20 @@
+=== G11 S3: wl mixed 2000 3000 500 (CPU 20), perf stat -e instructions:u,cycles:u ===
+wl pid=1972809
+--- perf stat (nguyen van) ---
+# started on Thu Oct 22 14:32:02 2026
+
+
+ Performance counter stats for thread id '1972809':
+
+     1,609,649,346      instructions:u                   #    0.81  insn per cycle            
+     1,991,896,089      cycles:u                                                              
+
+       3.754844892 seconds time elapsed
+
+cua so: 101613526939903 .. 101616308045070
+collector: ban ghi trong cua so=1001 khong_FIRST=1001 co_PMU=1001
+ti le PMU (khong-FIRST): 1001/1001 = 100.0000%
+tong inst collector = 1609649303
+tong cyc collector = 1991892427
+CPU 20: PMU 1001/1001 = 100.00%
+du lieu: out/m6c-g11-S3-143158.bin

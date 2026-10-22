@@ -1,0 +1,6 @@
+--- S2: validation/m6c3-20261022/gates/g3-sample20/g3/S2-ketqua.txt ---
+(khong co file ket qua)
+--- S3: validation/m6c3-20261022/gates/g3-sample20/g3/S3-ketqua.txt ---
+(khong co file ket qua)
+--- S5: validation/m6c3-20261022/gates/g3-sample20/g3/S5-ketqua.txt ---
+(khong co file ket qua)

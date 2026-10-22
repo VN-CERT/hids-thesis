@@ -1,0 +1,39 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 3b6fc92-dirty
+# record_size: 64
+# filter_tgids: 1978788
+# filter_pid: 1
+# filter_cgroup: khong co
+# ringbuf_bytes: 67108864
+# rb_wake_bytes: 8388608
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: journalctl -k -b | Oct 21 10:18:34 uni-lms-app kernel: vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# pmu: on
+# pmu_events: instructions:u,cycles:u
+# start_mono_ns: 101686452776938
+# start_wall: 2026-10-22T14:33:16.755934798+07:00
+# duration: 1m0s
+# moi dong cach nhau 10s
+mono_ns,wall,dinh_ghi_delta,mat_delta,dinh_ghi_tong,mat_tong,irq_hard_delta_ns,irq_soft_delta_ns,irq_vec_delta_ns,soft_raw_delta_ns,irq_hard_tong_ns,irq_soft_tong_ns,irq_vec_tong_ns,soft_raw_tong_ns
+101686470751274,2026-10-22T14:33:16.773909305+07:00,0,0,0,0,0,946266,7452375,952724,0,946266,7452375,952724
+101696470770915,2026-10-22T14:33:26.77392796+07:00,2081432,0,2081432,0,1022940,75855806,442763367,76001768,1022940,76802072,450215742,76954492
+101706480374744,2026-10-22T14:33:36.783532029+07:00,2836434,0,4917866,0,963632,63141973,345840429,63287241,1986572,139944045,796056171,140241733
+101716474440312,2026-10-22T14:33:46.777597424+07:00,3065430,0,7983296,0,414789,58372095,320423869,58489518,2401361,198316140,1116480040,198731251
+101723073315842,2026-10-22T14:33:53.376472921+07:00,2016705,0,10000001,0,496686,39278293,223719693,39312114,2898047,237594433,1340199733,238043365

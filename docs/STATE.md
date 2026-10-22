@@ -95,8 +95,8 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 - Nhiệm vụ: `docs/tasks/M6c-3.md`. Báo cáo R035, tag `m6c.3`. BPF mới của kiến trúc sư `9994b03f…` (lấy mẫu PMU), đã commit và build đạt.
 - Phần 2 XONG (commit `30b221b`): `-pmu sample=K` (K 2…1000; nạp `hids_pmu_sample`, header `pmu: sample=K`); STEALCHECK in thêm dòng `STEALCHECK canh_bao cpu=<n> lech_ns=<...>` khi tổng đạt nhưng một CPU lệch > 50 ms.
-- Việc đang chạy: cổng phần 3 — unit `hids-m6c3gates`, log `out/jobs/m6c3gates.log`, dữ liệu `validation/m6c3-20261022/gates/` (G7a ×4, G3 sample=20 + on, G11, G11s, T1 theo K; tự dừng/khởi động lại 12 container).
-- Tiếp theo: chạy thử cấu hình 24 giờ 10 phút với `-pmu sample=20`, viết R035, tag `m6c.3`, push.
+- Phần 3 XONG: G7a ×4 mất 0, header đúng 4 chế độ; G3 sample=20 (phần dư ≤ 500, CLAMPED 0, recursion 0, PMU 4,97–4,99%) và on (PMU 100%); G11 lệch inst 43, cyc 7761, cờ 100%; G11s đạt (sample20: 15 khoảng, inst +0,79%, cyc +1,55%; sample50: 6 khoảng, +0,77%/+1,04%); T1: C0 186,5 / host 817,9 / sample50 805,7 / sample20 952,9 / on 3766,5 ns/syscall; pre24h10 sample=20: CPU 0,80% lõi, RSS 183730176 B, drops 0, host 600 dòng, PMU 4,9883%. Hai lần G3 đầu hỏng do wrapper/driver cùng dừng container và wl trượt tự kiểm — đã chạy lại nguyên trạng.
+- M6c-3 ĐÓNG: R035 viết xong, tag `m6c.3`, đã push. Việc đang chạy: (không có) — unit `hids-*` trống, `bpftool prog show | grep -c hids_` = 0, 12 container chạy. Chờ kiến trúc sư chốt K cho LAB-1 (câu 8.1 của R035).
 
 ## M6c: ĐÓNG (R032)
 
