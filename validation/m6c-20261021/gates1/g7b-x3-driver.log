@@ -1,0 +1,8 @@
+extra=-zstd-level 0 start=2026-10-21T11:05:04+07:00
+dd5e772
+run1 mat=4508300 ban_ghi=19491724 thoi_gian=18.971s toc_do=1027448 ban_ghi/giay
+run2 mat=1865976 ban_ghi=22134048 thoi_gian=18.465s toc_do=1198703 ban_ghi/giay
+run3 mat=2205990 ban_ghi=21794034 thoi_gian=19.002s toc_do=1146934 ban_ghi/giay
+run4 mat=1821107 ban_ghi=22178917 thoi_gian=18.288s toc_do=1212758 ban_ghi/giay
+run5 mat=1549518 ban_ghi=22450506 thoi_gian=18.719s toc_do=1199343 ban_ghi/giay
+xong 2026-10-21T11:07:25+07:00

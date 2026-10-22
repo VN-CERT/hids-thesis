@@ -1,0 +1,2 @@
+validation/m6c1-20261021/part4/g7cap/zstd-default-p2-20261021-233206.bin: # pmu: host
+validation/m6c1-20261021/part4/g7cap/zstd-default-p4-20261021-233312.bin: # pmu: host

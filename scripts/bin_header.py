@@ -1,4 +1,4 @@
-"""Doc header file .bin hids-collect; tra ve kich thuoc ban ghi (48 hoac 56)."""
+"""Doc header file .bin hids-collect; tra ve kich thuoc ban ghi (48, 56 hoac 64)."""
 
 from __future__ import annotations
 
@@ -6,7 +6,8 @@ import sys
 from typing import BinaryIO
 
 LEGACY = 48
-CURRENT = 56
+SIZE56 = 56
+CURRENT = 64
 
 
 def record_size_after_header(f: BinaryIO) -> int:
@@ -23,8 +24,8 @@ def record_size_after_header(f: BinaryIO) -> int:
             except ValueError:
                 print("record_size khong hop le trong header", file=sys.stderr)
                 raise SystemExit(1)
-            if rec not in (LEGACY, CURRENT):
-                print(f"record_size {rec}: chi ho tro {LEGACY} hoac {CURRENT}", file=sys.stderr)
+            if rec not in (LEGACY, SIZE56, CURRENT):
+                print(f"record_size {rec}: chi ho tro {LEGACY}, {SIZE56} hoac {CURRENT}", file=sys.stderr)
                 raise SystemExit(1)
 
 

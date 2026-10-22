@@ -1,0 +1,102 @@
+--- scripts/g3.sh	2026-10-21 11:03:26.363633914 +0700
++++ scripts/g3_swap.sh	2026-10-21 19:13:40.298996655 +0700
+@@ -1,4 +1,5 @@
+ #!/usr/bin/env bash
++# g3_swap.sh: ban sao cua g3.sh, chi khac thu tu gan: bpftrace gan xong TRUOC collector (M6c-1 muc 3).
+ # g3.sh — kiem chung M3 muc H: S1-S5, G-real, G-irq, G7d.
+ set -uo pipefail
+ 
+@@ -164,6 +165,22 @@
+ 		echo "stress-ng pid=$stress_pid" | tee -a "$ketqua"
+ 	fi
+ 
++	local bt_pid=0 rqlat_pid=0 BTLOG RQLATLOG BT_RQ_NS BT_SO_LAN
++	if [[ $name == S2 || $name == S3 || $name == S5 ]]; then
++		BTLOG="$prefix-bpftrace.log"
++		RQLATLOG="$prefix-runqlat.log"
++		if [[ ${G3_BT_EVENTS:-0} == 1 ]]; then
++			bpftrace -e 'tracepoint:sched:sched_wakeup /args->pid == $1/ { $now = nsecs; printf("W %lu %d %d\n", $now, cpu, args->target_cpu); if (@w == 0) { @w = $now; } } tracepoint:sched:sched_switch { $now = nsecs; if (args->prev_pid == $1 && args->prev_state == 0) { printf("P %lu %d\n", $now, cpu); @p = $now; } if (args->next_pid == $1) { printf("S %lu %d\n", $now, cpu); $d = 0; if (@w != 0) { $d = $d + ($now - @w); @rq_sau_wakeup_ns = sum($now - @w); @so_lan = count(); @w = 0; } if (@p != 0) { $d = $d + ($now - @p); @rq_sau_preempt_ns = sum($now - @p); @so_lan_preempt = count(); @p = 0; } if ($d > 0) { @rq_tong_ns = sum($d); } } }' "$tid" >"$BTLOG" 2>&1 &
++		else
++			bpftrace -e 'tracepoint:sched:sched_wakeup /args->pid == $1 && @w == 0/ { @w = nsecs; } tracepoint:sched:sched_switch { $now = nsecs; if (args->prev_pid == $1 && args->prev_state == 0) { @p = $now; } if (args->next_pid == $1) { $d = 0; if (@w != 0) { $d = $d + ($now - @w); @rq_sau_wakeup_ns = sum($now - @w); @so_lan = count(); @w = 0; } if (@p != 0) { $d = $d + ($now - @p); @rq_sau_preempt_ns = sum($now - @p); @so_lan_preempt = count(); @p = 0; } if ($d > 0) { @rq_tong_ns = sum($d); } } }' "$tid" >"$BTLOG" 2>&1 &
++		fi
++		bt_pid=$!
++		wait_bpftrace_attach "$BTLOG"
++		runqlat-bpfcc -p "$tid" >"$RQLATLOG" 2>&1 &
++		rqlat_pid=$!
++		echo "bpftrace pid=$bt_pid, runqlat pid=$rqlat_pid" | tee -a "$ketqua"
++	fi
++
+ 	"$COLLECT" -pid "$wl_pid" -zstd-level 0 ${HIDS_COLLECT_EXTRA:-} -out "$bin" 2>"$prefix-collect.log" &
+ 	cpid=$!
+ 	wait_ready "$prefix-collect.log"
+@@ -181,22 +198,6 @@
+ 	echo "--- moc A /proc/$tid/sched ---" | tee -a "$ketqua"
+ 	echo "$a_sched" | tee -a "$ketqua"
+ 
+-	local bt_pid=0 rqlat_pid=0 BTLOG RQLATLOG BT_RQ_NS BT_SO_LAN
+-	if [[ $name == S2 || $name == S3 || $name == S5 ]]; then
+-		BTLOG="$prefix-bpftrace.log"
+-		RQLATLOG="$prefix-runqlat.log"
+-		if [[ ${G3_BT_EVENTS:-0} == 1 ]]; then
+-			bpftrace -e 'tracepoint:sched:sched_wakeup /args->pid == $1/ { $now = nsecs; printf("W %lu %d %d\n", $now, cpu, args->target_cpu); if (@w == 0) { @w = $now; } } tracepoint:sched:sched_switch { $now = nsecs; if (args->prev_pid == $1 && args->prev_state == 0) { printf("P %lu %d\n", $now, cpu); @p = $now; } if (args->next_pid == $1) { printf("S %lu %d\n", $now, cpu); $d = 0; if (@w != 0) { $d = $d + ($now - @w); @rq_sau_wakeup_ns = sum($now - @w); @so_lan = count(); @w = 0; } if (@p != 0) { $d = $d + ($now - @p); @rq_sau_preempt_ns = sum($now - @p); @so_lan_preempt = count(); @p = 0; } if ($d > 0) { @rq_tong_ns = sum($d); } } }' "$tid" >"$BTLOG" 2>&1 &
+-		else
+-			bpftrace -e 'tracepoint:sched:sched_wakeup /args->pid == $1 && @w == 0/ { @w = nsecs; } tracepoint:sched:sched_switch { $now = nsecs; if (args->prev_pid == $1 && args->prev_state == 0) { @p = $now; } if (args->next_pid == $1) { $d = 0; if (@w != 0) { $d = $d + ($now - @w); @rq_sau_wakeup_ns = sum($now - @w); @so_lan = count(); @w = 0; } if (@p != 0) { $d = $d + ($now - @p); @rq_sau_preempt_ns = sum($now - @p); @so_lan_preempt = count(); @p = 0; } if ($d > 0) { @rq_tong_ns = sum($d); } } }' "$tid" >"$BTLOG" 2>&1 &
+-		fi
+-		bt_pid=$!
+-		wait_bpftrace_attach "$BTLOG"
+-		runqlat-bpfcc -p "$tid" >"$RQLATLOG" 2>&1 &
+-		rqlat_pid=$!
+-		echo "bpftrace pid=$bt_pid, runqlat pid=$rqlat_pid" | tee -a "$ketqua"
+-	fi
+-
+ 	printf '.' >&9
+ 	wait_wl_on_read "$wl_pid"
+ 	local b_stat b_sched b_wait_ms b_sleep_ms b_block_ms
+@@ -490,30 +491,34 @@
+ 	bash "$G7" d 1000000 2>&1 | tee -a "$ketqua"
+ }
+ 
++want_scenario() {
++	[[ -z "${G3_ONLY:-}" || " ${G3_ONLY} " == *" $1 "* ]]
++}
++
+ main() {
+ 	local subset="${1:-}"
+ 	check_common
+ 	schedstats_save
+ 	case "$subset" in
+ 	m5d)
+-		run_scenario S1 cpu 10000 300
+-		run_scenario S2 sleep 5000 500
+-		run_scenario S3 mixed 2000 3000 500
+-		run_scenario S4 cpu 10000 300
+-		run_scenario S5 io 300
++		want_scenario S1 && run_scenario S1 cpu 10000 300
++		want_scenario S2 && run_scenario S2 sleep 5000 500
++		want_scenario S3 && run_scenario S3 mixed 2000 3000 500
++		want_scenario S4 && run_scenario S4 cpu 10000 300
++		want_scenario S5 && run_scenario S5 io 300
+ 		;;
+ 	m32)
+-		run_scenario S1 cpu 10000 300
+-		run_scenario S4 cpu 10000 300
+-		run_scenario S5 io 300
++		want_scenario S1 && run_scenario S1 cpu 10000 300
++		want_scenario S4 && run_scenario S4 cpu 10000 300
++		want_scenario S5 && run_scenario S5 io 300
+ 		part_g_real
+ 		;;
+ 	"" | all)
+-		run_scenario S1 cpu 10000 300
+-		run_scenario S2 sleep 5000 500
+-		run_scenario S3 mixed 2000 3000 500
+-		run_scenario S4 cpu 10000 300
+-		run_scenario S5 io 300
++		want_scenario S1 && run_scenario S1 cpu 10000 300
++		want_scenario S2 && run_scenario S2 sleep 5000 500
++		want_scenario S3 && run_scenario S3 mixed 2000 3000 500
++		want_scenario S4 && run_scenario S4 cpu 10000 300
++		want_scenario S5 && run_scenario S5 io 300
+ 		part_g_real
+ 		part_g_irq
+ 		part_g7d

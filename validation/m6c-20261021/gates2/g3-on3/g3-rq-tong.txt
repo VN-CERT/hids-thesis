@@ -1,0 +1,18 @@
+--- S2: validation/m6c-20261021/gates2/g3-on3/g3/S2-ketqua.txt ---
+@rq_sau_wakeup_ns: 17738703
+@rq_tong_ns: 17738703
+@so_lan: 501
+@so_lan_preempt: 0
+rq_sau_preempt       —             0               bpftrace @rq_sau_preempt_ns (so_lan_preempt: 0)
+rq                   13816071        17738703        bpftrace TONG @rq_sau_wakeup_ns + @rq_sau_preempt_ns
+LECH_RQ_TONG_S2: collector=13816071 bpftrace_tong=17738703 lech=22.11% (tieu chi: <=5%)
+--- S3: validation/m6c-20261021/gates2/g3-on3/g3/S3-ketqua.txt ---
+@rq_sau_wakeup_ns: 12246798
+@rq_tong_ns: 12246798
+@so_lan: 501
+@so_lan_preempt: 0
+rq_sau_preempt       —             0               bpftrace @rq_sau_preempt_ns (so_lan_preempt: 0)
+rq                   9297969         12246798        bpftrace TONG @rq_sau_wakeup_ns + @rq_sau_preempt_ns
+LECH_RQ_TONG_S3: collector=9297969 bpftrace_tong=12246798 lech=24.08% (tieu chi: <=5%)
+--- S5: validation/m6c-20261021/gates2/g3-on3/g3/S5-ketqua.txt ---
+(khong co file ket qua)

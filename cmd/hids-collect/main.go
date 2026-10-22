@@ -1,5 +1,5 @@
 // hids-collect gan hids_sys_enter vao tp_btf/sys_enter, loc theo pid/cgroup va
-// ghi cac ban ghi 56 byte ra file .bin. Can chay bang root.
+// ghi cac ban ghi 64 byte ra file .bin. Can chay bang root.
 package main
 
 import (
@@ -34,6 +34,13 @@ import (
 const logPath = "out/hids-collect.log"
 
 type stringList []string
+
+func pmuEventsLine(mode string) string {
+	if mode == "off" {
+		return "pmu_events: khong co (pmu off)"
+	}
+	return "pmu_events: instructions:u,cycles:u"
+}
 
 func (s *stringList) String() string     { return strings.Join(*s, ",") }
 func (s *stringList) Set(v string) error { *s = append(*s, v); return nil }
@@ -88,6 +95,8 @@ func run() error {
 	noProc := flag.Bool("no-proc", false, "tat luong proc (BPF proc_events) - co thu nghiem M6b-1.1")
 	noHost := flag.Bool("no-host", false, "tat luong host stats 1Hz - co thu nghiem M6b-1.1")
 	cgroupRefresh := flag.Duration("cgroup-refresh", time.Second, "chu ky quet lai cgroup (mac dinh 1s) - co thu nghiem M6b-1.1")
+	rbPoll := flag.Duration("rb-poll", 200*time.Millisecond, "deadline moi lan cho doc ring buffer syscall (mac dinh 200ms; xoay file co the tre toi da bang gia tri nay)")
+	pmu := flag.String("pmu", "host", "che do PMU: off|host (mac dinh, production: chi luong host doc tong)|on (thi nghiem: BPF doc theo ban ghi); auto = bi danh cua host")
 	flag.Parse()
 
 	if os.Geteuid() != 0 {
@@ -108,6 +117,12 @@ func run() error {
 	}
 	if *rotate <= 0 {
 		return fmt.Errorf("-rotate phai > 0")
+	}
+	if *rbPoll <= 0 {
+		return fmt.Errorf("-rb-poll phai > 0")
+	}
+	if *pmu != "auto" && *pmu != "host" && *pmu != "on" && *pmu != "off" {
+		return fmt.Errorf("-pmu phai la off, host, on (hoac auto = host), nhan %q", *pmu)
 	}
 	if len(cgroupPaths) == 0 && len(tgids) == 0 {
 		return fmt.Errorf("can it nhat mot -pid hoac mot -cgroup")
@@ -131,6 +146,8 @@ func run() error {
 			noProc:        *noProc,
 			noHost:        *noHost,
 			cgroupRefresh: *cgroupRefresh,
+			rbPoll:        *rbPoll,
+			pmu:           *pmu,
 		})
 	}
 
@@ -211,12 +228,17 @@ func run() error {
 		StealFallback: stealMode == stealModeFallback,
 		StealOff:      stealMode == stealModeOff,
 		SysEnterHook:  *sysEnterHook,
+		PMU:           *pmu,
 	})
 	if err != nil {
 		bpflog.Report(logPath, "khong nap duoc chuong trinh BPF cua collector", err)
 		return fmt.Errorf("nap BPF that bai, chi tiet o %s", logPath)
 	}
 	defer coll.Close()
+	if coll.PMUWarning() != "" {
+		fmt.Fprintf(os.Stderr, "CANH BAO: %s\n", coll.PMUWarning())
+	}
+	pmuState := coll.PMUMode()
 
 	f, err := os.Create(outPath)
 	if err != nil {
@@ -280,6 +302,8 @@ func run() error {
 		fmt.Sprintf("discard: %v", *discard),
 		fmt.Sprintf("sys_enter_hook: %s", *sysEnterHook),
 		fmt.Sprintf("zstd_level: %d", *zstdLevel),
+		fmt.Sprintf("pmu: %s", pmuState),
+		pmuEventsLine(pmuState),
 		fmt.Sprintf("start_mono_ns: %d", startMono),
 		fmt.Sprintf("start_wall: %s", startWall.Format(time.RFC3339Nano)),
 		fmt.Sprintf("duration: %s", durationText(*duration)),
@@ -366,7 +390,7 @@ func run() error {
 	var shortRecords int64
 	var sinceFlush int64
 
-	const readPoll = 10 * time.Millisecond
+	readPoll := *rbPoll
 	for {
 		coll.SetDeadline(time.Now().Add(readPoll))
 		err := coll.ReadInto(&rec)
@@ -537,13 +561,43 @@ func checkSteal(nrCPUs int, tscKHz uint64, allowNoStealclock, forceFallback bool
 		return stealModeFallback, status, evidence, nil
 	}
 
-	fmt.Fprintf(os.Stderr, "doi chieu vmw_steal_time voi rq->prev_steal_time trong %s...\n", stealcheck.SettleTime)
-	cmp, err := stealcheck.CompareStealPaths(nrCPUs, tscKHz)
-	if err != nil {
-		return "", "", evidence, fmt.Errorf("khong doi chieu duoc hai duong do steal: %w", err)
+	// Thu lai toi da 3 cua so 3s lien tiep truoc khi tu choi chay.
+	// Tieu chi (M6c-2, quyet dinh 8.4 cua R033): theo TONG moi CPU online,
+	// dat khi |tong_vmw - tong_rq| <= max(5 ms, 1% x tong_vmw). Ly do:
+	// kernel chi cong steal vao rq->prev_steal_time tai tick hoac khi thoat
+	// idle qua ranh gioi jiffy, nen mot CPU gan nhu ranh nhung thuc day lien
+	// tuc co the cham vai ms so voi dong ho vmw trong vai giay; tong tren
+	// moi CPU khong lech co he thong; phep kiem goc la G1 10 phut (0,08%).
+	var cmp stealcheck.Compare
+	for lan := 1; lan <= 3; lan++ {
+		fmt.Fprintf(os.Stderr, "doi chieu vmw_steal_time voi rq->prev_steal_time trong %s (lan %d)...\n", stealcheck.SettleTime, lan)
+		var cerr error
+		cmp, cerr = stealcheck.CompareStealPaths(nrCPUs, tscKHz)
+		if cerr != nil {
+			return "", "", evidence, fmt.Errorf("khong doi chieu duoc hai duong do steal: %w", cerr)
+		}
+		// Bang per-CPU day du vao log moi cua so, kem dong tong.
+		fmt.Fprintf(os.Stderr, "  %4s %14s %14s %12s %12s\n", "cpu", "vmw_ns", "rq_steal_ns", "lech_ns", "nguong_ns")
+		for _, c := range cmp.PerCPU {
+			fmt.Fprintf(os.Stderr, "  %4d %14d %14d %12d %12d\n", c.CPU, c.VmwNs, c.RqNs, c.DiffNs, c.LimitNs)
+		}
+		lechTong := cmp.SumDiffNs
+		if lechTong < 0 {
+			lechTong = -lechTong
+		}
+		fmt.Fprintf(os.Stderr, "  %4s %14d %14d %12d %12d\n", "TONG", cmp.SumVmwNs, cmp.SumRqNs, cmp.SumDiffNs, cmp.SumLimitNs)
+		ketQua := "LECH"
+		if cmp.OK() {
+			ketQua = "DAT"
+		}
+		fmt.Fprintf(os.Stderr, "STEALCHECK lan=%d tong_vmw_ns=%d tong_rq_ns=%d lech_ns=%d nguong_ns=%d cpu_lech_max=%d:%d ket_qua=%s\n",
+			lan, cmp.SumVmwNs, cmp.SumRqNs, lechTong, cmp.SumLimitNs, cmp.MaxCPU, cmp.MaxDiff, ketQua)
+		if cmp.OK() {
+			break
+		}
 	}
-	fmt.Fprintf(os.Stderr, "doi chieu xong: lech lon nhat %d ns tren %d CPU, nguong max(%d ns, %.0f%%)\n",
-		cmp.MaxDiff, len(cmp.PerCPU), stealcheck.ToleranceNs, stealcheck.ToleranceRel*100)
+	fmt.Fprintf(os.Stderr, "doi chieu xong: |tong_vmw - tong_rq| = %d ns, nguong max(%d ns, %.0f%% x tong_vmw); cpu lech max %d: %d ns\n",
+		cmp.SumDiffNs, stealcheck.SumToleranceNs, stealcheck.ToleranceRel*100, cmp.MaxCPU, cmp.MaxDiff)
 
 	if !cmp.OK() {
 		var b strings.Builder

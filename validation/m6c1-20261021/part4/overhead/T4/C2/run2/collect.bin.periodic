@@ -1,0 +1,42 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 630b8ed-dirty
+# record_size: 64
+# filter_tgids: khong co
+# filter_pid: 0
+# filter_cgroup: /sys/fs/cgroup/hids-m5-decoy (goc id=23647)
+# ringbuf_bytes: 67108864
+# rb_wake_bytes: 8388608
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: journalctl -k -b | Oct 21 10:18:34 uni-lms-app kernel: vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# pmu: host
+# pmu_events: instructions:u,cycles:u
+# start_mono_ns: 33151519910331
+# start_wall: 2026-10-21T19:31:01.82306778+07:00
+# duration: 3m0s
+# moi dong cach nhau 10s
+mono_ns,wall,dinh_ghi_delta,mat_delta,dinh_ghi_tong,mat_tong,irq_hard_delta_ns,irq_soft_delta_ns,irq_vec_delta_ns,soft_raw_delta_ns,irq_hard_tong_ns,irq_soft_tong_ns,irq_vec_tong_ns,soft_raw_tong_ns
+33151530849837,2026-10-21T19:31:01.834007703+07:00,0,0,0,0,13109,839940,11592050,845146,13109,839940,11592050,845146
+33161531288319,2026-10-21T19:31:11.834444752+07:00,0,0,0,0,1347703,24432971558,8040385227,24726000590,1360812,24433811498,8051977277,24726845736
+33171531217653,2026-10-21T19:31:21.834374158+07:00,0,0,0,0,5302920,23474696651,7989398671,23764235955,6663732,47908508149,16041375948,48491081691
+33181531240128,2026-10-21T19:31:31.834396676+07:00,0,0,0,0,4402891,23637125823,8125544946,23928266374,11066623,71545633972,24166920894,72419348065
+33191531202486,2026-10-21T19:31:41.834359065+07:00,0,0,0,0,2707204,23761691500,8164587490,24054423402,13773827,95307325472,32331508384,96473771467
+33201531259423,2026-10-21T19:31:51.834416118+07:00,0,0,0,0,3814213,23587622516,8167559087,23877044988,17588040,118894947988,40499067471,120350816455
+33211531326780,2026-10-21T19:32:01.834483424+07:00,0,0,0,0,4756985,23158484968,8240434635,23445083004,22345025,142053432956,48739502106,143795899459
+33211582323701,2026-10-21T19:32:01.885481192+07:00,0,0,0,0,6350,50913756,21084181,51588750,22351375,142104346712,48760586287,143847488209

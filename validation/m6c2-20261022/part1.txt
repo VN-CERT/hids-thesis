@@ -1,0 +1,16 @@
+=== 1a: ban ghi/giay moi o C1 (10 luot, tu collect-stats.txt), mat ===
+T1 C1 n=10 min=1184399.5 max=1419555.1 trung_vi=1261136.9 mat_tong=0
+T3 C1 n=10 min=429970.7 max=442398.2 trung_vi=435681.4 mat_tong=0
+T4 C1 n=10 min=404063.1 max=462231.8 trung_vi=417455.0 mat_tong=0
+T3-R25 C1 n=10 min=129839.3 max=133129.4 trung_vi=132093.7 mat_tong=0
+T3-R50 C1 n=10 min=283676.9 max=287653.7 trung_vi=285209.5 mat_tong=0
+T4-R25 C1 n=10 min=129143.1 max=130185.2 trung_vi=130004.9 mat_tong=0
+T4-R50 C1 n=10 min=250237.6 max=253855.7 trung_vi=253248.4 mat_tong=0
+=== 1a: C2 (collector loc cgroup decoy, khong phai tai) ===
+T1 C2 n=10 ban_ghi_moi_luot=[0] mat_tong=0
+T3 C2 n=10 ban_ghi_moi_luot=[0] mat_tong=0
+T4 C2 n=10 ban_ghi_moi_luot=[0] mat_tong=0
+T3-R25 C2 n=10 ban_ghi_moi_luot=[0] mat_tong=0
+T3-R50 C2 n=10 ban_ghi_moi_luot=[0] mat_tong=0
+T4-R25 C2 n=10 ban_ghi_moi_luot=[0] mat_tong=0
+T4-R50 C2 n=10 ban_ghi_moi_luot=[0] mat_tong=0

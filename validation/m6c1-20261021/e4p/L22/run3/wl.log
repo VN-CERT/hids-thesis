@@ -1,0 +1,13 @@
+1571714
+wl: tu kiem mem 1/5 mono=8528 us thread_cpu=8528 us
+wl: tu kiem mem 2/5 mono=8560 us thread_cpu=8561 us
+wl: tu kiem mem 3/5 mono=8544 us thread_cpu=8545 us
+wl: tu kiem mem 4/5 mono=9032 us thread_cpu=9033 us
+wl: tu kiem mem 5/5 mono=8540 us thread_cpu=8541 us
+wl: dieu chinh mem_steps=604805 (trung binh 8640 us)
+wl: tu kiem mem 1/5 mono=9705 us thread_cpu=9706 us
+wl: tu kiem mem 2/5 mono=9629 us thread_cpu=9629 us
+wl: tu kiem mem 3/5 mono=9735 us thread_cpu=9737 us
+wl: tu kiem mem 4/5 mono=9961 us thread_cpu=9962 us
+wl: tu kiem mem 5/5 mono=9761 us thread_cpu=9762 us
+wl: mem_steps=604805

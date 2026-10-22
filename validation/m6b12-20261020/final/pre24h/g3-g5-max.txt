@@ -1,0 +1,6 @@
+S1-ketqua.txt: g5_max_ns=0
+S2-ketqua.txt: g5_max_ns=497
+S3-ketqua.txt: g5_max_ns=499
+S4-ketqua.txt: g5_max_ns=0
+S5-ketqua.txt: g5_max_ns=6298
+FAIL S5-ketqua.txt max=6298 (can <=500)

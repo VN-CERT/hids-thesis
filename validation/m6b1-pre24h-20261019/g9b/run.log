@@ -1,0 +1,13 @@
+stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+stealclock_evidence: journalctl
+doi chieu vmw_steal_time voi rq->prev_steal_time trong 3s...
+doi chieu xong: lech lon nhat 194387 ns tren 24 CPU, nguong max(2000000 ns, 1%)
+mo segment 202610191014 -> validation/m6b1-pre24h-20261019/g9b/uni-lms-app-202610191014.bin
+longrun datadir=validation/m6b1-pre24h-20261019/g9b rotate=2m0s min_free_gb=50
+loc pid: khong co | loc cgroup: /sys/fs/cgroup/system.slice/docker-8c3714b54a78a41abae2560c64289c1ec4f973499a2a4cba0a0ac5ea2d5aa9f3.scope (goc id=6373) | /sys/fs/cgroup/system.slice/docker-7421d7ae79685498cdaf7b24ea4426cccb9531070b12a3265fdf9d1738fdb592.scope (goc id=6215) | ring buffer: 64 MiB
+READY
+mo segment 202610191016 -> validation/m6b1-pre24h-20261019/g9b/uni-lms-app-202610191016.bin
+mo segment 202610191018 -> validation/m6b1-pre24h-20261019/g9b/uni-lms-app-202610191018.bin
+mo segment 202610191020 -> validation/m6b1-pre24h-20261019/g9b/uni-lms-app-202610191020.bin
+mo segment 202610191022 -> validation/m6b1-pre24h-20261019/g9b/uni-lms-app-202610191022.bin
+ket thuc longrun end_mono_ns=872680998455108 disk_skipped=0

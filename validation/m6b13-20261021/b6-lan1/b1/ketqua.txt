@@ -1,0 +1,3 @@
+wl pid=528168 tid=528168
+thu tu: collector TRUOC (READY), bpftrace toi gian SAU
+bpftool_hids_count_sau=0

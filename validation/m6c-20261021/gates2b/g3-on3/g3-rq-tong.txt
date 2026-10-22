@@ -1,0 +1,24 @@
+--- S2: validation/m6c-20261021/gates2b/g3-on3/g3/S2-ketqua.txt ---
+@rq_sau_wakeup_ns: 19594237
+@rq_tong_ns: 19594237
+@so_lan: 501
+@so_lan_preempt: 0
+rq_sau_preempt       —             0               bpftrace @rq_sau_preempt_ns (so_lan_preempt: 0)
+rq                   15495564        19594237        bpftrace TONG @rq_sau_wakeup_ns + @rq_sau_preempt_ns
+LECH_RQ_TONG_S2: collector=15495564 bpftrace_tong=19594237 lech=20.92% (tieu chi: <=5%)
+--- S3: validation/m6c-20261021/gates2b/g3-on3/g3/S3-ketqua.txt ---
+@rq_sau_wakeup_ns: 12603994
+@rq_tong_ns: 12603994
+@so_lan: 501
+@so_lan_preempt: 0
+rq_sau_preempt       —             0               bpftrace @rq_sau_preempt_ns (so_lan_preempt: 0)
+rq                   9778584         12603994        bpftrace TONG @rq_sau_wakeup_ns + @rq_sau_preempt_ns
+LECH_RQ_TONG_S3: collector=9778584 bpftrace_tong=12603994 lech=22.42% (tieu chi: <=5%)
+--- S5: validation/m6c-20261021/gates2b/g3-on3/g3/S5-ketqua.txt ---
+@rq_sau_wakeup_ns: 11381326
+@rq_tong_ns: 11381326
+@so_lan: 601
+@so_lan_preempt: 0
+rq_sau_preempt       —             0               bpftrace @rq_sau_preempt_ns (so_lan_preempt: 0)
+rq                   6735181         11381326        bpftrace TONG @rq_sau_wakeup_ns + @rq_sau_preempt_ns
+LECH_RQ_TONG_S5: collector=6735181 bpftrace_tong=11381326 lech=40.82% (tieu chi: <=5%)

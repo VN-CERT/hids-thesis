@@ -1,0 +1,4 @@
+=== E4p L=22 run=3 ===
+so ban ghi theo syscall (khong FIRST): {0: 4, 257: 1, 5: 1, 3: 1, 9: 1, 230: 500, 110: 500, 11: 1}; chon khoang dot nr=230
+khoang dot (nr=230, khong FIRST): 0, co PMU: 0
+du lieu: out/m6c-e4p-L22-3-141947.bin

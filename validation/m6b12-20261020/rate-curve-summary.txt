@@ -1,0 +1,17 @@
+== rate 1000 status rows:
+2026-10-20T17:26:22.431594664Z rps=1589.82 cpu=1.651
+2026-10-20T17:27:23.43158668Z rps=1511.80 cpu=2.508
+== rate 10000 status rows:
+2026-10-20T17:28:57.195025812Z rps=10763.44 cpu=3.201
+2026-10-20T17:29:58.195025105Z rps=9895.69 cpu=5.500
+== rate 100000 status rows:
+2026-10-20T17:31:29.875315563Z rps=100589.76 cpu=13.211
+2026-10-20T17:32:29.875316624Z rps=97227.16 cpu=26.031
+== rate 500000 status rows:
+2026-10-20T17:34:04.649307047Z rps=501268.86 cpu=71.568
+2026-10-20T17:35:04.649308934Z rps=474715.45 cpu=140.547
+--- CPU % mot loi tinh tu delta cpu_seconds giua 2 dong status (~60s, trang thai on dinh) ---
+rate_target=1000: delta_cpu=0.857s cpu_%=1.43% rps_dong_cuoi=1511.80 kernel_drops_delta_tong=0
+rate_target=10000: delta_cpu=2.299s cpu_%=3.83% rps_dong_cuoi=9895.69 kernel_drops_delta_tong=0
+rate_target=100000: delta_cpu=12.820s cpu_%=21.37% rps_dong_cuoi=97227.16 kernel_drops_delta_tong=0
+rate_target=500000: delta_cpu=68.979s cpu_%=114.97% rps_dong_cuoi=474715.45 kernel_drops_delta_tong=0

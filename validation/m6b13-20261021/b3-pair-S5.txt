@@ -1,0 +1,20 @@
+su kien: W=608 S=608 P=0
+bpftrace tong hop @rq_sau_wakeup_ns = 17526174
+bpftrace tong hop @so_lan = 608
+bpftrace tong hop @so_lan_preempt = 0
+bpftrace tong hop @rq_tong_ns = 17526174
+cap (W,S) ghep duoc: 608; wakeup thua khi dang co W cho: 0; S khong co W cho: 0; W con cho den cuoi: 0
+ban ghi collector cua tid 521090: tong 1505
+cap khong roi vao khoang collector nao (S sau ban ghi cuoi): 0
+--- trong cua so (29349216534043, 29350143538965] ---
+tong cho sau wakeup bpftrace (cap co S trong cua so): 17526174 ns (608 cap)
+tong rq_ns collector (ban ghi trong cua so): 17811390 ns (1503 ban ghi)
+tong rq_ns collector (tat ca ban ghi cua tid): 17811390 ns
+tong cho bpftrace (tat ca cap): 17526174 ns (608 cap)
+--- phan loc: khoang chua dung 1 cap, preempt = 0: 8 khoang ---
+d = rq_ns - (S-W) tat ca: n=8 mean=343.0 ns median=205.0 ns p90=1431 ns max=1431 ns min=145 ns sum=2744 ns
+d wakeup cung CPU (cpu_probe == target_cpu): n=8 mean=343.0 ns median=205.0 ns p90=1431 ns max=1431 ns min=145 ns sum=2744 ns
+d wakeup khac CPU: n=0
+d ban ghi MIGRATED: n=0
+d ban ghi khong MIGRATED: n=8 mean=343.0 ns median=205.0 ns p90=1431 ns max=1431 ns min=145 ns sum=2744 ns
+khoang trong cua so co >1 cap: 300; co preempt: 0

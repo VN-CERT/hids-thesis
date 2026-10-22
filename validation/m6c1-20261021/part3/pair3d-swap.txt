@@ -1,0 +1,88 @@
+--- swap-on S2 tid=863728 window=(32134234728409,32136935984726] ---
+su kien: W=502 S=502 P=0
+bpftrace tong hop @rq_sau_wakeup_ns = 30830795
+bpftrace tong hop @so_lan = 502
+bpftrace tong hop @so_lan_preempt = 0
+bpftrace tong hop @rq_tong_ns = 30830795
+cap (W,S) ghep duoc: 502; wakeup thua khi dang co W cho: 0; S khong co W cho: 0; W con cho den cuoi: 0
+ban ghi collector cua tid 863728: tong 1003
+cap khong roi vao khoang collector nao (S sau ban ghi cuoi): 0
+--- trong cua so (32134234728409, 32136935984726] ---
+tong cho sau wakeup bpftrace (cap co S trong cua so): 30720606 ns (501 cap)
+tong rq_ns collector (ban ghi trong cua so): 30357561 ns (1001 ban ghi)
+tong rq_ns collector (tat ca ban ghi cua tid): 30357561 ns
+tong cho bpftrace (tat ca cap): 30830795 ns (502 cap)
+--- phan loc: khoang chua dung 1 cap, preempt = 0: 501 khoang ---
+d = rq_ns - (S-W) tat ca: n=501 mean=-724.6 ns median=-451.0 ns p90=429 ns max=39106 ns min=-67756 ns sum=-363045 ns
+d wakeup cung CPU (cpu_probe == target_cpu): n=501 mean=-724.6 ns median=-451.0 ns p90=429 ns max=39106 ns min=-67756 ns sum=-363045 ns
+d wakeup khac CPU: n=0
+d ban ghi MIGRATED: n=0
+d ban ghi khong MIGRATED: n=501 mean=-724.6 ns median=-451.0 ns p90=429 ns max=39106 ns min=-67756 ns sum=-363045 ns
+khoang trong cua so co >1 cap: 0; co preempt: 0
+swap-on S2	n=501	median_us=0.451	p10_us=-0.429	p90_us=1.254	lech_tong_pct=+1.20
+--- swap-on S5 tid=865003 window=(32142576835150,32143057077931] ---
+su kien: W=602 S=602 P=0
+bpftrace tong hop @rq_sau_wakeup_ns = 16711991
+bpftrace tong hop @so_lan = 602
+bpftrace tong hop @so_lan_preempt = 0
+bpftrace tong hop @rq_tong_ns = 16711991
+cap (W,S) ghep duoc: 602; wakeup thua khi dang co W cho: 0; S khong co W cho: 0; W con cho den cuoi: 0
+ban ghi collector cua tid 865003: tong 1505
+cap khong roi vao khoang collector nao (S sau ban ghi cuoi): 0
+--- trong cua so (32142576835150, 32143057077931] ---
+tong cho sau wakeup bpftrace (cap co S trong cua so): 16619262 ns (601 cap)
+tong rq_ns collector (ban ghi trong cua so): 16286249 ns (1503 ban ghi)
+tong rq_ns collector (tat ca ban ghi cua tid): 16286249 ns
+tong cho bpftrace (tat ca cap): 16711991 ns (602 cap)
+--- phan loc: khoang chua dung 1 cap, preempt = 0: 1 khoang ---
+d = rq_ns - (S-W) tat ca: n=1 mean=41.0 ns median=41.0 ns p90=41 ns max=41 ns min=41 ns sum=41 ns
+d wakeup cung CPU (cpu_probe == target_cpu): n=1 mean=41.0 ns median=41.0 ns p90=41 ns max=41 ns min=41 ns sum=41 ns
+d wakeup khac CPU: n=0
+d ban ghi MIGRATED: n=0
+d ban ghi khong MIGRATED: n=1 mean=41.0 ns median=41.0 ns p90=41 ns max=41 ns min=41 ns sum=41 ns
+khoang trong cua so co >1 cap: 300; co preempt: 0
+swap-on S5	n=1	median_us=-0.041	p10_us=-0.041	p90_us=-0.041	lech_tong_pct=-0.13
+--- swap-off S2 tid=865885 window=(32148676949758,32151355272645] ---
+su kien: W=502 S=502 P=0
+bpftrace tong hop @rq_sau_wakeup_ns = 28731122
+bpftrace tong hop @so_lan = 502
+bpftrace tong hop @so_lan_preempt = 0
+bpftrace tong hop @rq_tong_ns = 28731122
+cap (W,S) ghep duoc: 502; wakeup thua khi dang co W cho: 0; S khong co W cho: 0; W con cho den cuoi: 0
+ban ghi collector cua tid 865885: tong 1003
+cap khong roi vao khoang collector nao (S sau ban ghi cuoi): 0
+--- trong cua so (32148676949758, 32151355272645] ---
+tong cho sau wakeup bpftrace (cap co S trong cua so): 28679811 ns (501 cap)
+tong rq_ns collector (ban ghi trong cua so): 28773267 ns (1001 ban ghi)
+tong rq_ns collector (tat ca ban ghi cua tid): 28773267 ns
+tong cho bpftrace (tat ca cap): 28731122 ns (502 cap)
+--- phan loc: khoang chua dung 1 cap, preempt = 0: 501 khoang ---
+d = rq_ns - (S-W) tat ca: n=501 mean=186.5 ns median=-382.0 ns p90=561 ns max=144097 ns min=-13346 ns sum=93456 ns
+d wakeup cung CPU (cpu_probe == target_cpu): n=501 mean=186.5 ns median=-382.0 ns p90=561 ns max=144097 ns min=-13346 ns sum=93456 ns
+d wakeup khac CPU: n=0
+d ban ghi MIGRATED: n=0
+d ban ghi khong MIGRATED: n=501 mean=186.5 ns median=-382.0 ns p90=561 ns max=144097 ns min=-13346 ns sum=93456 ns
+khoang trong cua so co >1 cap: 0; co preempt: 0
+swap-off S2	n=501	median_us=0.382	p10_us=-0.561	p90_us=1.059	lech_tong_pct=-0.32
+--- swap-off S5 tid=867118 window=(32156874593503,32157348733223] ---
+su kien: W=607 S=607 P=0
+bpftrace tong hop @rq_sau_wakeup_ns = 15070072
+bpftrace tong hop @so_lan = 607
+bpftrace tong hop @so_lan_preempt = 0
+bpftrace tong hop @rq_tong_ns = 15070072
+cap (W,S) ghep duoc: 607; wakeup thua khi dang co W cho: 0; S khong co W cho: 0; W con cho den cuoi: 0
+ban ghi collector cua tid 867118: tong 1505
+cap khong roi vao khoang collector nao (S sau ban ghi cuoi): 0
+--- trong cua so (32156874593503, 32157348733223] ---
+tong cho sau wakeup bpftrace (cap co S trong cua so): 15035371 ns (606 cap)
+tong rq_ns collector (ban ghi trong cua so): 14713594 ns (1503 ban ghi)
+tong rq_ns collector (tat ca ban ghi cua tid): 14713594 ns
+tong cho bpftrace (tat ca cap): 15070072 ns (607 cap)
+--- phan loc: khoang chua dung 1 cap, preempt = 0: 6 khoang ---
+d = rq_ns - (S-W) tat ca: n=6 mean=-250.8 ns median=-162.5 ns p90=141 ns max=141 ns min=-1018 ns sum=-1505 ns
+d wakeup cung CPU (cpu_probe == target_cpu): n=6 mean=-250.8 ns median=-162.5 ns p90=141 ns max=141 ns min=-1018 ns sum=-1505 ns
+d wakeup khac CPU: n=0
+d ban ghi MIGRATED: n=0
+d ban ghi khong MIGRATED: n=6 mean=-250.8 ns median=-162.5 ns p90=141 ns max=141 ns min=-1018 ns sum=-1505 ns
+khoang trong cua so co >1 cap: 300; co preempt: 0
+swap-off S5	n=6	median_us=0.163	p10_us=-0.141	p90_us=0.222	lech_tong_pct=+1.98

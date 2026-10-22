@@ -1,0 +1,39 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 294b872-dirty
+# record_size: 64
+# filter_tgids: 334797
+# filter_pid: 1
+# filter_cgroup: khong co
+# ringbuf_bytes: 67108864
+# rb_wake_bytes: 8388608
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: dmesg | [    0.000000] vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# pmu: on
+# pmu_events: instructions:u,cycles:u
+# start_mono_ns: 7908894719015
+# start_wall: 2026-10-21T12:30:19.19787605+07:00
+# duration: 1m0s
+# moi dong cach nhau 10s
+mono_ns,wall,dinh_ghi_delta,mat_delta,dinh_ghi_tong,mat_tong,irq_hard_delta_ns,irq_soft_delta_ns,irq_vec_delta_ns,soft_raw_delta_ns,irq_hard_tong_ns,irq_soft_tong_ns,irq_vec_tong_ns,soft_raw_tong_ns
+7908906074619,2026-10-21T12:30:19.209232306+07:00,0,0,0,0,0,396579,7627354,397456,0,396579,7627354,397456
+7918909540699,2026-10-21T12:30:29.212697836+07:00,2087158,0,2087158,0,874404,97856648,461922256,98173197,874404,98253227,469549610,98570653
+7928915329699,2026-10-21T12:30:39.21848715+07:00,2748413,0,4835571,0,862013,88281323,429117514,88623959,1736417,186534550,898667124,187194612
+7938915612566,2026-10-21T12:30:49.218769686+07:00,3047967,0,7883538,0,656687,84383138,433911055,84600300,2393104,270917688,1332578179,271794912
+7945863982641,2026-10-21T12:30:56.167139126+07:00,2116463,0,10000001,0,546088,58218925,303518197,58438298,2939192,329136613,1636096376,330233210

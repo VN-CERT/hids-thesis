@@ -1,0 +1,32 @@
+stress-ng: info:  [491671] setting to a 5 mins, 0 secs run per stressor
+stress-ng: info:  [491671] dispatching hogs: 22 stream
+stress-ng: info:  [491679] stream: stressor loosely based on a variant of the STREAM benchmark code
+stress-ng: info:  [491679] stream: do NOT submit any of these results to the STREAM benchmark results
+stress-ng: info:  [491679] stream: Using cache size of 43008K
+stress-ng: info:  [491694] stream: memory rate: 3081.94 MB read/sec, 2054.63 MB write/sec, 269.30 double precision Mflop/sec (instance 15)
+stress-ng: info:  [491691] stream: memory rate: 2777.00 MB read/sec, 1851.33 MB write/sec, 242.66 double precision Mflop/sec (instance 12)
+stress-ng: info:  [491702] stream: memory rate: 2759.24 MB read/sec, 1839.49 MB write/sec, 241.11 double precision Mflop/sec (instance 21)
+stress-ng: info:  [491698] stream: memory rate: 2798.32 MB read/sec, 1865.55 MB write/sec, 244.52 double precision Mflop/sec (instance 19)
+stress-ng: info:  [491700] stream: memory rate: 2860.18 MB read/sec, 1906.79 MB write/sec, 249.93 double precision Mflop/sec (instance 20)
+stress-ng: info:  [491690] stream: memory rate: 2733.52 MB read/sec, 1822.35 MB write/sec, 238.86 double precision Mflop/sec (instance 11)
+stress-ng: info:  [491696] stream: memory rate: 3276.91 MB read/sec, 2184.61 MB write/sec, 286.34 double precision Mflop/sec (instance 17)
+stress-ng: info:  [491681] stream: memory rate: 2783.72 MB read/sec, 1855.81 MB write/sec, 243.24 double precision Mflop/sec (instance 2)
+stress-ng: info:  [491695] stream: memory rate: 2834.24 MB read/sec, 1889.49 MB write/sec, 247.66 double precision Mflop/sec (instance 16)
+stress-ng: info:  [491684] stream: memory rate: 2712.53 MB read/sec, 1808.35 MB write/sec, 237.02 double precision Mflop/sec (instance 5)
+stress-ng: info:  [491688] stream: memory rate: 2609.03 MB read/sec, 1739.35 MB write/sec, 227.98 double precision Mflop/sec (instance 9)
+stress-ng: info:  [491697] stream: memory rate: 2846.36 MB read/sec, 1897.57 MB write/sec, 248.72 double precision Mflop/sec (instance 18)
+stress-ng: info:  [491679] stream: memory rate: 2734.93 MB read/sec, 1823.29 MB write/sec, 238.98 double precision Mflop/sec (instance 0)
+stress-ng: info:  [491686] stream: memory rate: 2753.32 MB read/sec, 1835.55 MB write/sec, 240.59 double precision Mflop/sec (instance 7)
+stress-ng: info:  [491693] stream: memory rate: 2810.09 MB read/sec, 1873.39 MB write/sec, 245.55 double precision Mflop/sec (instance 14)
+stress-ng: info:  [491683] stream: memory rate: 2843.37 MB read/sec, 1895.58 MB write/sec, 248.46 double precision Mflop/sec (instance 4)
+stress-ng: info:  [491685] stream: memory rate: 2745.92 MB read/sec, 1830.61 MB write/sec, 239.94 double precision Mflop/sec (instance 6)
+stress-ng: info:  [491689] stream: memory rate: 2803.17 MB read/sec, 1868.78 MB write/sec, 244.94 double precision Mflop/sec (instance 10)
+stress-ng: info:  [491692] stream: memory rate: 3026.67 MB read/sec, 2017.78 MB write/sec, 264.47 double precision Mflop/sec (instance 13)
+stress-ng: info:  [491687] stream: memory rate: 2886.92 MB read/sec, 1924.61 MB write/sec, 252.26 double precision Mflop/sec (instance 8)
+stress-ng: info:  [491682] stream: memory rate: 2808.33 MB read/sec, 1872.22 MB write/sec, 245.40 double precision Mflop/sec (instance 3)
+stress-ng: info:  [491680] stream: memory rate: 2854.63 MB read/sec, 1903.08 MB write/sec, 249.44 double precision Mflop/sec (instance 1)
+stress-ng: info:  [491671] skipped: 0
+stress-ng: info:  [491671] passed: 22: stream (22)
+stress-ng: info:  [491671] failed: 0
+stress-ng: info:  [491671] metrics untrustworthy: 0
+stress-ng: info:  [491671] successful run completed in 6.57 secs

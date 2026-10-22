@@ -1,0 +1,27 @@
+=== validation/m6b1-20261019/g9/uni-lms-app-202610190954.bin (tong 168223573 ban ghi) ===
+   cpu    ban_ghi  seq_min    seq_max  lo_hong  seq_thieu   seq_cuoi  mat
+    15  168223573        1  168223573        1     132318  168355891    0
+  TONG                                       1     132318               0
+
+=== validation/m6b1-20261019/g9/uni-lms-app-202610190956.bin (tong 31776428 ban ghi) ===
+   cpu   ban_ghi    seq_min    seq_max  lo_hong  seq_thieu   seq_cuoi  mat
+    15  31776428  168223574  200000001        1  168223573  200000001    0
+  TONG                                        1  168223573               0
+
+=== validation/m6b1-20261019/g9/uni-lms-app-202610190958.bin (tong 0 ban ghi) ===
+   cpu  ban_ghi  seq_min  seq_max  lo_hong  seq_thieu   seq_cuoi  mat
+    15        0        -        -        1  200000001  200000001    0
+  TONG                                   1  200000001               0
+
+=== validation/m6b1-20261019/g9/uni-lms-app-202610191000.bin (tong 0 ban ghi) ===
+   cpu  ban_ghi  seq_min  seq_max  lo_hong  seq_thieu   seq_cuoi  mat
+    15        0        -        -        1  200000001  200000001    0
+  TONG                                   1  200000001               0
+
+ranh gioi file lien ke (seq theo CPU)
+   cpu                                                file_truoc                                                  file_sau  seq_max_truoc  seq_min_sau  lo_hong  seq_thieu
+    15  validation/m6b1-20261019/g9/uni-lms-app-202610190954.bin  validation/m6b1-20261019/g9/uni-lms-app-202610190956.bin      168223573    168223574        0          0
+    15  validation/m6b1-20261019/g9/uni-lms-app-202610190956.bin  validation/m6b1-20261019/g9/uni-lms-app-202610190958.bin      200000001            -        0          0
+  TONG                                                                                                                                                        0          0
+
+tong lo hong ranh gioi: 0 | tong seq thieu ranh gioi: 0

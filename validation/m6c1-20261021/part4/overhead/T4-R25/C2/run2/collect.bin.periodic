@@ -1,0 +1,42 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 630b8ed-dirty
+# record_size: 64
+# filter_tgids: khong co
+# filter_pid: 0
+# filter_cgroup: /sys/fs/cgroup/hids-m5-decoy (goc id=23647)
+# ringbuf_bytes: 67108864
+# rb_wake_bytes: 8388608
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: journalctl -k -b | Oct 21 10:18:34 uni-lms-app kernel: vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# pmu: host
+# pmu_events: instructions:u,cycles:u
+# start_mono_ns: 42789118948741
+# start_wall: 2026-10-21T22:11:39.422105799+07:00
+# duration: 3m0s
+# moi dong cach nhau 10s
+mono_ns,wall,dinh_ghi_delta,mat_delta,dinh_ghi_tong,mat_tong,irq_hard_delta_ns,irq_soft_delta_ns,irq_vec_delta_ns,soft_raw_delta_ns,irq_hard_tong_ns,irq_soft_tong_ns,irq_vec_tong_ns,soft_raw_tong_ns
+42789128273407,2026-10-21T22:11:39.431431227+07:00,0,0,0,0,11094,525416,7302394,532733,11094,525416,7302394,532733
+42799128216779,2026-10-21T22:11:49.431373342+07:00,0,0,0,0,145679,9026450756,5933357987,9157952595,156773,9026976172,5940660381,9158485328
+42809128252628,2026-10-21T22:11:59.431410259+07:00,0,0,0,0,451312,9208060166,5996710638,9338488084,608085,18235036338,11937371019,18496973412
+42819128432232,2026-10-21T22:12:09.431588777+07:00,0,0,0,0,369924,9270185942,6025953308,9402439641,978009,27505222280,17963324327,27899413053
+42829128276837,2026-10-21T22:12:19.431434524+07:00,0,0,0,0,1182095,9258184990,6018144182,9391396688,2160104,36763407270,23981468509,37290809741
+42839128194859,2026-10-21T22:12:29.431351825+07:00,0,0,0,0,104607,9232646788,6059876948,9365574873,2264711,45996054058,30041345457,46656384614
+42849128288652,2026-10-21T22:12:39.431445654+07:00,0,0,0,0,467842,9275353223,6136368694,9410083973,2732553,55271407281,36177714151,56066468587
+42849179745530,2026-10-21T22:12:39.482902588+07:00,0,0,0,0,8124,23220256,20157653,23646270,2740677,55294627537,36197871804,56090114857

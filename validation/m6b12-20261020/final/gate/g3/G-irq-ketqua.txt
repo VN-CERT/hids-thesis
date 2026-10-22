@@ -1,0 +1,54 @@
+=== G-irq: 30 giay may ranh ===
+--- hardirqs-bpfcc (nguyen van) ---
+Tracing hard irq event time... Hit Ctrl-C to end.
+
+HARDIRQ                    TOTAL_usecs
+ens33-rxtx-2                         8
+vmw_vmci                            73
+ens33-rxtx-6                       106
+ens33-rxtx-5                       111
+ens33-rxtx-0                       591
+vmw_pvscsi                         601
+ens33-rxtx-7                       644
+ens33-rxtx-4                       799
+--- softirqs-bpfcc (nguyen van) ---
+Tracing soft irq event time... Hit Ctrl-C to end.
+
+SOFTIRQ          TOTAL_usecs
+block                   2267
+net_rx                 32585
+timer                  33428
+rcu                    78315
+sched                 186554
+--- log collector (cuoi) ---
+  hids_irq_irq_handler_exit                0
+  hids_irq_irq_work_entry                  0
+  hids_irq_irq_work_exit                   0
+  hids_irq_local_timer_entry               0
+  hids_irq_local_timer_exit                0
+  hids_irq_reschedule_entry                0
+  hids_irq_reschedule_exit                 0
+  hids_irq_softirq_entry                   0
+  hids_irq_softirq_exit                    0
+  hids_irq_spurious_apic_entry             0
+  hids_irq_spurious_apic_exit              0
+  hids_irq_thermal_apic_entry              0
+  hids_irq_thermal_apic_exit               0
+  hids_irq_threshold_apic_entry            0
+  hids_irq_threshold_apic_exit             0
+  hids_irq_x86_platform_ipi_entry          0
+  hids_irq_x86_platform_ipi_exit           0
+  hids_sched_switch                        0
+  hids_sched_wakeup                        0
+  hids_sched_wakeup_new                    0
+  hids_sys_enter                           0
+  hids_sys_enter_fentry                    0
+thoi gian chay: 30.102 s | CPU collector: user 0.334 s, sys 0.379 s (getrusage RUSAGE_SELF)
+kich thuoc file: 1101 byte
+du lieu: out/g3-girq-010223.bin | thong ke: out/g3-girq-010223.bin.stats | theo doi: out/g3-girq-010223.bin.periodic
+--- bang doi chieu irq ---
+loai                 collector       tham_chieu      nguon
+hard (ns)            3047302         2933 (us)       hardirqs-bpfcc tong cot usecs
+soft_raw (ns)        349527241       333149 (us)     softirqs-bpfcc tong cot usecs
+soft_excl            348647756       —             collector (bcc khong tach)
+vector               1230672648      —             collector only

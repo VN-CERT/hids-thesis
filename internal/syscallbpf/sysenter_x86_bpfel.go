@@ -29,6 +29,7 @@ type sysEnterHidsIrqstate struct {
 	OddNs          uint64
 	OddCnt         uint32
 	Pad            uint32
+	Gen            uint64
 }
 
 type sysEnterHidsTstate struct {
@@ -40,9 +41,13 @@ type sysEnterHidsTstate struct {
 	AccRq        uint64
 	AccVol       uint64
 	AccStealOff  uint64
+	AccInst      uint64
+	AccCyc       uint64
 	OnTs         uint64
 	OnStealRaw   uint64
 	OnIrqTotal   uint64
+	OnInst       uint64
+	OnCyc        uint64
 	OnCpu        uint32
 	_            [4]byte
 	OffTs        uint64
@@ -55,8 +60,9 @@ type sysEnterHidsTstate struct {
 	OnActive     uint8
 	Seen         uint8
 	GapPending   uint8
+	PmuBad       uint8
+	_            [1]byte
 	PendingFlags uint16
-	_            [2]byte
 }
 
 // Names of all BPF objects in the ELF.
@@ -68,6 +74,8 @@ const (
 	sysEnterMapHidsEvents                      = "hids_events"
 	sysEnterMapHidsIrq                         = "hids_irq"
 	sysEnterMapHidsPids                        = "hids_pids"
+	sysEnterMapHidsPmuCyc                      = "hids_pmu_cyc"
+	sysEnterMapHidsPmuInst                     = "hids_pmu_inst"
 	sysEnterMapHidsSeq                         = "hids_seq"
 	sysEnterMapHidsTaskState                   = "hids_task_state"
 	sysEnterProgHidsIrqCallFunctionEntry       = "hids_irq_call_function_entry"
@@ -103,6 +111,7 @@ const (
 	sysEnterProgHidsSysEnterFentry             = "hids_sys_enter_fentry"
 	sysEnterVarHidsFilterCgroup                = "hids_filter_cgroup"
 	sysEnterVarHidsFilterPid                   = "hids_filter_pid"
+	sysEnterVarHidsPmuOn                       = "hids_pmu_on"
 	sysEnterVarHidsRbWakeBytes                 = "hids_rb_wake_bytes"
 	sysEnterVarHidsSelfTgid                    = "hids_self_tgid"
 	sysEnterVarHidsStealFallback               = "hids_steal_fallback"
@@ -194,6 +203,8 @@ type sysEnterMapSpecs struct {
 	HidsEvents    *ebpf.MapSpec `ebpf:"hids_events"`
 	HidsIrq       *ebpf.MapSpec `ebpf:"hids_irq"`
 	HidsPids      *ebpf.MapSpec `ebpf:"hids_pids"`
+	HidsPmuCyc    *ebpf.MapSpec `ebpf:"hids_pmu_cyc"`
+	HidsPmuInst   *ebpf.MapSpec `ebpf:"hids_pmu_inst"`
 	HidsSeq       *ebpf.MapSpec `ebpf:"hids_seq"`
 	HidsTaskState *ebpf.MapSpec `ebpf:"hids_task_state"`
 }
@@ -204,6 +215,7 @@ type sysEnterMapSpecs struct {
 type sysEnterVariableSpecs struct {
 	HidsFilterCgroup  *ebpf.VariableSpec `ebpf:"hids_filter_cgroup"`
 	HidsFilterPid     *ebpf.VariableSpec `ebpf:"hids_filter_pid"`
+	HidsPmuOn         *ebpf.VariableSpec `ebpf:"hids_pmu_on"`
 	HidsRbWakeBytes   *ebpf.VariableSpec `ebpf:"hids_rb_wake_bytes"`
 	HidsSelfTgid      *ebpf.VariableSpec `ebpf:"hids_self_tgid"`
 	HidsStealFallback *ebpf.VariableSpec `ebpf:"hids_steal_fallback"`
@@ -236,6 +248,8 @@ type sysEnterMaps struct {
 	HidsEvents    *ebpf.Map `ebpf:"hids_events"`
 	HidsIrq       *ebpf.Map `ebpf:"hids_irq"`
 	HidsPids      *ebpf.Map `ebpf:"hids_pids"`
+	HidsPmuCyc    *ebpf.Map `ebpf:"hids_pmu_cyc"`
+	HidsPmuInst   *ebpf.Map `ebpf:"hids_pmu_inst"`
 	HidsSeq       *ebpf.Map `ebpf:"hids_seq"`
 	HidsTaskState *ebpf.Map `ebpf:"hids_task_state"`
 }
@@ -247,6 +261,8 @@ func (m *sysEnterMaps) Close() error {
 		m.HidsEvents,
 		m.HidsIrq,
 		m.HidsPids,
+		m.HidsPmuCyc,
+		m.HidsPmuInst,
 		m.HidsSeq,
 		m.HidsTaskState,
 	)
@@ -258,6 +274,7 @@ func (m *sysEnterMaps) Close() error {
 type sysEnterVariables struct {
 	HidsFilterCgroup  *ebpf.Variable `ebpf:"hids_filter_cgroup"`
 	HidsFilterPid     *ebpf.Variable `ebpf:"hids_filter_pid"`
+	HidsPmuOn         *ebpf.Variable `ebpf:"hids_pmu_on"`
 	HidsRbWakeBytes   *ebpf.Variable `ebpf:"hids_rb_wake_bytes"`
 	HidsSelfTgid      *ebpf.Variable `ebpf:"hids_self_tgid"`
 	HidsStealFallback *ebpf.Variable `ebpf:"hids_steal_fallback"`

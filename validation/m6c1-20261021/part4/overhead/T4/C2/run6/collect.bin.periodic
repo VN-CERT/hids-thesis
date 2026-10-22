@@ -1,0 +1,42 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 630b8ed-dirty
+# record_size: 64
+# filter_tgids: khong co
+# filter_pid: 0
+# filter_cgroup: /sys/fs/cgroup/hids-m5-decoy (goc id=23647)
+# ringbuf_bytes: 67108864
+# rb_wake_bytes: 8388608
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: journalctl -k -b | Oct 21 10:18:34 uni-lms-app kernel: vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# pmu: host
+# pmu_events: instructions:u,cycles:u
+# start_mono_ns: 34076369626020
+# start_wall: 2026-10-21T19:46:26.672819047+07:00
+# duration: 3m0s
+# moi dong cach nhau 10s
+mono_ns,wall,dinh_ghi_delta,mat_delta,dinh_ghi_tong,mat_tong,irq_hard_delta_ns,irq_soft_delta_ns,irq_vec_delta_ns,soft_raw_delta_ns,irq_hard_tong_ns,irq_soft_tong_ns,irq_vec_tong_ns,soft_raw_tong_ns
+34076376874455,2026-10-21T19:46:26.680031923+07:00,0,0,0,0,2959,381368,6782596,382092,2959,381368,6782596,382092
+34086377193305,2026-10-21T19:46:36.680350109+07:00,0,0,0,0,4910042,23990145059,8249022934,24296253295,4913001,23990526427,8255805530,24296635387
+34096377181173,2026-10-21T19:46:46.680337559+07:00,0,0,0,0,2926904,24126910335,8232780811,24421503323,7839905,48117436762,16488586341,48718138710
+34106377244727,2026-10-21T19:46:56.680401294+07:00,0,0,0,0,1481954,23957473413,8226081671,24245881801,9321859,72074910175,24714668012,72964020511
+34116377278987,2026-10-21T19:47:06.680437418+07:00,0,0,0,0,5147815,23675532857,8176500778,23960874401,14469674,95750443032,32891168790,96924894912
+34126377176647,2026-10-21T19:47:16.680333349+07:00,0,0,0,0,4330050,23660656077,8047155324,23943193610,18799724,119411099109,40938324114,120868088522
+34136377197572,2026-10-21T19:47:26.680354061+07:00,0,0,0,0,2655297,23424326936,7888867224,23700151379,21455021,142835426045,48827191338,144568239901
+34136417360427,2026-10-21T19:47:26.720517345+07:00,0,0,0,0,0,47890022,24313801,48417536,21455021,142883316067,48851505139,144616657437

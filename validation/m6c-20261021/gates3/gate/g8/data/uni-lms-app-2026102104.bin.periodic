@@ -1,0 +1,47 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 294b872-dirty
+# record_size: 64
+# filter_tgids: khong co
+# filter_pid: 0
+# filter_cgroup: /sys/fs/cgroup/hids-test8 (goc id=22541)
+# ringbuf_bytes: 67108864
+# rb_wake_bytes: 8388608
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: dmesg | [    0.000000] vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# datadir: validation/m6c-20261021/gates3/gate/g8/data
+# rotate: 1h0m0s
+# min_free_gb: 50
+# no_proc: false
+# no_host: false
+# cgroup_refresh: 1s
+# rb_poll: 200ms
+# pmu: on
+# pmu_events: instructions:u,cycles:u
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 0
+# start_mono_ns: 4333790129595
+# start_wall: 2026-10-21T11:30:44.09328784+07:00
+# duration: 2m0s
+# segment_tag: 2026102104
+# moi dong cach nhau 10s
+mono_ns,wall,dinh_ghi_delta,mat_delta,dinh_ghi_tong,mat_tong,irq_hard_delta_ns,irq_soft_delta_ns,irq_vec_delta_ns,soft_raw_delta_ns,irq_hard_tong_ns,irq_soft_tong_ns,irq_vec_tong_ns,soft_raw_tong_ns
+4333798832484,2026-10-21T11:30:44.101989995+07:00,0,0,0,0,10305,2575237,28344905,2576210,10305,2575237,28344905,2576210
+4343799946308,2026-10-21T11:30:54.103103+07:00,27604,0,27604,0,729687,176885480,725579150,177691694,739992,179460717,753924055,180267904
+4353800303550,2026-10-21T11:31:04.103460413+07:00,0,0,27604,0,632710,105218184,425609825,105497481,1372702,284678901,1179533880,285765385
+4363799522006,2026-10-21T11:31:14.102678828+07:00,0,0,27604,0,561803,102731134,422343319,103169161,1934505,387410035,1601877199,388934546
+4364071153991,2026-10-21T11:31:14.374310886+07:00,0,0,27604,0,23557,4277214,25174419,4282659,1958062,391687249,1627051618,393217205

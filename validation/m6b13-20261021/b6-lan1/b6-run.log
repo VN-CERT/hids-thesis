@@ -1,0 +1,67 @@
+=== m6b13_b6 start=2026-10-21T07:10:49+07:00 outdir=validation/m6b13-20261021/b6 ===
+e623d83
+14d065a601787645b911b7a743e4d6d323757aff0b02bf3487a58fee5fed9d7d  bpf/sys_enter.bpf.c
+39d892e5524de1cb49ace593b152c5b303d99c056e110f0a072d344c8270c7ec  bpf/proc_events.bpf.c
+9f0b4cde1c2e1c6aa560c041eaefaef1a40e5c7d9fc292db1d77dfc971d046cd  analysis/m5f_parse.py
+bpftool_hids_count_truoc=0
+khong co collector
+container dang chay truoc: hscd_backend hscd_worker hscd_frontend frontend huey backend postgres caddy qdrant atelier3d-web hscd_postgres hscd_redis
+hscd_backend
+hscd_worker
+hscd_frontend
+frontend
+huey
+backend
+postgres
+caddy
+qdrant
+atelier3d-web
+hscd_postgres
+hscd_redis
+container con chay khi do: 0
+=== B6 cau hinh a lan 1 (prefix out/m6b13-b6-a1-071100) ===
+wl pid=525139 tid=525139
+thu tu: bpftrace toi gian TRUOC, collector SAU
+bpftool_hids_count_sau=0
+cua so ts_enter: (29422469083610, 29425232556126]
+collector_rq_ns=10442208
+bpftrace_rq_sau_wakeup_ns=10260413
+bpftrace_so_lan_wakeup=502
+lech_ns=181795
+lech_phan_tram=1.7718
+lech_us_moi_wakeup=0.3621
+bin: out/m6b13-b6-a1-071100.bin
+xong B6 a lan 1
+=== B6 cau hinh a lan 2 (prefix out/m6b13-b6-a2-071108) ===
+wl pid=526146 tid=526146
+thu tu: bpftrace toi gian TRUOC, collector SAU
+bpftool_hids_count_sau=0
+cua so ts_enter: (29430179820185, 29432977078519]
+collector_rq_ns=10083827
+bpftrace_rq_sau_wakeup_ns=9918920
+bpftrace_so_lan_wakeup=502
+lech_ns=164907
+lech_phan_tram=1.6625
+lech_us_moi_wakeup=0.3285
+bin: out/m6b13-b6-a2-071108.bin
+xong B6 a lan 2
+=== B6 cau hinh a lan 3 (prefix out/m6b13-b6-a3-071115) ===
+wl pid=527171 tid=527171
+thu tu: bpftrace toi gian TRUOC, collector SAU
+bpftool_hids_count_sau=0
+cua so ts_enter: (29437933047780, 29440754070585]
+collector_rq_ns=9259520
+bpftrace_rq_sau_wakeup_ns=9181288
+bpftrace_so_lan_wakeup=502
+lech_ns=78232
+lech_phan_tram=0.8521
+lech_us_moi_wakeup=0.1558
+bin: out/m6b13-b6-a3-071115.bin
+xong B6 a lan 3
+=== B6 cau hinh b lan 1 (prefix out/m6b13-b6-b1-071123) ===
+wl pid=528168 tid=528168
+thu tu: collector TRUOC (READY), bpftrace toi gian SAU
+bpftool_hids_count_sau=0
+khong tim thay getuid cho tid 528168
+m6b13_b6: khong tim cua so (from)
+container dang chay sau: hscd_backend hscd_worker hscd_frontend frontend huey backend postgres caddy qdrant atelier3d-web hscd_postgres hscd_redis 

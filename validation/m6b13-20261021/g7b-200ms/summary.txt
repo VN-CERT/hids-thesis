@@ -1,0 +1,6 @@
+run1 mat=1803381 ban_ghi=22196643 thoi_gian=19.457s toc_do=1140805 ban_ghi/giay
+run2 mat=0 ban_ghi=24000024 thoi_gian=19.600s toc_do=1224491 ban_ghi/giay
+run3 mat=662330 ban_ghi=23337694 thoi_gian=19.539s toc_do=1194416 ban_ghi/giay
+run4 mat=0 ban_ghi=24000024 thoi_gian=19.588s toc_do=1225241 ban_ghi/giay
+run5 mat=0 ban_ghi=24000024 thoi_gian=19.409s toc_do=1236541 ban_ghi/giay
+xong 2026-10-21T07:05:03+07:00

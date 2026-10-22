@@ -1,0 +1,10 @@
+# started on Wed Oct 21 11:26:29 2026
+
+
+ Performance counter stats for thread id '214456':
+
+     4,809,756,172      instructions:u                   #    0.80  insn per cycle            
+     5,990,469,100      cycles:u                                                              
+
+       4.028921489 seconds time elapsed
+

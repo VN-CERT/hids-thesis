@@ -1,0 +1,3 @@
+=== E4p L=0 run=2 ===
+khoang dot (nr=35, khong FIRST): 0, co PMU: 0
+du lieu: out/m6c-e4p-L0-2-122140.bin

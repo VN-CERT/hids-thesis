@@ -1,0 +1,270 @@
+file: validation/m6b1-pre24h-20261019/g9b/uni-lms-app-202610191014.bin
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 1a88508
+# record_size: 56
+# filter_tgids: khong co
+# filter_pid: 0
+# filter_cgroup: /sys/fs/cgroup/system.slice/docker-8c3714b54a78a41abae2560c64289c1ec4f973499a2a4cba0a0ac5ea2d5aa9f3.scope (goc id=6373) | /sys/fs/cgroup/system.slice/docker-7421d7ae79685498cdaf7b24ea4426cccb9531070b12a3265fdf9d1738fdb592.scope (goc id=6215)
+# ringbuf_bytes: 67108864
+# rb_wake_bytes: 8388608
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: dmesg | [    0.000000] vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# datadir: validation/m6b1-pre24h-20261019/g9b
+# rotate: 2m0s
+# min_free_gb: 50
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# start_mono_ns: 872260953480896
+# start_wall: 2026-10-19T17:15:15.636559739+07:00
+# duration: 7m0s
+# segment_tag: 202610191014
+
+tong so ban ghi trong file : 16510
+ts_enter nho nhat / lon nhat: 872260897559491 / 872305279404683 (ns, CLOCK_MONOTONIC)
+ban ghi co co FIRST        : 114
+ban ghi co co GAP_BEFORE   : 0
+
+so ban ghi theo tgid (114 tien trinh)
+     tgid  ban_ghi  FIRST  GAP_BEFORE      nguon_tgid
+     2500     2159      1           0           /proc
+  3162267      508      1           0  ? (suy tu tid)
+  3162471      507      1           0  ? (suy tu tid)
+  3162021      506      1           0  ? (suy tu tid)
+  3161965      505      1           0  ? (suy tu tid)
+  3162172      503      1           0  ? (suy tu tid)
+  3162323      503      1           0  ? (suy tu tid)
+  3162114      502      1           0  ? (suy tu tid)
+  3162416      499      1           0  ? (suy tu tid)
+  3161971      390      1           0  ? (suy tu tid)
+  3162027      390      1           0  ? (suy tu tid)
+  3162120      390      1           0  ? (suy tu tid)
+  3162178      390      1           0  ? (suy tu tid)
+  3162273      390      1           0  ? (suy tu tid)
+  3162329      390      1           0  ? (suy tu tid)
+  3162421      390      1           0  ? (suy tu tid)
+  3162477      390      1           0  ? (suy tu tid)
+  3162153      364      1           0  ? (suy tu tid)
+  3162305      363      1           0  ? (suy tu tid)
+  3162380      363      1           0  ? (suy tu tid)
+  3162453      363      1           0  ? (suy tu tid)
+  3162077      362      1           0  ? (suy tu tid)
+  3162529      362      1           0  ? (suy tu tid)
+  3161894      361      1           0  ? (suy tu tid)
+  3162003      361      1           0  ? (suy tu tid)
+  3162229      361      1           0  ? (suy tu tid)
+  3162154      197      1           0  ? (suy tu tid)
+  3162004      196      1           0  ? (suy tu tid)
+  3162173      186      1           0  ? (suy tu tid)
+  3162115      176      1           0  ? (suy tu tid)
+  3162078      175      1           0  ? (suy tu tid)
+  3162324      173      1           0  ? (suy tu tid)
+  3162268      168      1           0  ? (suy tu tid)
+  3161895      165      1           0  ? (suy tu tid)
+  3162381      162      1           0  ? (suy tu tid)
+  3162454      162      1           0  ? (suy tu tid)
+  3161966      161      1           0  ? (suy tu tid)
+  3162306      160      1           0  ? (suy tu tid)
+     2514      152      1           0           /proc
+  3162230      147      1           0  ? (suy tu tid)
+  3162417      143      1           0  ? (suy tu tid)
+  3162472      131      1           0  ? (suy tu tid)
+  3162530      131      1           0  ? (suy tu tid)
+  3162022       78      1           0  ? (suy tu tid)
+  3162271       41      1           0  ? (suy tu tid)
+  3162457       36      1           0  ? (suy tu tid)
+  3161969       34      1           0  ? (suy tu tid)
+  3162475       34      1           0  ? (suy tu tid)
+  3162384       32      1           0  ? (suy tu tid)
+  3162156       31      1           0  ? (suy tu tid)
+  3162176       31      1           0  ? (suy tu tid)
+  3162533       31      1           0  ? (suy tu tid)
+  3161898       30      1           0  ? (suy tu tid)
+  3162005       30      1           0  ? (suy tu tid)
+  3162118       30      1           0  ? (suy tu tid)
+  3162233       30      1           0  ? (suy tu tid)
+  3162309       30      1           0  ? (suy tu tid)
+  3162418       28      1           0  ? (suy tu tid)
+  3162024       26      1           0  ? (suy tu tid)
+  3162079       20      1           0  ? (suy tu tid)
+  3162325       20      1           0  ? (suy tu tid)
+  3162327       20      1           0  ? (suy tu tid)
+  3162081       19      1           0  ? (suy tu tid)
+  3162025       13      1           0  ? (suy tu tid)
+  3162007       12      1           0  ? (suy tu tid)
+  3162155       12      1           0  ? (suy tu tid)
+  3162174       12      1           0  ? (suy tu tid)
+  3162307       12      1           0  ? (suy tu tid)
+  3162531       12      1           0  ? (suy tu tid)
+  3161896       11      1           0  ? (suy tu tid)
+  3161968       11      1           0  ? (suy tu tid)
+  3162023       11      1           0  ? (suy tu tid)
+  3162026       11      1           0  ? (suy tu tid)
+  3162080       11      1           0  ? (suy tu tid)
+  3162082       11      1           0  ? (suy tu tid)
+  3162116       11      1           0  ? (suy tu tid)
+  3162234       11      1           0  ? (suy tu tid)
+  3162270       11      1           0  ? (suy tu tid)
+  3162326       11      1           0  ? (suy tu tid)
+  3162382       11      1           0  ? (suy tu tid)
+  3162420       11      1           0  ? (suy tu tid)
+  3162456       11      1           0  ? (suy tu tid)
+  3162476       11      1           0  ? (suy tu tid)
+  3161897       10      1           0  ? (suy tu tid)
+  3161899       10      1           0  ? (suy tu tid)
+  3161967       10      1           0  ? (suy tu tid)
+  3161970       10      1           0  ? (suy tu tid)
+  3162006       10      1           0  ? (suy tu tid)
+  3162117       10      1           0  ? (suy tu tid)
+  3162119       10      1           0  ? (suy tu tid)
+  3162157       10      1           0  ? (suy tu tid)
+  3162158       10      1           0  ? (suy tu tid)
+  3162175       10      1           0  ? (suy tu tid)
+  3162177       10      1           0  ? (suy tu tid)
+  3162231       10      1           0  ? (suy tu tid)
+  3162232       10      1           0  ? (suy tu tid)
+  3162269       10      1           0  ? (suy tu tid)
+  3162272       10      1           0  ? (suy tu tid)
+  3162308       10      1           0  ? (suy tu tid)
+  3162310       10      1           0  ? (suy tu tid)
+  3162328       10      1           0  ? (suy tu tid)
+  3162383       10      1           0  ? (suy tu tid)
+  3162385       10      1           0  ? (suy tu tid)
+  3162419       10      1           0  ? (suy tu tid)
+  3162455       10      1           0  ? (suy tu tid)
+  3162458       10      1           0  ? (suy tu tid)
+  3162473       10      1           0  ? (suy tu tid)
+  3162474       10      1           0  ? (suy tu tid)
+  3162532       10      1           0  ? (suy tu tid)
+  3162534       10      1           0  ? (suy tu tid)
+     3164        9      1           0           /proc
+     3122        8      1           0           /proc
+  3161797        6      1           0           /proc
+     3167        2      1           0           /proc
+     TONG    16510    114           0                
+
+so ban ghi theo tid (114 thread, in 40 dong dau)
+      tid  tgid  ban_ghi
+     2500  2500     2159
+  3162267     ?      508
+  3162471     ?      507
+  3162021     ?      506
+  3161965     ?      505
+  3162172     ?      503
+  3162323     ?      503
+  3162114     ?      502
+  3162416     ?      499
+  3161971     ?      390
+  3162027     ?      390
+  3162120     ?      390
+  3162178     ?      390
+  3162273     ?      390
+  3162329     ?      390
+  3162421     ?      390
+  3162477     ?      390
+  3162153     ?      364
+  3162305     ?      363
+  3162380     ?      363
+  3162453     ?      363
+  3162077     ?      362
+  3162529     ?      362
+  3161894     ?      361
+  3162003     ?      361
+  3162229     ?      361
+  3162154     ?      197
+  3162004     ?      196
+  3162173     ?      186
+  3162115     ?      176
+  3162078     ?      175
+  3162324     ?      173
+  3162268     ?      168
+  3161895     ?      165
+  3162381     ?      162
+  3162454     ?      162
+  3161966     ?      161
+  3162306     ?      160
+     2514  2514      152
+  3162230     ?      147
+
+top 20 syscall_nr (tong cong 77 gia tri khac nhau)
+  syscall_nr  ban_ghi
+          35     2405
+          19     1384
+           3     1242
+           0     1089
+           9     1089
+         157      977
+           2      870
+          72      866
+         202      797
+         281      663
+          11      554
+          39      413
+           5      411
+         233      236
+          14      224
+         138      221
+         257      221
+         437      204
+          12      203
+          15      191
+
+theo tung CPU (cpu lay tu bit8..15 cua flags; seq_cuoi va mat lay tu .stats)
+   cpu  ban_ghi  seq_min  seq_max  lo_hong  seq_thieu  seq_cuoi  mat
+     0      877        1      877        0          0       877    0
+     1      903        1      903        0          0       903    0
+     2      154        1      154        0          0       154    0
+     3      914        1      914        0          0       914    0
+     4      737        1      737        0          0       737    0
+     5      731        1      731        0          0       731    0
+     6      140        1      140        0          0       140    0
+     7     1054        1     1054        0          0      1054    0
+     8      799        1      799        0          0       799    0
+     9      212        1      212        0          0       212    0
+    10     1101        1     1101        0          0      1101    0
+    11      384        1      384        0          0       384    0
+    12       20        1       20        0          0        20    0
+    13      895        1      895        0          0       895    0
+    14      622        1      622        0          0       622    0
+    15      390        1      390        0          0       390    0
+    16     1247        1     1247        0          0      1247    0
+    17      549        1      549        0          0       549    0
+    18      500        1      500        0          0       500    0
+    19      604        1      604        0          0       604    0
+    20       21        1       21        0          0        21    0
+    21     1143        1     1143        0          0      1143    0
+    22     1995        1     1995        0          0      1995    0
+    23      518        1      518        0          0       518    0
+  TONG    16510                          0          0     16510    0
+
+y nghia cac cot:
+  ban_ghi   so ban ghi cua CPU do co trong file (tinh tren toan bo file,
+            khong phu thuoc -tgid/-nr/-from-mono/-to-mono)
+  seq_min   seq nho nhat doc duoc; bang 1 neu khong mat ban ghi nao o dau
+  lo_hong   so doan seq lien tuc bi thieu (ke ca doan dau tu 1 den seq_min
+            va doan cuoi tu seq_max den seq_cuoi)
+  seq_thieu tong so seq bi thieu; so nay doi chieu truc tiep voi cot mat
+  seq_cuoi  so lan dinh ghi tren CPU do, doc tu kernel luc collector dung
+  mat       bo dem bpf_ringbuf_reserve that bai, doc tu kernel
+
+doi chieu seq (toan cuc)
+  so lan dinh ghi (tong seq_cuoi cua moi CPU): 16510
+  so ban ghi collector doc duoc             : 16510
+  so ban ghi dem duoc trong file            : 16510
+  tong bo dem mat (ring buffer day)         : 0
+  tong so seq bi thieu theo CPU             : 0
+  dinh ghi - ban ghi trong file             : 0

@@ -1,0 +1,144 @@
+dung container: hscd_backend hscd_worker hscd_frontend frontend huey backend postgres caddy qdrant atelier3d-web hscd_postgres hscd_redis
+hscd_backend
+hscd_worker
+hscd_frontend
+frontend
+huey
+backend
+postgres
+caddy
+qdrant
+atelier3d-web
+hscd_postgres
+hscd_redis
+=== overhead chinh (m6c1_overhead.sh) 2026-10-21T19:19:19+07:00 ===
+overhead_exit=0
+=== duong CPU theo toc do (-pmu host) 2026-10-21T23:20:35+07:00 ===
+rate_target=1000 start=2026-10-21T23:20:35+07:00
+d78563d
+collector_pid=1029383
+--- cpu-proc.tsv ---
+wall	ticks	cpu_seconds
+2026-10-21T23:20:39+07:00	80	0.800
+2026-10-21T23:20:49+07:00	96	0.960
+2026-10-21T23:20:59+07:00	114	1.140
+2026-10-21T23:21:09+07:00	130	1.300
+2026-10-21T23:21:19+07:00	147	1.470
+2026-10-21T23:21:29+07:00	169	1.690
+2026-10-21T23:21:39+07:00	185	1.850
+2026-10-21T23:21:49+07:00	201	2.010
+2026-10-21T23:21:59+07:00	220	2.200
+2026-10-21T23:22:09+07:00	242	2.420
+2026-10-21T23:22:19+07:00	258	2.580
+2026-10-21T23:22:29+07:00	276	2.760
+2026-10-21T23:22:39+07:00	293	2.930
+2026-10-21T23:22:49+07:00	302	3.020
+--- tom tat ---
+cpu_delta=2.220 s tren 14 mau (10s/mau) cpu_%_mot_loi=1.71%
+status dong cuoi:
+2026-10-21T16:22:40.238850119Z	1563.62	0	0	1099444	3197.71	183431168	2.945	0
+tong ban ghi doc duoc (tu .bin.stats):
+# so_ban_ghi_doc_duoc: 189204
+TONG_BAN_GHI=189204 toc_do_dat_duoc_uoc_tinh=1577 ban_ghi/giay (chia 120s)
+rate_target=10000 start=2026-10-21T23:23:09+07:00
+d78563d
+collector_pid=1030302
+--- cpu-proc.tsv ---
+wall	ticks	cpu_seconds
+2026-10-21T23:23:16+07:00	109	1.090
+2026-10-21T23:23:26+07:00	152	1.520
+2026-10-21T23:23:36+07:00	197	1.970
+2026-10-21T23:23:46+07:00	238	2.380
+2026-10-21T23:23:56+07:00	283	2.830
+2026-10-21T23:24:06+07:00	327	3.270
+2026-10-21T23:24:16+07:00	367	3.670
+2026-10-21T23:24:26+07:00	411	4.110
+2026-10-21T23:24:36+07:00	451	4.510
+2026-10-21T23:24:46+07:00	497	4.970
+2026-10-21T23:24:56+07:00	539	5.390
+2026-10-21T23:25:06+07:00	582	5.820
+2026-10-21T23:25:16+07:00	624	6.240
+2026-10-21T23:25:26+07:00	632	6.320
+--- tom tat ---
+cpu_delta=5.230 s tren 14 mau (10s/mau) cpu_%_mot_loi=4.02%
+status dong cuoi:
+2026-10-21T16:25:18.506550258Z	9895.62	0	0	8038850	3197.70	192577536	6.261	0
+tong ban ghi doc duoc (tu .bin.stats):
+# so_ban_ghi_doc_duoc: 1249608
+TONG_BAN_GHI=1249608 toc_do_dat_duoc_uoc_tinh=10413 ban_ghi/giay (chia 120s)
+rate_target=100000 start=2026-10-21T23:25:46+07:00
+d78563d
+collector_pid=1031283
+--- cpu-proc.tsv ---
+wall	ticks	cpu_seconds
+2026-10-21T23:25:50+07:00	84	0.840
+2026-10-21T23:26:00+07:00	312	3.120
+2026-10-21T23:26:10+07:00	536	5.360
+2026-10-21T23:26:20+07:00	769	7.690
+2026-10-21T23:26:30+07:00	984	9.840
+2026-10-21T23:26:40+07:00	1204	12.040
+2026-10-21T23:26:50+07:00	1428	14.280
+2026-10-21T23:27:00+07:00	1646	16.460
+2026-10-21T23:27:10+07:00	1877	18.770
+2026-10-21T23:27:20+07:00	2101	21.010
+2026-10-21T23:27:30+07:00	2339	23.390
+2026-10-21T23:27:40+07:00	2586	25.860
+2026-10-21T23:27:50+07:00	2804	28.040
+2026-10-21T23:28:00+07:00	2813	28.130
+--- tom tat ---
+cpu_delta=27.290 s tren 14 mau (10s/mau) cpu_%_mot_loi=20.99%
+status dong cuoi:
+2026-10-21T16:27:51.545824037Z	97226.09	0	0	71395924	3197.64	227815424	28.055	0
+tong ban ghi doc duoc (tu .bin.stats):
+# so_ban_ghi_doc_duoc: 11868966
+TONG_BAN_GHI=11868966 toc_do_dat_duoc_uoc_tinh=98908 ban_ghi/giay (chia 120s)
+rate_target=500000 start=2026-10-21T23:28:20+07:00
+d78563d
+collector_pid=1032199
+--- cpu-proc.tsv ---
+wall	ticks	cpu_seconds
+2026-10-21T23:28:24+07:00	80	0.800
+2026-10-21T23:28:34+07:00	1217	12.170
+2026-10-21T23:28:44+07:00	2390	23.900
+2026-10-21T23:28:54+07:00	3619	36.190
+2026-10-21T23:29:04+07:00	4876	48.760
+2026-10-21T23:29:14+07:00	6116	61.160
+2026-10-21T23:29:24+07:00	7350	73.500
+2026-10-21T23:29:34+07:00	8600	86.000
+2026-10-21T23:29:44+07:00	9875	98.750
+2026-10-21T23:29:54+07:00	11207	112.070
+2026-10-21T23:30:04+07:00	12547	125.470
+2026-10-21T23:30:14+07:00	13934	139.340
+2026-10-21T23:30:24+07:00	15162	151.620
+2026-10-21T23:30:34+07:00	15170	151.700
+--- tom tat ---
+cpu_delta=150.900 s tren 14 mau (10s/mau) cpu_%_mot_loi=116.08%
+status dong cuoi:
+2026-10-21T16:30:26.5708953Z	474244.93	0	0	448744309	3197.22	216727552	151.637	0
+tong ban ghi doc duoc (tu .bin.stats):
+# so_ban_ghi_doc_duoc: 59058065
+TONG_BAN_GHI=59058065 toc_do_dat_duoc_uoc_tinh=492151 ban_ghi/giay (chia 120s)
+=== G7-cap 1/2/4 (zstd mac dinh, -pmu mac dinh host) 2026-10-21T23:30:54+07:00 ===
+=== G7-cap2 nproc=1 zstd-default duration=60s ===
+recs=57203693 mat=0
+da xoa validation/m6c1-20261021/part4/g7cap/zstd-default-p1-20261021-233054.bin (giu validation/m6c1-20261021/part4/g7cap/zstd-default-p1-20261021-233054.bin.stats validation/m6c1-20261021/part4/g7cap/zstd-default-p1-20261021-233054.bin.periodic); dat KEEP_RAW=1 de giu file .bin
+g7cap nproc=1 exit=0
+=== G7-cap2 nproc=2 zstd-default duration=60s ===
+recs=53262308 mat=64071301
+g7cap nproc=2 exit=1
+=== G7-cap2 nproc=4 zstd-default duration=60s ===
+recs=52486414 mat=204385788
+g7cap nproc=4 exit=1
+hscd_backend
+hscd_worker
+hscd_frontend
+frontend
+huey
+backend
+postgres
+caddy
+qdrant
+atelier3d-web
+hscd_postgres
+hscd_redis
+container sau: hscd_backend hscd_worker hscd_frontend frontend huey backend postgres caddy qdrant atelier3d-web hscd_postgres hscd_redis 

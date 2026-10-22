@@ -1,0 +1,42 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 294b872-dirty
+# record_size: 64
+# filter_tgids: khong co
+# filter_pid: 0
+# filter_cgroup: /sys/fs/cgroup/system.slice/docker-52f0b156ee464854cbd63c251fc6ce93205dc761fe4565102cec9a1f52f10d1a.scope (goc id=36129)
+# ringbuf_bytes: 67108864
+# rb_wake_bytes: 8388608
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: dmesg | [    0.000000] vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# pmu: on
+# pmu_events: instructions:u,cycles:u
+# start_mono_ns: 22319639086046
+# start_wall: 2026-10-21T16:30:29.942242971+07:00
+# duration: 3m0s
+# moi dong cach nhau 10s
+mono_ns,wall,dinh_ghi_delta,mat_delta,dinh_ghi_tong,mat_tong,irq_hard_delta_ns,irq_soft_delta_ns,irq_vec_delta_ns,soft_raw_delta_ns,irq_hard_tong_ns,irq_soft_tong_ns,irq_vec_tong_ns,soft_raw_tong_ns
+22319646464401,2026-10-21T16:30:29.949621863+07:00,0,0,0,0,0,426993,6682439,426993,0,426993,6682439,426993
+22329647249289,2026-10-21T16:30:39.950405774+07:00,3021856,0,3021856,0,723075,15930604082,7740167514,16113790034,723075,15931031075,7746849953,16114217027
+22339646224476,2026-10-21T16:30:49.949381388+07:00,3178182,0,6200038,0,1305456,14816852947,7020623457,14969378149,2028531,30747884022,14767473410,31083595176
+22349646150157,2026-10-21T16:30:59.949306792+07:00,3158108,0,9358146,0,656024,14711047964,7049353316,14866935989,2684555,45458931986,21816826726,45950531165
+22359646211678,2026-10-21T16:31:09.949368057+07:00,3196034,0,12554180,0,2109366,14272813645,6790176305,14423728542,4793921,59731745631,28607003031,60374259707
+22369646609635,2026-10-21T16:31:19.949766273+07:00,3138410,0,15692590,0,931225,15174076699,7212186805,15336107020,5725146,74905822330,35819189836,75710366727
+22379647283396,2026-10-21T16:31:29.950439879+07:00,3191007,0,18883597,0,1030446,14294695617,6802870063,14446171964,6755592,89200517947,42622059899,90156538691
+22379758596593,2026-10-21T16:31:30.061753542+07:00,8753,0,18892350,0,3872,47603120,25606200,48088422,6759464,89248121067,42647666099,90204627113

@@ -1,0 +1,192 @@
+file: validation/m6b12-20261020/final2/pre24h/g9b/uni-lms-app-202610201930.bin
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: fa60c56
+# record_size: 56
+# filter_tgids: khong co
+# filter_pid: 0
+# filter_cgroup: /sys/fs/cgroup/system.slice/docker-7421d7ae79685498cdaf7b24ea4426cccb9531070b12a3265fdf9d1738fdb592.scope (goc id=14061) | /sys/fs/cgroup/system.slice/docker-319c38ff33aa4827288f68ca1236600174cf278175fd7d5d68657d48e2a6366f.scope (goc id=13745)
+# ringbuf_bytes: 67108864
+# rb_wake_bytes: 8388608
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: dmesg | [    0.000000] vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# datadir: validation/m6b12-20261020/final2/pre24h/g9b
+# rotate: 2m0s
+# min_free_gb: 50
+# no_proc: false
+# no_host: false
+# cgroup_refresh: 1s
+# rb_poll: 200ms
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# start_mono_ns: 12652780865268
+# start_wall: 2026-10-21T02:31:35.170332909+07:00
+# duration: 7m0s
+# segment_tag: 202610201930
+
+tong so ban ghi trong file : 9958
+ts_enter nho nhat / lon nhat: 12652709751678 / 12677560661086 (ns, CLOCK_MONOTONIC)
+ban ghi co co FIRST        : 54
+ban ghi co co GAP_BEFORE   : 0
+
+so ban ghi theo tgid (32 tien trinh)
+    tgid  ban_ghi  FIRST  GAP_BEFORE      nguon_tgid
+  143588     5844     23           0           /proc
+  143935     1209      1           0           /proc
+  271020      365      1           0  ? (suy tu tid)
+  270879      364      1           0  ? (suy tu tid)
+  270961      364      1           0  ? (suy tu tid)
+  271171      364      1           0  ? (suy tu tid)
+  271095      363      1           0  ? (suy tu tid)
+  271180      196      1           0  ? (suy tu tid)
+  270964      160      1           0  ? (suy tu tid)
+  271032      140      1           0  ? (suy tu tid)
+  271096      140      1           0  ? (suy tu tid)
+  270882      136      1           0  ? (suy tu tid)
+  271035       34      1           0  ? (suy tu tid)
+  271184       32      1           0  ? (suy tu tid)
+  270884       29      1           0  ? (suy tu tid)
+  270965       29      1           0  ? (suy tu tid)
+  271102       28      1           0  ? (suy tu tid)
+  270968       17      1           0  ? (suy tu tid)
+  270883       11      1           0  ? (suy tu tid)
+  270886       11      1           0  ? (suy tu tid)
+  270966       11      1           0  ? (suy tu tid)
+  271097       11      1           0  ? (suy tu tid)
+  270885       10      1           0  ? (suy tu tid)
+  270970       10      1           0  ? (suy tu tid)
+  271033       10      1           0  ? (suy tu tid)
+  271034       10      1           0  ? (suy tu tid)
+  271036       10      1           0  ? (suy tu tid)
+  271098       10      1           0  ? (suy tu tid)
+  271103       10      1           0  ? (suy tu tid)
+  271181       10      1           0  ? (suy tu tid)
+  271187       10      1           0  ? (suy tu tid)
+  271188       10      1           0  ? (suy tu tid)
+    TONG     9958     54           0                
+
+so ban ghi theo tid (54 thread, in 40 dong dau)
+     tid    tgid  ban_ghi
+  143935  143935     1209
+  271020       ?      365
+  270879       ?      364
+  270961       ?      364
+  271171       ?      364
+  271095       ?      363
+  143678  143588      255
+  143707  143588      255
+  143716  143588      255
+  143720  143588      255
+  143728  143588      255
+  143747  143588      255
+  143753  143588      255
+  143755  143588      255
+  143756  143588      255
+  143766  143588      255
+  143777  143588      255
+  143793  143588      255
+  143800  143588      255
+  143699  143588      254
+  143745  143588      254
+  143782  143588      254
+  143809  143588      254
+  143744  143588      253
+  143761  143588      253
+  143772  143588      252
+  143803  143588      252
+  143811  143588      252
+  143774  143588      251
+  271180       ?      196
+  270964       ?      160
+  271032       ?      140
+  271096       ?      140
+  270882       ?      136
+  271035       ?       34
+  271184       ?       32
+  270884       ?       29
+  270965       ?       29
+  271102       ?       28
+  270968       ?       17
+
+top 20 syscall_nr (tong cong 59 gia tri khac nhau)
+  syscall_nr  ban_ghi
+         232     3545
+           1     2369
+          35      679
+           0      432
+           3      430
+         281      329
+           2      290
+         157      285
+         202      241
+          72      220
+          39      110
+           5       95
+           9       80
+         138       65
+         257       65
+         233       60
+         437       60
+          12       55
+          15       55
+         234       55
+
+theo tung CPU (cpu lay tu bit8..15 cua flags; seq_cuoi va mat lay tu .stats)
+   cpu  ban_ghi  seq_min  seq_max  lo_hong  seq_thieu  seq_cuoi  mat
+     0      198        1      198        0          0       198    0
+     1      305        1      305        1          3       308    0
+     2      368        1      368        0          0       368    0
+     3      478        1      478        0          0       478    0
+     4      601        1      601        0          0       601    0
+     5      473        1      473        1          1       474    0
+     6      287        1      287        0          0       287    0
+     7      483        1      483        0          0       483    0
+     8      408        1      408        0          0       408    0
+     9     1026        1     1026        0          0      1026    0
+    10      999        1      999        1          8      1007    0
+    11      484        1      484        0          0       484    0
+    12      681        1      681        0          0       681    0
+    13      289        1      289        1          1       290    0
+    14      265        1      265        0          0       265    0
+    15      135        1      135        0          0       135    0
+    16       62        1       62        0          0        62    0
+    17      440        1      440        0          0       440    0
+    18      638        1      638        0          0       638    0
+    19      445        1      445        0          0       445    0
+    20      394        1      394        0          0       394    0
+    21       10        1       10        0          0        10    0
+    22      200        1      200        0          0       200    0
+    23      289        1      289        0          0       289    0
+  TONG     9958                          4         13      9971    0
+
+y nghia cac cot:
+  ban_ghi   so ban ghi cua CPU do co trong file (tinh tren toan bo file,
+            khong phu thuoc -tgid/-nr/-from-mono/-to-mono)
+  seq_min   seq nho nhat doc duoc; bang 1 neu khong mat ban ghi nao o dau
+  lo_hong   so doan seq lien tuc bi thieu (ke ca doan dau tu 1 den seq_min
+            va doan cuoi tu seq_max den seq_cuoi)
+  seq_thieu tong so seq bi thieu; so nay doi chieu truc tiep voi cot mat
+  seq_cuoi  so lan dinh ghi tren CPU do, doc tu kernel luc collector dung
+  mat       bo dem bpf_ringbuf_reserve that bai, doc tu kernel
+
+doi chieu seq (toan cuc)
+  so lan dinh ghi (tong seq_cuoi cua moi CPU): 9971
+  so ban ghi collector doc duoc             : 9958
+  so ban ghi dem duoc trong file            : 9958
+  tong bo dem mat (ring buffer day)         : 0
+  tong so seq bi thieu theo CPU             : 13
+  dinh ghi - ban ghi trong file             : 13

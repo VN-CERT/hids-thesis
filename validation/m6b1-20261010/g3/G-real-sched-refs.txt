@@ -1,0 +1,1444 @@
+=== moc A mono_ns=85820542402289 ===
+--- tid 2497 schedstat A ---
+60355694 564729 120
+--- tid 2497 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 2869 schedstat A ---
+64077771 377239 283
+--- tid 2869 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 2914 schedstat A ---
+10050610 73261 53
+--- tid 2914 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3009 schedstat A ---
+872129 12941 5
+--- tid 3009 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3010 schedstat A ---
+1230327 4991 6
+--- tid 3010 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3011 schedstat A ---
+1273998 0 3
+--- tid 3011 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3012 schedstat A ---
+738681 0 5
+--- tid 3012 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3013 schedstat A ---
+1299940 0 4
+--- tid 3013 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3014 schedstat A ---
+935898 48502 4
+--- tid 3014 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3015 schedstat A ---
+964951 0 4
+--- tid 3015 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3016 schedstat A ---
+987824 0 4
+--- tid 3016 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3017 schedstat A ---
+23491965 44544 119
+--- tid 3017 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3018 schedstat A ---
+801217 0 5
+--- tid 3018 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3019 schedstat A ---
+831120 0 9
+--- tid 3019 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3020 schedstat A ---
+713870 0 1
+--- tid 3020 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3021 schedstat A ---
+534326 0 2
+--- tid 3021 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3022 schedstat A ---
+409986 0 1
+--- tid 3022 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3023 schedstat A ---
+397438 0 2
+--- tid 3023 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3024 schedstat A ---
+571420 0 4
+--- tid 3024 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3025 schedstat A ---
+626301 0 2
+--- tid 3025 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3026 schedstat A ---
+732426 0 4
+--- tid 3026 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3027 schedstat A ---
+563412 0 5
+--- tid 3027 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3028 schedstat A ---
+777293 0 4
+--- tid 3028 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3029 schedstat A ---
+383884 0 2
+--- tid 3029 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3030 schedstat A ---
+405326 0 3
+--- tid 3030 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3031 schedstat A ---
+609427 0 1
+--- tid 3031 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3032 schedstat A ---
+321762 0 2
+--- tid 3032 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3033 schedstat A ---
+337871 0 2
+--- tid 3033 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3034 schedstat A ---
+307671 0 1
+--- tid 3034 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3035 schedstat A ---
+504410 9761 2
+--- tid 3035 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3036 schedstat A ---
+569169 0 5
+--- tid 3036 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3037 schedstat A ---
+377963 0 4
+--- tid 3037 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3038 schedstat A ---
+1811760 333777 3
+--- tid 3038 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3039 schedstat A ---
+867465 0 4
+--- tid 3039 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3040 schedstat A ---
+483166 371972 4
+--- tid 3040 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3041 schedstat A ---
+773728 82824 4
+--- tid 3041 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3042 schedstat A ---
+439107 777414 4
+--- tid 3042 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3043 schedstat A ---
+997855 419306 5
+--- tid 3043 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3044 schedstat A ---
+497015 0 5
+--- tid 3044 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3045 schedstat A ---
+562630 0 5
+--- tid 3045 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3046 schedstat A ---
+336844 0 2
+--- tid 3046 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3047 schedstat A ---
+541144 0 3
+--- tid 3047 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3048 schedstat A ---
+1341012 0 4
+--- tid 3048 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3049 schedstat A ---
+497385 0 5
+--- tid 3049 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3050 schedstat A ---
+505417 190326 3
+--- tid 3050 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3051 schedstat A ---
+336288 525278 4
+--- tid 3051 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3052 schedstat A ---
+631001 14105 2
+--- tid 3052 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3053 schedstat A ---
+562641 57768 2
+--- tid 3053 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3054 schedstat A ---
+508292 0 3
+--- tid 3054 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3055 schedstat A ---
+782237 0 2
+--- tid 3055 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3056 schedstat A ---
+443375 40455 2
+--- tid 3056 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3057 schedstat A ---
+438378 0 6
+--- tid 3057 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3058 schedstat A ---
+430886 0 1
+--- tid 3058 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3059 schedstat A ---
+928246 120282 5
+--- tid 3059 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3060 schedstat A ---
+488150 51294 5
+--- tid 3060 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3061 schedstat A ---
+425323 322930 9
+--- tid 3061 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3062 schedstat A ---
+240574670 3010458 1565
+--- tid 3062 sched A ---
+sum_sleep_runtime                            :           649.859901
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3063 schedstat A ---
+513585 131322 2
+--- tid 3063 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3064 schedstat A ---
+554857 35026 5
+--- tid 3064 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3065 schedstat A ---
+437634 0 2
+--- tid 3065 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3066 schedstat A ---
+491431 37862 3
+--- tid 3066 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3067 schedstat A ---
+326587 13817 2
+--- tid 3067 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3068 schedstat A ---
+50862877 2216952 394
+--- tid 3068 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3069 schedstat A ---
+318012 0 5
+--- tid 3069 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3070 schedstat A ---
+639960 474326 5
+--- tid 3070 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3071 schedstat A ---
+527468 155217 12
+--- tid 3071 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3072 schedstat A ---
+638250 0 2
+--- tid 3072 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3073 schedstat A ---
+1324896 0 2
+--- tid 3073 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3074 schedstat A ---
+548219 20305 4
+--- tid 3074 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3075 schedstat A ---
+389089 0 2
+--- tid 3075 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3076 schedstat A ---
+465822 202379 3
+--- tid 3076 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3077 schedstat A ---
+211683 102352 2
+--- tid 3077 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3078 schedstat A ---
+60998243 330421 242
+--- tid 3078 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3079 schedstat A ---
+171274880 1923982 1027
+--- tid 3079 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3080 schedstat A ---
+455983 0 1
+--- tid 3080 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3081 schedstat A ---
+1190231 0 1
+--- tid 3081 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3082 schedstat A ---
+138816490 783494 778
+--- tid 3082 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3089 schedstat A ---
+12283321 16627 56
+--- tid 3089 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3090 schedstat A ---
+12102586 0 7
+--- tid 3090 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3091 schedstat A ---
+27523850221 187064689 361525
+--- tid 3091 sched A ---
+sum_sleep_runtime                            :         74529.453660
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.049172
+iowait_sum                                   :             0.000000
+--- tid 3093 schedstat A ---
+26587626269 173283637 361516
+--- tid 3093 sched A ---
+sum_sleep_runtime                            :         74522.375202
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.281884
+iowait_sum                                   :             0.000000
+--- tid 3094 schedstat A ---
+25831883348 178203470 361512
+--- tid 3094 sched A ---
+sum_sleep_runtime                            :         74973.255744
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.264136
+iowait_sum                                   :             0.000000
+--- tid 3096 schedstat A ---
+24813377951 223770206 350795
+--- tid 3096 sched A ---
+sum_sleep_runtime                            :         74974.690753
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.252824
+iowait_sum                                   :             0.000000
+--- tid 3098 schedstat A ---
+24892407572 165687661 355098
+--- tid 3098 sched A ---
+sum_sleep_runtime                            :         74974.191565
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.175206
+iowait_sum                                   :             0.000000
+--- tid 3100 schedstat A ---
+24865454906 173238245 350785
+--- tid 3100 sched A ---
+sum_sleep_runtime                            :         74972.674165
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.282269
+iowait_sum                                   :             0.000000
+--- tid 3101 schedstat A ---
+25165324658 165429202 361510
+--- tid 3101 sched A ---
+sum_sleep_runtime                            :         74974.269994
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.236003
+iowait_sum                                   :             0.000000
+--- tid 3107 schedstat A ---
+24714767546 167402903 355511
+--- tid 3107 sched A ---
+sum_sleep_runtime                            :         75035.020114
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.094612
+iowait_sum                                   :             0.000000
+--- tid 3108 schedstat A ---
+24796610652 158536907 361504
+--- tid 3108 sched A ---
+sum_sleep_runtime                            :         75033.685866
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.289929
+iowait_sum                                   :             0.000000
+--- tid 3111 schedstat A ---
+24812976610 158843064 361478
+--- tid 3111 sched A ---
+sum_sleep_runtime                            :         75033.320327
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.148667
+iowait_sum                                   :             0.000000
+--- tid 3115 schedstat A ---
+25016755727 167755896 361526
+--- tid 3115 sched A ---
+sum_sleep_runtime                            :         75037.320969
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.259049
+iowait_sum                                   :             0.000000
+--- tid 3120 schedstat A ---
+24723527334 179619210 361482
+--- tid 3120 sched A ---
+sum_sleep_runtime                            :         75032.179384
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.173145
+iowait_sum                                   :             0.000000
+--- tid 3125 schedstat A ---
+24305017284 161767166 350781
+--- tid 3125 sched A ---
+sum_sleep_runtime                            :         75032.930784
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.319356
+iowait_sum                                   :             0.000000
+--- tid 3136 schedstat A ---
+24731048988 168649778 361509
+--- tid 3136 sched A ---
+sum_sleep_runtime                            :         75030.516424
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.089861
+iowait_sum                                   :             0.000000
+--- tid 3139 schedstat A ---
+24500175293 166294192 361482
+--- tid 3139 sched A ---
+sum_sleep_runtime                            :         75032.904460
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.092175
+iowait_sum                                   :             0.000000
+--- tid 3142 schedstat A ---
+24444219765 183215233 361515
+--- tid 3142 sched A ---
+sum_sleep_runtime                            :         75031.960788
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.049280
+iowait_sum                                   :             0.000000
+--- tid 3147 schedstat A ---
+24544474079 169362994 361479
+--- tid 3147 sched A ---
+sum_sleep_runtime                            :         75032.462405
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.350741
+iowait_sum                                   :             0.000000
+--- tid 3151 schedstat A ---
+24751687944 180094021 354947
+--- tid 3151 sched A ---
+sum_sleep_runtime                            :         75035.657476
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.099460
+iowait_sum                                   :             0.000000
+--- tid 3160 schedstat A ---
+25097921268 169094754 355280
+--- tid 3160 sched A ---
+sum_sleep_runtime                            :         75033.052087
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.195636
+iowait_sum                                   :             0.000000
+--- tid 3171 schedstat A ---
+25015102212 179179341 361487
+--- tid 3171 sched A ---
+sum_sleep_runtime                            :         75032.686230
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.368353
+iowait_sum                                   :             0.000000
+--- tid 3172 schedstat A ---
+24817998952 170241375 361515
+--- tid 3172 sched A ---
+sum_sleep_runtime                            :         75030.601994
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.151825
+iowait_sum                                   :             0.000000
+--- tid 3174 schedstat A ---
+25054625013 175388233 361516
+--- tid 3174 sched A ---
+sum_sleep_runtime                            :         75493.628384
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.263616
+iowait_sum                                   :             0.000000
+--- tid 3176 schedstat A ---
+25112551733 191516253 361489
+--- tid 3176 sched A ---
+sum_sleep_runtime                            :         75493.419117
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.028994
+iowait_sum                                   :             0.000000
+--- tid 3178 schedstat A ---
+212005 0 1
+--- tid 3178 sched A ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+=== moc B mono_ns=85912144447077 ===
+--- tid 2497 schedstat B ---
+60355694 564729 120
+--- tid 2497 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 2869 schedstat B ---
+64077771 377239 283
+--- tid 2869 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 2914 schedstat B ---
+10050610 73261 53
+--- tid 2914 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3009 schedstat B ---
+872129 12941 5
+--- tid 3009 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3010 schedstat B ---
+1230327 4991 6
+--- tid 3010 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3011 schedstat B ---
+1273998 0 3
+--- tid 3011 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3012 schedstat B ---
+738681 0 5
+--- tid 3012 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3013 schedstat B ---
+1299940 0 4
+--- tid 3013 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3014 schedstat B ---
+935898 48502 4
+--- tid 3014 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3015 schedstat B ---
+964951 0 4
+--- tid 3015 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3016 schedstat B ---
+987824 0 4
+--- tid 3016 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3017 schedstat B ---
+23491965 44544 119
+--- tid 3017 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3018 schedstat B ---
+801217 0 5
+--- tid 3018 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3019 schedstat B ---
+831120 0 9
+--- tid 3019 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3020 schedstat B ---
+713870 0 1
+--- tid 3020 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3021 schedstat B ---
+534326 0 2
+--- tid 3021 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3022 schedstat B ---
+409986 0 1
+--- tid 3022 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3023 schedstat B ---
+397438 0 2
+--- tid 3023 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3024 schedstat B ---
+571420 0 4
+--- tid 3024 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3025 schedstat B ---
+626301 0 2
+--- tid 3025 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3026 schedstat B ---
+732426 0 4
+--- tid 3026 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3027 schedstat B ---
+563412 0 5
+--- tid 3027 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3028 schedstat B ---
+777293 0 4
+--- tid 3028 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3029 schedstat B ---
+383884 0 2
+--- tid 3029 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3030 schedstat B ---
+405326 0 3
+--- tid 3030 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3031 schedstat B ---
+609427 0 1
+--- tid 3031 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3032 schedstat B ---
+321762 0 2
+--- tid 3032 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3033 schedstat B ---
+337871 0 2
+--- tid 3033 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3034 schedstat B ---
+307671 0 1
+--- tid 3034 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3035 schedstat B ---
+504410 9761 2
+--- tid 3035 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3036 schedstat B ---
+569169 0 5
+--- tid 3036 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3037 schedstat B ---
+377963 0 4
+--- tid 3037 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3038 schedstat B ---
+1811760 333777 3
+--- tid 3038 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3039 schedstat B ---
+867465 0 4
+--- tid 3039 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3040 schedstat B ---
+483166 371972 4
+--- tid 3040 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3041 schedstat B ---
+773728 82824 4
+--- tid 3041 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3042 schedstat B ---
+439107 777414 4
+--- tid 3042 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3043 schedstat B ---
+997855 419306 5
+--- tid 3043 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3044 schedstat B ---
+497015 0 5
+--- tid 3044 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3045 schedstat B ---
+562630 0 5
+--- tid 3045 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3046 schedstat B ---
+336844 0 2
+--- tid 3046 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3047 schedstat B ---
+541144 0 3
+--- tid 3047 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3048 schedstat B ---
+1341012 0 4
+--- tid 3048 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3049 schedstat B ---
+497385 0 5
+--- tid 3049 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3050 schedstat B ---
+505417 190326 3
+--- tid 3050 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3051 schedstat B ---
+336288 525278 4
+--- tid 3051 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3052 schedstat B ---
+631001 14105 2
+--- tid 3052 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3053 schedstat B ---
+562641 57768 2
+--- tid 3053 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3054 schedstat B ---
+508292 0 3
+--- tid 3054 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3055 schedstat B ---
+782237 0 2
+--- tid 3055 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3056 schedstat B ---
+443375 40455 2
+--- tid 3056 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3057 schedstat B ---
+438378 0 6
+--- tid 3057 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3058 schedstat B ---
+430886 0 1
+--- tid 3058 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3059 schedstat B ---
+928246 120282 5
+--- tid 3059 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3060 schedstat B ---
+488150 51294 5
+--- tid 3060 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3061 schedstat B ---
+425323 322930 9
+--- tid 3061 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3062 schedstat B ---
+240874144 3010458 1568
+--- tid 3062 sched B ---
+sum_sleep_runtime                            :         90649.069599
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3063 schedstat B ---
+513585 131322 2
+--- tid 3063 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3064 schedstat B ---
+554857 35026 5
+--- tid 3064 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3065 schedstat B ---
+437634 0 2
+--- tid 3065 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3066 schedstat B ---
+491431 37862 3
+--- tid 3066 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3067 schedstat B ---
+326587 13817 2
+--- tid 3067 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3068 schedstat B ---
+50862877 2216952 394
+--- tid 3068 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3069 schedstat B ---
+318012 0 5
+--- tid 3069 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3070 schedstat B ---
+639960 474326 5
+--- tid 3070 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3071 schedstat B ---
+527468 155217 12
+--- tid 3071 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3072 schedstat B ---
+638250 0 2
+--- tid 3072 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3073 schedstat B ---
+1324896 0 2
+--- tid 3073 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3074 schedstat B ---
+548219 20305 4
+--- tid 3074 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3075 schedstat B ---
+389089 0 2
+--- tid 3075 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3076 schedstat B ---
+465822 202379 3
+--- tid 3076 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3077 schedstat B ---
+211683 102352 2
+--- tid 3077 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3078 schedstat B ---
+60998243 330421 242
+--- tid 3078 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3079 schedstat B ---
+171274880 1923982 1027
+--- tid 3079 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3080 schedstat B ---
+455983 0 1
+--- tid 3080 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3081 schedstat B ---
+1190231 0 1
+--- tid 3081 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3082 schedstat B ---
+138816490 783494 778
+--- tid 3082 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3089 schedstat B ---
+12283321 16627 56
+--- tid 3089 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3090 schedstat B ---
+12102586 0 7
+--- tid 3090 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000
+--- tid 3091 schedstat B ---
+27559697276 187239098 361911
+--- tid 3091 sched B ---
+sum_sleep_runtime                            :        166463.641469
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.223581
+iowait_sum                                   :             0.000000
+--- tid 3093 schedstat B ---
+26622352617 173568154 361902
+--- tid 3093 sched B ---
+sum_sleep_runtime                            :        165986.292158
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.566401
+iowait_sum                                   :             0.000000
+--- tid 3094 schedstat B ---
+25866078195 178443489 361897
+--- tid 3094 sched B ---
+sum_sleep_runtime                            :        166438.892335
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.504155
+iowait_sum                                   :             0.000000
+--- tid 3096 schedstat B ---
+24846061134 223969806 351170
+--- tid 3096 sched B ---
+sum_sleep_runtime                            :        166441.232133
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.452424
+iowait_sum                                   :             0.000000
+--- tid 3098 schedstat B ---
+24925036974 165830136 355480
+--- tid 3098 sched B ---
+sum_sleep_runtime                            :        166920.432593
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.326537
+iowait_sum                                   :             0.000000
+--- tid 3100 schedstat B ---
+24897575936 173484657 351160
+--- tid 3100 sched B ---
+sum_sleep_runtime                            :        166916.023983
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.528681
+iowait_sum                                   :             0.000000
+--- tid 3101 schedstat B ---
+25198385304 165811224 361896
+--- tid 3101 sched B ---
+sum_sleep_runtime                            :        166919.107100
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.618025
+iowait_sum                                   :             0.000000
+--- tid 3107 schedstat B ---
+24747778386 167467939 355889
+--- tid 3107 sched B ---
+sum_sleep_runtime                            :        166980.440889
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.159648
+iowait_sum                                   :             0.000000
+--- tid 3108 schedstat B ---
+24829809715 158750803 361890
+--- tid 3108 sched B ---
+sum_sleep_runtime                            :        166978.073841
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.503825
+iowait_sum                                   :             0.000000
+--- tid 3111 schedstat B ---
+24846222773 158974622 361863
+--- tid 3111 sched B ---
+sum_sleep_runtime                            :        166981.086793
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.280225
+iowait_sum                                   :             0.000000
+--- tid 3115 schedstat B ---
+25049479353 167939057 361912
+--- tid 3115 sched B ---
+sum_sleep_runtime                            :        166980.885459
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.442210
+iowait_sum                                   :             0.000000
+--- tid 3120 schedstat B ---
+24755717742 179938835 361867
+--- tid 3120 sched B ---
+sum_sleep_runtime                            :        166498.747504
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.492770
+iowait_sum                                   :             0.000000
+--- tid 3125 schedstat B ---
+24339847197 162346745 351156
+--- tid 3125 sched B ---
+sum_sleep_runtime                            :        166977.134892
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.898935
+iowait_sum                                   :             0.000000
+--- tid 3136 schedstat B ---
+24765354770 168795806 361894
+--- tid 3136 sched B ---
+sum_sleep_runtime                            :        166977.909680
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.235889
+iowait_sum                                   :             0.000000
+--- tid 3139 schedstat B ---
+24532422950 166405144 361867
+--- tid 3139 sched B ---
+sum_sleep_runtime                            :        166982.070950
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.203127
+iowait_sum                                   :             0.000000
+--- tid 3142 schedstat B ---
+24475522141 183434025 361900
+--- tid 3142 sched B ---
+sum_sleep_runtime                            :        166982.337460
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.268072
+iowait_sum                                   :             0.000000
+--- tid 3147 schedstat B ---
+24577119109 169498129 361865
+--- tid 3147 sched B ---
+sum_sleep_runtime                            :        166981.113062
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.485876
+iowait_sum                                   :             0.000000
+--- tid 3151 schedstat B ---
+24783673310 180362136 355328
+--- tid 3151 sched B ---
+sum_sleep_runtime                            :        166982.463299
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.367575
+iowait_sum                                   :             0.000000
+--- tid 3160 schedstat B ---
+25131851198 169397797 355662
+--- tid 3160 sched B ---
+sum_sleep_runtime                            :        166977.298793
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.498679
+iowait_sum                                   :             0.000000
+--- tid 3171 schedstat B ---
+25048200456 179193589 361873
+--- tid 3171 sched B ---
+sum_sleep_runtime                            :        166980.341251
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.382601
+iowait_sum                                   :             0.000000
+--- tid 3172 schedstat B ---
+24851549125 170362974 361901
+--- tid 3172 sched B ---
+sum_sleep_runtime                            :        166979.420179
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.273424
+iowait_sum                                   :             0.000000
+--- tid 3174 schedstat B ---
+25087998520 175519338 361902
+--- tid 3174 sched B ---
+sum_sleep_runtime                            :        166997.591786
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.438428
+iowait_sum                                   :             0.000000
+--- tid 3176 schedstat B ---
+25145200737 192005547 361875
+--- tid 3176 sched B ---
+sum_sleep_runtime                            :        166998.329594
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.518288
+iowait_sum                                   :             0.000000
+--- tid 3178 schedstat B ---
+212005 0 1
+--- tid 3178 sched B ---
+sum_sleep_runtime                            :             0.000000
+sum_block_runtime                            :             0.000000
+wait_sum                                     :             0.000000
+iowait_sum                                   :             0.000000

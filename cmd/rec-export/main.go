@@ -18,6 +18,13 @@ func main() {
 	}
 }
 
+func boolToInt(b bool) int {
+	if b {
+		return 1
+	}
+	return 0
+}
+
 func run() error {
 	flag.Parse()
 	if flag.NArg() != 1 {
@@ -48,6 +55,7 @@ func run() error {
 	if err := w.Write([]string{
 		"tid", "ts_enter", "syscall_nr", "flags",
 		"cpu_ns", "steal_ns", "irq_ns", "rq_ns", "vol_ns", "steal_off_ns", "dt_ns",
+		"inst", "cyc", "pmu_ok",
 	}); err != nil {
 		return err
 	}
@@ -74,6 +82,9 @@ func run() error {
 			fmt.Sprintf("%d", volNs),
 			fmt.Sprintf("%d", r.StealOffNs),
 			dt,
+			fmt.Sprintf("%d", r.Inst),
+			fmt.Sprintf("%d", r.Cyc),
+			fmt.Sprintf("%d", boolToInt(r.Flags&recfmt.FlagPMU != 0)),
 		}
 		return w.Write(row)
 	})

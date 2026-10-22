@@ -48,6 +48,10 @@ type longRunOpts struct {
 	noProc        bool
 	noHost        bool
 	cgroupRefresh time.Duration
+	// Deadline cho doc ring buffer syscall (M6b-1.2 cau 1.2); mac dinh 200ms.
+	rbPoll time.Duration
+	// M6c: che do PMU auto|on|off.
+	pmu string
 }
 
 type tsvZstWriter struct {
@@ -398,6 +402,9 @@ func runLongRun(o longRunOpts) error {
 	if o.cgroupRefresh <= 0 {
 		o.cgroupRefresh = time.Second
 	}
+	if o.rbPoll <= 0 {
+		o.rbPoll = 200 * time.Millisecond
+	}
 	if err := os.MkdirAll(o.datadir, 0o755); err != nil {
 		return err
 	}
@@ -474,6 +481,7 @@ func runLongRun(o longRunOpts) error {
 		StealFallback: stealMode == stealModeFallback,
 		StealOff:      stealMode == stealModeOff,
 		SysEnterHook:  o.sysEnterHook,
+		PMU:           o.pmu,
 	})
 	if err != nil {
 		bpflog.Report(logPath, "khong nap duoc syscall BPF", err)
@@ -546,6 +554,14 @@ func runLongRun(o longRunOpts) error {
 		fmt.Sprintf("no_proc: %v", o.noProc),
 		fmt.Sprintf("no_host: %v", o.noHost),
 		fmt.Sprintf("cgroup_refresh: %s", o.cgroupRefresh),
+		fmt.Sprintf("rb_poll: %s", o.rbPoll),
+	}
+	if coll.PMUWarning() != "" {
+		fmt.Fprintf(os.Stderr, "CANH BAO: %s\n", coll.PMUWarning())
+	}
+	header = append(header, fmt.Sprintf("pmu: %s", coll.PMUMode()))
+	if coll.PMUMode() != "off" {
+		header = append(header, "pmu_events: instructions:u,cycles:u")
 	}
 	for _, name := range []string{"IRQ_TIME_ACCOUNTING", "PARAVIRT_TIME_ACCOUNTING", "SCHEDSTATS", "SCHED_INFO"} {
 		value, err := hostinfo.KernelConfig(name)
@@ -768,6 +784,10 @@ func runLongRun(o longRunOpts) error {
 		go func() {
 			ticker := time.NewTicker(time.Second)
 			defer ticker.Stop()
+			var prevPMUInst, prevPMUCyc uint64
+			if coll.PMUCounters() {
+				prevPMUInst, prevPMUCyc, _ = coll.PMUTotals()
+			}
 			for {
 				select {
 				case <-stopHost:
@@ -777,6 +797,14 @@ func runLongRun(o longRunOpts) error {
 					if err != nil {
 						bpflog.Note(os.Stderr, logPath, fmt.Sprintf("hostsample: %v", err))
 						continue
+					}
+					if coll.PMUCounters() {
+						inst, cyc, perr := coll.PMUTotals()
+						if perr == nil {
+							s.PMUInstDelta = strconv.FormatUint(inst-prevPMUInst, 10)
+							s.PMUCycDelta = strconv.FormatUint(cyc-prevPMUCyc, 10)
+							prevPMUInst, prevPMUCyc = inst, cyc
+						}
 					}
 					_ = ws.maybeRotate(time.Now(), header)
 					if err := ws.writeHostRow(s.RowTSV()); err != nil {
@@ -814,7 +842,7 @@ func runLongRun(o longRunOpts) error {
 		}
 	}()
 
-	const readPoll = 10 * time.Millisecond
+	readPoll := o.rbPoll
 	handleProcEvent := func(pr *ringbuf.Record) {
 		if len(pr.RawSample) != procbpf.EventSize {
 			return
@@ -898,7 +926,9 @@ func runLongRun(o longRunOpts) error {
 			var procRec ringbuf.Record
 			var sinceFlush int64
 			for {
-				procColl.SetDeadline(time.Now().Add(readPoll))
+				// Khong dat deadline: cho khong thoi han. BPF proc nop voi co 0
+				// nen kernel tu danh thuc khi co su kien. Dung bang Flush ->
+				// ErrFlushed nhu ban sua SIGTERM (M6b-1.2 cau 1.1).
 				perr := procColl.ReadInto(&procRec)
 				if perr == nil {
 					sinceFlush++

@@ -1,0 +1,41 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 6fe3fa3
+# record_size: 56
+# filter_tgids: 3138910
+# filter_pid: 1
+# filter_cgroup: khong co
+# ringbuf_bytes: 67108864
+# rb_wake_bytes: 8388608
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: dmesg | [    0.000000] vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# datadir: validation/m6b1-20261019/g10
+# rotate: 1h0m0s
+# min_free_gb: 50
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 0
+# start_mono_ns: 871453226852262
+# start_wall: 2026-10-19T17:01:47.909931211+07:00
+# duration: 1m30s
+# segment_tag: 2026101910
+# moi dong cach nhau 10s
+mono_ns,wall,dinh_ghi_delta,mat_delta,dinh_ghi_tong,mat_tong,irq_hard_delta_ns,irq_soft_delta_ns,irq_vec_delta_ns,soft_raw_delta_ns,irq_hard_tong_ns,irq_soft_tong_ns,irq_vec_tong_ns,soft_raw_tong_ns
+871453236451755,2026-10-19T17:01:47.919530385+07:00,0,0,0,0,27591,3559988,20080745,3573556,27591,3559988,20080745,3573556
+871463236534022,2026-10-19T17:01:57.919612058+07:00,12693210,0,12693210,0,2152441,273978416,1472787382,274643444,2180032,277538404,1492868127,278217000
+871473236904570,2026-10-19T17:02:07.919982387+07:00,17964989,0,30658199,0,4649862,212380059,1389601923,212829605,6829894,489918463,2882470050,491046605
+871483237129457,2026-10-19T17:02:17.920207738+07:00,15756026,0,46414225,0,561034,193736364,1487236016,194010502,7390928,683654827,4369706066,685057107
+871485404945285,2026-10-19T17:02:20.088022498+07:00,3330051,0,49744276,0,119917,36478169,310211386,36605231,7510845,720132996,4679917452,721662338

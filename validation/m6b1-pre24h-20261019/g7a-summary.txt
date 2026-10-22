@@ -1,0 +1,1 @@
+G7a ban_ghi=1000001 mat=0 (perf-ban_ghi)=0

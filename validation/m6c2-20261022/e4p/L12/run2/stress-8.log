@@ -1,0 +1,11 @@
+stress-ng: info:  [1676203] setting to a 2 mins, 0 secs run per stressor
+stress-ng: info:  [1676203] dispatching hogs: 1 stream
+stress-ng: info:  [1676217] stream: stressor loosely based on a variant of the STREAM benchmark code
+stress-ng: info:  [1676217] stream: do NOT submit any of these results to the STREAM benchmark results
+stress-ng: info:  [1676217] stream: Using cache size of 43008K
+stress-ng: info:  [1676217] stream: memory rate: 4108.50 MB read/sec, 2739.00 MB write/sec, 359.01 double precision Mflop/sec (instance 0)
+stress-ng: info:  [1676203] skipped: 0
+stress-ng: info:  [1676203] passed: 1: stream (1)
+stress-ng: info:  [1676203] failed: 0
+stress-ng: info:  [1676203] metrics untrustworthy: 0
+stress-ng: info:  [1676203] successful run completed in 1 min, 36.81 secs

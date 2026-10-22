@@ -1,0 +1,11 @@
+wl pid=555936 tid=555936
+thu tu: collector TRUOC (READY), bpftrace mo rong + su kien SAU
+bpftool_hids_count_sau=0
+cua so ts_enter: (29688853162941, 29710863538556]
+collector_rq_ns=20620036
+bpftrace_rq_sau_wakeup_ns=20139974
+bpftrace_so_lan_wakeup=502
+lech_ns=480062
+lech_phan_tram=2.3836
+lech_us_moi_wakeup=0.9563
+bin: out/m6b13-b6-c1-071526.bin

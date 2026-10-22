@@ -7,6 +7,8 @@ Collector eBPF đo khoảng thời gian giữa hai syscall liên tiếp của t�
 
 # Môi trường cố định
 - Ubuntu 24.04, kernel 6.8.x (máy chính 6.8.0-142), VM VMware, stealclock đã bật. Chỉ hỗ trợ kernel 6.8; không viết nhánh tương thích kernel khác.
+- Kiểm tra stealclock lúc khởi động collector (M6c-2, quyết định 8.4 của R033): cửa sổ 3 s, thử lại tối đa 3 cửa sổ, fail-closed; tiêu chí theo TỔNG mọi CPU online: đạt khi |Σvmw_delta − Σrq_delta| ≤ max(5 ms, 1% × Σvmw). Lý do: kernel chỉ cộng steal vào rq->prev_steal_time tại tick hoặc khi thoát idle qua ranh giới jiffy, nên một CPU gần như rảnh nhưng thức dậy liên tục có thể chậm vài ms so với đồng hồ vmw trong vài giây; tổng trên mọi CPU không lệch có hệ thống; phép kiểm gốc là G1 10 phút (0,08%).
+- Dấu tần số (M6c-2): mọi đợt overhead và E-series bắt đầu bằng `scripts/freq_stamp.sh <cpu>` trên CPU của tải (3 lần coreclk, trung vị GHz_wall ghi trong báo cáo cạnh bảng kết quả); so sánh tuyệt đối giữa hai đợt chỉ khi GHz khác nhau ≤ 2%.
 - BPF viết bằng C, CO-RE, vmlinux.h sinh từ /sys/kernel/btf/vmlinux bằng bpftool. Ưu tiên tp_btf/tracepoint. Không dùng kprobe/fentry vào hàm nội bộ kernel nếu chưa được duyệt.
 - User space: Go, github.com/cilium/ebpf + bpf2go. Không cgo.
 - Repo /root/hids: bpf/ (mã BPF), cmd/<tên>/ (mỗi binary một thư mục), internal/, scripts/ (bash), out/ (dữ liệu, thêm vào .gitignore). Binary build ra bin/. Có Makefile: make build.
@@ -25,13 +27,15 @@ Collector eBPF đo khoảng thời gian giữa hai syscall liên tiếp của t�
 - Lỗi verifier/libbpf phải in nguyên văn ra stderr và ghi vào out/<tên>.log.
 - Kết thúc mỗi nhiệm vụ: báo cáo ngắn gồm việc đã làm, lệnh build, lệnh chạy, phương án đã dùng (nếu có dự phòng), lỗi còn tồn tại. Commit và gắn tag git theo mốc (m1, m2, ...).
 
-# Đặc tả bản ghi syscall (M6a; cố định 56 byte, little-endian; file cũ 48 byte vẫn đọc được)
-ts_enter u64 ns (bpf_ktime_get_ns tại sys_enter) | cgroup_id u64 | tid u32 | seq u32 (tăng dần theo CPU) | syscall_nr u16 | flags u16 | cpu_ns u32 | steal_ns u32 | irq_ns u32 | rq_ns u32 | vol_us u32 | steal_off_ns u32 | reserved u32 (= 0)
+# Đặc tả bản ghi syscall (M6c; cố định 64 byte, little-endian; file cũ 48 và 56 byte vẫn đọc được theo record_size trong header)
+ts_enter u64 ns (bpf_ktime_get_ns tại sys_enter) | cgroup_id u64 | tid u32 | seq u32 (tăng dần theo CPU) | syscall_nr u16 | flags u16 | cpu_ns u32 | steal_ns u32 | irq_ns u32 | rq_ns u32 | vol_us u32 | steal_off_ns u32 | inst u32 | cyc u32 | reserved u32 (= 0)
+inst/cyc (M6c): số lệnh / số chu kỳ CHẾ ĐỘ USER (exclude_kernel=1, exclude_hv=1) trong các đoạn ON-CPU của khoảng, đọc từ bộ đếm PMU per-CPU. Không gồm phần chạy trong kernel (syscall, irq, BPF), nên không chứa chi phí của collector. Tràn u32 thì bão hoà và bật OVERFLOW (bit4).
+Chế độ PMU (M6c-1): cờ `-pmu` của hids-collect có `off | host | on`, MẶC ĐỊNH `host` (production: chỉ mở fd perf per-CPU cho luồng host đọc tổng mỗi giây, BPF KHÔNG đọc PMU theo bản ghi, bit7 = 0). `on` chỉ dùng cho thí nghiệm cần inst/cyc theo bản ghi (như E4p): mỗi lần đọc bộ đếm trên vPMC VMware tốn ~1,47 µs (đo ở R032), 2 lần đọc mỗi sys_enter và mỗi sched_switch của thread được theo dõi.
 steal_off_ns: steal trên vCPU liên quan khi thread OFF-CPU trong khoảng; không nằm trong tổng Δt (chồng lên vol/rq), chỉ đo bổ sung.
 Các thành phần thuộc khoảng từ sys_enter trước đó của cùng tid tới sys_enter hiện tại; mỗi thành phần được đo độc lập (không suy ra từ Δt trừ các phần khác).
 
 # Bảng flags (kiến trúc sư chốt, cố định từ M3)
-bit0 FIRST (bản ghi đầu tiên của thread kể từ khi collector chạy) | bit1 GAP_BEFORE | bit2 D_SLEEP | bit3 MIGRATED | bit4 OVERFLOW | bit5 STEAL_FALLBACK | bit6 CLAMPED | bit7 = 0 | bit8–15 = số CPU lúc sys_enter (bpf_get_smp_processor_id() & 0xff)
+bit0 FIRST (bản ghi đầu tiên của thread kể từ khi collector chạy) | bit1 GAP_BEFORE | bit2 D_SLEEP | bit3 MIGRATED | bit4 OVERFLOW | bit5 STEAL_FALLBACK | bit6 CLAMPED | bit7 PMU (M6c: 1 khi inst và cyc hợp lệ cho CẢ khoảng; 0 thì không dùng inst/cyc) | bit8–15 = số CPU lúc sys_enter (bpf_get_smp_processor_id() & 0xff)
 
 # Định nghĩa 5 thành phần của Δt (kiến trúc sư chốt ở M3, cố định)
 - Một khoảng = từ sys_enter trước của cùng thread tới sys_enter hiện tại. Bản ghi phát ra tại sys_enter hiện tại mang các thành phần của khoảng đó.

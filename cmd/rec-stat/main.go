@@ -81,6 +81,7 @@ func run() error {
 	seqByCPU := map[int][]uint32{}
 
 	var total, kept, nrCount, firstCount, gapCount int64
+	var nonFirst, pmuOK int64
 	var minTs, maxTs uint64
 
 	_, leftover, err := recfmt.ForEach(payload, recordSize, func(r recfmt.Record) error {
@@ -125,6 +126,11 @@ func run() error {
 			firstCount++
 			tid.first++
 			tg.first++
+		} else {
+			nonFirst++
+			if r.Flags&recfmt.FlagPMU != 0 {
+				pmuOK++
+			}
 		}
 		if r.Flags&recfmt.FlagGapBefore != 0 {
 			gapCount++
@@ -156,6 +162,9 @@ func run() error {
 	}
 	fmt.Printf("ban ghi co co FIRST        : %d\n", firstCount)
 	fmt.Printf("ban ghi co co GAP_BEFORE   : %d\n", gapCount)
+	if nonFirst > 0 {
+		fmt.Printf("ti le ban ghi khong-FIRST co co PMU: %d/%d = %.4f%%\n", pmuOK, nonFirst, float64(pmuOK)*100/float64(nonFirst))
+	}
 	if *nrFilter >= 0 {
 		fmt.Printf("ban ghi co syscall_nr=%-5d: %d\n", *nrFilter, nrCount)
 	}

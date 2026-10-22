@@ -1,0 +1,99 @@
+88ef821eb062855b0189af1568d25e310b53f1e0c1e29e35e360282515d97706  tools/coreclk.c
+-rwxr-xr-x 1 root root 16200 Oct 21 19:09 bin/coreclk
+--- L=0 lan=1 ---
+proc_stat_truoc: cpu  4891151 92 5510544 64836061 32692 0 1200085 292750 0 0
+so_imul=800000000 chu_ky_ky_vong=2400000000 thoi_gian_ns=1243398780 GHz_wall=1.9302 kiem=5236358074778120193
+
+ Performance counter stats for 'taskset -c 20 bin/coreclk 100000000':
+
+     2,494,480,873      cycles:u                                                              
+     1,324,291,645      instructions:u                   #    0.53  insn per cycle            
+
+       1.271856495 seconds time elapsed
+
+       1.269843000 seconds user
+       0.001997000 seconds sys
+
+
+proc_stat_sau: cpu  4891299 92 5510574 64839010 32692 0 1200086 292756 0 0
+--- L=0 lan=2 ---
+proc_stat_truoc: cpu  4891300 92 5510575 64839020 32692 0 1200086 292756 0 0
+so_imul=800000000 chu_ky_ky_vong=2400000000 thoi_gian_ns=1248603217 GHz_wall=1.9221 kiem=5236358074778120193
+
+ Performance counter stats for 'taskset -c 20 bin/coreclk 100000000':
+
+     2,494,360,503      cycles:u                                                              
+     1,324,291,632      instructions:u                   #    0.53  insn per cycle            
+
+       1.283085042 seconds time elapsed
+
+       1.281127000 seconds user
+       0.001966000 seconds sys
+
+
+proc_stat_sau: cpu  4891443 92 5510598 64841993 32692 0 1200087 292761 0 0
+--- L=0 lan=3 ---
+proc_stat_truoc: cpu  4891443 92 5510599 64842000 32692 0 1200087 292761 0 0
+so_imul=800000000 chu_ky_ky_vong=2400000000 thoi_gian_ns=1241745386 GHz_wall=1.9328 kiem=5236358074778120193
+
+ Performance counter stats for 'taskset -c 20 bin/coreclk 100000000':
+
+     2,493,921,977      cycles:u                                                              
+     1,324,291,640      instructions:u                   #    0.53  insn per cycle            
+
+       1.276119087 seconds time elapsed
+
+       1.272177000 seconds user
+       0.003962000 seconds sys
+
+
+proc_stat_sau: cpu  4891647 92 5510637 64844866 32692 0 1200088 292768 0 0
+--- L=22 lan=1 ---
+proc_stat_truoc: cpu  4913641 92 5510877 64851392 32692 0 1200120 292812 0 0
+so_imul=800000000 chu_ky_ky_vong=2400000000 thoi_gian_ns=1270993403 GHz_wall=1.8883 kiem=5236358074778120193
+
+ Performance counter stats for 'taskset -c 20 bin/coreclk 100000000':
+
+     2,495,184,684      cycles:u                                                              
+     1,324,291,714      instructions:u                   #    0.53  insn per cycle            
+
+       1.308048484 seconds time elapsed
+
+       1.263231000 seconds user
+       0.008948000 seconds sys
+
+
+proc_stat_sau: cpu  4916798 92 5510914 64851466 32692 0 1200123 292815 0 0
+--- L=22 lan=2 ---
+proc_stat_truoc: cpu  4916805 92 5510914 64851466 32692 0 1200123 292815 0 0
+so_imul=800000000 chu_ky_ky_vong=2400000000 thoi_gian_ns=1251218347 GHz_wall=1.9181 kiem=5236358074778120193
+
+ Performance counter stats for 'taskset -c 20 bin/coreclk 100000000':
+
+     2,498,350,036      cycles:u                                                              
+     1,324,291,627      instructions:u                   #    0.53  insn per cycle            
+
+       1.275849596 seconds time elapsed
+
+       1.267839000 seconds user
+       0.002991000 seconds sys
+
+
+proc_stat_sau: cpu  4919844 92 5510950 64851535 32692 0 1200126 292819 0 0
+--- L=22 lan=3 ---
+proc_stat_truoc: cpu  4919861 92 5510951 64851535 32692 0 1200126 292819 0 0
+so_imul=800000000 chu_ky_ky_vong=2400000000 thoi_gian_ns=1246778222 GHz_wall=1.9250 kiem=5236358074778120193
+
+ Performance counter stats for 'taskset -c 20 bin/coreclk 100000000':
+
+     2,498,225,069      cycles:u                                                              
+     1,324,291,659      instructions:u                   #    0.53  insn per cycle            
+
+       1.277747126 seconds time elapsed
+
+       1.270067000 seconds user
+       0.003895000 seconds sys
+
+
+proc_stat_sau: cpu  4922898 92 5510982 64851628 32692 0 1200128 292821 0 0
+coreclk xong 2026-10-21T19:17:26+07:00

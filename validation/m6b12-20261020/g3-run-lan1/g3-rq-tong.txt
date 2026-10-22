@@ -1,0 +1,13 @@
+--- S2: validation/m6b12-20261020/g3-run/g3/S2-ketqua.txt ---
+@rq_sau_wakeup_ns: 13595027
+@rq_tong_ns: 13595027
+@so_lan: 501
+@so_lan_preempt: 0
+rq_sau_preempt       —             0               bpftrace @rq_sau_preempt_ns (so_lan_preempt: 0)
+rq                   14379949        13595027        bpftrace TONG @rq_sau_wakeup_ns + @rq_sau_preempt_ns
+LECH_RQ_TONG_S2: collector=14379949 bpftrace_tong=13595027 lech=5.77% (tieu chi: <=5%)
+--- S3: validation/m6b12-20261020/g3-run/g3/S3-ketqua.txt ---
+@so_lan: 0
+@so_lan_preempt: 0
+--- S5: validation/m6b12-20261020/g3-run/g3/S5-ketqua.txt ---
+(khong co file ket qua)
