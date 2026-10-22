@@ -1,0 +1,73 @@
+stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+stealclock_evidence: journalctl
+doi chieu vmw_steal_time voi rq->prev_steal_time trong 3s (lan 1)...
+   cpu         vmw_ns    rq_steal_ns      lech_ns    nguong_ns
+     0         416469         416469            0      2000000
+     1         159716         159717           -1      2000000
+     2         185415         185416           -1      2000000
+     3         231461         231462           -1      2000000
+     4       16362293       16362294           -1      2000000
+     5         178347         178347            0      2000000
+     6              0              0            0      2000000
+     7              0              0            0      2000000
+     8         570551         570551            0      2000000
+     9       20658527       20658528           -1      2000000
+    10              0              0            0      2000000
+    11              0              0            0      2000000
+    12              0              0            0      2000000
+    13         342548         342549           -1      2000000
+    14              0              0            0      2000000
+    15        8502538        8502539           -1      2000000
+    16        2846538        2846538            0      2000000
+    17              0              0            0      2000000
+    18              0              0            0      2000000
+    19              0              0            0      2000000
+    20       40316548       40334657       -18109      2000000
+    21         434563         434564           -1      2000000
+    22              0              0            0      2000000
+    23              0              0            0      2000000
+  TONG       91205514       91223631       -18117      5000000
+STEALCHECK lan=1 tong_vmw_ns=91205514 tong_rq_ns=91223631 lech_ns=18117 nguong_ns=5000000 cpu_lech_max=20:18109 ket_qua=DAT
+doi chieu xong: |tong_vmw - tong_rq| = -18117 ns, nguong max(5000000 ns, 1% x tong_vmw); cpu lech max 20: 18109 ns
+ghi vao out/m6c2-e4p-L22-2-104326.bin
+loc pid: 1690720 | loc cgroup: khong co | ring buffer: 64 MiB
+READY
+ban ghi doc duoc: 1011 | so lan dinh ghi: 1011 | mat: 0
+irq cong don (ns): hard 8680961 | soft 814016740 | vector 9346747561 | tong 10169445262
+soft_raw cong don (ns): 816719830 (ke ca hard/vector long ben trong, de so voi softirqs-bpfcc)
+irq bat thuong: 0 khoang, 0 ns | loai con dang hoat dong: 0
+recursion_misses (bpf_prog_info), tong 0 tren 31 chuong trinh:
+  hids_irq_call_function_entry             0
+  hids_irq_call_function_exit              0
+  hids_irq_call_function_single_entry      0
+  hids_irq_call_function_single_exit       0
+  hids_irq_deferred_error_apic_entry       0
+  hids_irq_deferred_error_apic_exit        0
+  hids_irq_error_apic_entry                0
+  hids_irq_error_apic_exit                 0
+  hids_irq_irq_handler_entry               0
+  hids_irq_irq_handler_exit                0
+  hids_irq_irq_work_entry                  0
+  hids_irq_irq_work_exit                   0
+  hids_irq_local_timer_entry               0
+  hids_irq_local_timer_exit                0
+  hids_irq_reschedule_entry                0
+  hids_irq_reschedule_exit                 0
+  hids_irq_softirq_entry                   0
+  hids_irq_softirq_exit                    0
+  hids_irq_spurious_apic_entry             0
+  hids_irq_spurious_apic_exit              0
+  hids_irq_thermal_apic_entry              0
+  hids_irq_thermal_apic_exit               0
+  hids_irq_threshold_apic_entry            0
+  hids_irq_threshold_apic_exit             0
+  hids_irq_x86_platform_ipi_entry          0
+  hids_irq_x86_platform_ipi_exit           0
+  hids_sched_switch                        0
+  hids_sched_wakeup                        0
+  hids_sched_wakeup_new                    0
+  hids_sys_enter                           0
+  hids_sys_enter_fentry                    0
+thoi gian chay: 90.039 s | CPU collector: user 0.500 s, sys 0.648 s (getrusage RUSAGE_SELF)
+kich thuoc file: 1185 byte
+du lieu: out/m6c2-e4p-L22-2-104326.bin | thong ke: out/m6c2-e4p-L22-2-104326.bin.stats | theo doi: out/m6c2-e4p-L22-2-104326.bin.periodic

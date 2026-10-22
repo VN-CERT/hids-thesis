@@ -85,8 +85,8 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 - Phần 1 XONG (chỉ dùng dữ liệu cũ, file `validation/m6c2-20261022/part1.txt`): C1 bản ghi/giây 10 lượt mỗi ô (T1 trung vị 1.261.136,9/s, mất tổng 0); C2 = 0 bản ghi mọi lượt (cgroup decoy). Đối chiếu 1c: R026/M5h T1 C0 141,84 ns, T3 C0 4901,59 TPS, T4 C0 140081 RPS; R021/M5f T3 C0 ≈ 4965 TPS, T4 C0 142675 RPS.
 - Phần 2 XONG: STEALCHECK theo TỔNG mọi CPU (|Σvmw − Σrq| ≤ max(5 ms, 1% Σvmw)), bảng per-CPU mỗi cửa sổ; G7a ×1 mất 0; G3 ×1: G5 max ≤ 500, CLAMPED 0/tổng, recursion_misses = 0 trên 31 chương trình. Dữ liệu `validation/m6c2-20261022/part23/`.
 - Phần 3 XONG: `scripts/freq_stamp.sh`; CPU 12 trung vị 1,9359 GHz, CPU 20 trung vị 1,9349 GHz (máy rảnh, container dừng). Quy ước đã ghi vào `.cursor/rules/hids.mdc`.
-- Việc đang chạy: phần 4 E4p cơ chế gốc — unit `hids-m6c2e4p`, log `out/jobs/m6c2e4p.log`, dữ liệu `validation/m6c2-20261022/e4p/` (script tự dừng/khởi động lại 12 container).
-- Tiếp theo: tổng hợp R034, đếm STEALCHECK toàn nhiệm vụ, tag `m6c.2`, push.
+- Phần 4 XONG: E4p cơ chế gốc đủ 9/9 ô, attempt 1, 500/500 khoảng mỗi ô; inst 14170548–14170579 ở mọi mức; dấu tần số L=22 là 2,5239 GHz (khác L0/L12 ~1,93 — câu 8.1 của R034).
+- M6c-2 ĐÓNG: R034 viết xong, tag `m6c.2`, đã push. Việc đang chạy: (không có) — unit `hids-*` trống, `bpftool prog show | grep -c hids_` = 0, 12 container chạy. Chờ kiến trúc sư trả lời 2 câu hỏi mục 8 của R034.
 
 ## M6c: ĐÓNG (R032)
 

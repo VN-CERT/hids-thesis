@@ -1,0 +1,14 @@
+=== E4p-goc L=22 run=3 attempt=1 ===
+stress-ng: stress-ng --stream 1 --taskset 0-19,21-23 --timeout 120 (x22 worker)
+wl: taskset -c 20 ./bin/wl -loops 2634849 mem 500
+so ban ghi theo syscall (khong FIRST): {0: 4, 257: 1, 5: 1, 3: 1, 9: 1, 230: 500, 110: 500, 11: 1, 231: 1}; chon khoang dot nr=230
+khoang dot (nr=230, khong FIRST): 500, co PMU: 500
+trung vi cpu_ns = 39050517.0
+trung vi inst = 14170574.0
+trung vi cyc = 90758257.5
+trung vi cyc/inst (CPI) = 6.4047
+trung vi cyc/cpu_ns (GHz hieu dung) = 2.2281
+so_khoang_dot = 500
+du lieu: out/m6c2-e4p-L22-3-104503.bin
+so_attempt = 1
+GHz_wall_dau_tan_so = 2.5239
