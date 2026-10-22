@@ -1,0 +1,80 @@
+== norm-on S2
+@rq_sau_wakeup_ns: 36303066
+@rq_tong_ns: 36303066
+@so_lan: 500
+@so_lan_preempt: 0
+rq 27097183
+rq                   27097183        528826          Delta schedstat field2 run_delay
+rq (wait_sum)        27097183        528826          Delta wait_sum /proc/sched
+rq                   27097183        36303066        bpftrace @rq_sau_wakeup_ns (cot 3: 528826 run_delay)
+rq_sau_preempt       —             0               bpftrace @rq_sau_preempt_ns (so_lan_preempt: 0)
+== norm-on S5
+@rq_sau_wakeup_ns: 20669672
+@rq_tong_ns: 20669672
+@so_lan: 606
+@so_lan_preempt: 0
+rq 16497067
+rq                   16497067        1034745         Delta schedstat field2 run_delay
+rq (wait_sum)        16497067        1034750         Delta wait_sum /proc/sched
+rq                   16497067        20669672        bpftrace @rq_sau_wakeup_ns (cot 3: 1034745 run_delay)
+rq_sau_preempt       —             0               bpftrace @rq_sau_preempt_ns (so_lan_preempt: 0)
+== norm-off S2
+@rq_sau_wakeup_ns: 27615196
+@rq_tong_ns: 27615196
+@so_lan: 500
+@so_lan_preempt: 0
+rq 28372427
+rq                   28372427        2023536         Delta schedstat field2 run_delay
+rq (wait_sum)        28372427        2023540         Delta wait_sum /proc/sched
+rq                   28372427        27615196        bpftrace @rq_sau_wakeup_ns (cot 3: 2023536 run_delay)
+rq_sau_preempt       —             0               bpftrace @rq_sau_preempt_ns (so_lan_preempt: 0)
+== norm-off S5
+@rq_sau_wakeup_ns: 16727147
+@rq_tong_ns: 16727147
+@so_lan: 603
+@so_lan_preempt: 0
+rq 15721162
+rq                   15721162        978317          Delta schedstat field2 run_delay
+rq (wait_sum)        15721162        978317          Delta wait_sum /proc/sched
+rq                   15721162        16727147        bpftrace @rq_sau_wakeup_ns (cot 3: 978317 run_delay)
+rq_sau_preempt       —             0               bpftrace @rq_sau_preempt_ns (so_lan_preempt: 0)
+== swap-on S2
+@rq_sau_wakeup_ns: 30830795
+@rq_tong_ns: 30830795
+@so_lan: 502
+@so_lan_preempt: 0
+rq 30357561
+rq                   30357561        3173964         Delta schedstat field2 run_delay
+rq (wait_sum)        30357561        3173960         Delta wait_sum /proc/sched
+rq                   30357561        30830795        bpftrace @rq_sau_wakeup_ns (cot 3: 3173964 run_delay)
+rq_sau_preempt       —             0               bpftrace @rq_sau_preempt_ns (so_lan_preempt: 0)
+== swap-on S5
+@rq_sau_wakeup_ns: 16711991
+@rq_tong_ns: 16711991
+@so_lan: 602
+@so_lan_preempt: 0
+rq 16286249
+rq                   16286249        1794745         Delta schedstat field2 run_delay
+rq (wait_sum)        16286249        1794750         Delta wait_sum /proc/sched
+rq                   16286249        16711991        bpftrace @rq_sau_wakeup_ns (cot 3: 1794745 run_delay)
+rq_sau_preempt       —             0               bpftrace @rq_sau_preempt_ns (so_lan_preempt: 0)
+== swap-off S2
+@rq_sau_wakeup_ns: 28731122
+@rq_tong_ns: 28731122
+@so_lan: 502
+@so_lan_preempt: 0
+rq 28773267
+rq                   28773267        1732930         Delta schedstat field2 run_delay
+rq (wait_sum)        28773267        1732930         Delta wait_sum /proc/sched
+rq                   28773267        28731122        bpftrace @rq_sau_wakeup_ns (cot 3: 1732930 run_delay)
+rq_sau_preempt       —             0               bpftrace @rq_sau_preempt_ns (so_lan_preempt: 0)
+== swap-off S5
+@rq_sau_wakeup_ns: 15070072
+@rq_tong_ns: 15070072
+@so_lan: 607
+@so_lan_preempt: 0
+rq 14713594
+rq                   14713594        1270735         Delta schedstat field2 run_delay
+rq (wait_sum)        14713594        1270730         Delta wait_sum /proc/sched
+rq                   14713594        15070072        bpftrace @rq_sau_wakeup_ns (cot 3: 1270735 run_delay)
+rq_sau_preempt       —             0               bpftrace @rq_sau_preempt_ns (so_lan_preempt: 0)

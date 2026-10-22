@@ -1,0 +1,405 @@
+[2026-10-21T19:19:19+07:00] m6c1 overhead bat dau, RUNS=10, out=validation/m6c1-20261021/part4/overhead
+8b05464db597cfc471dc7af24ce651ef905751ebd80ec463b3863b7dd0263c35  bpf/sys_enter.bpf.c
+39d892e5524de1cb49ace593b152c5b303d99c056e110f0a072d344c8270c7ec  bpf/proc_events.bpf.c
+9f0b4cde1c2e1c6aa560c041eaefaef1a40e5c7d9fc292db1d77dfc971d046cd  analysis/m5f_parse.py
+8c390002870f3ea8ace38a241f803bb5e7ec6c2413fdd403f757de24a6a1be25  analysis/m6c_stats.py
+88ef821eb062855b0189af1568d25e310b53f1e0c1e29e35e360282515d97706  tools/coreclk.c
+d78563d
+/usr/bin/wrk
+[2026-10-21T19:19:35+07:00] T1
+T1 C0 run1: 186.31 ns/syscall
+ban_ghi=10000001 ban_ghi_giay=1301229.9 mat=0
+T1 C1 run1: 769.00 ns/syscall
+T1 C2 run1: 238.67 ns/syscall
+T1 C0 run2: 183.59 ns/syscall
+ban_ghi=10000001 ban_ghi_giay=1346170.1 mat=0
+T1 C1 run2: 743.30 ns/syscall
+T1 C2 run2: 236.84 ns/syscall
+T1 C0 run3: 181.85 ns/syscall
+ban_ghi=10000001 ban_ghi_giay=1419555.1 mat=0
+T1 C1 run3: 704.73 ns/syscall
+T1 C2 run3: 240.10 ns/syscall
+T1 C0 run4: 183.02 ns/syscall
+ban_ghi=10000001 ban_ghi_giay=1262313.2 mat=0
+T1 C1 run4: 792.69 ns/syscall
+T1 C2 run4: 246.62 ns/syscall
+T1 C0 run5: 184.86 ns/syscall
+[2026-10-21T19:21:54+07:00] KHONG_READY t1-C1-5
+[2026-10-21T19:21:54+07:00] T1-C1-5 hong (lan 1/3), chay lai
+ban_ghi=10000001 ban_ghi_giay=1282532.1 mat=0
+T1 C1 run5: 779.94 ns/syscall
+[2026-10-21T19:22:10+07:00] T1-C1-5 dat o lan thu 2
+T1 C2 run5: 252.94 ns/syscall
+T1 C0 run6: 184.67 ns/syscall
+ban_ghi=10000001 ban_ghi_giay=1222262.9 mat=0
+T1 C1 run6: 818.57 ns/syscall
+T1 C2 run6: 240.17 ns/syscall
+T1 C0 run7: 185.29 ns/syscall
+ban_ghi=10000001 ban_ghi_giay=1259960.6 mat=0
+T1 C1 run7: 794.09 ns/syscall
+T1 C2 run7: 262.25 ns/syscall
+T1 C0 run8: 187.06 ns/syscall
+ban_ghi=10000001 ban_ghi_giay=1184399.5 mat=0
+T1 C1 run8: 844.73 ns/syscall
+T1 C2 run8: 281.79 ns/syscall
+T1 C0 run9: 190.26 ns/syscall
+ban_ghi=10000001 ban_ghi_giay=1185579.5 mat=0
+T1 C1 run9: 843.88 ns/syscall
+T1 C2 run9: 247.01 ns/syscall
+T1 C0 run10: 189.61 ns/syscall
+ban_ghi=10000001 ban_ghi_giay=1207226.2 mat=0
+T1 C1 run10: 828.59 ns/syscall
+T1 C2 run10: 252.84 ns/syscall
+[2026-10-21T19:24:29+07:00] T4 kich tran (wrk goc)
+T4 C0 run1: 66795.68 req/s
+ban_ghi=24285544 ban_ghi_giay=404063.1 mat=0
+T4 C1 run1: 56653.62 req/s
+T4 C2 run1: 64169.95 req/s
+T4 C0 run2: 67945.53 req/s
+ban_ghi=25853709 ban_ghi_giay=430826.5 mat=0
+T4 C1 run2: 60338.71 req/s
+T4 C2 run2: 65234.86 req/s
+T4 C0 run3: 67397.30 req/s
+ban_ghi=25103454 ban_ghi_giay=418342.1 mat=0
+T4 C1 run3: 58633.80 req/s
+T4 C2 run3: 69261.97 req/s
+T4 C0 run4: 68051.38 req/s
+ban_ghi=25219721 ban_ghi_giay=420285.3 mat=0
+T4 C1 run4: 58925.22 req/s
+T4 C2 run4: 66410.81 req/s
+T4 C0 run5: 69425.02 req/s
+ban_ghi=26229997 ban_ghi_giay=437128.1 mat=0
+T4 C1 run5: 61250.19 req/s
+T4 C2 run5: 68553.37 req/s
+T4 C0 run6: 70558.74 req/s
+ban_ghi=24838789 ban_ghi_giay=413836.4 mat=0
+T4 C1 run6: 58000.19 req/s
+T4 C2 run6: 67350.40 req/s
+T4 C0 run7: 68781.69 req/s
+ban_ghi=24820525 ban_ghi_giay=413599.1 mat=0
+T4 C1 run7: 57959.87 req/s
+T4 C2 run7: 63779.54 req/s
+T4 C0 run8: 67028.31 req/s
+ban_ghi=27739164 ban_ghi_giay=462231.8 mat=0
+T4 C1 run8: 64915.81 req/s
+T4 C2 run8: 65666.50 req/s
+T4 C0 run9: 67528.44 req/s
+ban_ghi=25000579 ban_ghi_giay=416567.9 mat=0
+T4 C1 run9: 58375.60 req/s
+T4 C2 run9: 65751.24 req/s
+T4 C0 run10: 69068.00 req/s
+ban_ghi=24998153 ban_ghi_giay=416534.6 mat=0
+T4 C1 run10: 58364.45 req/s
+T4 C2 run10: 66267.47 req/s
+[2026-10-21T20:03:02+07:00] T3 kich tran
+T3 C0 run1: 2912.4542 tps
+ban_ghi=25952651 ban_ghi_giay=430737.3 mat=0
+T3 C1 run1: 2266.9844 tps
+T3 C2 run1: 2840.5740 tps
+T3 C0 run2: 2965.3594 tps
+ban_ghi=26616501 ban_ghi_giay=441145.4 mat=0
+T3 C1 run2: 2322.6192 tps
+T3 C2 run2: 2833.4004 tps
+T3 C0 run3: 2957.9705 tps
+ban_ghi=26605397 ban_ghi_giay=441529.9 mat=0
+T3 C1 run3: 2324.1039 tps
+T3 C2 run3: 2849.7718 tps
+T3 C0 run4: 2983.8245 tps
+ban_ghi=26211372 ban_ghi_giay=435009.1 mat=0
+T3 C1 run4: 2286.0424 tps
+T3 C2 run4: 2827.3780 tps
+T3 C0 run5: 2967.1414 tps
+ban_ghi=26288602 ban_ghi_giay=436353.8 mat=0
+T3 C1 run5: 2287.2274 tps
+T3 C2 run5: 2842.1296 tps
+T3 C0 run6: 2924.9173 tps
+ban_ghi=25931854 ban_ghi_giay=429970.7 mat=0
+T3 C1 run6: 2242.0665 tps
+T3 C2 run6: 2820.2913 tps
+T3 C0 run7: 2949.1541 tps
+ban_ghi=26378511 ban_ghi_giay=437817.2 mat=0
+T3 C1 run7: 2318.6179 tps
+T3 C2 run7: 2940.8241 tps
+T3 C0 run8: 2950.0902 tps
+ban_ghi=26142176 ban_ghi_giay=433837.0 mat=0
+T3 C1 run8: 2294.6610 tps
+T3 C2 run8: 2833.4714 tps
+T3 C0 run9: 3023.8547 tps
+ban_ghi=26653234 ban_ghi_giay=442398.2 mat=0
+T3 C1 run9: 2298.1999 tps
+T3 C2 run9: 2857.5641 tps
+T3 C0 run10: 2992.3393 tps
+ban_ghi=26204314 ban_ghi_giay=434222.3 mat=0
+T3 C1 run10: 2293.0253 tps
+T3 C2 run10: 2785.6765 tps
+[2026-10-21T20:44:02+07:00] C0 kich tran dot nay: T3 median=2961.66495 tps, T4 median=67998.455 req/s
+[2026-10-21T20:44:02+07:00] T3-R25
+T3-R25 C0 run1 xong
+ban_ghi=7914984 ban_ghi_giay=131411.5 mat=0
+T3-R25 C1 run1 xong
+T3-R25 C2 run1 xong
+T3-R25 C0 run2 xong
+ban_ghi=7829013 ban_ghi_giay=129839.3 mat=0
+T3-R25 C1 run2 xong
+T3-R25 C2 run2 xong
+T3-R25 C0 run3 xong
+ban_ghi=7943345 ban_ghi_giay=131862.0 mat=0
+T3-R25 C1 run3 xong
+T3-R25 C2 run3 xong
+T3-R25 C0 run4 xong
+ban_ghi=7957954 ban_ghi_giay=132100.1 mat=0
+T3-R25 C1 run4 xong
+T3-R25 C2 run4 xong
+T3-R25 C0 run5 xong
+ban_ghi=8021201 ban_ghi_giay=133129.4 mat=0
+T3-R25 C1 run5 xong
+T3-R25 C2 run5 xong
+T3-R25 C0 run6 xong
+ban_ghi=7961395 ban_ghi_giay=132087.2 mat=0
+T3-R25 C1 run6 xong
+T3-R25 C2 run6 xong
+T3-R25 C0 run7 xong
+ban_ghi=7962943 ban_ghi_giay=132164.2 mat=0
+T3-R25 C1 run7 xong
+T3-R25 C2 run7 xong
+T3-R25 C0 run8 xong
+ban_ghi=7975186 ban_ghi_giay=132425.6 mat=0
+T3-R25 C1 run8 xong
+T3-R25 C2 run8 xong
+T3-R25 C0 run9 xong
+[2026-10-21T21:17:06+07:00] KHONG_READY t3r25-C1-9
+[2026-10-21T21:17:06+07:00] T3-R25-C1-9 hong (lan 1/3), chay lai
+ban_ghi=7974765 ban_ghi_giay=132395.6 mat=0
+T3-R25 C1 run9 xong
+[2026-10-21T21:18:18+07:00] T3-R25-C1-9 dat o lan thu 2
+T3-R25 C2 run9 xong
+T3-R25 C0 run10 xong
+ban_ghi=7891961 ban_ghi_giay=130821.5 mat=0
+T3-R25 C1 run10 xong
+T3-R25 C2 run10 xong
+[2026-10-21T21:23:46+07:00] T3-R50
+T3-R50 C0 run1 xong
+ban_ghi=17254908 ban_ghi_giay=286063.9 mat=0
+T3-R50 C1 run1 xong
+[2026-10-21T21:27:10+07:00] KHONG_READY t3r50-C2-1
+[2026-10-21T21:27:10+07:00] T3-R50-C2-1 hong (lan 1/3), chay lai
+[2026-10-21T21:27:46+07:00] KHONG_READY t3r50-C2-1
+[2026-10-21T21:27:46+07:00] T3-R50-C2-1 hong (lan 2/3), chay lai
+T3-R50 C2 run1 xong
+[2026-10-21T21:28:54+07:00] T3-R50-C2-1 dat o lan thu 3
+T3-R50 C0 run2 xong
+ban_ghi=17140732 ban_ghi_giay=284535.2 mat=0
+T3-R50 C1 run2 xong
+T3-R50 C2 run2 xong
+T3-R50 C0 run3 xong
+ban_ghi=17143068 ban_ghi_giay=284309.3 mat=0
+T3-R50 C1 run3 xong
+T3-R50 C2 run3 xong
+T3-R50 C0 run4 xong
+ban_ghi=17106448 ban_ghi_giay=283676.9 mat=0
+T3-R50 C1 run4 xong
+T3-R50 C2 run4 xong
+T3-R50 C0 run5 xong
+ban_ghi=17203011 ban_ghi_giay=284938.5 mat=0
+T3-R50 C1 run5 xong
+T3-R50 C2 run5 xong
+T3-R50 C0 run6 xong
+ban_ghi=17207435 ban_ghi_giay=285695.6 mat=0
+T3-R50 C1 run6 xong
+T3-R50 C2 run6 xong
+T3-R50 C0 run7 xong
+ban_ghi=17141039 ban_ghi_giay=284074.0 mat=0
+T3-R50 C1 run7 xong
+T3-R50 C2 run7 xong
+T3-R50 C0 run8 xong
+ban_ghi=17201016 ban_ghi_giay=285480.4 mat=0
+T3-R50 C1 run8 xong
+T3-R50 C2 run8 xong
+T3-R50 C0 run9 xong
+ban_ghi=17331672 ban_ghi_giay=287653.7 mat=0
+T3-R50 C1 run9 xong
+T3-R50 C2 run9 xong
+T3-R50 C0 run10 xong
+ban_ghi=17250163 ban_ghi_giay=286283.5 mat=0
+T3-R50 C1 run10 xong
+T3-R50 C2 run10 xong
+[2026-10-21T22:05:24+07:00] T4-R25
+T4-R25 C0 run1 xong
+ban_ghi=7764161 ban_ghi_giay=129391.6 mat=0
+T4-R25 C1 run1 xong
+T4-R25 C2 run1 xong
+T4-R25 C0 run2 xong
+ban_ghi=7804162 ban_ghi_giay=130057.9 mat=0
+T4-R25 C1 run2 xong
+T4-R25 C2 run2 xong
+T4-R25 C0 run3 xong
+ban_ghi=7800027 ban_ghi_giay=129984.8 mat=0
+T4-R25 C1 run3 xong
+T4-R25 C2 run3 xong
+T4-R25 C0 run4 xong
+ban_ghi=7754064 ban_ghi_giay=129221.6 mat=0
+T4-R25 C1 run4 xong
+T4-R25 C2 run4 xong
+T4-R25 C0 run5 xong
+ban_ghi=7802435 ban_ghi_giay=130025.0 mat=0
+T4-R25 C1 run5 xong
+T4-R25 C2 run5 xong
+T4-R25 C0 run6 xong
+ban_ghi=7811970 ban_ghi_giay=130185.2 mat=0
+T4-R25 C1 run6 xong
+T4-R25 C2 run6 xong
+T4-R25 C0 run7 xong
+ban_ghi=7799666 ban_ghi_giay=129984.7 mat=0
+T4-R25 C1 run7 xong
+T4-R25 C2 run7 xong
+T4-R25 C0 run8 xong
+ban_ghi=7809101 ban_ghi_giay=130138.4 mat=0
+T4-R25 C1 run8 xong
+T4-R25 C2 run8 xong
+T4-R25 C0 run9 xong
+ban_ghi=7806137 ban_ghi_giay=130090.7 mat=0
+T4-R25 C1 run9 xong
+T4-R25 C2 run9 xong
+T4-R25 C0 run10 xong
+ban_ghi=7749640 ban_ghi_giay=129143.1 mat=0
+T4-R25 C1 run10 xong
+T4-R25 C2 run10 xong
+[2026-10-21T22:42:36+07:00] T4-R50
+T4-R50 C0 run1 xong
+ban_ghi=15200771 ban_ghi_giay=253324.9 mat=0
+T4-R50 C1 run1 xong
+T4-R50 C2 run1 xong
+T4-R50 C0 run2 xong
+ban_ghi=15114481 ban_ghi_giay=251883.3 mat=0
+T4-R50 C1 run2 xong
+T4-R50 C2 run2 xong
+T4-R50 C0 run3 xong
+ban_ghi=15197602 ban_ghi_giay=253277.5 mat=0
+T4-R50 C1 run3 xong
+T4-R50 C2 run3 xong
+T4-R50 C0 run4 xong
+ban_ghi=15194213 ban_ghi_giay=253216.9 mat=0
+T4-R50 C1 run4 xong
+T4-R50 C2 run4 xong
+T4-R50 C0 run5 xong
+ban_ghi=15232544 ban_ghi_giay=253855.7 mat=0
+T4-R50 C1 run5 xong
+T4-R50 C2 run5 xong
+T4-R50 C0 run6 xong
+ban_ghi=15119639 ban_ghi_giay=251973.0 mat=0
+T4-R50 C1 run6 xong
+T4-R50 C2 run6 xong
+T4-R50 C0 run7 xong
+ban_ghi=15015491 ban_ghi_giay=250237.6 mat=0
+T4-R50 C1 run7 xong
+T4-R50 C2 run7 xong
+T4-R50 C0 run8 xong
+ban_ghi=15231919 ban_ghi_giay=253834.7 mat=0
+T4-R50 C1 run8 xong
+T4-R50 C2 run8 xong
+T4-R50 C0 run9 xong
+ban_ghi=15195056 ban_ghi_giay=253219.3 mat=0
+T4-R50 C1 run9 xong
+T4-R50 C2 run9 xong
+T4-R50 C0 run10 xong
+ban_ghi=15208715 ban_ghi_giay=253455.5 mat=0
+T4-R50 C1 run10 xong
+T4-R50 C2 run10 xong
+[2026-10-21T23:20:21+07:00] tong hop TSV
+tsv xong
+===== validation/m6c1-20261021/part4/overhead/T1.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T1	C0	10	185.6520	2.7218	183.7051	187.5989	0.0000	-	-	-
+T1	C1	10	791.9520	44.9491	759.7996	824.1044	326.5788	311.2153	340.4751	0.0001
+T1	C2	10	249.9230	13.7189	240.1098	259.7362	34.6191	30.6065	39.5150	0.0001
+===== validation/m6c1-20261021/part4/overhead/T3.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T3	C0	10	2962.7106	32.3324	2939.5829	2985.8382	0.0000	-	-	-
+T3	C1	10	2293.3548	25.5655	2275.0676	2311.6419	-22.5927	-23.3110	-21.8916	0.0001
+T3	C2	10	2843.1081	39.5288	2814.8329	2871.3833	-4.0369	-4.9693	-2.9795	0.0001
+===== validation/m6c1-20261021/part4/overhead/T4.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T4	C0	10	68258.0090	1185.5426	67409.9819	69106.0361	0.0000	-	-	-
+T4	C1	10	59341.7460	2338.2065	57669.2100	61014.2820	-13.0626	-15.0529	-10.7072	0.0001
+T4	C2	10	66244.6110	1753.2115	64990.5262	67498.6958	-2.9497	-4.7207	-1.1569	0.0087
+===== validation/m6c1-20261021/part4/overhead/T3-R25-cgroupcpu.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T3-R25	C0	10	87057922.6000	417608.9084	86759203.9382	87356641.2618	0.0000	-	-	-
+T3-R25	C1	10	93978039.6000	661748.8133	93504685.9048	94451393.2952	7.9489	7.4092	8.4729	0.0001
+T3-R25	C2	10	88566566.7000	445349.5835	88248004.9334	88885128.4666	1.7329	1.3213	2.1436	0.0001
+===== validation/m6c1-20261021/part4/overhead/T3-R25-lat_avg.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T3-R25	C0	10	2.6437	0.0177	2.6310	2.6563	0.0000	-	-	-
+T3-R25	C1	10	2.9205	0.0548	2.8813	2.9597	10.4714	9.2958	11.8881	0.0001
+T3-R25	C2	10	2.7155	0.0335	2.6915	2.7394	2.7155	1.9153	3.5994	0.0001
+===== validation/m6c1-20261021/part4/overhead/T3-R25-p50.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T3-R25	C0	10	2.4514	0.0072	2.4463	2.4565	0.0000	-	-	-
+T3-R25	C1	10	2.6587	0.0209	2.6437	2.6737	8.4564	7.9158	8.9954	0.0001
+T3-R25	C2	10	2.5061	0.0155	2.4950	2.5172	2.2314	1.8433	2.6594	0.0001
+===== validation/m6c1-20261021/part4/overhead/T3-R25-p99.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T3-R25	C0	10	5.5869	0.1165	5.5036	5.6702	0.0000	-	-	-
+T3-R25	C1	10	6.6274	0.2714	6.4332	6.8216	18.6239	15.5072	22.0138	0.0001
+T3-R25	C2	10	5.8005	0.1549	5.6897	5.9113	3.8232	1.8984	6.0222	0.0010
+===== validation/m6c1-20261021/part4/overhead/T3-R50-cgroupcpu.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T3-R50	C0	10	142951623.3000	648435.0274	142487793.0518	143415453.5482	0.0000	-	-	-
+T3-R50	C1	10	161764179.9000	935280.8097	161095166.7965	162433193.0035	13.1601	12.6637	13.6478	0.0001
+T3-R50	C2	10	146283524.7000	954340.3630	145600878.1607	146966171.2393	2.3308	1.8557	2.8153	0.0001
+===== validation/m6c1-20261021/part4/overhead/T3-R50-lat_avg.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T3-R50	C0	10	3.0002	0.0320	2.9773	3.0231	0.0000	-	-	-
+T3-R50	C1	10	4.2688	0.1109	4.1895	4.3481	42.2848	39.9792	44.5785	0.0001
+T3-R50	C2	10	3.1365	0.0476	3.1025	3.1705	4.5434	3.3496	5.6473	0.0001
+===== validation/m6c1-20261021/part4/overhead/T3-R50-p50.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T3-R50	C0	10	2.6536	0.0267	2.6345	2.6727	0.0000	-	-	-
+T3-R50	C1	10	3.5114	0.0499	3.4757	3.5471	32.3259	30.9549	33.6510	0.0001
+T3-R50	C2	10	2.7694	0.0420	2.7394	2.7994	4.3639	3.2213	5.4683	0.0001
+===== validation/m6c1-20261021/part4/overhead/T3-R50-p99.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T3-R50	C0	10	7.8100	0.1775	7.6831	7.9369	0.0000	-	-	-
+T3-R50	C1	10	15.3731	2.0075	13.9371	16.8091	96.8387	82.3674	112.8372	0.0001
+T3-R50	C2	10	8.1835	0.2506	8.0042	8.3628	4.7823	2.3832	7.0811	0.0018
+===== validation/m6c1-20261021/part4/overhead/T4-R25-cgroupcpu.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T4-R25	C0	10	73392689.6000	515429.2996	73023999.3075	73761379.8925	0.0000	-	-	-
+T4-R25	C1	10	80274854.5000	227280.1348	80112279.3817	80437429.6183	9.3772	8.9437	9.9028	0.0001
+T4-R25	C2	10	75090675.7000	825849.2877	74499939.7528	75681411.6472	2.3136	1.5179	3.1059	0.0001
+===== validation/m6c1-20261021/part4/overhead/T4-R25-lat_avg.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T4-R25	C0	10	1.2790	0.0032	1.2767	1.2813	0.0000	-	-	-
+T4-R25	C1	10	1.2920	0.0103	1.2846	1.2994	1.0164	0.5469	1.4879	0.0024
+T4-R25	C2	10	1.2880	0.0140	1.2780	1.2980	0.7037	0.0000	1.3302	0.0999
+===== validation/m6c1-20261021/part4/overhead/T4-R25-p50.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T4-R25	C0	10	1.2260	0.0070	1.2210	1.2310	0.0000	-	-	-
+T4-R25	C1	10	1.2300	0.0115	1.2217	1.2383	0.3263	-0.3257	0.9804	0.4964
+T4-R25	C2	10	1.2290	0.0137	1.2192	1.2388	0.2447	-0.4894	0.9796	0.6950
+===== validation/m6c1-20261021/part4/overhead/T4-R25-p99.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T4-R25	C0	10	2.6430	0.0340	2.6187	2.6673	0.0000	-	-	-
+T4-R25	C1	10	2.7100	0.0245	2.6925	2.7275	2.5350	1.6190	3.5388	0.0001
+T4-R25	C2	10	2.6790	0.0384	2.6515	2.7065	1.3621	0.1886	2.5191	0.0468
+===== validation/m6c1-20261021/part4/overhead/T4-R50-cgroupcpu.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T4-R50	C0	10	115729479.2000	989271.3880	115021846.2467	116437112.1533	0.0000	-	-	-
+T4-R50	C1	10	128948281.2000	1342186.2331	127988205.7147	129908356.6853	11.4222	10.5337	12.2976	0.0001
+T4-R50	C2	10	118939004.5000	1508457.2832	117859994.1343	120018014.8657	2.7733	1.8539	3.6799	0.0001
+===== validation/m6c1-20261021/part4/overhead/T4-R50-lat_avg.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T4-R50	C0	10	1.3940	0.0207	1.3792	1.4088	0.0000	-	-	-
+T4-R50	C1	10	1.4710	0.0709	1.4203	1.5217	5.5237	2.8017	9.0253	0.0004
+T4-R50	C2	10	1.4080	0.0249	1.3902	1.4258	1.0043	-0.3564	2.3827	0.2183
+===== validation/m6c1-20261021/part4/overhead/T4-R50-p50.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T4-R50	C0	10	1.2890	0.0088	1.2827	1.2953	0.0000	-	-	-
+T4-R50	C1	10	1.3290	0.0223	1.3130	1.3450	3.1032	2.0898	4.2768	0.0001
+T4-R50	C2	10	1.2990	0.0074	1.2937	1.3043	0.7758	0.2322	1.3230	0.0240
+===== validation/m6c1-20261021/part4/overhead/T4-R50-p99.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T4-R50	C0	10	3.2810	0.1091	3.2030	3.3590	0.0000	-	-	-
+T4-R50	C1	10	4.0670	1.3025	3.1353	4.9987	23.9561	7.9169	50.8116	0.0001
+T4-R50	C2	10	3.3030	0.1636	3.1860	3.4200	0.6705	-2.6930	4.3225	0.7424
+[2026-10-21T23:20:30+07:00] m6c1 overhead XONG

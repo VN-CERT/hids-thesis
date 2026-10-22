@@ -1,0 +1,16 @@
+out/g7a-20261021-185929.bin
+# pmu: host
+# pmu_events: instructions:u,cycles:u
+
+out/g7a-20261021-185939.bin
+# pmu: on
+# pmu_events: instructions:u,cycles:u
+
+out/g7a-20261021-185953.bin
+# pmu: off
+# pmu_events: khong co (pmu off)
+
+out/g7a-20261021-190002.bin
+# pmu: host
+# pmu_events: instructions:u,cycles:u
+

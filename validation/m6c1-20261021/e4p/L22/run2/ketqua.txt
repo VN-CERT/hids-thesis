@@ -1,0 +1,9 @@
+=== E4p L=22 run=2 attempt=1 ===
+so ban ghi theo syscall (khong FIRST): {0: 4, 257: 1, 5: 1, 3: 1, 9: 1, 230: 500, 110: 500, 11: 1}; chon khoang dot nr=230
+khoang dot (nr=230, khong FIRST): 500, co PMU: 500
+trung vi cpu_ns = 43979931.5
+trung vi inst = 14653580.0
+trung vi cyc = 88642333.0
+trung vi cyc/inst (CPI) = 6.0492
+trung vi cyc/cpu_ns (GHz hieu dung) = 1.9746
+du lieu: out/m6c-e4p-L22-2-094132.bin

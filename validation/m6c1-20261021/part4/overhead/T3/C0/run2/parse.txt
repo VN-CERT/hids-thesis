@@ -1,0 +1,1 @@
+pgbench	177856	2965.3594	5.2703	5.0400	9.6180	38.0370	nan	nan	bo_qua=0;that_bai=0	-	OK

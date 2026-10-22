@@ -1,0 +1,66 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 630b8ed-dirty
+# record_size: 64
+# filter_tgids: khong co
+# filter_pid: 0
+# filter_cgroup: /sys/fs/cgroup/hids-rate (goc id=67063)
+# ringbuf_bytes: 67108864
+# rb_wake_bytes: 8388608
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: journalctl -k -b | Oct 21 10:18:34 uni-lms-app kernel: vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# datadir: validation/m6c1-20261021/part4/rate-500000/data
+# rotate: 1h0m0s
+# min_free_gb: 50
+# no_proc: false
+# no_host: false
+# cgroup_refresh: 1s
+# rb_poll: 200ms
+# pmu: host
+# pmu_events: instructions:u,cycles:u
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# start_mono_ns: 47394255419967
+# start_wall: 2026-10-21T23:28:24.558577658+07:00
+# duration: 2m30s
+# segment_tag: 2026102116
+# so_ban_ghi_doc_duoc: 59058065
+cpu,seq_cuoi,mat
+0,599,0
+1,3002136,0
+2,1000158,0
+3,2999601,0
+4,1499871,0
+5,500299,0
+6,500171,0
+7,66,0
+8,0,0
+9,66,0
+10,0,0
+11,0,0
+12,1029,0
+13,876,0
+14,6231,0
+15,2504730,0
+16,3510124,0
+17,9011809,0
+18,3505931,0
+19,12003713,0
+20,9505113,0
+21,8505113,0
+22,500225,0
+23,500204,0

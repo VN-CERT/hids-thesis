@@ -1,0 +1,1 @@
+ban_ghi=15015491 ban_ghi_giay=250237.6 mat=0

@@ -1,0 +1,1 @@
+container thu hids-hostcheck cgroup=/sys/fs/cgroup/system.slice/docker-37867ae5ed326928f6dfe39d0842397ad191895e8482cd0234c7f1159132472f.scope

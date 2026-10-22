@@ -1,0 +1,42 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 630b8ed-dirty
+# record_size: 64
+# filter_tgids: khong co
+# filter_pid: 0
+# filter_cgroup: /sys/fs/cgroup/hids-m5-decoy (goc id=23647)
+# ringbuf_bytes: 67108864
+# rb_wake_bytes: 8388608
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: journalctl -k -b | Oct 21 10:18:34 uni-lms-app kernel: vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# pmu: host
+# pmu_events: instructions:u,cycles:u
+# start_mono_ns: 34307198775816
+# start_wall: 2026-10-21T19:50:17.501933379+07:00
+# duration: 3m0s
+# moi dong cach nhau 10s
+mono_ns,wall,dinh_ghi_delta,mat_delta,dinh_ghi_tong,mat_tong,irq_hard_delta_ns,irq_soft_delta_ns,irq_vec_delta_ns,soft_raw_delta_ns,irq_hard_tong_ns,irq_soft_tong_ns,irq_vec_tong_ns,soft_raw_tong_ns
+34307210570070,2026-10-21T19:50:17.513727443+07:00,0,0,0,0,7961,1109123,9546740,1115292,7961,1109123,9546740,1115292
+34317211243425,2026-10-21T19:50:27.514400352+07:00,0,0,0,0,3167741,23357843111,8181828311,23643347892,3175702,23358952234,8191375051,23644463184
+34327211235010,2026-10-21T19:50:37.514391503+07:00,0,0,0,0,4239945,23675478096,8282106060,23967146133,7415647,47034430330,16473481111,47611609317
+34337211229399,2026-10-21T19:50:47.514386285+07:00,0,0,0,0,1689017,23310693727,8262315486,23597764181,9104664,70345124057,24735796597,71209373498
+34347211208779,2026-10-21T19:50:57.514365331+07:00,0,0,0,0,3075700,23538988981,8273769031,23832390520,12180364,93884113038,33009565628,95041764018
+34357211242451,2026-10-21T19:51:07.514399105+07:00,0,0,0,0,5091163,22943833097,7868524837,23222901864,17271527,116827946135,40878090465,118264665882
+34367211413030,2026-10-21T19:51:17.514569471+07:00,0,0,0,0,4040892,23163906889,8122971447,23449778616,21312419,139991853024,49001061912,141714444498
+34367262899175,2026-10-21T19:51:17.566056309+07:00,0,0,0,0,0,50974197,21003879,51544140,21312419,140042827221,49022065791,141765988638

@@ -1,0 +1,42 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 630b8ed-dirty
+# record_size: 64
+# filter_tgids: khong co
+# filter_pid: 0
+# filter_cgroup: /sys/fs/cgroup/hids-m5-decoy (goc id=23647)
+# ringbuf_bytes: 67108864
+# rb_wake_bytes: 8388608
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: journalctl -k -b | Oct 21 10:18:34 uni-lms-app kernel: vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# pmu: host
+# pmu_events: instructions:u,cycles:u
+# start_mono_ns: 33382799659664
+# start_wall: 2026-10-21T19:34:53.102832169+07:00
+# duration: 3m0s
+# moi dong cach nhau 10s
+mono_ns,wall,dinh_ghi_delta,mat_delta,dinh_ghi_tong,mat_tong,irq_hard_delta_ns,irq_soft_delta_ns,irq_vec_delta_ns,soft_raw_delta_ns,irq_hard_tong_ns,irq_soft_tong_ns,irq_vec_tong_ns,soft_raw_tong_ns
+33382812942132,2026-10-21T19:34:53.116099054+07:00,0,0,0,0,11176,1232065,8062138,1233754,11176,1232065,8062138,1233754
+33392813217452,2026-10-21T19:35:03.116374151+07:00,0,0,0,0,3448703,23066594792,7942071730,23329261353,3459879,23067826857,7950133868,23330495107
+33402813258059,2026-10-21T19:35:13.116415145+07:00,0,0,0,0,2875572,23124767601,8003553313,23385826511,6335451,46192594458,15953687181,46716321618
+33412813319617,2026-10-21T19:35:23.116476259+07:00,0,0,0,0,1808003,23056316244,7973296483,23318528526,8143454,69248910702,23926983664,70034850144
+33422813275466,2026-10-21T19:35:33.11643264+07:00,0,0,0,0,5633350,23163559490,7802941510,23426588621,13776804,92412470192,31729925174,93461438765
+33432813247202,2026-10-21T19:35:43.116403992+07:00,0,0,0,0,3104313,23447111574,7849367280,23713904079,16881117,115859581766,39579292454,117175342844
+33442813226894,2026-10-21T19:35:53.116383693+07:00,0,0,0,0,2365102,23187834799,7943513594,23449340292,19246219,139047416565,47522806048,140624683136
+33442861253773,2026-10-21T19:35:53.164411181+07:00,0,0,0,0,11861,72167750,23720809,72838575,19258080,139119584315,47546526857,140697521711

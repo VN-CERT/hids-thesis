@@ -1,0 +1,53 @@
+--- scripts/m6c_e4p.sh	2026-10-21 14:29:40.446917220 +0700
++++ scripts/m6c1_e4p.sh	2026-10-22 09:32:47.089068960 +0700
+@@ -13,11 +13,11 @@
+ 
+ wait_ready() {
+ 	local log=$1 i
+-	for ((i = 0; i < 3000; i++)); do
++	for ((i = 0; i < 2000; i++)); do
+ 		grep -qx READY "$log" 2>/dev/null && return 0
+ 		sleep 0.01
+ 	done
+-	echo "collector khong READY" >&2; exit 1
++	echo "KHONG_READY (cho 20s)" >&2; return 1
+ }
+ wait_wchan() { # <pid> <want: eq|ne> — cho wchan pipe_read theo dieu kien
+ 	local pid=$1 want=$2 i w
+@@ -57,13 +57,10 @@
+ 	fifo="$prefix.fifo"
+ 	echo "=== E4p L=$L run=$run attempt=$attempt ===" | tee "$dir/ketqua.txt"
+ 
++	# Giao thuc E4 (M6c-1 5a): wl khoi dong, hieu chuan va tu kiem mem KHI MAY
++	# RANH (stress-ng chua chay); stress-ng khoi dong sau, cho on dinh 10s,
++	# roi moi gui go.
+ 	local stress_pid=""
+-	if ((L > 0)); then
+-		stress-ng --stream "$L" --taskset 0-19,21-23 --timeout 300 >"$dir/stress.log" 2>&1 &
+-		stress_pid=$!
+-		sleep 2
+-	fi
+-
+ 	mkfifo "$fifo"
+ 	exec 9<>"$fifo"
+ 	taskset -c 20 "$WL" mem 500 <"$fifo" >"$dir/wl.log" 2>&1 &
+@@ -71,8 +68,18 @@
+ 	sleep 0.5
+ 	"$COLLECT" -pid "$wl_pid" -zstd-level 0 -pmu on -out "$bin" 2>"$dir/collect.log" &
+ 	local cpid=$!
+-	wait_ready "$dir/collect.log"
++	if ! wait_ready "$dir/collect.log"; then
++		kill "$wl_pid" "$cpid" 2>/dev/null; wait "$wl_pid" 2>/dev/null || true
++		exec 9>&-
++		echo "KHONG_READY: bo attempt nay, run_one se thu lai" >&2
++		return 1
++	fi
+ 	wait_wchan "$wl_pid" eq
++	if ((L > 0)); then
++		stress-ng --stream "$L" --taskset 0-19,21-23 --timeout 300 >"$dir/stress.log" 2>&1 &
++		stress_pid=$!
++		sleep 10
++	fi
+ 	# wl co hai cong wait_go: '.' 1 qua marker getuid, '.' 2 chay burst.
+ 	printf '.' >&9
+ 	wait_wchan "$wl_pid" eq

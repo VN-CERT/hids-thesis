@@ -1,0 +1,42 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 630b8ed-dirty
+# record_size: 64
+# filter_tgids: khong co
+# filter_pid: 0
+# filter_cgroup: /sys/fs/cgroup/hids-m5-decoy (goc id=23647)
+# ringbuf_bytes: 67108864
+# rb_wake_bytes: 8388608
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: journalctl -k -b | Oct 21 10:18:34 uni-lms-app kernel: vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# pmu: host
+# pmu_events: instructions:u,cycles:u
+# start_mono_ns: 32919996798680
+# start_wall: 2026-10-21T19:27:10.299955902+07:00
+# duration: 3m0s
+# moi dong cach nhau 10s
+mono_ns,wall,dinh_ghi_delta,mat_delta,dinh_ghi_tong,mat_tong,irq_hard_delta_ns,irq_soft_delta_ns,irq_vec_delta_ns,soft_raw_delta_ns,irq_hard_tong_ns,irq_soft_tong_ns,irq_vec_tong_ns,soft_raw_tong_ns
+32920008249246,2026-10-21T19:27:10.311406566+07:00,0,0,0,0,3703,745397,6292599,745397,3703,745397,6292599,745397
+32930009319626,2026-10-21T19:27:20.312492979+07:00,0,0,0,0,2313229,23639566058,8262096574,23937981040,2316932,23640311455,8268389173,23938726437
+32940009276753,2026-10-21T19:27:30.312433337+07:00,0,0,0,0,2918598,23255254793,8263768584,23542139829,5235530,46895566248,16532157757,47480866266
+32950008291926,2026-10-21T19:27:40.311448584+07:00,0,0,0,0,1788605,23478489270,8288111342,23773504778,7024135,70374055518,24820269099,71254371044
+32960008526393,2026-10-21T19:27:50.311683153+07:00,0,0,0,0,4168487,23566801194,8136679422,23854163973,11192622,93940856712,32956948521,95108535017
+32970009309414,2026-10-21T19:28:00.312466207+07:00,0,0,0,0,2911328,23885443908,8218450574,24180339757,14103950,117826300620,41175399095,119288874774
+32980009369614,2026-10-21T19:28:10.312526458+07:00,0,0,0,0,1827495,23309338564,8277506463,23597973040,15931445,141135639184,49452905558,142886847814
+32980146847957,2026-10-21T19:28:10.45000547+07:00,0,0,0,0,16617,195643863,99095326,197952646,15948062,141331283047,49552000884,143084800460
