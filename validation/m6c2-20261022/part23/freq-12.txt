@@ -1,0 +1,6 @@
+=== freq_stamp CPU 12 ===
+2026-10-22T10:27:43+07:00
+lan 1: GHz_wall=1.9280
+lan 2: GHz_wall=1.9359
+lan 3: GHz_wall=1.9360
+trung vi GHz_wall=1.9359
