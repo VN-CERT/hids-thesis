@@ -91,6 +91,13 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
   1. Không đo lại L=22; so sánh giữa các mức bằng cyc, CPI, inst (không phụ thuộc tần số); cpu_ns luôn kèm GHz hiệu dụng của mức đó; việc tần số nhảy 1,93→2,52 GHz là phát hiện: turbo có nhưng host dùng chung nên lúc có lúc không; quy ước bổ sung: freq_stamp trước VÀ sau mỗi khối đo, lệch >2% thì ghi chú khối đó.
   2. Câu 8.2 của R033 đóng: inst không đổi với cơ chế -loops. Ghi nhận lỗi trong tools/wl.c self_test_mem_10ms: biến sum không được cộng dồn nên nhánh điều chỉnh mem_steps là mã chết; không sửa trong nhiệm vụ nào hiện tại.
 
+## Bước đang làm (M6c-3)
+
+- Nhiệm vụ: `docs/tasks/M6c-3.md`. Báo cáo R035, tag `m6c.3`. BPF mới của kiến trúc sư `9994b03f…` (lấy mẫu PMU), đã commit và build đạt.
+- Phần 2 XONG (commit `30b221b`): `-pmu sample=K` (K 2…1000; nạp `hids_pmu_sample`, header `pmu: sample=K`); STEALCHECK in thêm dòng `STEALCHECK canh_bao cpu=<n> lech_ns=<...>` khi tổng đạt nhưng một CPU lệch > 50 ms.
+- Việc đang chạy: cổng phần 3 — unit `hids-m6c3gates`, log `out/jobs/m6c3gates.log`, dữ liệu `validation/m6c3-20261022/gates/` (G7a ×4, G3 sample=20 + on, G11, G11s, T1 theo K; tự dừng/khởi động lại 12 container).
+- Tiếp theo: chạy thử cấu hình 24 giờ 10 phút với `-pmu sample=20`, viết R035, tag `m6c.3`, push.
+
 ## M6c: ĐÓNG (R032)
 
 - Bản ghi 64 byte + PMU xong: recfmt 48/56/64, loader `-pmu auto|on|off`, header `pmu:`, host `pmu_inst_delta`/`pmu_cyc_delta`, rec-export `inst,cyc,pmu_ok`, rec-stat tỉ lệ PMU. Đồng bộ Go `irqState.Gen`.
