@@ -14,7 +14,7 @@ G3WIN=./scripts/g3_window.py
 GREAL_AGG=./scripts/g3_greal_agg.py
 OUTROOT="${G3_OUTROOT:-validation/g3-$(date +%Y%m%d)-v3}"
 SCHEDSTAT_SYS=/proc/sys/kernel/sched_schedstats
-WL_CPU=20
+WL_CPU="${WL_CPU:-20}"
 GETUID_NR=102
 GETPPID_NR=110
 
