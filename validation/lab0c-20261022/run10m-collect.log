@@ -1,0 +1,22 @@
+CANH BAO: binary build tu cay lam viec con thay doi chua commit (git_commit=0835e87-dirty).
+CANH BAO: du lieu ghi ra khong tai lap duoc tu git. Commit truoc khi do that.
+stealclock: bat (8/8 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+stealclock_evidence: journalctl
+doi chieu vmw_steal_time voi rq->prev_steal_time trong 3s (lan 1)...
+   cpu         vmw_ns    rq_steal_ns      lech_ns    nguong_ns
+     0        2226508        2231801        -5293      2000000
+     1        1957288        1958257         -969      2000000
+     2        2530201        2530201            0      2000000
+     3         651293         613993        37300      2000000
+     4        1756727        1759104        -2377      2000000
+     5        1076136        1076136            0      2000000
+     6        2348038        2323861        24177      2000000
+     7        1098714        1104381        -5667      2000000
+  TONG       13644905       13597734        47171      5000000
+STEALCHECK lan=1 tong_vmw_ns=13644905 tong_rq_ns=13597734 lech_ns=47171 nguong_ns=5000000 cpu_lech_max=3:37300 ket_qua=DAT
+doi chieu xong: |tong_vmw - tong_rq| = 47171 ns, nguong max(5000000 ns, 1% x tong_vmw); cpu lech max 3: 37300 ns
+mo segment 2026102204 -> /srv/hids-data/hids-collector/hids-collector-2026102204.bin
+longrun datadir=/srv/hids-data/hids-collector rotate=1h0m0s min_free_gb=50
+loc pid: khong co | loc cgroup: /sys/fs/cgroup/system.slice/docker-026f7cbf1bc47de73f226721ea7ad4aa6415f8607ac9e83de2755a2f51108da2.scope (goc id=24181) | /sys/fs/cgroup/system.slice/docker-6e46e483810609715f4c42e35a5087fa36df28a4dd1c8f40bd715f9c35f31669.scope (goc id=25058) | ring buffer: 64 MiB
+READY
+ket thuc longrun end_mono_ns=102288934865829 disk_skipped=0
