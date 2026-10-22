@@ -79,6 +79,15 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 - Phần 5a XONG (3 job: job đầu chết vì STEALCHECK từ chối 1 lần + `wait_ready` của bản sao dùng `exit 1`; đã sửa bản sao, chạy lại đủ 9/9 ô): L0 CPI 1,92–1,94; L12 CPI 3,68–3,74; L22 CPI 5,95–6,40; GHz hiệu dụng 1,95–1,98; inst tăng theo L (câu 8.2 của R033).
 - M6c-1 ĐÓNG: R033 viết xong, tag `m6c.1`, đã push (remote khớp local). Việc đang chạy: (không có) — unit `hids-*` trống, `bpftool prog show | grep -c hids_` = 0, 12 container chạy. Chờ kiến trúc sư trả lời 6 câu hỏi mục 8 của R033.
 
+## Bước đang làm (M6c-2)
+
+- Nhiệm vụ: `docs/tasks/M6c-2.md`. Báo cáo R034, tag `m6c.2`.
+- Phần 1 XONG (chỉ dùng dữ liệu cũ, file `validation/m6c2-20261022/part1.txt`): C1 bản ghi/giây 10 lượt mỗi ô (T1 trung vị 1.261.136,9/s, mất tổng 0); C2 = 0 bản ghi mọi lượt (cgroup decoy). Đối chiếu 1c: R026/M5h T1 C0 141,84 ns, T3 C0 4901,59 TPS, T4 C0 140081 RPS; R021/M5f T3 C0 ≈ 4965 TPS, T4 C0 142675 RPS.
+- Phần 2 XONG: STEALCHECK theo TỔNG mọi CPU (|Σvmw − Σrq| ≤ max(5 ms, 1% Σvmw)), bảng per-CPU mỗi cửa sổ; G7a ×1 mất 0; G3 ×1: G5 max ≤ 500, CLAMPED 0/tổng, recursion_misses = 0 trên 31 chương trình. Dữ liệu `validation/m6c2-20261022/part23/`.
+- Phần 3 XONG: `scripts/freq_stamp.sh`; CPU 12 trung vị 1,9359 GHz, CPU 20 trung vị 1,9349 GHz (máy rảnh, container dừng). Quy ước đã ghi vào `.cursor/rules/hids.mdc`.
+- Việc đang chạy: phần 4 E4p cơ chế gốc — unit `hids-m6c2e4p`, log `out/jobs/m6c2e4p.log`, dữ liệu `validation/m6c2-20261022/e4p/` (script tự dừng/khởi động lại 12 container).
+- Tiếp theo: tổng hợp R034, đếm STEALCHECK toàn nhiệm vụ, tag `m6c.2`, push.
+
 ## M6c: ĐÓNG (R032)
 
 - Bản ghi 64 byte + PMU xong: recfmt 48/56/64, loader `-pmu auto|on|off`, header `pmu:`, host `pmu_inst_delta`/`pmu_cyc_delta`, rec-export `inst,cyc,pmu_ok`, rec-stat tỉ lệ PMU. Đồng bộ Go `irqState.Gen`.
