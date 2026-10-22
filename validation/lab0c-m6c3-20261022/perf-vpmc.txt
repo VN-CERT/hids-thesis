@@ -1,0 +1,8 @@
+
+ Performance counter stats for 'system wide':
+
+       171,155,113      cycles:u                                                              
+       188,700,001      instructions:u                   #    1.10  insn per cycle            
+
+       1.001625858 seconds time elapsed
+

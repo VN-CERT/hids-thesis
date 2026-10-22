@@ -1,13 +1,13 @@
-LAB-0c — KET QUA CAP NHAT m6c.2 VA KIEM CONG TREN MAY NAN NHAN
-May: hids-collector (201, 192.168.77.10). Nhanh cuoi: lab-collector
-Nhiem vu goc: docs/tasks/LAB-0c.md
+LAB-0c — KET QUA CAP NHAT m6c.3 VA KIEM CONG TREN MAY NAN NHAN
+May: hids-collector (201, 192.168.77.10). Nhanh: lab-collector
+Nhiem vu goc: docs/tasks/LAB-0c.md (ban cap nhat m6c.3; bao cao nay thay bao cao LAB-0c ban m6c.2)
 
 ================================================================
 DA LAM
 ================================================================
-0. Kiem dieu kien; 1. fetch/checkout m6c.2, sha256, make build; 2. freq_stamp CPU 0 va CPU 7;
-3. G7a x2 khong -pmu; 4. G3 S1-S5 x1; 5. chay thu cau hinh 24h trong 10 phut;
-6. kiem ket thuc, viet bao cao, merge ma m6c.2 vao lab-collector, commit.
+0. Kiem dieu kien, sysctl; 1. fetch/merge m6c.3, sha256, make build; 2. thong tin may/vPMC, freq_stamp;
+3. G7a x3 (-zstd-level 0): mac dinh, -pmu sample=20, -pmu on; 4. G3 S1-S5 x1 -pmu sample=20;
+5. chay thu cau hinh 24h 10 phut -pmu sample=20; 6. kiem ket thuc, viet bao cao, commit, push.
 
 ================================================================
 OUTPUT NGUYEN VAN
@@ -18,17 +18,32 @@ $ systemctl list-units 'hids-*' 'hidsrun-*' --state=active
 0 loaded units listed.
 $ bpftool prog show | grep -c hids_
 0
+$ pgrep -a hids-collect
+no collector
+$ sysctl kernel.perf_event_paranoid (truoc)
+kernel.perf_event_paranoid = 4
+$ sysctl -w kernel.perf_event_paranoid=1
+kernel.perf_event_paranoid = 1
+$ sysctl kernel.perf_event_paranoid
+kernel.perf_event_paranoid = 1
 
 --- 1. Keo ma, sha256, build ---
-$ git fetch --all --tags
-$ git checkout m6c.2
-HEAD is now at 0835e87 M6c-2: R034 + du lieu validation + STATE dong M6c-2
+$ git fetch origin --tags
+ * [new tag]         m6c.3      -> m6c.3
+   3c0ce90..455970a  master     -> origin/master
+(tag m6c.3 la commit 455970a "M6c-3: R035 + du lieu validation + STATE dong M6c-3" — R035 xong)
+$ git checkout lab-collector && git merge --no-edit m6c.3
+(merge sach, khong xung dot)
 $ git describe --tags
-m6c.2
-$ git rev-parse HEAD
-0835e877cdc099b29630bb0072b1739f7b1751d9
+m6c.3-8-g540647e
+$ git rev-parse HEAD (ngay sau merge, truoc commit luu nhiem vu)
+540647e6fa82a1987962065bc742e5ac17796b74
+$ git log --oneline -3
+540647e Merge tag 'm6c.3' into lab-collector
+455970a M6c-3: R035 + du lieu validation + STATE dong M6c-3
+3f5a08a STATE: M6c-3 phan 1-2 xong, cong dang chay
 $ sha256sum bpf/sys_enter.bpf.c bpf/proc_events.bpf.c analysis/m5f_parse.py analysis/m6c_stats.py tools/coreclk.c
-8b05464db597cfc471dc7af24ce651ef905751ebd80ec463b3863b7dd0263c35  bpf/sys_enter.bpf.c
+9994b03f359ee5205354515f80bd4dd67f4919daca6b585702f4dc54796648c0  bpf/sys_enter.bpf.c
 39d892e5524de1cb49ace593b152c5b303d99c056e110f0a072d344c8270c7ec  bpf/proc_events.bpf.c
 9f0b4cde1c2e1c6aa560c041eaefaef1a40e5c7d9fc292db1d77dfc971d046cd  analysis/m5f_parse.py
 8c390002870f3ea8ace38a241f803bb5e7ec6c2413fdd403f757de24a6a1be25  analysis/m6c_stats.py
@@ -36,78 +51,72 @@ $ sha256sum bpf/sys_enter.bpf.c bpf/proc_events.bpf.c analysis/m5f_parse.py anal
 (ca 5 file khop sha256 cua kien truc su)
 $ make build
 go generate ./...
-go build -ldflags "-X hids/internal/buildinfo.Commit=0835e87-dirty" -o bin/steal-probe ./cmd/steal-probe
-go build -ldflags "-X hids/internal/buildinfo.Commit=0835e87-dirty" -o bin/steal-summary ./cmd/steal-summary
-go build -ldflags "-X hids/internal/buildinfo.Commit=0835e87-dirty" -o bin/hids-collect ./cmd/hids-collect
-go build -ldflags "-X hids/internal/buildinfo.Commit=0835e87-dirty" -o bin/rec-stat ./cmd/rec-stat
-go build -ldflags "-X hids/internal/buildinfo.Commit=0835e87-dirty" -o bin/rec-check ./cmd/rec-check
-go build -ldflags "-X hids/internal/buildinfo.Commit=0835e87-dirty" -o bin/rec-export ./cmd/rec-export
-go build -ldflags "-X hids/internal/buildinfo.Commit=0835e87-dirty" -o bin/rec-chain ./cmd/rec-chain
+go build -ldflags "-X hids/internal/buildinfo.Commit=0c7cd6f-dirty" -o bin/steal-probe ./cmd/steal-probe
+go build -ldflags "-X hids/internal/buildinfo.Commit=0c7cd6f-dirty" -o bin/steal-summary ./cmd/steal-summary
+go build -ldflags "-X hids/internal/buildinfo.Commit=0c7cd6f-dirty" -o bin/hids-collect ./cmd/hids-collect
+go build -ldflags "-X hids/internal/buildinfo.Commit=0c7cd6f-dirty" -o bin/rec-stat ./cmd/rec-stat
+go build -ldflags "-X hids/internal/buildinfo.Commit=0c7cd6f-dirty" -o bin/rec-check ./cmd/rec-check
+go build -ldflags "-X hids/internal/buildinfo.Commit=0c7cd6f-dirty" -o bin/rec-export ./cmd/rec-export
+go build -ldflags "-X hids/internal/buildinfo.Commit=0c7cd6f-dirty" -o bin/rec-chain ./cmd/rec-chain
 $ ./bin/hids-collect -h (dong -pmu)
   -pmu string
-        che do PMU: off|host (mac dinh, production: chi luong host doc tong)|on (thi nghiem: BPF doc theo ban ghi); auto = bi danh cua host (default "host")
+        che do PMU: off|host (mac dinh, production: chi luong host doc tong)|on (thi nghiem: BPF doc theo ban ghi)|sample=K (lay mau 1/K khoang, K=2..1000); auto = bi danh cua host (default "host")
 
---- 2. Dau tan so ---
-$ nproc
-8
-$ lscpu | grep 'Model name'
+--- 2. Thong tin may, vPMC, dau tan so ---
+$ lscpu (trich)
+CPU(s):                                  8
 Model name:                              Intel(R) Xeon(R) Gold 6330N CPU @ 2.20GHz
 BIOS Model name:                         Intel(R) Xeon(R) Gold 6330N CPU @ 2.20GHz  CPU @ 2.0GHz
+NUMA node0 CPU(s):                       0-7
 $ uname -r
 6.8.0-142-generic
+$ perf stat -e cycles:u,instructions:u -a -- sleep 1
+ Performance counter stats for 'system wide':
+       171,155,113      cycles:u
+       188,700,001      instructions:u                   #    1.10  insn per cycle
+       1.001625858 seconds time elapsed
+=> co vPMC (ra so, khong phai <not supported>)
 $ bash scripts/freq_stamp.sh 0
-2026-10-22T04:33:50+00:00
-lan 1: GHz_wall=2.5275
-lan 2: GHz_wall=2.5293
-lan 3: GHz_wall=2.5297
-trung vi GHz_wall=2.5293
+2026-10-22T08:23:41+00:00
+lan 1: GHz_wall=2.5286
+lan 2: GHz_wall=2.5292
+lan 3: GHz_wall=2.5302
+trung vi GHz_wall=2.5292
 $ bash scripts/freq_stamp.sh 7
-2026-10-22T04:33:53+00:00
-lan 1: GHz_wall=2.5303
-lan 2: GHz_wall=2.5302
-lan 3: GHz_wall=2.5315
-trung vi GHz_wall=2.5303
-vPMC: co (xem muc 3: header .bin "pmu: host", khong co canh bao mo perf fd loi, khong ha ve "pmu: off")
+2026-10-22T08:23:44+00:00
+lan 1: GHz_wall=2.5296
+lan 2: GHz_wall=2.5312
+lan 3: GHz_wall=2.5281
+trung vi GHz_wall=2.5296
 
---- 3. G7a x2, khong truyen -pmu ---
-Lenh (ca 2 lan): bash scripts/g7.sh a
-File day du: validation/lab0c-20261022/g7a-1.txt, validation/lab0c-20261022/g7a-2.txt
+--- 3. G7a x3 (-zstd-level 0) ---
+Cach chay: HIDS_COLLECT_EXTRA="-zstd-level 0 [-pmu ...]" bash scripts/g7.sh a
+File day du: validation/lab0c-m6c3-20261022/g7a-default.txt, g7a-sample20.txt, g7a-on.txt
 
-[G7a lan 1] out/g7a-20261022-043400.bin
---- bang theo tung PID ---
-       pid   N_thiet_ke perf_sys_enter        ban_ghi  ban_ghi_110   perf-ban_ghi   GAP_BEFORE
-     64941      1000000        1000001        1000001      1000000              0            0
-      TONG      1000000        1000001        1000001      1000000              0            0
---- doi chieu toan cuc ---
-tong lan dinh ghi (tong seq theo CPU):        1000001
-tong ban ghi doc duoc:                        1000001
-tong bo dem mat:                              0
-tong so seq bi thieu theo CPU:                0
-tong (perf - ban ghi):                        0
-header .bin (# rec-stat):
+[mac dinh, khong -pmu] out/g7a-20261022-082356.bin
+perf_sys_enter=1000001 ban_ghi=1000001 perf-ban_ghi=0 mat=0
 # pmu: host
 # pmu_events: instructions:u,cycles:u
-# zstd_level: 2
+# zstd_level: 0
+ti le ban ghi khong-FIRST co co PMU: 0/1000000 = 0.0000%
 
-[G7a lan 2] out/g7a-20261022-043411.bin
---- bang theo tung PID ---
-       pid   N_thiet_ke perf_sys_enter        ban_ghi  ban_ghi_110   perf-ban_ghi   GAP_BEFORE
-     65846      1000000        1000001        1000001      1000000              0            0
-      TONG      1000000        1000001        1000001      1000000              0            0
---- doi chieu toan cuc ---
-tong lan dinh ghi (tong seq theo CPU):        1000001
-tong ban ghi doc duoc:                        1000001
-tong bo dem mat:                              0
-tong so seq bi thieu theo CPU:                0
-tong (perf - ban ghi):                        0
-header .bin (# rec-stat):
-# pmu: host
+[-pmu sample=20] out/g7a-20261022-082417.bin
+perf_sys_enter=1000001 ban_ghi=1000001 perf-ban_ghi=0 mat=0
+# pmu: sample=20
 # pmu_events: instructions:u,cycles:u
-# zstd_level: 2
+# zstd_level: 0
+ti le ban ghi khong-FIRST co co PMU: 50000/1000000 = 5.0000%
 
---- 4. G3 S1-S5 x1 ---
-Lenh: WL_CPU=7 G3_OUTROOT=validation/lab0c-20261022/g3 bash scripts/g3.sh m5d
-File day du: validation/lab0c-20261022/g3/S1-ketqua.txt .. S5-ketqua.txt, validation/lab0c-20261022/g3-run.txt
+[-pmu on] out/g7a-20261022-082434.bin
+perf_sys_enter=1000001 ban_ghi=1000001 perf-ban_ghi=0 mat=0
+# pmu: on
+# pmu_events: instructions:u,cycles:u
+# zstd_level: 0
+ti le ban ghi khong-FIRST co co PMU: 1000000/1000000 = 100.0000%
+
+--- 4. G3 S1-S5 x1 voi -pmu sample=20 ---
+Lenh: WL_CPU=7 HIDS_COLLECT_EXTRA="-pmu sample=20" G3_OUTROOT=validation/lab0c-m6c3-20261022/g3 bash scripts/g3.sh m5d
+File day du: validation/lab0c-m6c3-20261022/g3/S1-ketqua.txt .. S5-ketqua.txt, g3-run.txt
 
 Phan du G5 |tat ca (tru FIRST)| (ns), yeu cau <= 500 ns:
 [S1]
@@ -123,9 +132,9 @@ so khoang CLAMPED va |phan du| > 500 ns: 0 / tong 300
 [S2]
 so khoang: 1000
 p50 0
-p99 490
-p99.9 499
-max 499
+p99 487
+p99.9 500
+max 500
 so khoang |phan du| > 1000 ns: 0
 so khoang |phan du| > 10000 ns: 0
 so khoang CLAMPED va |phan du| > 500 ns: 0 / tong 1000
@@ -133,9 +142,9 @@ so khoang CLAMPED va |phan du| > 500 ns: 0 / tong 1000
 [S3]
 so khoang: 1000
 p50 0
-p99 487
-p99.9 500
-max 500
+p99 483
+p99.9 498
+max 498
 so khoang |phan du| > 1000 ns: 0
 so khoang |phan du| > 10000 ns: 0
 so khoang CLAMPED va |phan du| > 500 ns: 0 / tong 1000
@@ -153,9 +162,9 @@ so khoang CLAMPED va |phan du| > 500 ns: 0 / tong 300
 [S5]
 so khoang: 1502
 p50 0
-p99 476
-p99.9 495
-max 496
+p99 478
+p99.9 497
+max 498
 so khoang |phan du| > 1000 ns: 0
 so khoang |phan du| > 10000 ns: 0
 so khoang CLAMPED va |phan du| > 500 ns: 0 / tong 1502
@@ -169,107 +178,114 @@ S5: so khoang CLAMPED va |phan du| > 500 ns: 0 / tong 1502
 
 recursion_misses (bpf_prog_info), tong 0 tren 31 chuong trinh (ca 5 kich ban)
 
-5 dong STEALCHECK cua 5 lan khoi dong G3 (S1..S5):
-STEALCHECK lan=1 tong_vmw_ns=40655496 tong_rq_ns=40266616 lech_ns=388880 nguong_ns=5000000 cpu_lech_max=1:350575 ket_qua=DAT
-STEALCHECK lan=1 tong_vmw_ns=35741511 tong_rq_ns=35679243 lech_ns=62268 nguong_ns=5000000 cpu_lech_max=5:88571 ket_qua=DAT
-STEALCHECK lan=1 tong_vmw_ns=42021224 tong_rq_ns=42117210 lech_ns=95986 nguong_ns=5000000 cpu_lech_max=0:100649 ket_qua=DAT
-STEALCHECK lan=1 tong_vmw_ns=37871355 tong_rq_ns=37882022 lech_ns=10667 nguong_ns=5000000 cpu_lech_max=1:10666 ket_qua=DAT
-STEALCHECK lan=1 tong_vmw_ns=37386618 tong_rq_ns=37335110 lech_ns=51508 nguong_ns=5000000 cpu_lech_max=7:51512 ket_qua=DAT
+Ti le co PMU (rec-stat tren file .bin cua tung kich ban, header # pmu: sample=20):
+S1: ti le ban ghi khong-FIRST co co PMU: 15/302 = 4.9669%
+S2: ti le ban ghi khong-FIRST co co PMU: 50/1002 = 4.9900%
+S3: ti le ban ghi khong-FIRST co co PMU: 50/1002 = 4.9900%
+S4: ti le ban ghi khong-FIRST co co PMU: 15/302 = 4.9669%
+S5: ti le ban ghi khong-FIRST co co PMU: 75/1504 = 4.9867%
 
-Bang doi chieu kernel (schedstat + bpftrace), nguyen van tu tung S*-ketqua.txt:
+5 dong STEALCHECK cua 5 lan khoi dong G3 (S1..S5):
+STEALCHECK lan=1 tong_vmw_ns=40209824 tong_rq_ns=40199174 lech_ns=10650 nguong_ns=5000000 cpu_lech_max=7:27015 ket_qua=DAT
+STEALCHECK lan=1 tong_vmw_ns=36246817 tong_rq_ns=36183633 lech_ns=63184 nguong_ns=5000000 cpu_lech_max=1:63186 ket_qua=DAT
+STEALCHECK lan=1 tong_vmw_ns=45025012 tong_rq_ns=45060192 lech_ns=35180 nguong_ns=5000000 cpu_lech_max=1:46967 ket_qua=DAT
+STEALCHECK lan=1 tong_vmw_ns=33793197 tong_rq_ns=33794533 lech_ns=1336 nguong_ns=5000000 cpu_lech_max=4:1334 ket_qua=DAT
+STEALCHECK lan=1 tong_vmw_ns=34754848 tong_rq_ns=34772135 lech_ns=17287 nguong_ns=5000000 cpu_lech_max=5:66133 ket_qua=DAT
+
+Bang doi chieu kernel (schedstat + bpftrace), nguyen van tu tung S*-ketqua.txt (lech rq so bpftrace TONG chi in, khong phai tieu chi):
 [S1]
 thanh_phan           collector       tham_chieu      nguon
-cpu+steal+irq        2995743635      2995687360      Delta schedstat field1 sum_exec_runtime
-rq                   107840          141565          Delta schedstat field2 run_delay
-rq (wait_sum)        107840          141565          Delta wait_sum /proc/sched
-vol                  26750000        26748200        Delta sum_sleep_runtime
+cpu+steal+irq        3011814772      3011737722      Delta schedstat field1 sum_exec_runtime
+rq                   128412          174426          Delta schedstat field2 run_delay
+rq (wait_sum)        128412          174426          Delta wait_sum /proc/sched
+vol                  27935000        27934600        Delta sum_sleep_runtime
 vol (D_SLEEP)        0               0               Delta sum_block_runtime
 
 [S2]
 thanh_phan           collector       tham_chieu      nguon
-cpu+steal+irq        3725809         6943050         Delta schedstat field1 sum_exec_runtime
-rq                   9572203         6588106         Delta schedstat field2 run_delay
-rq (wait_sum)        9572203         6588110         Delta wait_sum /proc/sched
-vol                  2877293000      2877040000      Delta sum_sleep_runtime
+cpu+steal+irq        4427885         7606191         Delta schedstat field1 sum_exec_runtime
+rq                   12317611        9477898         Delta schedstat field2 run_delay
+rq (wait_sum)        12317611        9477900         Delta wait_sum /proc/sched
+vol                  2825726000      2825360000      Delta sum_sleep_runtime
 vol (D_SLEEP)        0               0               Delta sum_block_runtime
-rq                   9572203         9333590         bpftrace @rq_sau_wakeup_ns (cot 3: 6588106 run_delay)
+rq                   12317611        11988487        bpftrace @rq_sau_wakeup_ns (cot 3: 9477898 run_delay)
 so_lan_wakeup        —             501             bpftrace @so_lan (cot 3: 501 Delta pcount)
 rq_sau_preempt       —             0               bpftrace @rq_sau_preempt_ns (so_lan_preempt: 0)
-rq                   9572203         9333590         bpftrace TONG @rq_sau_wakeup_ns + @rq_sau_preempt_ns
-tong cpu+steal+irq+rq+vol | exec+run_delay+sleep 2890591012      2890571156      collector | kernel
+rq                   12317611        11988487        bpftrace TONG @rq_sau_wakeup_ns + @rq_sau_preempt_ns
+tong cpu+steal+irq+rq+vol | exec+run_delay+sleep 2842471496      2842444089      collector | kernel
 
 [S3]
 thanh_phan           collector       tham_chieu      nguon
-cpu+steal+irq        1006768168      1010361649      Delta schedstat field1 sum_exec_runtime
-rq                   10663271        7083691         Delta schedstat field2 run_delay
-rq (wait_sum)        10663271        7083690         Delta wait_sum /proc/sched
-vol                  1823705000      1823670000      Delta sum_sleep_runtime
+cpu+steal+irq        1003976112      1007856259      Delta schedstat field1 sum_exec_runtime
+rq                   4530907         669828          Delta schedstat field2 run_delay
+rq (wait_sum)        4530907         669828          Delta wait_sum /proc/sched
+vol                  1825842000      1825790000      Delta sum_sleep_runtime
 vol (D_SLEEP)        0               0               Delta sum_block_runtime
-rq                   10663271        10462815        bpftrace @rq_sau_wakeup_ns (cot 3: 7083691 run_delay)
-so_lan_wakeup        —             501             bpftrace @so_lan (cot 3: 506 Delta pcount)
-rq_sau_preempt       —             53001           bpftrace @rq_sau_preempt_ns (so_lan_preempt: 5)
-rq                   10663271        10515816        bpftrace TONG @rq_sau_wakeup_ns + @rq_sau_preempt_ns
-tong cpu+steal+irq+rq+vol | exec+run_delay+sleep 2841136439      2841115340      collector | kernel
+rq                   4530907         4294979         bpftrace @rq_sau_wakeup_ns (cot 3: 669828 run_delay)
+so_lan_wakeup        —             501             bpftrace @so_lan (cot 3: 505 Delta pcount)
+rq_sau_preempt       —             44741           bpftrace @rq_sau_preempt_ns (so_lan_preempt: 4)
+rq                   4530907         4339720         bpftrace TONG @rq_sau_wakeup_ns + @rq_sau_preempt_ns
+tong cpu+steal+irq+rq+vol | exec+run_delay+sleep 2834349019      2834316087      collector | kernel
 
 [S4]
 thanh_phan           collector       tham_chieu      nguon
-cpu+steal+irq        3000773167      3000762674      Delta schedstat field1 sum_exec_runtime
-rq                   3002299743      3002262269      Delta schedstat field2 run_delay
-rq (wait_sum)        3002299743      3002260000      Delta wait_sum /proc/sched
-vol                  28949000        28948400        Delta sum_sleep_runtime
+cpu+steal+irq        2992984364      2992989503      Delta schedstat field1 sum_exec_runtime
+rq                   2990789723      2990723787      Delta schedstat field2 run_delay
+rq (wait_sum)        2990789723      2990720000      Delta wait_sum /proc/sched
+vol                  39316000        39313000        Delta sum_sleep_runtime
 vol (D_SLEEP)        0               0               Delta sum_block_runtime
 
 [S5]
 thanh_phan           collector       tham_chieu      nguon
-cpu+steal+irq        21951132        23450321        Delta schedstat field1 sum_exec_runtime
-rq                   15145393        14107704        Delta schedstat field2 run_delay
-rq (wait_sum)        15145393        14107700        Delta wait_sum /proc/sched
-vol                  351161000       350692000       Delta sum_sleep_runtime
-vol (D_SLEEP)        54281000        53816100        Delta sum_block_runtime
-rq                   15145393        15042660        bpftrace @rq_sau_wakeup_ns (cot 3: 14107704 run_delay)
-so_lan_wakeup        —             601             bpftrace @so_lan (cot 3: 601 Delta pcount)
+cpu+steal+irq        21150684        21617748        Delta schedstat field1 sum_exec_runtime
+rq                   3245276         2341571         Delta schedstat field2 run_delay
+rq (wait_sum)        3245276         2341570         Delta wait_sum /proc/sched
+vol                  298147000       298577000       Delta sum_sleep_runtime
+vol (D_SLEEP)        55744000        56176600        Delta sum_block_runtime
+rq                   3245276         3215908         bpftrace @rq_sau_wakeup_ns (cot 3: 2341571 run_delay)
+so_lan_wakeup        —             565             bpftrace @so_lan (cot 3: 601 Delta pcount)
 rq_sau_preempt       —             0               bpftrace @rq_sau_preempt_ns (so_lan_preempt: 0)
-rq                   15145393        15042660        bpftrace TONG @rq_sau_wakeup_ns + @rq_sau_preempt_ns
-tong cpu+steal+irq+rq+vol | exec+run_delay+sleep 388257525       388250025       collector | kernel
+rq                   3245276         3215908         bpftrace TONG @rq_sau_wakeup_ns + @rq_sau_preempt_ns
+tong cpu+steal+irq+rq+vol | exec+run_delay+sleep 322542960       322536319       collector | kernel
 
---- 5. Chay thu cau hinh 24 gio trong 10 phut ---
-Lenh (dong -datadir cua LAB-0b/m6b1_24h_run.sh, chi doi -duration 24h -> 10m):
-timeout --signal=TERM 700 ./bin/hids-collect -datadir /srv/hids-data/hids-collector -cgroup /sys/fs/cgroup/system.slice/docker-026f7cbf1bc47de73f226721ea7ad4aa6415f8607ac9e83de2755a2f51108da2.scope -cgroup /sys/fs/cgroup/system.slice/docker-6e46e483810609715f4c42e35a5087fa36df28a4dd1c8f40bd715f9c35f31669.scope -duration 10m -min-free-gb 50
-start=2026-10-22T04:35:51+00:00
-end=2026-10-22T04:45:54+00:00
+--- 5. Chay thu cau hinh 24 gio 10 phut, -pmu sample=20 ---
+Lenh (dong -datadir cua LAB-0b, them -pmu sample=20, chi doi -duration 24h -> 10m):
+timeout --signal=TERM 700 ./bin/hids-collect -datadir /srv/hids-data/hids-collector -cgroup /sys/fs/cgroup/system.slice/docker-026f7cbf1bc47de73f226721ea7ad4aa6415f8607ac9e83de2755a2f51108da2.scope -cgroup /sys/fs/cgroup/system.slice/docker-6e46e483810609715f4c42e35a5087fa36df28a4dd1c8f40bd715f9c35f31669.scope -duration 10m -min-free-gb 50 -pmu sample=20
+start=2026-10-22T08:26:04+00:00
+end=2026-10-22T08:36:08+00:00
 COLLECT_EXIT:0
-log: longrun datadir=/srv/hids-data/hids-collector rotate=1h0m0s min_free_gb=50
-     ket thuc longrun end_mono_ns=102288934865829 disk_skipped=0
-header .bin doan chay thu (# rec-stat):
-# datadir: /srv/hids-data/hids-collector
-# rotate: 1h0m0s
-# min_free_gb: 50
-# pmu: host
+mo segment 2026102208 -> /srv/hids-data/hids-collector/hids-collector-2026102208.bin
+longrun datadir=/srv/hids-data/hids-collector rotate=1h0m0s min_free_gb=50
+ket thuc longrun end_mono_ns=116102517038232 disk_skipped=0
+header .bin (# rec-stat):
+# pmu: sample=20
 # pmu_events: instructions:u,cycles:u
+tong so ban ghi trong file : 879
+ti le ban ghi khong-FIRST co co PMU: 42/875 = 4.8000%
 
-status.tsv (nguyen van):
+status.tsv cac dong cua luot nay (nguyen van, status.tsv la file cong don tu cac luot truoc):
 wall	records_per_sec	kernel_drops_delta	disk_skipped_total	bin_bytes_compressed	free_gb	rss_bytes	cpu_seconds_total	proc_drops_delta
-2026-10-22T04:36:55.779680049Z	6.42	0	0	1563	165.54	183463936	0.585	0
-2026-10-22T04:37:56.779679041Z	4.61	0	0	1563	165.54	183463936	0.774	0
-2026-10-22T04:38:57.779678661Z	0.52	0	0	1563	165.54	183463936	0.913	0
-2026-10-22T04:39:58.779678807Z	0.48	0	0	1563	165.54	183463936	1.051	0
-2026-10-22T04:40:58.779680741Z	0.48	0	0	1563	165.54	183463936	1.181	0
-2026-10-22T04:41:59.779680413Z	0.51	0	0	1563	165.54	184246272	1.326	0
-2026-10-22T04:43:00.779678845Z	0.48	0	0	1563	165.54	184901632	1.460	0
-2026-10-22T04:44:00.779678963Z	0.48	0	0	1563	165.54	185819136	1.593	0
-2026-10-22T04:45:01.779679154Z	0.51	0	0	1563	165.54	185819136	1.727	0
+2026-10-22T08:27:09.361268944Z	6.27	0	0	1568	165.36	184000512	0.734	0
+2026-10-22T08:28:10.361269785Z	4.41	0	0	1568	165.36	184000512	0.925	0
+2026-10-22T08:29:11.361268333Z	0.51	0	0	1568	165.36	184000512	1.068	0
+2026-10-22T08:30:11.361269583Z	0.45	0	0	1568	165.36	184000512	1.211	0
+2026-10-22T08:31:12.361268355Z	0.48	0	0	1568	165.36	184000512	1.353	0
+2026-10-22T08:32:12.361268434Z	0.52	0	0	1568	165.36	184000512	1.491	0
+2026-10-22T08:33:13.361270452Z	0.49	0	0	1568	165.36	184000512	1.630	0
+2026-10-22T08:34:14.361270351Z	0.48	0	0	1568	165.36	184000512	1.773	0
+2026-10-22T08:35:15.361268167Z	0.51	0	0	1568	165.36	184000512	1.913	0
 
-CPU collector (cua so on dinh, tu status.tsv): dcpu/dt cac khoang cuoi = 0.217% - 0.238% mot loi (vi du 0.130s/60s = 0.217%, 0.145s/61s = 0.238%)
-RSS: 183463936 -> 185819136 byte (dong cuoi 185819136)
+CPU collector (cua so on dinh, tu status.tsv): 0.228% - 0.238% mot loi (0.138s/60s - 0.143s/61s)
+RSS: 184000512 byte (khong doi trong luot)
 kernel drops (kernel_drops_delta): 0 o moi dong
 proc drops (proc_drops_delta): 0 o moi dong
-So dong host: /srv/hids-data/hids-collector/host-2026102204.tsv.zst: 601 dong (1 header + 600 dong du lieu)
-Hai cot cuoi (pmu_inst_delta, pmu_cyc_delta) cua 3 dong host cuoi:
-12335175 34696790
-1543570995 1098646478
-15028390 40710018
+So dong host doan cua luot nay: host-2026102208.tsv.zst: 601 dong (1 header + 600 dong du lieu)
+Hai cot PMU (pmu_inst_delta, pmu_cyc_delta) cua 3 dong host cuoi doan nay:
+26682563 46885858
+175724985 161493131
+20706211 40219934
 
-Sau chay thu: collector tu dung theo -duration 10m; khong bat lai collector 24 gio.
+Sau chay thu: collector tu dung theo -duration 10m; khong bat lai.
 
 --- 6. Ket thuc ---
 $ systemctl list-units 'hids-*' 'hidsrun-*' --state=active
@@ -290,35 +306,37 @@ $ docker exec lab0-postgres pg_isready
 ================================================================
 FILE DA TAO
 ================================================================
-docs/tasks/LAB-0c.md (nguyen van nhiem vu)
-LAB-0c-ketqua.txt (file nay)
-validation/lab0c-20261022/freq-cpu0.txt
-validation/lab0c-20261022/freq-cpu7.txt
-validation/lab0c-20261022/g7a-1.txt
-validation/lab0c-20261022/g7a-2.txt
-validation/lab0c-20261022/g3-run.txt
-validation/lab0c-20261022/g3/S1-ketqua.txt .. S5-ketqua.txt (+ .bin.periodic/.bin.stats/.bpftrace.log/.runqlat.log, sched_schedstats.before)
-validation/lab0c-20261022/run10m-collect.log
-validation/lab0c-20261022/run10m-status.txt
-/srv/hids-data/hids-collector/hids-collector-2026102204.bin (+ .bin.periodic/.bin.stats)
-/srv/hids-data/hids-collector/host-2026102204.tsv.zst
-/srv/hids-data/hids-collector/proc-2026102204.tsv.zst
-/srv/hids-data/hids-collector/status.tsv
+docs/tasks/LAB-0c.md (ban cap nhat m6c.3, nguyen van)
+LAB-0c-ketqua.txt (file nay, thay ban m6c.2)
+validation/lab0c-m6c3-20261022/perf-vpmc.txt
+validation/lab0c-m6c3-20261022/freq-cpu0.txt
+validation/lab0c-m6c3-20261022/freq-cpu7.txt
+validation/lab0c-m6c3-20261022/g7a-default.txt
+validation/lab0c-m6c3-20261022/g7a-sample20.txt
+validation/lab0c-m6c3-20261022/g7a-on.txt
+validation/lab0c-m6c3-20261022/g3-run.txt
+validation/lab0c-m6c3-20261022/g3/S1-ketqua.txt .. S5-ketqua.txt (+ .bin.periodic/.bin.stats/.bpftrace.log/.runqlat.log, sched_schedstats.before)
+validation/lab0c-m6c3-20261022/run10m-collect.log
+validation/lab0c-m6c3-20261022/run10m-status.txt
+/srv/hids-data/hids-collector/hids-collector-2026102208.bin (+ .bin.periodic/.bin.stats)
+/srv/hids-data/hids-collector/host-2026102208.tsv.zst
+/srv/hids-data/hids-collector/proc-2026102208.tsv.zst
+/srv/hids-data/hids-collector/status.tsv (cong don them 9 dong cua luot nay)
 
 ================================================================
 QUYET DINH TU DUA RA
 ================================================================
-- Checkout dung tag m6c.2 (detached HEAD 0835e87) de kiem sha/build/chay cong; sau do merge commit tren tag vao lab-collector (merge 8718c72) de may nan nhan giu ma m6c.2 cung lich su LAB-0/LAB-0b. 5 file kien truc su khong doi sau merge (sha o tren).
-- Truoc checkout, file generate chua tracked internal/procbpf/procevents_x86_bpfel.o (sha e027b726...) chan checkout vi o tag la file tracked; da chuyen tam sang /tmp/procevents-pre-m6c2.o, khong xoa.
-- Sau make build, git status chi co 2 file .o generate bi sua (internal/procbpf, internal/stealbpf); da git checkout HEAD -- 2 file do (binary bin/hids-collect da build khong build lai) de g7/g3 qua kiem tra cay sach, nhu LAB-0. Vi vay binary in git_commit=0835e87-dirty.
-- WL_CPU cua g3.sh o tag van ghim 20 (may nay 8 vCPU, taskset -c 20 loi); da doi thanh WL_CPU="${WL_CPU:-20}" (mac dinh cu nguyen) + commit rieng tren tag, chay WL_CPU=7, nhu quyet dinh o LAB-0.
-- freq_stamp: ung dung nan nhan chinh khong co CPU rieng (container dang dung luc chay cong), nen dung CPU 0 va CPU cuoi (7) theo dieu kien du phong cua nhiem vu.
-- G7a chay khong truyen -pmu va khong truyen -zstd-level (g7.sh mac dinh cua tag, zstd_level=2 trong header); tieu chi perf = ban ghi, mat = 0 van ap dung.
-- Chay thu 10 phut: khoi dong lai 2 container lab0-nginx/lab0-postgres (truoc do o trang thai Exited (0)) de lay cgroup that; khong chay script tai LAB-0b, khong chay tai nao.
-- Khong push nhanh lab-collector sau merge (nhiem vu LAB-0c chi noi commit; khac LAB-0b co yeu cau push rieng).
+- sysctl -w kernel.perf_event_paranoid=1 (tu 4) theo dieu kien 0; chi la thay doi runtime, chua ghi file cau hinh ben vung.
+- Dung 2 container lab0-nginx/lab0-postgres trong luc chay cong G7a/G3/freq (docker stop truoc, docker start lai cho muc 5), nhu cach cac script cong cua may test lam (ngung container khi do, khoi dong lai khi xong).
+- Sau make build, git status chi co 2 file .o generate bi sua (internal/procbpf, internal/stealbpf); da git checkout HEAD -- 2 file do (binary da build khong build lai) de g7/g3 qua kiem tra cay sach, nhu LAB-0/LAB-0c truoc. Vi vay binary in git_commit=0c7cd6f-dirty.
+- WL_CPU: ban merge da chua thay doi tu LAB-0 (WL_CPU="${WL_CPU:-20}"), chay WL_CPU=7 tren may 8 vCPU, khong sua them.
+- G3 truyen -pmu qua HIDS_COLLECT_EXTRA="-pmu sample=20" (g3.sh cua tag da ho tro bien nay o dong chay collector -pid).
+- So dong host muc 5 dem tren doan host-2026102208.tsv.zst cua chinh luot chay thu (601 dong gom header); trong /srv/hids-data/hids-collector con doan cu host-2026102204.tsv.zst cua LAB-0c ban m6c.2, khong xoa.
+- Bao cao LAB-0c-ketqua.txt ghi de ban m6c.2 (cung ten file theo day bao cao); noi dung m6c.2 con trong validation/lab0c-20261022 va lich su git.
 
 ================================================================
 CAU HOI CHO KIEN TRUC SU
 ================================================================
-1. Cot pmu_inst_delta dong host gan cuoi co gia tri 1543570995 / 1098646478, lech han cac dong ke (12335175/34696790 va 15028390/40710018): day la so lieu goc cua collector (pmu: host), can kien truc su xem co phai nhieu luc dung/xoay doan khong? So lieu in nguyen van, khong sua tieu chi.
-2. Binary build tu tag sach van in git_commit=0835e87-dirty vi make generate lam khac 2 file .o tracked; co can chuan hoa de binary khong con -dirty cho LAB-1 khong, hay giu nguyen binary da qua cong nay?
+1. Dong host thu hai tu cuoi cua luot chay thu co pmu_inst_delta/pmu_cyc_delta = 175724985 / 161493131, lech han 2 dong ke (26682563/46885858 va 20706211/40219934) — mau hinh giong luot m6c.2. Can kien truc su xem day co phai dong ngay truoc luc dong doan/dung collector khong. So lieu in nguyen van, khong sua tieu chi.
+2. kernel.perf_event_paranoid da ha xuong 1 bang sysctl -w (runtime). LAB-1 co can ghi ben vung vao /etc/sysctl.d de qua reboot van <= 1 khong?
+3. R035 ghi "Cho kien truc su chot K cho LAB-1": ket qua tren 201 cho thay sample=20 dat ti le co PMU dung 5.0000% (G7a) va 4.9669-4.9900% (G3), 4.8000% o luot 10 phut it ban ghi. Cho xac nhan LAB-1 dung -pmu sample=20 tren may nay.
