@@ -1,0 +1,19 @@
+thoi_gian_thuc_s=602
+tong cpu_jiffies (utime+stime, 100 Hz):
+408
+rss_kb cuoi:
+2026-10-22T15:16:45+07:00 cpu_jiffies_delta=7 rss_kb=175144
+host lines (cong moi doan host-*.tsv.zst, tru header moi doan):
+host_lines=600
+hai cot PMU cua host stream (3 dong cuoi):
+15236273 31478212
+20124422 49244096
+149939778 137428562
+kernel drops + proc drops (dong cuoi .periodic / run.log):
+104303481227911,2026-10-22T15:16:53.784384952+07:00,118,0,7278,0,744393,66337822,196367527,66477207,37702826,3561502972,12272868826,3570125949
+104303511356410,2026-10-22T15:16:53.814514097+07:00,0,0,7278,0,2736,360262,4649769,361471,37705562,3561863234,12277518595,3570487420
+ti le co PMU trong .bin (rec-stat tung file):
+# pmu: sample=20
+# pmu_events: instructions:u,cycles:u
+tong so ban ghi trong file : 7278
+ti le ban ghi khong-FIRST co co PMU: 363/7277 = 4.9883%

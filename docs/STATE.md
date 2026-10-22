@@ -86,7 +86,17 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 - Phần 2 XONG: STEALCHECK theo TỔNG mọi CPU (|Σvmw − Σrq| ≤ max(5 ms, 1% Σvmw)), bảng per-CPU mỗi cửa sổ; G7a ×1 mất 0; G3 ×1: G5 max ≤ 500, CLAMPED 0/tổng, recursion_misses = 0 trên 31 chương trình. Dữ liệu `validation/m6c2-20261022/part23/`.
 - Phần 3 XONG: `scripts/freq_stamp.sh`; CPU 12 trung vị 1,9359 GHz, CPU 20 trung vị 1,9349 GHz (máy rảnh, container dừng). Quy ước đã ghi vào `.cursor/rules/hids.mdc`.
 - Phần 4 XONG: E4p cơ chế gốc đủ 9/9 ô, attempt 1, 500/500 khoảng mỗi ô; inst 14170548–14170579 ở mọi mức; dấu tần số L=22 là 2,5239 GHz (khác L0/L12 ~1,93 — câu 8.1 của R034).
-- M6c-2 ĐÓNG: R034 viết xong, tag `m6c.2`, đã push. Việc đang chạy: (không có) — unit `hids-*` trống, `bpftool prog show | grep -c hids_` = 0, 12 container chạy. Chờ kiến trúc sư trả lời 2 câu hỏi mục 8 của R034.
+- M6c-2 ĐÓNG: R034 viết xong, tag `m6c.2`, đã push. Việc đang chạy: (không có) — unit `hids-*` trống, `bpftool prog show | grep -c hids_` = 0, 12 container chạy.
+- Trả lời của kiến trúc sư về R034 mục 8 (nhận 2026-10-22, ghi nguyên văn):
+  1. Không đo lại L=22; so sánh giữa các mức bằng cyc, CPI, inst (không phụ thuộc tần số); cpu_ns luôn kèm GHz hiệu dụng của mức đó; việc tần số nhảy 1,93→2,52 GHz là phát hiện: turbo có nhưng host dùng chung nên lúc có lúc không; quy ước bổ sung: freq_stamp trước VÀ sau mỗi khối đo, lệch >2% thì ghi chú khối đó.
+  2. Câu 8.2 của R033 đóng: inst không đổi với cơ chế -loops. Ghi nhận lỗi trong tools/wl.c self_test_mem_10ms: biến sum không được cộng dồn nên nhánh điều chỉnh mem_steps là mã chết; không sửa trong nhiệm vụ nào hiện tại.
+
+## Bước đang làm (M6c-3)
+
+- Nhiệm vụ: `docs/tasks/M6c-3.md`. Báo cáo R035, tag `m6c.3`. BPF mới của kiến trúc sư `9994b03f…` (lấy mẫu PMU), đã commit và build đạt.
+- Phần 2 XONG (commit `30b221b`): `-pmu sample=K` (K 2…1000; nạp `hids_pmu_sample`, header `pmu: sample=K`); STEALCHECK in thêm dòng `STEALCHECK canh_bao cpu=<n> lech_ns=<...>` khi tổng đạt nhưng một CPU lệch > 50 ms.
+- Phần 3 XONG: G7a ×4 mất 0, header đúng 4 chế độ; G3 sample=20 (phần dư ≤ 500, CLAMPED 0, recursion 0, PMU 4,97–4,99%) và on (PMU 100%); G11 lệch inst 43, cyc 7761, cờ 100%; G11s đạt (sample20: 15 khoảng, inst +0,79%, cyc +1,55%; sample50: 6 khoảng, +0,77%/+1,04%); T1: C0 186,5 / host 817,9 / sample50 805,7 / sample20 952,9 / on 3766,5 ns/syscall; pre24h10 sample=20: CPU 0,80% lõi, RSS 183730176 B, drops 0, host 600 dòng, PMU 4,9883%. Hai lần G3 đầu hỏng do wrapper/driver cùng dừng container và wl trượt tự kiểm — đã chạy lại nguyên trạng.
+- M6c-3 ĐÓNG: R035 viết xong, tag `m6c.3`, đã push. Việc đang chạy: (không có) — unit `hids-*` trống, `bpftool prog show | grep -c hids_` = 0, 12 container chạy. Chờ kiến trúc sư chốt K cho LAB-1 (câu 8.1 của R035).
 
 ## M6c: ĐÓNG (R032)
 

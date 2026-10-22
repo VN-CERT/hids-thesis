@@ -1,0 +1,38 @@
+CANH BAO: binary build tu cay lam viec con thay doi chua commit (git_commit=3b6fc92-dirty).
+CANH BAO: du lieu ghi ra khong tai lap duoc tu git. Commit truoc khi do that.
+stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+stealclock_evidence: journalctl
+doi chieu vmw_steal_time voi rq->prev_steal_time trong 3s (lan 1)...
+   cpu         vmw_ns    rq_steal_ns      lech_ns    nguong_ns
+     0       13750067       12280029      1470038      2000000
+     1        2153784        2153784            0      2000000
+     2        2019146        2019147           -1      2000000
+     3       10199129       10211180       -12051      2000000
+     4        5701455        5701455            0      2000000
+     5       20469274       20469275           -1      2000000
+     6        6410823        6417134        -6311      2000000
+     7       10745294       10745295           -1      2000000
+     8        4676901        4687952       -11051      2000000
+     9        9278115        9307177       -29062      2000000
+    10        8145121        8145121            0      2000000
+    11        7780772        7780772            0      2000000
+    12        9600334        9600334            0      2000000
+    13        8693184        8709321       -16137      2000000
+    14        9149091        9149092           -1      2000000
+    15        9663064        9600506        62558      2000000
+    16        7298432        7409097      -110665      2000000
+    17        4830066        4756881        73185      2000000
+    18        3173732        3173732            0      2000000
+    19        3926165        3983508       -57343      2000000
+    20        1518082        1512185         5897      2000000
+    21        1913278        2011608       -98330      2000000
+    22        1864624        1961360       -96736      2000000
+    23        2709879        2723893       -14014      2000000
+  TONG      165669812      164509838      1159974      5000000
+STEALCHECK lan=1 tong_vmw_ns=165669812 tong_rq_ns=164509838 lech_ns=1159974 nguong_ns=5000000 cpu_lech_max=0:1470038 ket_qua=DAT
+doi chieu xong: |tong_vmw - tong_rq| = 1159974 ns, nguong max(5000000 ns, 1% x tong_vmw); cpu lech max 0: 1470038 ns
+mo segment 2026102208 -> validation/m6c3-20261022/pre24h10/data/uni-lms-app-2026102208.bin
+longrun datadir=validation/m6c3-20261022/pre24h10/data rotate=1h0m0s min_free_gb=50
+loc pid: 2053057 | loc cgroup: khong co | ring buffer: 64 MiB
+READY
+ket thuc longrun end_mono_ns=104303511514265 disk_skipped=0

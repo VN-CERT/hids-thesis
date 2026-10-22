@@ -1,0 +1,75 @@
+CANH BAO: binary build tu cay lam viec con thay doi chua commit (git_commit=3b6fc92-dirty).
+CANH BAO: du lieu ghi ra khong tai lap duoc tu git. Commit truoc khi do that.
+stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+stealclock_evidence: journalctl
+doi chieu vmw_steal_time voi rq->prev_steal_time trong 3s (lan 1)...
+   cpu         vmw_ns    rq_steal_ns      lech_ns    nguong_ns
+     0       12591082       12066473       524609      2000000
+     1        1028736        1057943       -29207      2000000
+     2        3621882        3576806        45076      2000000
+     3         459801         435053        24748      2000000
+     4        1866631        1853701        12930      2000000
+     5         752742         752742            0      2000000
+     6       14732823       14732824           -1      2000000
+     7       10153079       10147529         5550      2000000
+     8        6875444        6899570       -24126      2000000
+     9        4120721        4120722           -1      2000000
+    10        8332596        8296820        35776      2000000
+    11        7033571        7058208       -24637      2000000
+    12        6699532        6661319        38213      2000000
+    13        6906251        6897531         8720      2000000
+    14        4287231        4297148        -9917      2000000
+    15        6221125        6221126           -1      2000000
+    16        6291491        6257697        33794      2000000
+    17        3893035        3859398        33637      2000000
+    18        2202118        2211117        -8999      2000000
+    19        2798890        2792101         6789      2000000
+    20        2286332        2300431       -14099      2000000
+    21        9860189        9860189            0      2000000
+    22        1047418        1088319       -40901      2000000
+    23       14377246       14418624       -41378      2000000
+  TONG      138439966      137863391       576575      5000000
+STEALCHECK lan=1 tong_vmw_ns=138439966 tong_rq_ns=137863391 lech_ns=576575 nguong_ns=5000000 cpu_lech_max=0:524609 ket_qua=DAT
+doi chieu xong: |tong_vmw - tong_rq| = 576575 ns, nguong max(5000000 ns, 1% x tong_vmw); cpu lech max 0: 524609 ns
+ghi vao validation/m6c3-20261022/gates/T1/C1-host/run6/collect.bin
+loc pid: 1989607 | loc cgroup: khong co | ring buffer: 64 MiB
+READY
+ban ghi doc duoc: 10000001 | so lan dinh ghi: 10000001 | mat: 0
+irq cong don (ns): hard 384427 | soft 106489408 | vector 938285989 | tong 1045159824
+soft_raw cong don (ns): 106642297 (ke ca hard/vector long ben trong, de so voi softirqs-bpfcc)
+irq bat thuong: 0 khoang, 0 ns | loai con dang hoat dong: 0
+recursion_misses (bpf_prog_info), tong 0 tren 31 chuong trinh:
+  hids_irq_call_function_entry             0
+  hids_irq_call_function_exit              0
+  hids_irq_call_function_single_entry      0
+  hids_irq_call_function_single_exit       0
+  hids_irq_deferred_error_apic_entry       0
+  hids_irq_deferred_error_apic_exit        0
+  hids_irq_error_apic_entry                0
+  hids_irq_error_apic_exit                 0
+  hids_irq_irq_handler_entry               0
+  hids_irq_irq_handler_exit                0
+  hids_irq_irq_work_entry                  0
+  hids_irq_irq_work_exit                   0
+  hids_irq_local_timer_entry               0
+  hids_irq_local_timer_exit                0
+  hids_irq_reschedule_entry                0
+  hids_irq_reschedule_exit                 0
+  hids_irq_softirq_entry                   0
+  hids_irq_softirq_exit                    0
+  hids_irq_spurious_apic_entry             0
+  hids_irq_spurious_apic_exit              0
+  hids_irq_thermal_apic_entry              0
+  hids_irq_thermal_apic_exit               0
+  hids_irq_threshold_apic_entry            0
+  hids_irq_threshold_apic_exit             0
+  hids_irq_x86_platform_ipi_entry          0
+  hids_irq_x86_platform_ipi_exit           0
+  hids_sched_switch                        0
+  hids_sched_wakeup                        0
+  hids_sched_wakeup_new                    0
+  hids_sys_enter                           0
+  hids_sys_enter_fentry                    0
+thoi gian chay: 8.476 s | CPU collector: user 17.450 s, sys 1.269 s (getrusage RUSAGE_SELF)
+kich thuoc file: 71780200 byte
+du lieu: validation/m6c3-20261022/gates/T1/C1-host/run6/collect.bin | thong ke: validation/m6c3-20261022/gates/T1/C1-host/run6/collect.bin.stats | theo doi: validation/m6c3-20261022/gates/T1/C1-host/run6/collect.bin.periodic

@@ -1,0 +1,10 @@
+[on] so khoang khong-FIRST: 302, co co PMU: 302, khong co nhung inst/cyc != 0: 0
+[on] inst: trung_vi=15654346.0 p10=15654345 p90=15654346
+[on] cyc: trung_vi=19418440.0 p10=18779836 p90=19632425
+[sample20] so khoang khong-FIRST: 302, co co PMU: 15, khong co nhung inst/cyc != 0: 0
+[sample20] inst: trung_vi=15778390.0 p10=15778389 p90=15778391
+[sample20] cyc: trung_vi=19719346.0 p10=18506206 p90=19852452
+[sample50] so khoang khong-FIRST: 302, co co PMU: 6, khong co nhung inst/cyc != 0: 0
+[sample50] inst: trung_vi=15775102.0 p10=15775102 p90=15775102
+[sample50] cyc: trung_vi=19621149.0 p10=19369656 p90=19812723
+G11s xong

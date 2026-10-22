@@ -1,0 +1,39 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 3b6fc92-dirty
+# record_size: 64
+# filter_tgids: 1988821
+# filter_pid: 1
+# filter_cgroup: khong co
+# ringbuf_bytes: 67108864
+# rb_wake_bytes: 8388608
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: journalctl -k -b | Oct 21 10:18:34 uni-lms-app kernel: vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# pmu: on
+# pmu_events: instructions:u,cycles:u
+# start_mono_ns: 102017362372989
+# start_wall: 2026-10-22T14:38:47.665530261+07:00
+# duration: 1m0s
+# moi dong cach nhau 10s
+mono_ns,wall,dinh_ghi_delta,mat_delta,dinh_ghi_tong,mat_tong,irq_hard_delta_ns,irq_soft_delta_ns,irq_vec_delta_ns,soft_raw_delta_ns,irq_hard_tong_ns,irq_soft_tong_ns,irq_vec_tong_ns,soft_raw_tong_ns
+102017373199044,2026-10-22T14:38:47.676355937+07:00,0,0,0,0,11598,393583,6062705,393583,11598,393583,6062705,393583
+102027380848670,2026-10-22T14:38:57.684005387+07:00,2073407,0,2073407,0,957205,77555634,391562934,77687310,968803,77949217,397625639,78080893
+102037382516118,2026-10-22T14:39:07.685672499+07:00,2378258,0,4451665,0,599834,62832522,368480250,62994958,1568637,140781739,766105889,141075851
+102047373359462,2026-10-22T14:39:17.676516567+07:00,2915271,0,7366936,0,396036,52494544,352738379,52580563,1964673,193276283,1118844268,193656414
+102056849964158,2026-10-22T14:39:27.153121523+07:00,2633065,0,10000001,0,559672,51879085,315888183,51933836,2524345,245155368,1434732451,245590250

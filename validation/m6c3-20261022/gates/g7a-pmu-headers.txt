@@ -1,0 +1,16 @@
+out/g7a-20261022-143105.bin
+# pmu: host
+# pmu_events: instructions:u,cycles:u
+
+out/g7a-20261022-143114.bin
+# pmu: on
+# pmu_events: instructions:u,cycles:u
+
+out/g7a-20261022-143128.bin
+# pmu: sample=20
+# pmu_events: instructions:u,cycles:u
+
+out/g7a-20261022-143139.bin
+# pmu: sample=50
+# pmu_events: instructions:u,cycles:u
+

@@ -290,3 +290,8 @@ Không có. Mọi job đã xong, 12 container đã khởi động lại, kernel 
 
 - Không có cổng nào không đạt trong nhiệm vụ này: G7a mất 0; G3 phần dư ≤ 500 ns, CLAMPED 0/tổng, recursion_misses = 0; STEALCHECK 15/15 lần đạt ở cửa sổ đầu; E4p đủ 9/9 ô ở attempt 1, mỗi ô 500/500 khoảng đốt có PMU.
 - Đề xuất: chờ kiến trúc sư trả lời mục 8 (đặc biệt câu 1 về dấu tần số của L=22) rồi mở nhiệm vụ tiếp theo; không tự mở rộng phạm vi.
+
+## Phụ lục — Trả lời của kiến trúc sư về mục 8 (nhận 2026-10-22, ghi nguyên văn)
+
+1. Không đo lại L=22; so sánh giữa các mức bằng cyc, CPI, inst (không phụ thuộc tần số); cpu_ns luôn kèm GHz hiệu dụng của mức đó; việc tần số nhảy 1,93→2,52 GHz là phát hiện: turbo có nhưng host dùng chung nên lúc có lúc không; quy ước bổ sung: freq_stamp trước VÀ sau mỗi khối đo, lệch >2% thì ghi chú khối đó.
+2. Câu 8.2 của R033 đóng: inst không đổi với cơ chế -loops. Ghi nhận lỗi trong tools/wl.c self_test_mem_10ms: biến sum không được cộng dồn nên nhánh điều chỉnh mem_steps là mã chết; không sửa trong nhiệm vụ nào hiện tại.

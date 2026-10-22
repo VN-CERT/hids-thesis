@@ -126,6 +126,10 @@ struct hids_tstate {
 	__u8 gap_pending;  /* lan ghi truoc that bai */
 	__u8 pmu_bad;      /* M6c: 1 = mot lan doc PMU trong khoang that bai/ghep kenh */
 	__u16 pending_flags;
+	/* M6c-3: lay mau PMU. pmu_live = khoang HIEN TAI cua thread co doc PMU;
+	 * pmu_ctr = so khoang ke tu lan lay mau truoc (chi dung khi hids_pmu_sample > 1). */
+	__u8 pmu_live;
+	__u32 pmu_ctr;
 };
 
 /* Bo cong don irq cua mot CPU (muc C cua M3, viet lai theo phuong an (c) cua
@@ -180,6 +184,10 @@ const volatile __u64 hids_rb_wake_bytes = 0;
 /* M6c: 1 = user space da mo bo dem instructions va cycles (che do user) tren
  * moi CPU va nap vao hids_pmu_inst / hids_pmu_cyc. 0 = khong doc PMU. */
 const volatile __u8 hids_pmu_on = 0;
+/* M6c-3: 0 hoac 1 = doc PMU o MOI khoang (che do on). K > 1 = che do sample=K:
+ * moi thread chi doc PMU o 1 trong K khoang (khoang thu K, 2K, ...); cac khoang
+ * khac inst = cyc = 0 va bit PMU = 0. Chi co nghia khi hids_pmu_on = 1. */
+const volatile __u32 hids_pmu_sample = 0;
 
 struct {
 	__uint(type, BPF_MAP_TYPE_RINGBUF);
@@ -456,6 +464,16 @@ static __always_inline int pmu_read(__u64 *inst, __u64 *cyc)
 	return 1;
 }
 
+/* M6c-3: khoang hien tai cua thread nay co doc PMU khong. */
+static __always_inline int pmu_live(const struct hids_tstate *st)
+{
+	if (!hids_pmu_on)
+		return 0;
+	if (hids_pmu_sample <= 1)
+		return 1;
+	return st->pmu_live;
+}
+
 /* M6c: chup NHAT QUAN (moc thoi gian, steal tho, PMU) tai sys_enter.
  * Sua cuoc dua o R030/R031: o sys_enter ngat KHONG bi khoa, nen mot ngat (hoac
  * mot lan hypervisor dung vCPU) xay ra giua luc doc dong ho va luc doc tong
@@ -463,7 +481,7 @@ static __always_inline int pmu_read(__u64 *inst, __u64 *cyc)
  * (irq > dt -> CLAMPED). Doc gen irq va steal TRUOC va SAU; neu khac nhau thi
  * co ngat/steal chen vao, doc lai (toi da 3 lan). */
 static __always_inline void snap_sys_enter(__u32 cpu, __u64 *ts, __u64 *raw, __u64 *itot,
-					   __u64 *inst, __u64 *cyc, int *pmu_ok)
+					   __u64 *inst, __u64 *cyc, int *pmu_ok, int want)
 {
 	struct hids_irqstate *is = irq_state();
 	__u64 g1 = 0, g2 = 0, r1 = 0, r2 = 0;
@@ -473,7 +491,7 @@ static __always_inline void snap_sys_enter(__u32 cpu, __u64 *ts, __u64 *raw, __u
 		g1 = is ? *(volatile __u64 *)&is->gen : 0;
 		r1 = steal_raw_on_cpu(cpu);
 		*ts = bpf_ktime_get_ns();
-		*pmu_ok = pmu_read(inst, cyc);
+		*pmu_ok = want ? pmu_read(inst, cyc) : 0;
 		/* Doc tong irq BEN TRONG cap kiem gen: mot ngat ket thuc sau g1 ma
 		 * truoc luc doc tong se lam g2 != g1 va buoc doc lai. Doc tong sau
 		 * vong lap thi ngat chen giua van lot. */
@@ -497,7 +515,7 @@ static __always_inline void open_on_cpu(struct hids_tstate *st, __u64 now, __u32
 	st->on_irq_total = itot;
 	st->on_inst = inst;
 	st->on_cyc = cyc;
-	if (hids_pmu_on && !pmu_ok)
+	if (pmu_live(st) && !pmu_ok)
 		st->pmu_bad = 1;
 	st->on_cpu = cpu;
 	st->on_active = 1;
@@ -525,7 +543,7 @@ static __always_inline void close_on_cpu(struct hids_tstate *st, __u64 now, __u6
 
 	/* M6c: PMU cua doan. Bo dem per-CPU nen chi dung vi doan ON-CPU nam tron
 	 * tren mot CPU. */
-	if (hids_pmu_on) {
+	if (pmu_live(st)) {
 		if (!pmu_ok || inst < st->on_inst || cyc < st->on_cyc) {
 			st->pmu_bad = 1;
 		} else {
@@ -566,7 +584,7 @@ static __always_inline int hids_on_sys_enter(long id)
 	__u64 cgid = 0;
 	__u32 cpu;
 	__u16 flags = 0;
-	int pmu_ok = 0;
+	int pmu_ok = 0, next_live = 0, want = 0;
 	bool by_pid = false;
 
 	if (tgid == hids_self_tgid)
@@ -600,7 +618,16 @@ static __always_inline int hids_on_sys_enter(long id)
 
 	/* M6c: chup nhat quan moc thoi gian + steal + irq + PMU (xem snap_sys_enter);
 	 * dung chung cho dong doan cu va mo doan moi. */
-	snap_sys_enter(cpu, &ts, &raw, &itot, &inst, &cyc, &pmu_ok);
+	/* M6c-3: khoang KE co doc PMU khong. Chua ghi vao st; chi ghi khi ghi duoc ban
+	 * ghi (duong ghi hut giu nguyen trang thai lay mau cua khoang dang do dang). */
+	if (!hids_pmu_on)
+		next_live = 0;
+	else if (hids_pmu_sample <= 1)
+		next_live = 1;
+	else
+		next_live = (st->pmu_ctr + 1 >= hids_pmu_sample);
+	want = next_live || (st->seen && pmu_live(st));
+	snap_sys_enter(cpu, &ts, &raw, &itot, &inst, &cyc, &pmu_ok, want);
 
 	if (!st->seen) {
 		flags |= HIDS_F_FIRST;
@@ -653,7 +680,7 @@ static __always_inline int hids_on_sys_enter(long id)
 		rec->rq_ns = sat32(st->acc_rq, &flags);
 		rec->vol_us = sat32((st->acc_vol + 500) / 1000, &flags);
 		rec->steal_off_ns = sat32(st->acc_steal_off, &flags);
-		if (hids_pmu_on && !st->pmu_bad) {
+		if (pmu_live(st) && !st->pmu_bad) {
 			rec->inst = sat32(st->acc_inst, &flags);
 			rec->cyc = sat32(st->acc_cyc, &flags);
 			flags |= HIDS_F_PMU;
@@ -680,6 +707,10 @@ static __always_inline int hids_on_sys_enter(long id)
 	st->acc_inst = 0;
 	st->acc_cyc = 0;
 	st->pmu_bad = 0;
+	if (hids_pmu_sample > 1) {
+		st->pmu_ctr = next_live ? 0 : st->pmu_ctr + 1;
+		st->pmu_live = next_live;
+	}
 	open_on_cpu(st, ts, cpu, raw, itot, inst, cyc, pmu_ok);
 
 	return 0;
@@ -700,7 +731,7 @@ int BPF_PROG(hids_sys_enter_fentry, struct pt_regs *regs, int nr)
 /* M5h-r2: doc moc thoi gian, so CPU, steal tho va bo cong don irq cua CPU hien
  * tai, mot lan cho ca prev va next. */
 static __always_inline void read_now(__u64 *now, __u32 *cpu, __u64 *raw, __u64 *itot,
-				     __u64 *inst, __u64 *cyc, int *pmu_ok)
+				     __u64 *inst, __u64 *cyc, int *pmu_ok, int want)
 {
 	__u64 r1 = 0, r2 = 0;
 	int i;
@@ -712,7 +743,7 @@ static __always_inline void read_now(__u64 *now, __u32 *cpu, __u64 *raw, __u64 *
 	for (i = 0; i < 3; i++) {
 		r1 = steal_raw_on_cpu(*cpu);
 		*now = bpf_ktime_get_ns();
-		*pmu_ok = pmu_read(inst, cyc);
+		*pmu_ok = want ? pmu_read(inst, cyc) : 0;
 		r2 = steal_raw_on_cpu(*cpu);
 		if (r1 == r2)
 			break;
@@ -725,16 +756,19 @@ SEC("tp_btf/sched_switch")
 int BPF_PROG(hids_sched_switch, bool preempt, struct task_struct *prev,
 	     struct task_struct *next, unsigned int prev_state)
 {
-	struct hids_tstate *st;
+	struct hids_tstate *st, *stn;
 	__u64 now = 0, raw = 0, itot = 0, inst = 0, cyc = 0;
 	__u32 cpu = 0;
-	int got = 0, pmu_ok = 0;
+	int got = 0, pmu_ok = 0, want = 0;
 
 	/* prev roi CPU. Khong tao storage o day. Task khong duoc theo doi (truong
 	 * hop pho bien) thi khong doc dong ho, steal, irq. */
 	st = bpf_task_storage_get(&hids_task_state, prev, NULL, 0);
+	stn = bpf_task_storage_get(&hids_task_state, next, NULL, 0);
+	/* M6c-3: chi doc PMU khi khoang hien tai cua prev hoac next dang lay mau. */
+	want = (st && st->seen && pmu_live(st)) || (stn && stn->seen && pmu_live(stn));
 	if (st && st->seen) {
-		read_now(&now, &cpu, &raw, &itot, &inst, &cyc, &pmu_ok);
+		read_now(&now, &cpu, &raw, &itot, &inst, &cyc, &pmu_ok, want);
 		got = 1;
 		close_on_cpu(st, now, raw, itot, inst, cyc, pmu_ok);
 		st->off_ts = now;
@@ -753,10 +787,10 @@ int BPF_PROG(hids_sched_switch, bool preempt, struct task_struct *prev,
 	}
 
 	/* next duoc chay lai. */
-	st = bpf_task_storage_get(&hids_task_state, next, NULL, 0);
+	st = stn;
 	if (st && st->seen) {
 		if (!got)
-			read_now(&now, &cpu, &raw, &itot, &inst, &cyc, &pmu_ok);
+			read_now(&now, &cpu, &raw, &itot, &inst, &cyc, &pmu_ok, want);
 		steal_off_close_reuse(st, st->target_cpu, st->rq_steal_raw, cpu, raw);
 		if (st->off_kind == HIDS_OFF_RUNNABLE) {
 			if (now > st->off_ts)

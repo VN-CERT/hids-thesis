@@ -35,6 +35,14 @@ const logPath = "out/hids-collect.log"
 
 type stringList []string
 
+// parsePMUSample phan giai "sample=K"; tra ve K hoac loi.
+func parsePMUSample(v string) (uint64, error) {
+	if !strings.HasPrefix(v, "sample=") {
+		return 0, fmt.Errorf("khong phai sample=K")
+	}
+	return strconv.ParseUint(strings.TrimPrefix(v, "sample="), 10, 32)
+}
+
 func pmuEventsLine(mode string) string {
 	if mode == "off" {
 		return "pmu_events: khong co (pmu off)"
@@ -96,7 +104,7 @@ func run() error {
 	noHost := flag.Bool("no-host", false, "tat luong host stats 1Hz - co thu nghiem M6b-1.1")
 	cgroupRefresh := flag.Duration("cgroup-refresh", time.Second, "chu ky quet lai cgroup (mac dinh 1s) - co thu nghiem M6b-1.1")
 	rbPoll := flag.Duration("rb-poll", 200*time.Millisecond, "deadline moi lan cho doc ring buffer syscall (mac dinh 200ms; xoay file co the tre toi da bang gia tri nay)")
-	pmu := flag.String("pmu", "host", "che do PMU: off|host (mac dinh, production: chi luong host doc tong)|on (thi nghiem: BPF doc theo ban ghi); auto = bi danh cua host")
+	pmu := flag.String("pmu", "host", "che do PMU: off|host (mac dinh, production: chi luong host doc tong)|on (thi nghiem: BPF doc theo ban ghi)|sample=K (lay mau 1/K khoang, K=2..1000); auto = bi danh cua host")
 	flag.Parse()
 
 	if os.Geteuid() != 0 {
@@ -122,7 +130,10 @@ func run() error {
 		return fmt.Errorf("-rb-poll phai > 0")
 	}
 	if *pmu != "auto" && *pmu != "host" && *pmu != "on" && *pmu != "off" {
-		return fmt.Errorf("-pmu phai la off, host, on (hoac auto = host), nhan %q", *pmu)
+		k, kerr := parsePMUSample(*pmu)
+		if kerr != nil || k < 2 || k > 1000 {
+			return fmt.Errorf("-pmu phai la off, host, on, sample=K (K nguyen 2..1000) (hoac auto = host), nhan %q", *pmu)
+		}
 	}
 	if len(cgroupPaths) == 0 && len(tgids) == 0 {
 		return fmt.Errorf("can it nhat mot -pid hoac mot -cgroup")
@@ -589,6 +600,17 @@ func checkSteal(nrCPUs int, tscKHz uint64, allowNoStealclock, forceFallback bool
 		ketQua := "LECH"
 		if cmp.OK() {
 			ketQua = "DAT"
+			// M6c-3: tong dat nhung mot CPU lech > 50 ms thi canh bao them,
+			// khong tu choi, khong doi tieu chi.
+			for _, c := range cmp.PerCPU {
+				d := c.DiffNs
+				if d < 0 {
+					d = -d
+				}
+				if d > 50_000_000 {
+					fmt.Fprintf(os.Stderr, "STEALCHECK canh_bao cpu=%d lech_ns=%d\n", c.CPU, c.DiffNs)
+				}
+			}
 		}
 		fmt.Fprintf(os.Stderr, "STEALCHECK lan=%d tong_vmw_ns=%d tong_rq_ns=%d lech_ns=%d nguong_ns=%d cpu_lech_max=%d:%d ket_qua=%s\n",
 			lan, cmp.SumVmwNs, cmp.SumRqNs, lechTong, cmp.SumLimitNs, cmp.MaxCPU, cmp.MaxDiff, ketQua)

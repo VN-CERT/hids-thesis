@@ -1,0 +1,39 @@
+# hids-collect
+# uname_r: 6.8.0-142-generic
+# nr_cpus: 24
+# nr_cpus_possible: 24
+# git_commit: 3b6fc92-dirty
+# record_size: 64
+# filter_tgids: 1996382
+# filter_pid: 1
+# filter_cgroup: khong co
+# ringbuf_bytes: 67108864
+# rb_wake_bytes: 8388608
+# stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+# stealclock_evidence: journalctl
+# steal_mode: vmw_steal_time
+# tsc_khz: 1995312
+# tsc_source: journalctl -k -b | Oct 21 10:18:34 uni-lms-app kernel: vmware: TSC freq read from hypervisor : 1995.312 MHz
+# preempt: voluntary (nguyen van: "none (voluntary) full")
+# config_hz: 1000
+# kernel.sched_schedstats: 0
+# CONFIG_IRQ_TIME_ACCOUNTING: is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING: is not set
+# CONFIG_SCHEDSTATS: y
+# CONFIG_SCHED_INFO: y
+# irq_tracepoints (13 cap): call_function call_function_single deferred_error_apic error_apic irq_handler irq_work local_timer reschedule softirq spurious_apic thermal_apic threshold_apic x86_platform_ipi
+# discard: false
+# sys_enter_hook: tracepoint
+# zstd_level: 2
+# pmu: on
+# pmu_events: instructions:u,cycles:u
+# start_mono_ns: 102264915858007
+# start_wall: 2026-10-22T14:42:55.21901551+07:00
+# duration: 1m0s
+# moi dong cach nhau 10s
+mono_ns,wall,dinh_ghi_delta,mat_delta,dinh_ghi_tong,mat_tong,irq_hard_delta_ns,irq_soft_delta_ns,irq_vec_delta_ns,soft_raw_delta_ns,irq_hard_tong_ns,irq_soft_tong_ns,irq_vec_tong_ns,soft_raw_tong_ns
+102264924422393,2026-10-22T14:42:55.227579524+07:00,0,0,0,0,0,488428,5615311,489569,0,488428,5615311,489569
+102274933486248,2026-10-22T14:43:05.236643368+07:00,2048194,0,2048194,0,1129791,72042144,397136046,72105866,1129791,72530572,402751357,72595435
+102284933788331,2026-10-22T14:43:15.23694536+07:00,2994169,0,5042363,0,452394,52750645,337274467,52855546,1582185,125281217,740025824,125450981
+102294927814955,2026-10-22T14:43:25.230971452+07:00,2757951,0,7800314,0,454256,54117495,354728816,54197962,2036441,179398712,1094754640,179648943
+102302923721518,2026-10-22T14:43:33.22687811+07:00,2199687,0,10000001,0,545392,45703291,277882863,45854364,2581833,225102003,1372637503,225503307
