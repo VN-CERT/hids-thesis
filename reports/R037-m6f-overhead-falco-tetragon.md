@@ -3,7 +3,7 @@
 1. Số báo cáo: **R037**  
    Ngày giờ: **2026-10-25 02:47 (+07)**  
    Mốc: **M6f**  
-   Git commit: , tag .
+   Git commit: `3ee5460` (du lieu + R037); tag `m6f` = HEAD tai luc push.
 
 2. Mục tiêu  
    So overhead của Falco, Tetragon (mặc định và sys_enter), HIDS-host (production), HIDS-all (toàn máy) với mốc C0 trên cùng benchmark T1/T3/T4 (máy 195), 10 lượt xen kẽ. Không sửa BPF, không sửa file kiến trúc sư, không sửa `analysis/`.
