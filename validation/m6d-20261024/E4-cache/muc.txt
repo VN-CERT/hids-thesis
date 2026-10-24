@@ -1,0 +1,1 @@
+=== E4-cache muc (m4.sh dong 329): n in 0 4 12 22; stress-ng --cache 1 --taskset 0-19,21-23; wl -loops mem 500; -pmu on ===

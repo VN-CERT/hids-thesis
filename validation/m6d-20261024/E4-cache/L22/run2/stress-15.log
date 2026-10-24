@@ -1,0 +1,9 @@
+stress-ng: info:  [475881] setting to a 2 mins, 0 secs run per stressor
+stress-ng: info:  [475881] dispatching hogs: 1 cache
+stress-ng: info:  [475908] cache: cache flags used: none
+stress-ng: info:  [475908] cache: use --cache-enable-all to enable all cache flags for heavier cache stressing
+stress-ng: info:  [475881] skipped: 0
+stress-ng: info:  [475881] passed: 1: cache (1)
+stress-ng: info:  [475881] failed: 0
+stress-ng: info:  [475881] metrics untrustworthy: 0
+stress-ng: info:  [475881] successful run completed in 1 min, 36.48 secs

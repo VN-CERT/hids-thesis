@@ -63,7 +63,9 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 ## Việc đang chạy
 
-- (không có) — mọi unit M6c đã xong. Sau cùng: `bpftool prog show | grep -c hids_` = 0, không còn collector, 12 container chạy.
+- (không có) — `hids-m6d-a` exit=0 (20:08–21:29 +07). 12 container chạy, `hids_` = 0.
+- **E2 chờ người dùng vCenter:** `sudo bash scripts/m6d_e2.sh`
+
 
 ## Bước đang làm (M6c-1)
 
@@ -172,4 +174,8 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
   - trạng thái: `out/jobs/m6d-a.status`
   - dữ liệu: `validation/m6d-20261024/`
 
+## Kết quả M6d phần A (2026-10-24)
 
+- Unit `hids-m6d-a` exit=0; dữ liệu `validation/m6d-20261024/`.
+- READY 30/30 (attempt=1). Báo cáo R036 (E2 chờ). Tag `m6d` chưa gắn.
+- Cập nhật: 2026-10-24 21:31.

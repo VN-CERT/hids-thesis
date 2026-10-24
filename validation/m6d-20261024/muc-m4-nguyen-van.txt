@@ -1,0 +1,56 @@
+=== trich nguyen van scripts/m4.sh ===
+e1() {
+	local loops L csv manifest=() stress_pids=()
+	loops=$(read_burn_loops)
+	mkdir -p "$OUTROOT/E1"
+	for L in 0 1 2 3; do
+		for p in "${stress_pids[@]:-}"; do kill "$p" 2>/dev/null; done
+		stress_pids=()
+		for ((i = 0; i < L; i++)); do
+			stress-ng --cpu 1 --taskset "$WL_CPU" --timeout 120 >/dev/null 2>&1 &
+			stress_pids+=($!)
+		done
+		sleep 1
+		bin=$(run_wl_mixed "$loops" 500)
+		csv="$OUTROOT/E1/L${L}.csv"
+		export_csv "$bin" "$csv"
+		cp "$bin" "$OUTROOT/E1/L${L}.bin"
+		manifest+=("E1:${L}:${csv}")
+	done
+	for p in "${stress_pids[@]:-}"; do kill "$p" 2>/dev/null; done
+	printf '%s\n' "${manifest[@]}"
+e3() {
+	e3_once idle 0
+	e3_once stress2 2
+}
+
+e4_workers() {
+	local n=$1 mode=$2
+	local loops csv manifest=() stress_pids=() cpus
+	loops=$(read_burn_loops)
+	mkdir -p "$OUTROOT/E4-${mode}"
+	for ((w = 0; w < n; w++)); do
+		cpus="0-19,21-23"
+		stress-ng --"$mode" 1 --taskset "$cpus" --timeout 120 >/dev/null 2>&1 &
+		stress_pids+=($!)
+	done
+	sleep 2
+	bin=$(run_wl_mem "$loops" 500)
+	csv="$OUTROOT/E4-${mode}/L${n}.csv"
+	export_csv "$bin" "$csv"
+	cp "$bin" "$OUTROOT/E4-${mode}/L${n}.bin"
+	for p in "${stress_pids[@]}"; do kill "$p" 2>/dev/null; done
+	echo "E4-${mode}:${n}:${csv}"
+}
+
+e4() {
+	local manifest=()
+	for n in 0 4 12 22; do
+		manifest+=("$(e4_workers "$n" cache)")
+e2_stress_start() {
+	stress-ng --cpu 22 --taskset 0-19,22-23 --timeout 7200 >/dev/null 2>&1 &
+	E2_STRESS_PID=$!
+	manifest+=("$(e2_one_level Unlimited "Unlimited" 0 "$probe_csv")")
+	manifest+=("$(e2_one_level 36000 "36000 MHz" 1 "$probe_csv")")
+	manifest+=("$(e2_one_level 24000 "24000 MHz" 1 "$probe_csv")")
+	manifest+=("$(e2_one_level 12000 "12000 MHz" 1 "$probe_csv")")

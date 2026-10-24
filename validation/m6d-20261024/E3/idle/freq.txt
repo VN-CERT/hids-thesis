@@ -1,0 +1,2 @@
+GHz_wall_sau=1.9258
+GHz_wall_truoc=1.9389

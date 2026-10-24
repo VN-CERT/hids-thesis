@@ -1,0 +1,14 @@
+burn_nr=230 so_khoang=500 so_pmu=500
+cpu_ns=13538405.0
+rq_ns=0.0
+steal_ns=0.0
+irq_ns=118416.5
+vol_us=0.0
+steal_off_ns=0.0
+inst=14170547.0
+cyc=23933951.5
+CPI=1.6890
+GHz=1.9501
+GHz_wall_truoc=1.9347
+so_attempt=1
+wl: taskset -c 20 ./bin/wl -loops 2586241 mem 500

@@ -1,0 +1,5 @@
+=== muc dung (trich tu scripts/m4.sh) ===
+E1: for L in 0 1 2 3; stress-ng --cpu 1 --taskset $WL_CPU; run_wl_mixed loops 500 (m4.sh:231-250)
+E3: e3_once idle 0; e3_once stress2 2 (m4.sh:303-305)
+E4-cache: for n in 0 4 12 22; stress-ng --cache 1 --taskset 0-19,21-23; run_wl_mem loops 500 (m4.sh:308-330)
+E4-stream: KHONG chay lai (da co R034)

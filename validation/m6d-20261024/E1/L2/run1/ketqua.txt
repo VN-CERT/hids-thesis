@@ -1,0 +1,14 @@
+burn_nr=230 so_khoang=500 so_pmu=500
+cpu_ns=7547062.0
+rq_ns=12004871.5
+steal_ns=0.0
+irq_ns=43461.0
+vol_us=0.0
+steal_off_ns=0.0
+inst=15517535.0
+cyc=19361331.0
+CPI=1.2477
+GHz=2.5736
+GHz_wall_truoc=1.9397
+so_attempt=1
+wl: taskset -c 20 ./bin/wl -loops 2586241 mixed 500

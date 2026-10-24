@@ -1,0 +1,15 @@
+e3_syscall_nr=41
+cpu_ns=25469
+steal_ns=0
+irq_ns=0
+rq_ns=25379
+vol_us=300000130
+steal_off_ns=227924112
+inst=0
+cyc=0
+pmu_ok=0
+CPI=na
+GHz=na
+so_khoang=1
+so_attempt=1
+GHz_wall_truoc=1.9327

@@ -1,0 +1,10 @@
+freq E1-L0: truoc=1.9345 sau=1.9353 lech=0.04%
+freq E1-L1: truoc=1.9345 sau=2.5258 lech=30.57% LECH_>2%
+freq E1-L2: truoc=1.9397 sau=2.5263 lech=30.24% LECH_>2%
+freq E1-L3: truoc=2.5260 sau=2.5252 lech=0.03%
+freq E3-idle: truoc=1.9389 sau=1.9258 lech=0.68%
+freq E3-stress2: truoc=1.9327 sau=1.9345 lech=0.09%
+freq E4c-L0: truoc=1.9368 sau=1.9285 lech=0.43%
+freq E4c-L4: truoc=1.9262 sau=1.9311 lech=0.25%
+freq E4c-L12: truoc=1.9347 sau=1.9260 lech=0.45%
+freq E4c-L22: truoc=1.9326 sau=1.9359 lech=0.17%

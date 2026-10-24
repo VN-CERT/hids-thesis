@@ -1,0 +1,11 @@
+burn_nr=230 so_khoang=500 so_pmu=500
+cpu_ns=13425287.0
+rq_ns=0.0
+steal_ns=8829.5
+irq_ns=120994.5
+vol_us=0.0
+steal_off_ns=0.0
+inst=14170547.0
+cyc=24385271.5
+CPI=1.7208
+GHz=1.9529
