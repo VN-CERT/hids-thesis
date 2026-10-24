@@ -1,0 +1,6 @@
+lab1_benign_gen: bat dau, log=/root/collector/validation/lab1-20261024/gen-test
+lab1_benign_gen: nhip=1 rps=120 tps=100 elapsed_ns=290430402355
+lab1_benign_gen: nhip=2 rps=120 tps=100 elapsed_ns=292644417515
+lab1_benign_gen: nhan SIGTERM, dung sau nhip hien tai
+lab1_benign_gen: nhip=3 rps=120 tps=100 elapsed_ns=43425026069
+lab1_benign_gen: thoat sach

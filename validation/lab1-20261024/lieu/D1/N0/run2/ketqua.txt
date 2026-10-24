@@ -1,0 +1,11 @@
+=== D1 N=0 run=2 attempt=1 ===
+wl_pid=138020 t0=306081930515333 t1=306173094231674
+bpftrace_@rq_tong_ns=28675427
+n	3000
+cpu_med	10032932.5
+steal_med	0.0
+irq_med	39673.5
+rq_med	0.0
+vol_ns_med	0.0
+burn_nr	230
+syscall_counts	{0: 2, 230: 3000, 110: 3000}

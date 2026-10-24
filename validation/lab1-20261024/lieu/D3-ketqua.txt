@@ -1,0 +1,26 @@
+LAB-1 buoc 3 — D3 (bo nho / CPI) — KHONG DAT tieu chi §3
+Ngay: 2026-10-24
+
+Bang trung vi theo muc (expected=CPI, other=rq_med ns):
+muc	expected(CPI)	other(rq_ns)	runs_ok
+0	1.3791536728510343	0.0	3
+4	2.134615696403221	0.0	2
+12	2.6989034459426717	4164564.0	1
+22	2.743273564964272	4682023.5	2
+
+Tieu chi (nguyen van tu lab1_lieu_stats.py check-d3):
+spearman_expected	0.9999999999999998
+other_change_pct	inf
+tieu_chi_spearman>=0.9	DAT
+tieu_chi_other<10pct	KHONG_DAT
+
+Giai thich other_change_pct=inf: rq_med muc thap nhat = 0; muc cao nhat = 4682023.5 ns.
+Theo giao thuc §3: thanh phan KHONG ky vong (rq/steal) doi < 10% giua muc thap nhat va cao nhat.
+0 → 4.68e6 ns khong thoa.
+
+Ghi chu them:
+- Mot so lan chay EMPTY (wl mem / -pmu on): L4 run1; L12 run2+3; L22 run3.
+- CPI tang don dieu theo muc (Spearman ≈ 1) — dat nhanh expected.
+- steal_med = 0 o moi lan chay thanh cong.
+
+DUNG theo nhiem vu: khong dat → DUNG, khong chay driver 4/4b/6.

@@ -150,3 +150,27 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 - A3: mục tiêu CPU ≤2% lõi không đạt trong phạm vi sửa được phép (nguyên nhân ở tương tác đường đọc ring buffer 10 ms với sysmon Go). Cần kiến trúc sư quyết định (câu hỏi mục 8 trong R029).
 - C/G3: lệch rq collector so với bpftrace ở S3 vượt 5% trong cả hai đợt đo (10.91% và 8.43%); S2, S5 có đợt vượt nhẹ. Cần kiến trúc sư quyết định tiêu chí/định nghĩa (mục 8 trong R029).
+
+## Bước đang làm (LAB-1) — cập nhật 2026-10-24
+
+- Nhiệm vụ: `docs/tasks/LAB-1.md`. Báo cáo: `LAB-1-ketqua.txt` (bước 5+7 khi driver xong).
+- Bước 0: preconditions OK (tag m6c.3, hids_=0, paranoid=1, đĩa 165G, lab0 Up). `make build` OK. Sha256 5 file kiến trúc sư khớp.
+- Bước 1 XONG: commit `6a914ee` — "LAB-1: chot giao thuc va detector C5 truoc khi ghi du lieu (kien truc su)". `docs/giao-thuc-lab1.md` sha256 `08a7a1fb…`; `detector_c5.py` tự-kiểm OK.
+- Bước 2 XONG: `scripts/lab1_benign_gen.sh`; thử 10 phút `validation/lab1-20261024/gen-test/` — wrk2 120.01 rps, pgbench ~99.6 tps, SIGTERM sạch.
+- Bước 3 ĐANG CHẠY: unit `hids-lab1-lieu` từ 13:20:45Z; log `validation/lab1-20261024/lieu/lieu-systemd.log`; dự kiến xong ~14:50Z. D2 ghi hoãn.
+- Tiếp: nếu liều đạt → unit `hids-lab1-driver` (4→4b→6); kiểm 10 phút đầu; dừng phiên. Bước 5+7 khi người dùng báo driver xong.
+
+## Việc đang chạy
+
+- **hids-lab1-lieu** — `/bin/bash scripts/lab1_lieu.sh validation/lab1-20261024/lieu` — bắt đầu 2026-10-24T13:20:45Z — dự kiến ~14:50Z — log `validation/lab1-20261024/lieu/lieu-systemd.log` — status `out/jobs/lab1-lieu.status`
+
+## Bước đang làm (LAB-1) — DỪNG 2026-10-24
+
+- Nhiệm vụ: `docs/tasks/LAB-1.md`. Báo cáo: `LAB-1-ketqua.txt`.
+- Bước 0–2 XONG. Bước 1 commit `6a914ee`.
+- Bước 3 DỪNG: D1 ĐẠT (Spearman rq≈1, cpu đổi 0,33%); D3 KHÔNG ĐẠT (rq_med 0→4,68e6 ns, other_change_pct=inf). D2 hoãn. D4/E5 không hoàn tất (wl pid / dừng sau D3).
+- Không khởi động `hids-lab1-driver`. Chờ kiến trúc sư quyết D3.
+
+## Việc đang chạy
+
+- (không có) — `bpftool prog show | grep -c hids_` = 0; lab0-postgres/nginx Up.

@@ -1,0 +1,10 @@
+muc	expected	other	runs
+0	0.0	10033107.0	3
+1	9001132.5	9996589.0	3
+2	18000661.0	10016560.0	3
+3	26999325.0	10021636.0	3
+4	36000976.0	10000269.0	3
+spearman_expected	0.9999999999999998
+other_change_pct	0.3272964197431563
+tieu_chi_spearman>=0.9	DAT
+tieu_chi_other<10pct	DAT

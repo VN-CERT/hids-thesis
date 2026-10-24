@@ -1,0 +1,382 @@
+LAB-1 lieu bat dau 2026-10-24T13:20:45+00:00
+D2 hoan: can vCenter
+dung lab0-postgres lab0-nginx
+2026-10-24T13:20:46+00:00
+lan 1: GHz_wall=2.5309
+lan 2: GHz_wall=2.5297
+lan 3: GHz_wall=2.5310
+trung vi GHz_wall=2.5309
+=== D1 N=0 run=1 attempt=1 ===
+wl_pid=137280 t0=305986861555714 t1=306078024454133
+bpftrace_@rq_tong_ns=29187583
+n	3000
+cpu_med	10045353.5
+steal_med	0.0
+irq_med	38644.5
+rq_med	0.0
+vol_ns_med	0.0
+burn_nr	230
+syscall_counts	{0: 2, 230: 3000, 110: 3000}
+=== D1 N=0 run=2 attempt=1 ===
+wl_pid=138020 t0=306081930515333 t1=306173094231674
+bpftrace_@rq_tong_ns=28675427
+n	3000
+cpu_med	10032932.5
+steal_med	0.0
+irq_med	39673.5
+rq_med	0.0
+vol_ns_med	0.0
+burn_nr	230
+syscall_counts	{0: 2, 230: 3000, 110: 3000}
+=== D1 N=0 run=3 attempt=1 ===
+wl_pid=138823 t0=306176991250935 t1=306268158663520
+bpftrace_@rq_tong_ns=29189451
+n	3000
+cpu_med	10033107.0
+steal_med	0.0
+irq_med	39903.0
+rq_med	0.0
+vol_ns_med	0.0
+burn_nr	230
+syscall_counts	{0: 2, 230: 3000, 110: 3000}
+=== D1 N=1 run=1 attempt=1 ===
+wl_pid=139603 t0=306272072564889 t1=306365243269331
+bpftrace_@rq_tong_ns=29977670161
+n	3000
+cpu_med	9998401.0
+steal_med	0.0
+irq_med	33396.0
+rq_med	9001132.5
+vol_ns_med	0.0
+burn_nr	230
+syscall_counts	{0: 2, 230: 3000, 110: 3000}
+=== D1 N=1 run=2 attempt=1 ===
+wl_pid=140423 t0=306369150693886 t1=306462331504535
+bpftrace_@rq_tong_ns=29941959832
+n	3000
+cpu_med	9996589.0
+steal_med	0.0
+irq_med	32674.0
+rq_med	9001401.5
+vol_ns_med	0.0
+burn_nr	230
+syscall_counts	{0: 2, 230: 3000, 110: 3000}
+=== D1 N=1 run=3 attempt=1 ===
+wl_pid=141226 t0=306466244186076 t1=306559412777672
+bpftrace_@rq_tong_ns=29766000070
+n	3000
+cpu_med	9937901.5
+steal_med	0.0
+irq_med	32202.0
+rq_med	9000682.0
+vol_ns_med	0.0
+burn_nr	230
+syscall_counts	{0: 2, 230: 3000, 110: 3000}
+=== D1 N=2 run=1 attempt=1 ===
+wl_pid=142029 t0=306563324129890 t1=306656503976695
+bpftrace_@rq_tong_ns=44995298779
+n	2261
+cpu_med	9993114
+steal_med	0
+irq_med	31495
+rq_med	18000661
+vol_ns_med	0
+burn_nr	230
+syscall_counts	{0: 1, 230: 2261, 110: 2261}
+=== D1 N=2 run=2 attempt=1 ===
+wl_pid=142782 t0=306688501666823 t1=306781681115903
+bpftrace_@rq_tong_ns=45043906360
+n	2255
+cpu_med	10016560
+steal_med	0
+irq_med	30977
+rq_med	18000514
+vol_ns_med	0
+burn_nr	230
+syscall_counts	{0: 1, 230: 2255, 110: 2254}
+=== D1 N=2 run=3 attempt=1 ===
+wl_pid=143630 t0=306813844763170 t1=306907024440732
+bpftrace_@rq_tong_ns=45363435923
+n	2207
+cpu_med	10315988
+steal_med	0
+irq_med	32309
+rq_med	18000698
+vol_ns_med	0
+burn_nr	230
+syscall_counts	{0: 1, 230: 2207, 110: 2207}
+=== D1 N=3 run=1 attempt=1 ===
+wl_pid=144481 t0=306940466360541 t1=307033646300979
+bpftrace_@rq_tong_ns=54082646572
+n	1802
+cpu_med	10017390.5
+steal_med	0.0
+irq_med	31985.0
+rq_med	26999325.0
+vol_ns_med	0.0
+burn_nr	230
+syscall_counts	{0: 1, 230: 1802, 110: 1802}
+=== D1 N=3 run=2 attempt=1 ===
+wl_pid=145328 t0=307077620072976 t1=307170805316196
+bpftrace_@rq_tong_ns=54084658098
+n	1803
+cpu_med	10021636
+steal_med	0
+irq_med	33058
+rq_med	26999320
+vol_ns_med	0
+burn_nr	230
+syscall_counts	{0: 1, 230: 1803, 110: 1802}
+=== D1 N=3 run=3 attempt=1 ===
+wl_pid=146175 t0=307214734434664 t1=307307915818352
+bpftrace_@rq_tong_ns=54270244647
+n	1777
+cpu_med	10193449
+steal_med	0
+irq_med	32993
+rq_med	27000695
+vol_ns_med	0
+burn_nr	230
+syscall_counts	{0: 1, 230: 1777, 110: 1777}
+=== D1 N=4 run=1 attempt=1 ===
+wl_pid=147024 t0=307352621544074 t1=307445802489693
+bpftrace_@rq_tong_ns=60053374959
+n	1508
+cpu_med	9994561.5
+steal_med	0.0
+irq_med	31116.0
+rq_med	36000928.0
+vol_ns_med	0.0
+burn_nr	230
+syscall_counts	{0: 1, 230: 1508, 110: 1508}
+=== D1 N=4 run=2 attempt=1 ===
+wl_pid=147759 t0=307497428509884 t1=307590607310699
+bpftrace_@rq_tong_ns=60062038034
+n	1505
+cpu_med	10000269
+steal_med	0
+irq_med	31307
+rq_med	36000985
+vol_ns_med	0
+burn_nr	230
+syscall_counts	{0: 1, 230: 1505, 110: 1505}
+=== D1 N=4 run=3 attempt=1 ===
+wl_pid=148621 t0=307642280766373 t1=307735460765805
+bpftrace_@rq_tong_ns=60065949053
+n	1506
+cpu_med	10000843.0
+steal_med	0.0
+irq_med	31037.5
+rq_med	36000976.0
+vol_ns_med	0.0
+burn_nr	230
+syscall_counts	{0: 1, 230: 1506, 110: 1505}
+2026-10-24T13:50:49+00:00
+lan 1: GHz_wall=2.5298
+lan 2: GHz_wall=2.5309
+lan 3: GHz_wall=2.5298
+trung vi GHz_wall=2.5298
+spearman_expected	0.9999999999999998
+other_change_pct	0.3272964197431563
+tieu_chi_spearman>=0.9	DAT
+tieu_chi_other<10pct	DAT
+2026-10-24T13:50:52+00:00
+lan 1: GHz_wall=2.5301
+lan 2: GHz_wall=2.5313
+lan 3: GHz_wall=2.5310
+trung vi GHz_wall=2.5310
+=== D3 L=0 run=1 attempt=1 ===
+wl_pid=149599 t0=307793301813797 t1=307793327378654
+EMPTY
+=== D3 L=0 run=1 attempt=2 ===
+wl_pid=150210 t0=307797073990236 t1=307807267968381
+n	500
+cpu_med	9959143.0
+steal_med	0.0
+irq_med	57062.0
+rq_med	0.0
+vol_ns_med	0.0
+burn_nr	230
+syscall_counts	{0: 4, 257: 1, 5: 1, 3: 1, 9: 1, 230: 500, 110: 500, 11: 1}
+cpi_med	1.3791536728510343
+inst_med	18577911.0
+cyc_med	25621793.5
+=== D3 L=0 run=2 attempt=1 ===
+wl_pid=153204 t0=307811022166807 t1=307820994269567
+n	500
+cpu_med	9497367.0
+steal_med	0.0
+irq_med	57876.5
+rq_med	0.0
+vol_ns_med	0.0
+burn_nr	230
+syscall_counts	{0: 4, 257: 1, 5: 1, 3: 1, 9: 1, 230: 500, 110: 500, 11: 1}
+cpi_med	1.380576732696887
+inst_med	17710527.0
+cyc_med	24450741.5
+=== D3 L=0 run=3 attempt=1 ===
+wl_pid=156207 t0=307824748969464 t1=307834369166247
+n	500
+cpu_med	8847206.0
+steal_med	0.0
+irq_med	53438.0
+rq_med	0.0
+vol_ns_med	0.0
+burn_nr	230
+syscall_counts	{0: 4, 257: 1, 5: 1, 3: 1, 9: 1, 230: 500, 110: 500, 11: 1}
+cpi_med	1.3770854585730992
+inst_med	16538838.0
+cyc_med	22775394.0
+=== D3 L=4 run=1 attempt=1 ===
+wl_pid=159130 t0=307838156455514 t1=307848186707345
+EMPTY
+=== D3 L=4 run=1 attempt=2 ===
+wl_pid=159808 t0=307851977456820 t1=307862007594597
+EMPTY
+=== D3 L=4 run=2 attempt=1 ===
+wl_pid=160484 t0=307865811694151 t1=307875842279217
+EMPTY
+=== D3 L=4 run=2 attempt=2 ===
+wl_pid=161160 t0=307879625323133 t1=307902457876199
+n	500
+cpu_med	14949440.5
+steal_med	0.0
+irq_med	82397.0
+rq_med	0.0
+vol_ns_med	0.0
+burn_nr	230
+syscall_counts	{0: 4, 257: 1, 5: 1, 3: 1, 9: 1, 230: 500, 110: 500, 11: 1}
+cpi_med	2.1347685401119403
+inst_med	18009600.0
+cyc_med	38446327.5
+=== D3 L=4 run=3 attempt=1 ===
+wl_pid=164694 t0=307906259511398 t1=307916290473426
+EMPTY
+=== D3 L=4 run=3 attempt=2 ===
+wl_pid=165369 t0=307920071210127 t1=307942785863134
+n	500
+cpu_med	14607783.5
+steal_med	0.0
+irq_med	81252.5
+rq_med	0.0
+vol_ns_med	0.0
+burn_nr	230
+syscall_counts	{0: 4, 257: 1, 5: 1, 3: 1, 9: 1, 230: 500, 110: 500, 11: 1}
+cpi_med	2.1344628526945018
+inst_med	17614660.0
+cyc_med	37597838.5
+=== D3 L=12 run=1 attempt=1 ===
+wl_pid=168858 t0=307946591219050 t1=307956632113791
+EMPTY
+=== D3 L=12 run=1 attempt=2 ===
+wl_pid=169543 t0=307960407599633 t1=307988030056413
+n	500
+cpu_med	18618642.0
+steal_med	0.0
+irq_med	217239.5
+rq_med	4164564.0
+vol_ns_med	0.0
+burn_nr	230
+syscall_counts	{0: 4, 257: 1, 5: 1, 3: 1, 9: 1, 230: 500, 110: 500, 11: 1}
+cpi_med	2.6989034459426717
+inst_med	17686545.0
+cyc_med	47734270.5
+=== D3 L=12 run=2 attempt=1 ===
+wl_pid=173227 t0=307991833374690 t1=308001865429009
+EMPTY
+=== D3 L=12 run=2 attempt=2 ===
+wl_pid=173913 t0=308005640596187 t1=308015678528409
+EMPTY
+=== D3 L=12 run=3 attempt=1 ===
+wl_pid=174596 t0=308019464726359 t1=308029501118474
+EMPTY
+=== D3 L=12 run=3 attempt=2 ===
+wl_pid=175280 t0=308033285833359 t1=308043324134538
+EMPTY
+=== D3 L=22 run=1 attempt=1 ===
+wl_pid=175966 t0=308047098707593 t1=308074512042691
+n	500
+cpu_med	18185033.5
+steal_med	0.0
+irq_med	213546.0
+rq_med	4256537.0
+vol_ns_med	0.0
+burn_nr	230
+syscall_counts	{0: 4, 257: 1, 5: 1, 3: 1, 9: 1, 230: 500, 110: 500, 11: 1}
+cpi_med	2.742922894212186
+inst_med	16983466.0
+cyc_med	46584324.0
+=== D3 L=22 run=2 attempt=1 ===
+wl_pid=179564 t0=308078315270913 t1=308107415331528
+n	500
+cpu_med	19958715.5
+steal_med	0.0
+irq_med	234115.5
+rq_med	5107510.0
+vol_ns_med	0.0
+burn_nr	230
+syscall_counts	{0: 4, 257: 1, 5: 1, 3: 1, 9: 1, 230: 500, 110: 500, 11: 1}
+cpi_med	2.743624235716358
+inst_med	18612201.0
+cyc_med	51064883.0
+=== D3 L=22 run=3 attempt=1 ===
+wl_pid=183302 t0=308111209903885 t1=308121244274299
+EMPTY
+=== D3 L=22 run=3 attempt=2 ===
+wl_pid=183995 t0=308125030846707 t1=308135069146887
+EMPTY
+2026-10-24T13:56:41+00:00
+lan 1: GHz_wall=2.5253
+lan 2: GHz_wall=2.5293
+lan 3: GHz_wall=2.5307
+trung vi GHz_wall=2.5293
+spearman_expected	0.9999999999999998
+other_change_pct	inf
+tieu_chi_spearman>=0.9	DAT
+tieu_chi_other<10pct	KHONG_DAT
+2026-10-24T13:56:44+00:00
+lan 1: GHz_wall=2.5284
+lan 2: GHz_wall=2.5303
+lan 3: GHz_wall=2.5310
+trung vi GHz_wall=2.5303
+D4 nolimit run=1: khong tim wl pid
+D4 nolimit run=1: khong tim wl pid
+D4 nolimit run=2: khong tim wl pid
+D4 nolimit run=2: khong tim wl pid
+D4 nolimit run=3: khong tim wl pid
+D4 nolimit run=3: khong tim wl pid
+D4 cpus2 run=1: khong tim wl pid
+D4 cpus2 run=1: khong tim wl pid
+D4 cpus2 run=2: khong tim wl pid
+D4 cpus2 run=2: khong tim wl pid
+D4 cpus2 run=3: khong tim wl pid
+D4 cpus2 run=3: khong tim wl pid
+D4 cpus1 run=1: khong tim wl pid
+D4 cpus1 run=1: khong tim wl pid
+D4 cpus1 run=2: khong tim wl pid
+D4 cpus1 run=2: khong tim wl pid
+D4 cpus1 run=3: khong tim wl pid
+D4 cpus1 run=3: khong tim wl pid
+D4 cpus0.5 run=1: khong tim wl pid
+D4 cpus0.5 run=1: khong tim wl pid
+D4 cpus0.5 run=2: khong tim wl pid
+D4 cpus0.5 run=2: khong tim wl pid
+D4 cpus0.5 run=3: khong tim wl pid
+D4 cpus0.5 run=3: khong tim wl pid
+2026-10-24T13:59:48+00:00
+lan 1: GHz_wall=2.5295
+lan 2: GHz_wall=2.5319
+lan 3: GHz_wall=2.5312
+trung vi GHz_wall=2.5312
+Traceback (most recent call last):
+  File "/root/collector/./scripts/lab1_lieu_stats.py", line 177, in <module>
+    main()
+  File "/root/collector/./scripts/lab1_lieu_stats.py", line 159, in main
+    other_lo = float(rows[0]["other"])
+                     ~~~~^^^
+IndexError: list index out of range
+2026-10-24T13:59:51+00:00
+lan 1: GHz_wall=2.5284
+lan 2: GHz_wall=2.5304
+lan 3: GHz_wall=2.5315
+trung vi GHz_wall=2.5304

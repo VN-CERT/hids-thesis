@@ -1,0 +1,7 @@
+138020
+wl: loops_per_us=343.841255 loops_10ms=3438412 (hieu chinh 200674 us)
+wl: tu kiem 1/5 mono=10066 us thread_cpu=10064 us
+wl: tu kiem 2/5 mono=9542 us thread_cpu=9542 us
+wl: tu kiem 3/5 mono=9710 us thread_cpu=9711 us
+wl: tu kiem 4/5 mono=9653 us thread_cpu=9654 us
+wl: tu kiem 5/5 mono=10009 us thread_cpu=10009 us

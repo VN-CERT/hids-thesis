@@ -1,0 +1,16 @@
+LAB-1 buoc 2 — thu generator 10 phut
+lenh: systemd-run --unit=hids-lab1-gen-test bash scripts/lab1_benign_gen.sh validation/lab1-20261024/gen-test
+dung: systemctl stop hids-lab1-gen-test (SIGTERM) — thoat sach
+
+nhip-benign.tsv:
+nhip_id	dich_vu	muc	t_bat_dau_mono_ns	t_ket_thuc_mono_ns
+1	nginx	120	305104742901036	305394771639798
+1	postgres	100	305104763372032	305395130336136
+2	nginx	120	305405287980545	305695316746831
+2	postgres	100	305405308388542	305697891759185
+3	nginx	120	(dung giua nhip)	...
+
+wrk2 nhip1: 34802 requests in 4.83m, Requests/sec: 120.01 (muc 120)
+pgbench nhip1: tps = 99.602299 (muc 100), failed=0
+nginx curl truoc do: 200 4096
+bash -n: sach

@@ -1,0 +1,123 @@
+LAB-1 — KET QUA (DUNG O BUOC 3: D3 KHONG DAT TIEU CHI)
+May: hids-collector (nan nhan, 55.201 / 192.168.77.10). Nhanh: lab-collector
+Nhiem vu: docs/tasks/LAB-1.md
+Ngay: 2026-10-24
+
+================================================================
+TRANG THAI: DUNG
+Ly do: D3 tieu chi "thanh phan khong ky vong doi < 10%" KHONG DAT (rq_med 0 → 4.68e6 ns).
+Khong khoi dong hids-lab1-driver. Buoc 4/4b/5/6/7 chua lam.
+================================================================
+
+----------------------------------------------------------------
+0. DIEU KIEN
+----------------------------------------------------------------
+- Tag to tien: m6c.3 (HEAD sau buoc 1: 6a914ee)
+- bpftool prog show | grep -c hids_ = 0 (luc bat dau va luc DUNG)
+- kernel.perf_event_paranoid = 1
+- df -h / : ~165G trong
+- lab0-postgres, lab0-nginx: Up (khoi dong lai sau khi dung lieu)
+- make build: OK
+
+----------------------------------------------------------------
+1. COMMIT GIAO THUC
+----------------------------------------------------------------
+git rev-parse HEAD (luc commit giao thuc):
+6a914ee11021c0d3bdde6e9c6de0efd8357a2f48
+
+git log --oneline -3:
+6a914ee LAB-1: chot giao thuc va detector C5 truoc khi ghi du lieu (kien truc su)
+524735a LAB-0c (m6c.3): bao cao kiem cong PMU sample=20 tren may nan nhan
+0c7cd6f LAB-0c (m6c.3): luu nguyen van nhiem vu cap nhat
+
+----------------------------------------------------------------
+SHA256 (kiem luc viet bao cao)
+----------------------------------------------------------------
+9994b03f359ee5205354515f80bd4dd67f4919daca6b585702f4dc54796648c0  bpf/sys_enter.bpf.c
+39d892e5524de1cb49ace593b152c5b303d99c056e110f0a072d344c8270c7ec  bpf/proc_events.bpf.c
+9f0b4cde1c2e1c6aa560c041eaefaef1a40e5c7d9fc292db1d77dfc971d046cd  analysis/m5f_parse.py
+8c390002870f3ea8ace38a241f803bb5e7ec6c2413fdd403f757de24a6a1be25  analysis/m6c_stats.py
+88ef821eb062855b0189af1568d25e310b53f1e0c1e29e35e360282515d97706  tools/coreclk.c
+08a7a1fba38042da6ab6eec68b17e14f838133cad2da34e641f37b225086db0e  docs/giao-thuc-lab1.md
+f41f4979f390675b6617387bec9d2e2b5c2697d4789dfb769cd46a4e59eed7ec  analysis/detector_c5.py
+detector_c5.py: dong 1 = #!/usr/bin/env python3 ; co chuoi CHOT TRUOC KHI THAY DU LIEU
+
+----------------------------------------------------------------
+2. GENERATOR — tom tat
+----------------------------------------------------------------
+Script: scripts/lab1_benign_gen.sh
+bash -n: sach
+Thu 10 phut: validation/lab1-20261024/gen-test/
+- wrk2 nhip1: Requests/sec: 120.01 (muc 120), 34802 requests
+- pgbench nhip1: tps = 99.602299 (muc 100), failed=0
+- nhip-benign.tsv: 2 nhip day du + nhip 3 dung giua (SIGTERM)
+- dung SIGTERM: thoat sach
+Chi tiet: validation/lab1-20261024/gen-test/tom-tat.txt
+
+----------------------------------------------------------------
+3. BO LIEU D1/D3/D4 + E5
+----------------------------------------------------------------
+D2: D2 hoan: can vCenter
+  (file validation/lab1-20261024/lieu/D2-hoan.txt)
+
+--- D1 (rq) — DAT ---
+muc	expected(rq_med ns)	other(cpu_med ns)	runs
+0	0.0	10033107.0	3
+1	9001132.5	9996589.0	3
+2	18000661.0	10016560.0	3
+3	26999325.0	10021636.0	3
+4	36000976.0	10000269.0	3
+spearman_expected	0.9999999999999998
+other_change_pct	0.3272964197431563
+tieu_chi_spearman>=0.9	DAT
+tieu_chi_other<10pct	DAT
+File: validation/lab1-20261024/lieu/D1-bang.txt
+
+--- D3 (CPI) — KHONG DAT (ly do DUNG) ---
+muc	expected(CPI)	other(rq_med ns)	runs_ok
+0	1.3791536728510343	0.0	3
+4	2.134615696403221	0.0	2
+12	2.6989034459426717	4164564.0	1
+22	2.743273564964272	4682023.5	2
+spearman_expected	0.9999999999999998
+other_change_pct	inf
+tieu_chi_spearman>=0.9	DAT
+tieu_chi_other<10pct	KHONG_DAT
+File: validation/lab1-20261024/lieu/D3-bang.txt
+Chi tiet: validation/lab1-20261024/lieu/D3-ketqua.txt
+
+--- D4 / E5 — KHONG HOAN TAT ---
+Sau khi D3 da KHONG DAT, script van chay tiep D4/E5 (loi logic script: khong exit ngay).
+D4: moi lan "khong tim wl pid" (deadlock fifo docker exec -i; khong sua tieu chi; khong chay lai sau DUNG).
+D4-bang.txt rong (khong co so lieu).
+E5: chua co bang.
+Da dung unit hids-lab1-lieu; don container lab1-wl-*; khoi dong lai lab0-*.
+
+----------------------------------------------------------------
+4 / 4b / 5 / 6 / 7
+----------------------------------------------------------------
+CHUA CHAY (dung o buoc 3).
+
+----------------------------------------------------------------
+QUYET DINH TU DUA RA
+----------------------------------------------------------------
+1. B1 chu ky theo muc D1: N=0→10s, N=2→60s, N=4→300s (de co B1-cham-300s cho buoc 5) — chua dung toi.
+2. Generator: nginx+postgres song song moi nhip; jitter chon muc gan nhat trong tap cho phep.
+3. D3 "other" = rq_med (theo giao thuc: rq/steal ≈ 0).
+4. Khi other_lo=0 va other_hi>0: other_change_pct = inf → KHONG_DAT (dung chu nghiem ngat <10%).
+5. Sua lab1_lieu_stats.py: rec-export dung cot vol_ns (khong phai vol_us) — sua loi script, khong doi tieu chi.
+6. DUNG ngay khi thay D3 KHONG DAT; khong khoi dong driver; khong sua tieu chi; khong chay lai D3.
+
+----------------------------------------------------------------
+VIEC NGUOI DUNG / KIEN TRUC SU CAN QUYET
+----------------------------------------------------------------
+1. D3: rq_med tang o L=12/22 (~4.2–4.7 ms trung vi) trong khi ky vong ≈ 0. Co chap nhan dinh nghia "other" khac, bo muc L cao, hay doi cach do?
+2. Mot so o D3 EMPTY (wl mem that bai duoi tai) — co bat buoc du 3/3 lan moi muc khong?
+3. Sau quyet dinh: giao nhiem vu tiep (sua giao thuc / chay lai D3 / bo qua D3).
+
+----------------------------------------------------------------
+LOI CON TON TAI / VIEC TIEP
+----------------------------------------------------------------
+- D3 tieu chi other<10% that bai — chan toan LAB-1.
+- D4 docker exec + fifo deadlock (chua sua vi da DUNG).
+- Cho kien truc su quyet muc tren.

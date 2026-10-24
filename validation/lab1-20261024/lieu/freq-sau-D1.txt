@@ -1,0 +1,5 @@
+2026-10-24T13:50:49+00:00
+lan 1: GHz_wall=2.5298
+lan 2: GHz_wall=2.5309
+lan 3: GHz_wall=2.5298
+trung vi GHz_wall=2.5298

@@ -1,0 +1,13 @@
+146175
+wl: loops_per_us=343.191381 loops_10ms=3431913 (hieu chinh 201054 us)
+wl: tu kiem 1/5 mono=10034 us thread_cpu=10032 us
+wl: tu kiem 2/5 mono=9856 us thread_cpu=9856 us
+wl: tu kiem 3/5 mono=10015 us thread_cpu=10015 us
+wl: tu kiem 4/5 mono=9776 us thread_cpu=9776 us
+wl: tu kiem 5/5 mono=9431 us thread_cpu=9432 us
+wl: dieu chinh loops_10ms=3494108 (trung binh 9822 us)
+wl: tu kiem 1/5 mono=9935 us thread_cpu=9935 us
+wl: tu kiem 2/5 mono=10207 us thread_cpu=10207 us
+wl: tu kiem 3/5 mono=10118 us thread_cpu=10117 us
+wl: tu kiem 4/5 mono=9951 us thread_cpu=9951 us
+wl: tu kiem 5/5 mono=9858 us thread_cpu=9859 us

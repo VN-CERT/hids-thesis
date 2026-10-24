@@ -1,0 +1,8 @@
+n	1506
+cpu_med	10000843.0
+steal_med	0.0
+irq_med	31037.5
+rq_med	36000976.0
+vol_ns_med	0.0
+burn_nr	230
+syscall_counts	{0: 1, 230: 1506, 110: 1505}

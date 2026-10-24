@@ -1,0 +1,59 @@
+CANH BAO: binary build tu cay lam viec con thay doi chua commit (git_commit=524735a-dirty).
+CANH BAO: du lieu ghi ra khong tai lap duoc tu git. Commit truoc khi do that.
+stealclock: bat (8/8 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+stealclock_evidence: journalctl
+doi chieu vmw_steal_time voi rq->prev_steal_time trong 3s (lan 1)...
+   cpu         vmw_ns    rq_steal_ns      lech_ns    nguong_ns
+     0        7408641        7413879        -5238      2000000
+     1        5620500        5620501           -1      2000000
+     2        5879619        5879620           -1      2000000
+     3        5084811        5084812           -1      2000000
+     4        6657862        6657862            0      2000000
+     5        4231447        4231448           -1      2000000
+     6        4787039        4787040           -1      2000000
+     7        5307310        5307311           -1      2000000
+  TONG       44977229       44982473        -5244      5000000
+STEALCHECK lan=1 tong_vmw_ns=44977229 tong_rq_ns=44982473 lech_ns=5244 nguong_ns=5000000 cpu_lech_max=0:5238 ket_qua=DAT
+doi chieu xong: |tong_vmw - tong_rq| = -5244 ns, nguong max(5000000 ns, 1% x tong_vmw); cpu lech max 0: 5238 ns
+ghi vao out/lab1-d1-N3-r2-a1.bin
+loc pid: 145328 | loc cgroup: khong co | ring buffer: 64 MiB
+READY
+ban ghi doc duoc: 3607 | so lan dinh ghi: 3607 | mat: 0
+irq cong don (ns): hard 1946402 | soft 102347788 | vector 1064940990 | tong 1169235180
+soft_raw cong don (ns): 102543013 (ke ca hard/vector long ben trong, de so voi softirqs-bpfcc)
+irq bat thuong: 0 khoang, 0 ns | loai con dang hoat dong: 0
+recursion_misses (bpf_prog_info), tong 0 tren 31 chuong trinh:
+  hids_irq_call_function_entry             0
+  hids_irq_call_function_exit              0
+  hids_irq_call_function_single_entry      0
+  hids_irq_call_function_single_exit       0
+  hids_irq_deferred_error_apic_entry       0
+  hids_irq_deferred_error_apic_exit        0
+  hids_irq_error_apic_entry                0
+  hids_irq_error_apic_exit                 0
+  hids_irq_irq_handler_entry               0
+  hids_irq_irq_handler_exit                0
+  hids_irq_irq_work_entry                  0
+  hids_irq_irq_work_exit                   0
+  hids_irq_local_timer_entry               0
+  hids_irq_local_timer_exit                0
+  hids_irq_reschedule_entry                0
+  hids_irq_reschedule_exit                 0
+  hids_irq_softirq_entry                   0
+  hids_irq_softirq_exit                    0
+  hids_irq_spurious_apic_entry             0
+  hids_irq_spurious_apic_exit              0
+  hids_irq_thermal_apic_entry              0
+  hids_irq_thermal_apic_exit               0
+  hids_irq_threshold_apic_entry            0
+  hids_irq_threshold_apic_exit             0
+  hids_irq_x86_platform_ipi_entry          0
+  hids_irq_x86_platform_ipi_exit           0
+  hids_sched_switch                        0
+  hids_sched_wakeup                        0
+  hids_sched_wakeup_new                    0
+  hids_sys_enter                           0
+  hids_sys_enter_fentry                    0
+thoi gian chay: 93.387 s | CPU collector: user 0.190 s, sys 0.197 s (getrusage RUSAGE_SELF)
+kich thuoc file: 232009 byte
+du lieu: out/lab1-d1-N3-r2-a1.bin | thong ke: out/lab1-d1-N3-r2-a1.bin.stats | theo doi: out/lab1-d1-N3-r2-a1.bin.periodic

@@ -1,0 +1,8 @@
+n	2207
+cpu_med	10315988
+steal_med	0
+irq_med	32309
+rq_med	18000698
+vol_ns_med	0
+burn_nr	230
+syscall_counts	{0: 1, 230: 2207, 110: 2207}

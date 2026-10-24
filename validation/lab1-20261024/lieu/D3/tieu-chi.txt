@@ -1,0 +1,4 @@
+spearman_expected	0.9999999999999998
+other_change_pct	inf
+tieu_chi_spearman>=0.9	DAT
+tieu_chi_other<10pct	KHONG_DAT
