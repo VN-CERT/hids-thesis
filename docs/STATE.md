@@ -92,7 +92,13 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 - XONG: `scripts/m6e_e2b.sh`, dữ liệu `validation/m6e-20261024/E2b/`, đã nối R036 mục E2b.
 - 12/12 attempt=1; vm_steal_pct Unlimited 0,037% → 36000 29,992% → 24000 45,392% → 12000 68,052%; Unlimited cuối 0,025%.
 - Oracle cpu20 vs hids_sum (steal+off): ti_le ≈ 1,00 ở các mức có limit (36000/24000/12000).
-- Cập nhật: 2026-10-24 23:27.
+- Trả lời kiến trúc sư về E2b (nhận 2026-10-24, **ĐẠT**, minh chứng steal chính thức Bài 1 / G12; ghi nguyên văn):
+  1. Bảng bài dùng TỔNG steal và tỉ lệ steal/Δt (p90 để mô tả đuôi), không dùng trung vị vì steal đến theo cục.
+  2. E2 (wl mixed) giữ làm phát hiện: ESXi dồn giới hạn lên vCPU bận liên tục, vCPU ngủ 50 % được ưu tiên khi chạy nhưng thức dậy chậm — phần mất nằm trong khoảng ngủ (xem kiem-khoang-ngu.txt).
+  3. "Unlimited-cuối lần 1 = 67,7 %" là cửa sổ đo trùng lúc limit chưa gỡ xong, lần 2 = 0,025 % là đúng.
+  (G12: tổng steal bản ghi = steal cpu20 /proc/stat, 11/12 lượt trong ±0,1 %, 1 lượt 0,965 ghi nguyên văn.)
+- Cập nhật: 2026-10-24 23:32.
+
 
 ## Việc đang chạy
 

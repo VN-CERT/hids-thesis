@@ -308,3 +308,15 @@ READY phần A (30/30), E2 (12/12), E2b (12/12). Không chạy lại phần A (k
 2. **E1:** cpu_ns chỉ so tuyệt đối trong cùng dải GHz; bảng bài dùng rq và cyc; ghi tần số nhảy 1,93↔2,53; rq 9/12/26 ms nhất quán với CFS chia đều.
 
 3. **E3** là kiểm không gán nhầm: vol = 300 s, cpu/rq vài chục µs, steal 0 — đạt.
+
+---
+
+## Phụ lục — Trả lời kiến trúc sư về E2b (nhận 2026-10-24)
+
+**ĐẠT.** E2b là minh chứng steal chính thức của Bài 1 (G12: tổng steal bản ghi = steal cpu20 `/proc/stat`, 11/12 lượt trong ±0,1 %, 1 lượt 0,965 ghi nguyên văn).
+
+1. Bảng bài dùng **TỔNG** steal và tỉ lệ steal/Δt (p90 để mô tả đuôi), **không** dùng trung vị vì steal đến theo cục.
+
+2. E2 (`wl mixed`) giữ làm **phát hiện**: ESXi dồn giới hạn lên vCPU bận liên tục, vCPU ngủ 50 % được ưu tiên khi chạy nhưng thức dậy chậm — phần mất nằm trong khoảng ngủ (xem `kiem-khoang-ngu.txt`).
+
+3. «Unlimited-cuối lần 1 = 67,7 %» là cửa sổ đo trùng lúc limit chưa gỡ xong; lần 2 = 0,025 % là đúng.
