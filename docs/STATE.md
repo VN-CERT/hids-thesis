@@ -164,5 +164,12 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 ## Việc đang chạy
 
-- (sẽ ghi khi khởi động hids-m6d-a)
+- **hids-m6d-a** (M6d phần A: calibrate → E1 → E3 → E4-cache, 3 lần/mức + freq_stamp)
+  - lệnh: `systemd-run --unit=hids-m6d-a --collect bash -c 'cd /root/hids && bash scripts/m6d_a_driver.sh'`
+  - bắt đầu: 2026-10-24 20:08
+  - dự kiến xong: 2026-10-24 22:08 (~2 giờ)
+  - log: `out/jobs/m6d-a.log`
+  - trạng thái: `out/jobs/m6d-a.status`
+  - dữ liệu: `validation/m6d-20261024/`
+
 
