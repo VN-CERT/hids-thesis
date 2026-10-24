@@ -1,0 +1,1 @@
+tool=TETRA cpu_usec=226625992 ringbuf_lost=0 queue_lost=7.6054585e+07 notify_overflow=117073 missed_prog_sum=0

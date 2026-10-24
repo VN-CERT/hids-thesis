@@ -1,0 +1,1123 @@
+[2026-10-24T23:47:35+07:00] m6f overhead bat dau, RUNS=10, out=/root/hids/validation/m6f-20261024
+=== sha256 5 file kien truc su ===
+9994b03f359ee5205354515f80bd4dd67f4919daca6b585702f4dc54796648c0  bpf/sys_enter.bpf.c
+39d892e5524de1cb49ace593b152c5b303d99c056e110f0a072d344c8270c7ec  bpf/proc_events.bpf.c
+9f0b4cde1c2e1c6aa560c041eaefaef1a40e5c7d9fc292db1d77dfc971d046cd  analysis/m5f_parse.py
+8c390002870f3ea8ace38a241f803bb5e7ec6c2413fdd403f757de24a6a1be25  analysis/m6c_stats.py
+88ef821eb062855b0189af1568d25e310b53f1e0c1e29e35e360282515d97706  tools/coreclk.c
+=== git ===
+26a364a
+=== images ===
+falcosecurity/falco:latest sha256:69e957f91b3a6beb5c82e2afae33ec3e4479dab2d4421475d288d0cd113cedf6
+quay.io/cilium/tetragon:v1.7.0 sha256:deda51c3f88e4d26b4d76c99ea207f2b05f9e40c210e0f04a37ca632ab7bf527
+=== falco version ===
+2026-10-24T16:47:35+0000: Falco version: 0.45.1 (x86_64)
+2026-10-24T16:47:35+0000: Falco initialized with configuration files:
+2026-10-24T16:47:35+0000:    /etc/falco/config.d/falco.container_plugin.yaml | schema validation: ok
+2026-10-24T16:47:35+0000:    /etc/falco/config.d/falco.iso8601_timeformat.yaml | schema validation: ok
+2026-10-24T16:47:35+0000:    /etc/falco/falco.yaml | schema validation: ok
+2026-10-24T16:47:35+0000: System info: Linux version 6.8.0-142-generic (buildd@lcy02-amd64-049) (x86_64-linux-gnu-gcc-13 (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, GNU ld (GNU Binutils for Ubuntu) 2.42) #142-Ubuntu SMP PREEMPT_DYNAMIC Wed Sep  2 14:24:27 UTC 2026
+Falco version: 0.45.1
+Libs version:  0.26.1
+Plugin API:    3.12.0
+Engine:        0.65.0
+Driver:
+  API version:    11.0.0
+  Schema version: 4.3.0
+  Default driver: 11.0.1+driver
+=== tetra version ===
+level=warn msg="Could not find BPF map root"
+CLI version: v1.7.0
+[2026-10-24T23:47:36+07:00] set user.slice AllowedCPUs=0-11,21-23
+[2026-10-24T23:47:36+07:00] dung 12 container san co
+[2026-10-24T23:48:02+07:00] freq_stamp T1 truoc
+2026-10-24T23:48:02+07:00
+lan 1: GHz_wall=1.9372
+lan 2: GHz_wall=1.9400
+lan 3: GHz_wall=1.9398
+trung vi GHz_wall=1.9398
+[2026-10-24T23:48:06+07:00] T1
+T1 C0 run1: 183.49 ns/syscall
+tool=FALCO cpu_usec=119039 scap_n_drops=0 event_drop_occurrences=?
+T1 FALCO run1: 216.64 ns/syscall
+tool=TETRA cpu_usec=34837 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+T1 TETRA-def run1: 185.35 ns/syscall
+tool=TETRA cpu_usec=77990389 ringbuf_lost=0 queue_lost=1.5160548e+07 notify_overflow=767264 missed_prog_sum=0
+T1 TETRA-sysenter run1: 1715.30 ns/syscall
+tool=HIDS cpu_usec=15593376 ban_ghi=10000001 ban_ghi_giay=1367702.9 mat=0
+T1 HIDS-host run1: 731.62 ns/syscall
+tool=HIDS cpu_usec=16127850 ban_ghi=10048372 ban_ghi_giay=1315774.2 mat=0
+T1 HIDS-all run1: 756.40 ns/syscall
+[2026-10-24T23:49:45+07:00] T1 tien do 1/10
+T1 C0 run2: 187.44 ns/syscall
+tool=FALCO cpu_usec=159348 scap_n_drops=0 event_drop_occurrences=?
+T1 FALCO run2: 216.47 ns/syscall
+tool=TETRA cpu_usec=40871 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+T1 TETRA-def run2: 183.49 ns/syscall
+tool=TETRA cpu_usec=69370514 ringbuf_lost=0 queue_lost=1.4381774e+07 notify_overflow=672411 missed_prog_sum=0
+T1 TETRA-sysenter run2: 1513.27 ns/syscall
+tool=HIDS cpu_usec=16905796 ban_ghi=10000001 ban_ghi_giay=1272662.4 mat=0
+T1 HIDS-host run2: 786.15 ns/syscall
+tool=HIDS cpu_usec=16565933 ban_ghi=10125975 ban_ghi_giay=1290924.8 mat=0
+T1 HIDS-all run2: 776.92 ns/syscall
+[2026-10-24T23:51:25+07:00] T1 tien do 2/10
+T1 C0 run3: 184.72 ns/syscall
+tool=FALCO cpu_usec=119558 scap_n_drops=0 event_drop_occurrences=?
+T1 FALCO run3: 217.30 ns/syscall
+tool=TETRA cpu_usec=52711 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+T1 TETRA-def run3: 183.58 ns/syscall
+tool=TETRA cpu_usec=71476550 ringbuf_lost=0 queue_lost=1.4529132e+07 notify_overflow=710562 missed_prog_sum=0
+T1 TETRA-sysenter run3: 1557.47 ns/syscall
+tool=HIDS cpu_usec=15117875 ban_ghi=10000001 ban_ghi_giay=1406479.3 mat=0
+T1 HIDS-host run3: 711.50 ns/syscall
+tool=HIDS cpu_usec=16514445 ban_ghi=10114767 ban_ghi_giay=1294563.6 mat=0
+T1 HIDS-all run3: 774.06 ns/syscall
+[2026-10-24T23:53:03+07:00] T1 tien do 3/10
+T1 C0 run4: 184.84 ns/syscall
+tool=FALCO cpu_usec=131037 scap_n_drops=0 event_drop_occurrences=?
+T1 FALCO run4: 213.93 ns/syscall
+tool=TETRA cpu_usec=43621 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+T1 TETRA-def run4: 187.95 ns/syscall
+tool=TETRA cpu_usec=80189433 ringbuf_lost=0 queue_lost=1.4935236e+07 notify_overflow=767638 missed_prog_sum=0
+T1 TETRA-sysenter run4: 1759.29 ns/syscall
+tool=HIDS cpu_usec=16824459 ban_ghi=10000001 ban_ghi_giay=1264595.0 mat=0
+T1 HIDS-host run4: 791.36 ns/syscall
+tool=HIDS cpu_usec=17445667 ban_ghi=10117107 ban_ghi_giay=1234435.1 mat=0
+T1 HIDS-all run4: 812.17 ns/syscall
+[2026-10-24T23:54:45+07:00] T1 tien do 4/10
+T1 C0 run5: 187.50 ns/syscall
+tool=FALCO cpu_usec=120774 scap_n_drops=0 event_drop_occurrences=?
+T1 FALCO run5: 215.76 ns/syscall
+tool=TETRA cpu_usec=53186 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+T1 TETRA-def run5: 186.67 ns/syscall
+tool=TETRA cpu_usec=70915822 ringbuf_lost=0 queue_lost=1.4527095e+07 notify_overflow=682580 missed_prog_sum=0
+T1 TETRA-sysenter run5: 1547.91 ns/syscall
+tool=HIDS cpu_usec=17379287 ban_ghi=10000001 ban_ghi_giay=1227835.6 mat=0
+T1 HIDS-host run5: 814.99 ns/syscall
+tool=HIDS cpu_usec=16760734 ban_ghi=10113008 ban_ghi_giay=1287544.7 mat=0
+T1 HIDS-all run5: 776.49 ns/syscall
+[2026-10-24T23:56:25+07:00] T1 tien do 5/10
+T1 C0 run6: 182.34 ns/syscall
+tool=FALCO cpu_usec=168879 scap_n_drops=0 event_drop_occurrences=?
+T1 FALCO run6: 217.78 ns/syscall
+tool=TETRA cpu_usec=46681 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+T1 TETRA-def run6: 183.02 ns/syscall
+tool=TETRA cpu_usec=69845529 ringbuf_lost=0 queue_lost=1.4387849e+07 notify_overflow=683336 missed_prog_sum=0
+T1 TETRA-sysenter run6: 1523.90 ns/syscall
+tool=HIDS cpu_usec=16463613 ban_ghi=10000001 ban_ghi_giay=1297589.5 mat=0
+T1 HIDS-host run6: 771.12 ns/syscall
+tool=HIDS cpu_usec=16025700 ban_ghi=10108758 ban_ghi_giay=1335189.4 mat=0
+T1 HIDS-all run6: 750.96 ns/syscall
+[2026-10-24T23:58:03+07:00] T1 tien do 6/10
+T1 C0 run7: 184.65 ns/syscall
+tool=FALCO cpu_usec=123886 scap_n_drops=0 event_drop_occurrences=?
+T1 FALCO run7: 215.22 ns/syscall
+tool=TETRA cpu_usec=44644 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+T1 TETRA-def run7: 183.02 ns/syscall
+tool=TETRA cpu_usec=71094144 ringbuf_lost=0 queue_lost=1.4392311e+07 notify_overflow=682334 missed_prog_sum=0
+T1 TETRA-sysenter run7: 1553.86 ns/syscall
+tool=HIDS cpu_usec=17121853 ban_ghi=10000001 ban_ghi_giay=1245260.8 mat=0
+T1 HIDS-host run7: 803.52 ns/syscall
+tool=HIDS cpu_usec=15609185 ban_ghi=10107699 ban_ghi_giay=1361940.5 mat=0
+T1 HIDS-all run7: 733.78 ns/syscall
+[2026-10-24T23:59:42+07:00] T1 tien do 7/10
+T1 C0 run8: 185.58 ns/syscall
+tool=FALCO cpu_usec=115899 scap_n_drops=0 event_drop_occurrences=?
+T1 FALCO run8: 216.58 ns/syscall
+tool=TETRA cpu_usec=43824 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+T1 TETRA-def run8: 194.20 ns/syscall
+tool=TETRA cpu_usec=68948848 ringbuf_lost=0 queue_lost=1.4392668e+07 notify_overflow=664967 missed_prog_sum=0
+T1 TETRA-sysenter run8: 1502.46 ns/syscall
+tool=HIDS cpu_usec=16424589 ban_ghi=10000001 ban_ghi_giay=1299205.4 mat=0
+T1 HIDS-host run8: 770.29 ns/syscall
+tool=HIDS cpu_usec=16017273 ban_ghi=10128710 ban_ghi_giay=1344073.6 mat=0
+T1 HIDS-all run8: 746.84 ns/syscall
+[2026-10-25T00:01:20+07:00] T1 tien do 8/10
+T1 C0 run9: 186.91 ns/syscall
+tool=FALCO cpu_usec=127820 scap_n_drops=0 event_drop_occurrences=?
+T1 FALCO run9: 216.29 ns/syscall
+tool=TETRA cpu_usec=37916 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+T1 TETRA-def run9: 184.96 ns/syscall
+tool=TETRA cpu_usec=77369157 ringbuf_lost=0 queue_lost=1.5128025e+07 notify_overflow=751623 missed_prog_sum=0
+T1 TETRA-sysenter run9: 1700.15 ns/syscall
+tool=HIDS cpu_usec=16696864 ban_ghi=10000001 ban_ghi_giay=1296881.1 mat=0
+T1 HIDS-host run9: 771.64 ns/syscall
+tool=HIDS cpu_usec=17356711 ban_ghi=10145250 ban_ghi_giay=1247843.3 mat=0
+T1 HIDS-all run9: 805.95 ns/syscall
+[2026-10-25T00:03:02+07:00] T1 tien do 9/10
+T1 C0 run10: 181.83 ns/syscall
+tool=FALCO cpu_usec=117951 scap_n_drops=0 event_drop_occurrences=?
+T1 FALCO run10: 219.07 ns/syscall
+tool=TETRA cpu_usec=55282 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+T1 TETRA-def run10: 184.97 ns/syscall
+tool=TETRA cpu_usec=70317912 ringbuf_lost=0 queue_lost=1.4284364e+07 notify_overflow=670386 missed_prog_sum=0
+T1 TETRA-sysenter run10: 1532.28 ns/syscall
+tool=HIDS cpu_usec=16599994 ban_ghi=10000001 ban_ghi_giay=1292654.1 mat=0
+T1 HIDS-host run10: 774.00 ns/syscall
+tool=HIDS cpu_usec=16023241 ban_ghi=10131254 ban_ghi_giay=1334795.3 mat=0
+T1 HIDS-all run10: 751.56 ns/syscall
+[2026-10-25T00:04:40+07:00] T1 tien do 10/10
+[2026-10-25T00:04:40+07:00] freq_stamp T1 sau
+2026-10-25T00:04:40+07:00
+lan 1: GHz_wall=1.9400
+lan 2: GHz_wall=1.9390
+lan 3: GHz_wall=1.9403
+trung vi GHz_wall=1.9400
+[2026-10-25T00:04:44+07:00] freq_stamp T4 truoc
+2026-10-25T00:04:44+07:00
+lan 1: GHz_wall=1.9403
+lan 2: GHz_wall=1.9390
+lan 3: GHz_wall=1.9401
+trung vi GHz_wall=1.9401
+[2026-10-25T00:04:48+07:00] T4 kich tran (wrk goc)
+T4 C0 run1: 105996.88 req/s
+tool=FALCO cpu_usec=38563079 scap_n_drops=0 event_drop_occurrences=?
+T4 FALCO run1: 97571.37 req/s
+tool=TETRA cpu_usec=283510 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+T4 TETRA-def run1: 99055.27 req/s
+tool=TETRA cpu_usec=237887280 ringbuf_lost=0 queue_lost=1.06554521e+08 notify_overflow=787143 missed_prog_sum=0
+T4 TETRA-sysenter run1: 57716.25 req/s
+tool=HIDS cpu_usec=46985178 ban_ghi=37980623 ban_ghi_giay=632972.2 mat=0
+T4 HIDS-host run1: 88933.63 req/s
+tool=HIDS cpu_usec=122824779 ban_ghi=86951731 ban_ghi_giay=1447607.9 mat=24513672
+T4 HIDS-all run1: 64586.42 req/s
+[2026-10-25T00:12:43+07:00] T4 tien do 1/10
+T4 C0 run2: 113930.84 req/s
+tool=FALCO cpu_usec=40846159 scap_n_drops=0 event_drop_occurrences=?
+T4 FALCO run2: 99868.94 req/s
+tool=TETRA cpu_usec=282335 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+T4 TETRA-def run2: 110505.09 req/s
+tool=TETRA cpu_usec=237963174 ringbuf_lost=0 queue_lost=1.08077933e+08 notify_overflow=782813 missed_prog_sum=0
+T4 TETRA-sysenter run2: 59471.04 req/s
+tool=HIDS cpu_usec=54095689 ban_ghi=44721671 ban_ghi_giay=745297.3 mat=0
+T4 HIDS-host run2: 104436.54 req/s
+tool=HIDS cpu_usec=120780038 ban_ghi=81919055 ban_ghi_giay=1363739.7 mat=31424093
+T4 HIDS-all run2: 65173.22 req/s
+[2026-10-25T00:20:42+07:00] T4 tien do 2/10
+T4 C0 run3: 102854.14 req/s
+tool=FALCO cpu_usec=37721467 scap_n_drops=0 event_drop_occurrences=?
+T4 FALCO run3: 94153.61 req/s
+tool=TETRA cpu_usec=290927 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+T4 TETRA-def run3: 109206.15 req/s
+tool=TETRA cpu_usec=238575684 ringbuf_lost=0 queue_lost=1.07134609e+08 notify_overflow=737450 missed_prog_sum=0
+T4 TETRA-sysenter run3: 58417.41 req/s
+tool=HIDS cpu_usec=50641776 ban_ghi=38998998 ban_ghi_giay=648872.9 mat=0
+T4 HIDS-host run3: 91007.25 req/s
+tool=HIDS cpu_usec=120195908 ban_ghi=82935765 ban_ghi_giay=1380248.7 mat=30828503
+T4 HIDS-all run3: 64939.27 req/s
+[2026-10-25T00:28:38+07:00] T4 tien do 3/10
+T4 C0 run4: 110343.49 req/s
+tool=FALCO cpu_usec=39169759 scap_n_drops=0 event_drop_occurrences=?
+T4 FALCO run4: 100417.04 req/s
+tool=TETRA cpu_usec=280317 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+T4 TETRA-def run4: 111717.95 req/s
+tool=TETRA cpu_usec=237558485 ringbuf_lost=0 queue_lost=1.05579112e+08 notify_overflow=781310 missed_prog_sum=0
+T4 TETRA-sysenter run4: 56744.28 req/s
+tool=HIDS cpu_usec=49985082 ban_ghi=39965285 ban_ghi_giay=666040.7 mat=0
+T4 HIDS-host run4: 93465.47 req/s
+tool=HIDS cpu_usec=118579160 ban_ghi=79827594 ban_ghi_giay=1328704.3 mat=27269937
+T4 HIDS-all run4: 60834.39 req/s
+[2026-10-25T00:36:32+07:00] T4 tien do 4/10
+T4 C0 run5: 108782.94 req/s
+tool=FALCO cpu_usec=34645954 scap_n_drops=0 event_drop_occurrences=?
+T4 FALCO run5: 86069.45 req/s
+tool=TETRA cpu_usec=301137 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+T4 TETRA-def run5: 101319.82 req/s
+tool=TETRA cpu_usec=230401252 ringbuf_lost=0 queue_lost=1.05849195e+08 notify_overflow=708560 missed_prog_sum=0
+T4 TETRA-sysenter run5: 58372.18 req/s
+tool=HIDS cpu_usec=46815249 ban_ghi=37242758 ban_ghi_giay=620669.3 mat=0
+T4 HIDS-host run5: 87212.33 req/s
+tool=HIDS cpu_usec=120516857 ban_ghi=82804415 ban_ghi_giay=1378125.4 mat=29238824
+T4 HIDS-all run5: 64552.83 req/s
+[2026-10-25T00:44:25+07:00] T4 tien do 5/10
+T4 C0 run6: 104721.85 req/s
+tool=FALCO cpu_usec=38113725 scap_n_drops=0 event_drop_occurrences=?
+T4 FALCO run6: 99809.52 req/s
+tool=TETRA cpu_usec=287046 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+T4 TETRA-def run6: 111986.94 req/s
+tool=TETRA cpu_usec=237045241 ringbuf_lost=0 queue_lost=1.01863012e+08 notify_overflow=709264 missed_prog_sum=0
+T4 TETRA-sysenter run6: 55696.60 req/s
+tool=HIDS cpu_usec=50620477 ban_ghi=40629218 ban_ghi_giay=675994.9 mat=0
+T4 HIDS-host run6: 94830.97 req/s
+tool=HIDS cpu_usec=119137173 ban_ghi=85906170 ban_ghi_giay=1430089.5 mat=24158725
+T4 HIDS-all run6: 62180.35 req/s
+[2026-10-25T00:52:21+07:00] T4 tien do 6/10
+T4 C0 run7: 113606.98 req/s
+tool=FALCO cpu_usec=39986571 scap_n_drops=0 event_drop_occurrences=?
+T4 FALCO run7: 103034.03 req/s
+tool=TETRA cpu_usec=299899 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+T4 TETRA-def run7: 119995.76 req/s
+tool=TETRA cpu_usec=238488606 ringbuf_lost=0 queue_lost=1.08994465e+08 notify_overflow=763776 missed_prog_sum=0
+T4 TETRA-sysenter run7: 59215.82 req/s
+tool=HIDS cpu_usec=52035750 ban_ghi=41842394 ban_ghi_giay=697310.8 mat=0
+T4 HIDS-host run7: 97774.37 req/s
+tool=HIDS cpu_usec=118721289 ban_ghi=83653744 ban_ghi_giay=1392485.8 mat=26616148
+T4 HIDS-all run7: 62525.23 req/s
+[2026-10-25T01:00:18+07:00] T4 tien do 7/10
+T4 C0 run8: 112466.24 req/s
+tool=FALCO cpu_usec=36840950 scap_n_drops=0 event_drop_occurrences=?
+T4 FALCO run8: 91680.57 req/s
+tool=TETRA cpu_usec=302181 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+T4 TETRA-def run8: 111576.15 req/s
+tool=TETRA cpu_usec=238191179 ringbuf_lost=0 queue_lost=1.06319473e+08 notify_overflow=796553 missed_prog_sum=0
+T4 TETRA-sysenter run8: 57422.88 req/s
+tool=HIDS cpu_usec=46863014 ban_ghi=37043727 ban_ghi_giay=617334.7 mat=0
+T4 HIDS-host run8: 86727.62 req/s
+tool=HIDS cpu_usec=117101114 ban_ghi=80253189 ban_ghi_giay=1335992.3 mat=27342518
+T4 HIDS-all run8: 61828.38 req/s
+[2026-10-25T01:08:09+07:00] T4 tien do 8/10
+T4 C0 run9: 113465.57 req/s
+tool=FALCO cpu_usec=38760486 scap_n_drops=0 event_drop_occurrences=?
+T4 FALCO run9: 100402.19 req/s
+tool=TETRA cpu_usec=276407 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+T4 TETRA-def run9: 113581.05 req/s
+tool=TETRA cpu_usec=236725361 ringbuf_lost=0 queue_lost=1.0403631e+08 notify_overflow=708124 missed_prog_sum=0
+T4 TETRA-sysenter run9: 57060.78 req/s
+tool=HIDS cpu_usec=51940028 ban_ghi=41136678 ban_ghi_giay=684443.6 mat=0
+T4 HIDS-host run9: 95984.18 req/s
+tool=HIDS cpu_usec=117684786 ban_ghi=80284491 ban_ghi_giay=1336147.1 mat=26918452
+T4 HIDS-all run9: 60044.18 req/s
+[2026-10-25T01:16:04+07:00] T4 tien do 9/10
+T4 C0 run10: 110363.55 req/s
+tool=FALCO cpu_usec=39308558 scap_n_drops=0 event_drop_occurrences=?
+T4 FALCO run10: 97680.98 req/s
+tool=TETRA cpu_usec=303317 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+T4 TETRA-def run10: 110834.28 req/s
+tool=TETRA cpu_usec=239309349 ringbuf_lost=0 queue_lost=1.10168948e+08 notify_overflow=801142 missed_prog_sum=0
+T4 TETRA-sysenter run10: 60831.29 req/s
+tool=HIDS cpu_usec=53476947 ban_ghi=43146027 ban_ghi_giay=717878.0 mat=0
+T4 HIDS-host run10: 100599.90 req/s
+tool=HIDS cpu_usec=119563032 ban_ghi=82654885 ban_ghi_giay=1375834.1 mat=26349964
+T4 HIDS-all run10: 62071.39 req/s
+[2026-10-25T01:24:01+07:00] T4 tien do 10/10
+[2026-10-25T01:24:01+07:00] freq_stamp T4 sau
+2026-10-25T01:24:01+07:00
+lan 1: GHz_wall=1.9378
+lan 2: GHz_wall=1.9415
+lan 3: GHz_wall=1.9399
+trung vi GHz_wall=1.9399
+[2026-10-25T01:24:05+07:00] freq_stamp T3 truoc
+2026-10-25T01:24:05+07:00
+lan 1: GHz_wall=1.9389
+lan 2: GHz_wall=2.0717
+lan 3: GHz_wall=2.0807
+trung vi GHz_wall=2.0717
+[2026-10-25T01:24:09+07:00] T3 kich tran
+T3 C0 run1: 3684.3708 tps
+tool=FALCO cpu_usec=19735628 scap_n_drops=0 event_drop_occurrences=?
+T3 FALCO run1: 3077.5385 tps
+tool=TETRA cpu_usec=604858 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+T3 TETRA-def run1: 3349.5265 tps
+tool=TETRA cpu_usec=224496599 ringbuf_lost=0 queue_lost=5.6819461e+07 notify_overflow=101834 missed_prog_sum=0
+T3 TETRA-sysenter run1: 1417.7774 tps
+tool=HIDS cpu_usec=49657547 ban_ghi=29090524 ban_ghi_giay=481897.6 mat=0
+T3 HIDS-host run1: 2543.0972 tps
+tool=HIDS cpu_usec=118104315 ban_ghi=63361100 ban_ghi_giay=1048635.7 mat=0
+T3 HIDS-all run1: 2042.7168 tps
+[2026-10-25T01:32:10+07:00] T3 tien do 1/10
+T3 C0 run2: 3274.3131 tps
+tool=FALCO cpu_usec=19375019 scap_n_drops=0 event_drop_occurrences=?
+T3 FALCO run2: 3096.2459 tps
+tool=TETRA cpu_usec=770702 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+T3 TETRA-def run2: 3442.8206 tps
+tool=TETRA cpu_usec=237112227 ringbuf_lost=0 queue_lost=7.0680386e+07 notify_overflow=186391 missed_prog_sum=0
+T3 TETRA-sysenter run2: 1682.1092 tps
+tool=HIDS cpu_usec=51347343 ban_ghi=31583298 ban_ghi_giay=523256.6 mat=0
+T3 HIDS-host run2: 2744.7936 tps
+tool=HIDS cpu_usec=117678711 ban_ghi=63119252 ban_ghi_giay=1044592.4 mat=0
+T3 HIDS-all run2: 1847.9627 tps
+[2026-10-25T01:40:15+07:00] T3 tien do 2/10
+T3 C0 run3: 3352.6395 tps
+tool=FALCO cpu_usec=19500834 scap_n_drops=0 event_drop_occurrences=?
+T3 FALCO run3: 3212.5365 tps
+tool=TETRA cpu_usec=750399 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+T3 TETRA-def run3: 3403.5421 tps
+tool=TETRA cpu_usec=227430516 ringbuf_lost=0 queue_lost=6.9633823e+07 notify_overflow=112420 missed_prog_sum=0
+T3 TETRA-sysenter run3: 1670.9074 tps
+tool=HIDS cpu_usec=51666617 ban_ghi=31142957 ban_ghi_giay=516621.2 mat=0
+T3 HIDS-host run3: 2785.2097 tps
+tool=HIDS cpu_usec=119185885 ban_ghi=67897148 ban_ghi_giay=1123939.9 mat=425063
+T3 HIDS-all run3: 1994.3888 tps
+[2026-10-25T01:48:22+07:00] T3 tien do 3/10
+T3 C0 run4: 3917.0420 tps
+tool=FALCO cpu_usec=19530807 scap_n_drops=0 event_drop_occurrences=?
+T3 FALCO run4: 3181.2499 tps
+tool=TETRA cpu_usec=886248 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+T3 TETRA-def run4: 3260.6391 tps
+tool=TETRA cpu_usec=224435411 ringbuf_lost=0 queue_lost=5.7149048e+07 notify_overflow=94930 missed_prog_sum=0
+T3 TETRA-sysenter run4: 1302.2128 tps
+tool=HIDS cpu_usec=51012329 ban_ghi=29759468 ban_ghi_giay=492923.2 mat=0
+T3 HIDS-host run4: 2612.8892 tps
+tool=HIDS cpu_usec=114626933 ban_ghi=60200202 ban_ghi_giay=996677.0 mat=0
+T3 HIDS-all run4: 1763.4756 tps
+[2026-10-25T01:56:29+07:00] T3 tien do 4/10
+T3 C0 run5: 3716.7942 tps
+tool=FALCO cpu_usec=20021230 scap_n_drops=0 event_drop_occurrences=?
+T3 FALCO run5: 3349.8222 tps
+tool=TETRA cpu_usec=802951 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+T3 TETRA-def run5: 3529.1089 tps
+tool=TETRA cpu_usec=226727738 ringbuf_lost=0 queue_lost=5.7868869e+07 notify_overflow=101927 missed_prog_sum=0
+T3 TETRA-sysenter run5: 1325.7935 tps
+tool=HIDS cpu_usec=50613213 ban_ghi=31412722 ban_ghi_giay=520099.7 mat=0
+T3 HIDS-host run5: 2748.1471 tps
+tool=HIDS cpu_usec=125850034 ban_ghi=65607129 ban_ghi_giay=1086081.5 mat=860094
+T3 HIDS-all run5: 1939.7544 tps
+[2026-10-25T02:04:38+07:00] T3 tien do 5/10
+T3 C0 run6: 3391.8771 tps
+tool=FALCO cpu_usec=20590523 scap_n_drops=0 event_drop_occurrences=?
+T3 FALCO run6: 3769.0238 tps
+tool=TETRA cpu_usec=811912 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+T3 TETRA-def run6: 3454.7171 tps
+tool=TETRA cpu_usec=226346140 ringbuf_lost=0 queue_lost=6.4277193e+07 notify_overflow=135524 missed_prog_sum=0
+T3 TETRA-sysenter run6: 1535.9074 tps
+tool=HIDS cpu_usec=53663194 ban_ghi=34630061 ban_ghi_giay=574317.4 mat=0
+T3 HIDS-host run6: 3053.4434 tps
+tool=HIDS cpu_usec=123661811 ban_ghi=77190028 ban_ghi_giay=1278072.5 mat=2865017
+T3 HIDS-all run6: 2379.1231 tps
+[2026-10-25T02:12:53+07:00] T3 tien do 6/10
+T3 C0 run7: 3342.4742 tps
+tool=FALCO cpu_usec=20215811 scap_n_drops=0 event_drop_occurrences=?
+T3 FALCO run7: 3357.8244 tps
+tool=TETRA cpu_usec=761106 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+T3 TETRA-def run7: 3369.1303 tps
+tool=TETRA cpu_usec=228310863 ringbuf_lost=0 queue_lost=6.4888038e+07 notify_overflow=115586 missed_prog_sum=0
+T3 TETRA-sysenter run7: 1522.0730 tps
+tool=HIDS cpu_usec=53532278 ban_ghi=34902585 ban_ghi_giay=578432.5 mat=0
+T3 HIDS-host run7: 3038.0067 tps
+tool=HIDS cpu_usec=122355692 ban_ghi=72441892 ban_ghi_giay=1199126.3 mat=2542787
+T3 HIDS-all run7: 2207.7055 tps
+[2026-10-25T02:21:06+07:00] T3 tien do 7/10
+T3 C0 run8: 3446.2810 tps
+tool=FALCO cpu_usec=20899717 scap_n_drops=0 event_drop_occurrences=?
+T3 FALCO run8: 3721.3407 tps
+tool=TETRA cpu_usec=857341 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+T3 TETRA-def run8: 3841.5458 tps
+tool=TETRA cpu_usec=226625992 ringbuf_lost=0 queue_lost=7.6054585e+07 notify_overflow=117073 missed_prog_sum=0
+T3 TETRA-sysenter run8: 1819.3760 tps
+tool=HIDS cpu_usec=48708211 ban_ghi=28891269 ban_ghi_giay=479390.4 mat=0
+T3 HIDS-host run8: 2515.1225 tps
+tool=HIDS cpu_usec=122848710 ban_ghi=74476177 ban_ghi_giay=1232304.4 mat=1245580
+T3 HIDS-all run8: 2234.3307 tps
+[2026-10-25T02:29:18+07:00] T3 tien do 8/10
+T3 C0 run9: 3907.1127 tps
+tool=FALCO cpu_usec=20035858 scap_n_drops=0 event_drop_occurrences=?
+T3 FALCO run9: 3398.4580 tps
+tool=TETRA cpu_usec=758793 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+T3 TETRA-def run9: 3529.2678 tps
+tool=TETRA cpu_usec=226619846 ringbuf_lost=0 queue_lost=5.8339399e+07 notify_overflow=99169 missed_prog_sum=0
+T3 TETRA-sysenter run9: 1338.9134 tps
+tool=HIDS cpu_usec=55052016 ban_ghi=36790228 ban_ghi_giay=609755.2 mat=0
+T3 HIDS-host run9: 3264.2775 tps
+tool=HIDS cpu_usec=121713930 ban_ghi=70000169 ban_ghi_giay=1158947.1 mat=1171783
+T3 HIDS-all run9: 2102.7888 tps
+[2026-10-25T02:37:30+07:00] T3 tien do 9/10
+T3 C0 run10: 3450.4368 tps
+tool=FALCO cpu_usec=19612089 scap_n_drops=0 event_drop_occurrences=?
+T3 FALCO run10: 3081.2817 tps
+tool=TETRA cpu_usec=821059 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+T3 TETRA-def run10: 3924.9802 tps
+tool=TETRA cpu_usec=226524955 ringbuf_lost=0 queue_lost=5.8151038e+07 notify_overflow=99998 missed_prog_sum=0
+T3 TETRA-sysenter run10: 1337.4842 tps
+tool=HIDS cpu_usec=51570960 ban_ghi=32826278 ban_ghi_giay=543446.2 mat=0
+T3 HIDS-host run10: 2871.6132 tps
+tool=HIDS cpu_usec=118731004 ban_ghi=65134189 ban_ghi_giay=1078023.4 mat=18911
+T3 HIDS-all run10: 1893.8075 tps
+[2026-10-25T02:45:38+07:00] T3 tien do 10/10
+[2026-10-25T02:45:38+07:00] freq_stamp T3 sau
+2026-10-25T02:45:38+07:00
+lan 1: GHz_wall=1.9380
+lan 2: GHz_wall=1.9390
+lan 3: GHz_wall=1.9355
+trung vi GHz_wall=1.9380
+[2026-10-25T02:45:42+07:00] tong hop TSV
+tsv xong
+===== /root/hids/validation/m6f-20261024/T1.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T1	C0	10	184.9300	1.9936	183.5040	186.3560	0.0000	-	-	-
+T1	FALCO	10	216.5040	1.4042	215.4996	217.5084	17.0735	16.2086	17.9413	0.0001
+T1	HIDS-all	10	768.5130	25.5840	750.2126	786.8134	315.5697	307.3839	324.3609	0.0001
+T1	HIDS-host	10	772.6190	31.1118	750.3645	794.8735	317.7900	307.2820	327.6276	0.0001
+T1	TETRA-def	10	185.7210	3.3862	183.2988	188.1432	0.4277	-0.6878	1.8241	0.5871
+T1	TETRA-sysenter	10	1590.5890	95.3800	1522.3630	1658.8150	760.1033	731.5546	792.8581	0.0002
+===== /root/hids/validation/m6f-20261024/T3.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T3	C0	10	3548.3341	238.4655	3377.7581	3718.9102	0.0000	-	-	-
+T3	FALCO	10	3324.5322	251.1323	3144.8954	3504.1689	-6.3072	-11.7092	-0.6532	0.0562
+T3	HIDS-all	10	2040.6054	191.9740	1903.2850	2177.9258	-42.4912	-46.2017	-38.5060	0.0001
+T3	HIDS-host	10	2817.6600	241.8824	2644.6398	2990.6802	-20.5920	-25.4680	-15.4034	0.0001
+T3	TETRA-def	10	3510.5278	213.3188	3357.9394	3663.1163	-1.0655	-6.1679	4.3353	0.6998
+T3	TETRA-sysenter	10	1495.2554	180.8972	1365.8584	1624.6525	-57.8604	-61.1641	-54.3283	0.0002
+===== /root/hids/validation/m6f-20261024/T4.tsv =====
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T4	C0	10	109653.2480	3972.5516	106811.6532	112494.8428	0.0000	-	-	-
+T4	FALCO	10	97068.7700	5081.5887	93433.8730	100703.6670	-11.4766	-14.9045	-8.2071	0.0001
+T4	HIDS-all	10	62873.5660	1819.9752	61571.7246	64175.4074	-42.6615	-44.1741	-41.0414	0.0001
+T4	HIDS-host	10	94097.2260	5822.6495	89932.2429	98262.2091	-14.1866	-17.6370	-10.3807	0.0001
+T4	TETRA-def	10	109977.8460	5951.9533	105720.3709	114235.3211	0.2960	-3.5312	4.2422	0.8894
+T4	TETRA-sysenter	10	58094.8530	1492.9225	57026.9548	59162.7512	-47.0195	-48.3075	-45.5824	0.0002
+===== tool-cpu (usage_usec) =====
+load  cond            run  value
+T1    FALCO           1    119039
+T1    FALCO           10   117951
+T1    FALCO           2    159348
+T1    FALCO           3    119558
+T1    FALCO           4    131037
+T1    FALCO           5    120774
+T1    FALCO           6    168879
+T1    FALCO           7    123886
+T1    FALCO           8    115899
+T1    FALCO           9    127820
+T1    HIDS-all        1    16127850
+T1    HIDS-all        10   16023241
+T1    HIDS-all        2    16565933
+T1    HIDS-all        3    16514445
+T1    HIDS-all        4    17445667
+T1    HIDS-all        5    16760734
+T1    HIDS-all        6    16025700
+T1    HIDS-all        7    15609185
+T1    HIDS-all        8    16017273
+T1    HIDS-all        9    17356711
+T1    HIDS-host       1    15593376
+T1    HIDS-host       10   16599994
+T1    HIDS-host       2    16905796
+T1    HIDS-host       3    15117875
+T1    HIDS-host       4    16824459
+T1    HIDS-host       5    17379287
+T1    HIDS-host       6    16463613
+T1    HIDS-host       7    17121853
+T1    HIDS-host       8    16424589
+T1    HIDS-host       9    16696864
+T1    TETRA-def       1    34837
+T1    TETRA-def       10   55282
+T1    TETRA-def       2    40871
+T1    TETRA-def       3    52711
+T1    TETRA-def       4    43621
+T1    TETRA-def       5    53186
+T1    TETRA-def       6    46681
+T1    TETRA-def       7    44644
+T1    TETRA-def       8    43824
+T1    TETRA-def       9    37916
+T1    TETRA-sysenter  1    77990389
+T1    TETRA-sysenter  10   70317912
+T1    TETRA-sysenter  2    69370514
+T1    TETRA-sysenter  3    71476550
+T1    TETRA-sysenter  4    80189433
+T1    TETRA-sysenter  5    70915822
+T1    TETRA-sysenter  6    69845529
+T1    TETRA-sysenter  7    71094144
+T1    TETRA-sysenter  8    68948848
+T1    TETRA-sysenter  9    77369157
+T3    FALCO           1    19735628
+T3    FALCO           10   19612089
+T3    FALCO           2    19375019
+T3    FALCO           3    19500834
+T3    FALCO           4    19530807
+T3    FALCO           5    20021230
+T3    FALCO           6    20590523
+T3    FALCO           7    20215811
+T3    FALCO           8    20899717
+T3    FALCO           9    20035858
+T3    HIDS-all        1    118104315
+T3    HIDS-all        10   118731004
+T3    HIDS-all        2    117678711
+T3    HIDS-all        3    119185885
+T3    HIDS-all        4    114626933
+T3    HIDS-all        5    125850034
+T3    HIDS-all        6    123661811
+T3    HIDS-all        7    122355692
+T3    HIDS-all        8    122848710
+T3    HIDS-all        9    121713930
+T3    HIDS-host       1    49657547
+T3    HIDS-host       10   51570960
+T3    HIDS-host       2    51347343
+T3    HIDS-host       3    51666617
+T3    HIDS-host       4    51012329
+T3    HIDS-host       5    50613213
+T3    HIDS-host       6    53663194
+T3    HIDS-host       7    53532278
+T3    HIDS-host       8    48708211
+T3    HIDS-host       9    55052016
+T3    TETRA-def       1    604858
+T3    TETRA-def       10   821059
+T3    TETRA-def       2    770702
+T3    TETRA-def       3    750399
+T3    TETRA-def       4    886248
+T3    TETRA-def       5    802951
+T3    TETRA-def       6    811912
+T3    TETRA-def       7    761106
+T3    TETRA-def       8    857341
+T3    TETRA-def       9    758793
+T3    TETRA-sysenter  1    224496599
+T3    TETRA-sysenter  10   226524955
+T3    TETRA-sysenter  2    237112227
+T3    TETRA-sysenter  3    227430516
+T3    TETRA-sysenter  4    224435411
+T3    TETRA-sysenter  5    226727738
+T3    TETRA-sysenter  6    226346140
+T3    TETRA-sysenter  7    228310863
+T3    TETRA-sysenter  8    226625992
+T3    TETRA-sysenter  9    226619846
+T4    FALCO           1    38563079
+T4    FALCO           10   39308558
+T4    FALCO           2    40846159
+T4    FALCO           3    37721467
+T4    FALCO           4    39169759
+T4    FALCO           5    34645954
+T4    FALCO           6    38113725
+T4    FALCO           7    39986571
+T4    FALCO           8    36840950
+T4    FALCO           9    38760486
+T4    HIDS-all        1    122824779
+T4    HIDS-all        10   119563032
+T4    HIDS-all        2    120780038
+T4    HIDS-all        3    120195908
+T4    HIDS-all        4    118579160
+T4    HIDS-all        5    120516857
+T4    HIDS-all        6    119137173
+T4    HIDS-all        7    118721289
+T4    HIDS-all        8    117101114
+T4    HIDS-all        9    117684786
+T4    HIDS-host       1    46985178
+T4    HIDS-host       10   53476947
+T4    HIDS-host       2    54095689
+T4    HIDS-host       3    50641776
+T4    HIDS-host       4    49985082
+T4    HIDS-host       5    46815249
+T4    HIDS-host       6    50620477
+T4    HIDS-host       7    52035750
+T4    HIDS-host       8    46863014
+T4    HIDS-host       9    51940028
+T4    TETRA-def       1    283510
+T4    TETRA-def       10   303317
+T4    TETRA-def       2    282335
+T4    TETRA-def       3    290927
+T4    TETRA-def       4    280317
+T4    TETRA-def       5    301137
+T4    TETRA-def       6    287046
+T4    TETRA-def       7    299899
+T4    TETRA-def       8    302181
+T4    TETRA-def       9    276407
+T4    TETRA-sysenter  1    237887280
+T4    TETRA-sysenter  10   239309349
+T4    TETRA-sysenter  2    237963174
+T4    TETRA-sysenter  3    238575684
+T4    TETRA-sysenter  4    237558485
+T4    TETRA-sysenter  5    230401252
+T4    TETRA-sysenter  6    237045241
+T4    TETRA-sysenter  7    238488606
+T4    TETRA-sysenter  8    238191179
+T4    TETRA-sysenter  9    236725361
+===== tool-drop =====
+load  cond            run  value
+T1    FALCO           1    0
+T1    FALCO           10   0
+T1    FALCO           2    0
+T1    FALCO           3    0
+T1    FALCO           4    0
+T1    FALCO           5    0
+T1    FALCO           6    0
+T1    FALCO           7    0
+T1    FALCO           8    0
+T1    FALCO           9    0
+T1    HIDS-all        1    0
+T1    HIDS-all        10   0
+T1    HIDS-all        2    0
+T1    HIDS-all        3    0
+T1    HIDS-all        4    0
+T1    HIDS-all        5    0
+T1    HIDS-all        6    0
+T1    HIDS-all        7    0
+T1    HIDS-all        8    0
+T1    HIDS-all        9    0
+T1    HIDS-host       1    0
+T1    HIDS-host       10   0
+T1    HIDS-host       2    0
+T1    HIDS-host       3    0
+T1    HIDS-host       4    0
+T1    HIDS-host       5    0
+T1    HIDS-host       6    0
+T1    HIDS-host       7    0
+T1    HIDS-host       8    0
+T1    HIDS-host       9    0
+T1    TETRA-def       1    0.0
+T1    TETRA-def       10   0.0
+T1    TETRA-def       2    0.0
+T1    TETRA-def       3    0.0
+T1    TETRA-def       4    0.0
+T1    TETRA-def       5    0.0
+T1    TETRA-def       6    0.0
+T1    TETRA-def       7    0.0
+T1    TETRA-def       8    0.0
+T1    TETRA-def       9    0.0
+T1    TETRA-sysenter  1    15160548.0
+T1    TETRA-sysenter  10   14284364.0
+T1    TETRA-sysenter  2    14381774.0
+T1    TETRA-sysenter  3    14529132.0
+T1    TETRA-sysenter  4    14935236.0
+T1    TETRA-sysenter  5    14527095.0
+T1    TETRA-sysenter  6    14387849.0
+T1    TETRA-sysenter  7    14392311.0
+T1    TETRA-sysenter  8    14392668.0
+T1    TETRA-sysenter  9    15128025.0
+T3    FALCO           1    0
+T3    FALCO           10   0
+T3    FALCO           2    0
+T3    FALCO           3    0
+T3    FALCO           4    0
+T3    FALCO           5    0
+T3    FALCO           6    0
+T3    FALCO           7    0
+T3    FALCO           8    0
+T3    FALCO           9    0
+T3    HIDS-all        1    0
+T3    HIDS-all        10   18911
+T3    HIDS-all        2    0
+T3    HIDS-all        3    425063
+T3    HIDS-all        4    0
+T3    HIDS-all        5    860094
+T3    HIDS-all        6    2865017
+T3    HIDS-all        7    2542787
+T3    HIDS-all        8    1245580
+T3    HIDS-all        9    1171783
+T3    HIDS-host       1    0
+T3    HIDS-host       10   0
+T3    HIDS-host       2    0
+T3    HIDS-host       3    0
+T3    HIDS-host       4    0
+T3    HIDS-host       5    0
+T3    HIDS-host       6    0
+T3    HIDS-host       7    0
+T3    HIDS-host       8    0
+T3    HIDS-host       9    0
+T3    TETRA-def       1    0.0
+T3    TETRA-def       10   0.0
+T3    TETRA-def       2    0.0
+T3    TETRA-def       3    0.0
+T3    TETRA-def       4    0.0
+T3    TETRA-def       5    0.0
+T3    TETRA-def       6    0.0
+T3    TETRA-def       7    0.0
+T3    TETRA-def       8    0.0
+T3    TETRA-def       9    0.0
+T3    TETRA-sysenter  1    56819461.0
+T3    TETRA-sysenter  10   58151038.0
+T3    TETRA-sysenter  2    70680386.0
+T3    TETRA-sysenter  3    69633823.0
+T3    TETRA-sysenter  4    57149048.0
+T3    TETRA-sysenter  5    57868869.0
+T3    TETRA-sysenter  6    64277193.0
+T3    TETRA-sysenter  7    64888038.0
+T3    TETRA-sysenter  8    76054585.0
+T3    TETRA-sysenter  9    58339399.0
+T4    FALCO           1    0
+T4    FALCO           10   0
+T4    FALCO           2    0
+T4    FALCO           3    0
+T4    FALCO           4    0
+T4    FALCO           5    0
+T4    FALCO           6    0
+T4    FALCO           7    0
+T4    FALCO           8    0
+T4    FALCO           9    0
+T4    HIDS-all        1    24513672
+T4    HIDS-all        10   26349964
+T4    HIDS-all        2    31424093
+T4    HIDS-all        3    30828503
+T4    HIDS-all        4    27269937
+T4    HIDS-all        5    29238824
+T4    HIDS-all        6    24158725
+T4    HIDS-all        7    26616148
+T4    HIDS-all        8    27342518
+T4    HIDS-all        9    26918452
+T4    HIDS-host       1    0
+T4    HIDS-host       10   0
+T4    HIDS-host       2    0
+T4    HIDS-host       3    0
+T4    HIDS-host       4    0
+T4    HIDS-host       5    0
+T4    HIDS-host       6    0
+T4    HIDS-host       7    0
+T4    HIDS-host       8    0
+T4    HIDS-host       9    0
+T4    TETRA-def       1    0.0
+T4    TETRA-def       10   0.0
+T4    TETRA-def       2    0.0
+T4    TETRA-def       3    0.0
+T4    TETRA-def       4    0.0
+T4    TETRA-def       5    0.0
+T4    TETRA-def       6    0.0
+T4    TETRA-def       7    0.0
+T4    TETRA-def       8    0.0
+T4    TETRA-def       9    0.0
+T4    TETRA-sysenter  1    106554521.0
+T4    TETRA-sysenter  10   110168948.0
+T4    TETRA-sysenter  2    108077933.0
+T4    TETRA-sysenter  3    107134609.0
+T4    TETRA-sysenter  4    105579112.0
+T4    TETRA-sysenter  5    105849195.0
+T4    TETRA-sysenter  6    101863012.0
+T4    TETRA-sysenter  7    108994465.0
+T4    TETRA-sysenter  8    106319473.0
+T4    TETRA-sysenter  9    104036310.0
+===== tool-stats mau =====
+-- /root/hids/validation/m6f-20261024/T1/C0/run10/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-20261024/T1/C0/run1/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-20261024/T1/C0/run2/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-20261024/T1/C0/run3/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-20261024/T1/C0/run4/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-20261024/T1/C0/run5/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-20261024/T1/C0/run6/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-20261024/T1/C0/run7/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-20261024/T1/C0/run8/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-20261024/T1/C0/run9/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-20261024/T1/FALCO/run10/tool-stats.txt
+tool=FALCO cpu_usec=117951 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-20261024/T1/FALCO/run1/tool-stats.txt
+tool=FALCO cpu_usec=119039 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-20261024/T1/FALCO/run2/tool-stats.txt
+tool=FALCO cpu_usec=159348 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-20261024/T1/FALCO/run3/tool-stats.txt
+tool=FALCO cpu_usec=119558 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-20261024/T1/FALCO/run4/tool-stats.txt
+tool=FALCO cpu_usec=131037 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-20261024/T1/FALCO/run5/tool-stats.txt
+tool=FALCO cpu_usec=120774 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-20261024/T1/FALCO/run6/tool-stats.txt
+tool=FALCO cpu_usec=168879 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-20261024/T1/FALCO/run7/tool-stats.txt
+tool=FALCO cpu_usec=123886 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-20261024/T1/FALCO/run8/tool-stats.txt
+tool=FALCO cpu_usec=115899 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-20261024/T1/FALCO/run9/tool-stats.txt
+tool=FALCO cpu_usec=127820 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-20261024/T1/HIDS-all/run10/tool-stats.txt
+tool=HIDS cpu_usec=16023241 ban_ghi=10131254 ban_ghi_giay=1334795.3 mat=0
+-- /root/hids/validation/m6f-20261024/T1/HIDS-all/run1/tool-stats.txt
+tool=HIDS cpu_usec=16127850 ban_ghi=10048372 ban_ghi_giay=1315774.2 mat=0
+-- /root/hids/validation/m6f-20261024/T1/HIDS-all/run2/tool-stats.txt
+tool=HIDS cpu_usec=16565933 ban_ghi=10125975 ban_ghi_giay=1290924.8 mat=0
+-- /root/hids/validation/m6f-20261024/T1/HIDS-all/run3/tool-stats.txt
+tool=HIDS cpu_usec=16514445 ban_ghi=10114767 ban_ghi_giay=1294563.6 mat=0
+-- /root/hids/validation/m6f-20261024/T1/HIDS-all/run4/tool-stats.txt
+tool=HIDS cpu_usec=17445667 ban_ghi=10117107 ban_ghi_giay=1234435.1 mat=0
+-- /root/hids/validation/m6f-20261024/T1/HIDS-all/run5/tool-stats.txt
+tool=HIDS cpu_usec=16760734 ban_ghi=10113008 ban_ghi_giay=1287544.7 mat=0
+-- /root/hids/validation/m6f-20261024/T1/HIDS-all/run6/tool-stats.txt
+tool=HIDS cpu_usec=16025700 ban_ghi=10108758 ban_ghi_giay=1335189.4 mat=0
+-- /root/hids/validation/m6f-20261024/T1/HIDS-all/run7/tool-stats.txt
+tool=HIDS cpu_usec=15609185 ban_ghi=10107699 ban_ghi_giay=1361940.5 mat=0
+-- /root/hids/validation/m6f-20261024/T1/HIDS-all/run8/tool-stats.txt
+tool=HIDS cpu_usec=16017273 ban_ghi=10128710 ban_ghi_giay=1344073.6 mat=0
+-- /root/hids/validation/m6f-20261024/T1/HIDS-all/run9/tool-stats.txt
+tool=HIDS cpu_usec=17356711 ban_ghi=10145250 ban_ghi_giay=1247843.3 mat=0
+-- /root/hids/validation/m6f-20261024/T1/HIDS-host/run10/tool-stats.txt
+tool=HIDS cpu_usec=16599994 ban_ghi=10000001 ban_ghi_giay=1292654.1 mat=0
+-- /root/hids/validation/m6f-20261024/T1/HIDS-host/run1/tool-stats.txt
+tool=HIDS cpu_usec=15593376 ban_ghi=10000001 ban_ghi_giay=1367702.9 mat=0
+-- /root/hids/validation/m6f-20261024/T1/HIDS-host/run2/tool-stats.txt
+tool=HIDS cpu_usec=16905796 ban_ghi=10000001 ban_ghi_giay=1272662.4 mat=0
+-- /root/hids/validation/m6f-20261024/T1/HIDS-host/run3/tool-stats.txt
+tool=HIDS cpu_usec=15117875 ban_ghi=10000001 ban_ghi_giay=1406479.3 mat=0
+-- /root/hids/validation/m6f-20261024/T1/HIDS-host/run4/tool-stats.txt
+tool=HIDS cpu_usec=16824459 ban_ghi=10000001 ban_ghi_giay=1264595.0 mat=0
+-- /root/hids/validation/m6f-20261024/T1/HIDS-host/run5/tool-stats.txt
+tool=HIDS cpu_usec=17379287 ban_ghi=10000001 ban_ghi_giay=1227835.6 mat=0
+-- /root/hids/validation/m6f-20261024/T1/HIDS-host/run6/tool-stats.txt
+tool=HIDS cpu_usec=16463613 ban_ghi=10000001 ban_ghi_giay=1297589.5 mat=0
+-- /root/hids/validation/m6f-20261024/T1/HIDS-host/run7/tool-stats.txt
+tool=HIDS cpu_usec=17121853 ban_ghi=10000001 ban_ghi_giay=1245260.8 mat=0
+-- /root/hids/validation/m6f-20261024/T1/HIDS-host/run8/tool-stats.txt
+tool=HIDS cpu_usec=16424589 ban_ghi=10000001 ban_ghi_giay=1299205.4 mat=0
+-- /root/hids/validation/m6f-20261024/T1/HIDS-host/run9/tool-stats.txt
+tool=HIDS cpu_usec=16696864 ban_ghi=10000001 ban_ghi_giay=1296881.1 mat=0
+-- /root/hids/validation/m6f-20261024/T1/TETRA-def/run10/tool-stats.txt
+tool=TETRA cpu_usec=55282 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T1/TETRA-def/run1/tool-stats.txt
+tool=TETRA cpu_usec=34837 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T1/TETRA-def/run2/tool-stats.txt
+tool=TETRA cpu_usec=40871 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T1/TETRA-def/run3/tool-stats.txt
+tool=TETRA cpu_usec=52711 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T1/TETRA-def/run4/tool-stats.txt
+tool=TETRA cpu_usec=43621 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T1/TETRA-def/run5/tool-stats.txt
+tool=TETRA cpu_usec=53186 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T1/TETRA-def/run6/tool-stats.txt
+tool=TETRA cpu_usec=46681 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T1/TETRA-def/run7/tool-stats.txt
+tool=TETRA cpu_usec=44644 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T1/TETRA-def/run8/tool-stats.txt
+tool=TETRA cpu_usec=43824 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T1/TETRA-def/run9/tool-stats.txt
+tool=TETRA cpu_usec=37916 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T1/TETRA-sysenter/run10/tool-stats.txt
+tool=TETRA cpu_usec=70317912 ringbuf_lost=0 queue_lost=1.4284364e+07 notify_overflow=670386 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T1/TETRA-sysenter/run1/tool-stats.txt
+tool=TETRA cpu_usec=77990389 ringbuf_lost=0 queue_lost=1.5160548e+07 notify_overflow=767264 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T1/TETRA-sysenter/run2/tool-stats.txt
+tool=TETRA cpu_usec=69370514 ringbuf_lost=0 queue_lost=1.4381774e+07 notify_overflow=672411 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T1/TETRA-sysenter/run3/tool-stats.txt
+tool=TETRA cpu_usec=71476550 ringbuf_lost=0 queue_lost=1.4529132e+07 notify_overflow=710562 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T1/TETRA-sysenter/run4/tool-stats.txt
+tool=TETRA cpu_usec=80189433 ringbuf_lost=0 queue_lost=1.4935236e+07 notify_overflow=767638 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T1/TETRA-sysenter/run5/tool-stats.txt
+tool=TETRA cpu_usec=70915822 ringbuf_lost=0 queue_lost=1.4527095e+07 notify_overflow=682580 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T1/TETRA-sysenter/run6/tool-stats.txt
+tool=TETRA cpu_usec=69845529 ringbuf_lost=0 queue_lost=1.4387849e+07 notify_overflow=683336 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T1/TETRA-sysenter/run7/tool-stats.txt
+tool=TETRA cpu_usec=71094144 ringbuf_lost=0 queue_lost=1.4392311e+07 notify_overflow=682334 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T1/TETRA-sysenter/run8/tool-stats.txt
+tool=TETRA cpu_usec=68948848 ringbuf_lost=0 queue_lost=1.4392668e+07 notify_overflow=664967 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T1/TETRA-sysenter/run9/tool-stats.txt
+tool=TETRA cpu_usec=77369157 ringbuf_lost=0 queue_lost=1.5128025e+07 notify_overflow=751623 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T3/C0/run10/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-20261024/T3/C0/run1/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-20261024/T3/C0/run2/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-20261024/T3/C0/run3/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-20261024/T3/C0/run4/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-20261024/T3/C0/run5/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-20261024/T3/C0/run6/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-20261024/T3/C0/run7/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-20261024/T3/C0/run8/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-20261024/T3/C0/run9/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-20261024/T3/FALCO/run10/tool-stats.txt
+tool=FALCO cpu_usec=19612089 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-20261024/T3/FALCO/run1/tool-stats.txt
+tool=FALCO cpu_usec=19735628 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-20261024/T3/FALCO/run2/tool-stats.txt
+tool=FALCO cpu_usec=19375019 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-20261024/T3/FALCO/run3/tool-stats.txt
+tool=FALCO cpu_usec=19500834 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-20261024/T3/FALCO/run4/tool-stats.txt
+tool=FALCO cpu_usec=19530807 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-20261024/T3/FALCO/run5/tool-stats.txt
+tool=FALCO cpu_usec=20021230 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-20261024/T3/FALCO/run6/tool-stats.txt
+tool=FALCO cpu_usec=20590523 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-20261024/T3/FALCO/run7/tool-stats.txt
+tool=FALCO cpu_usec=20215811 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-20261024/T3/FALCO/run8/tool-stats.txt
+tool=FALCO cpu_usec=20899717 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-20261024/T3/FALCO/run9/tool-stats.txt
+tool=FALCO cpu_usec=20035858 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-20261024/T3/HIDS-all/run10/tool-stats.txt
+tool=HIDS cpu_usec=118731004 ban_ghi=65134189 ban_ghi_giay=1078023.4 mat=18911
+-- /root/hids/validation/m6f-20261024/T3/HIDS-all/run1/tool-stats.txt
+tool=HIDS cpu_usec=118104315 ban_ghi=63361100 ban_ghi_giay=1048635.7 mat=0
+-- /root/hids/validation/m6f-20261024/T3/HIDS-all/run2/tool-stats.txt
+tool=HIDS cpu_usec=117678711 ban_ghi=63119252 ban_ghi_giay=1044592.4 mat=0
+-- /root/hids/validation/m6f-20261024/T3/HIDS-all/run3/tool-stats.txt
+tool=HIDS cpu_usec=119185885 ban_ghi=67897148 ban_ghi_giay=1123939.9 mat=425063
+-- /root/hids/validation/m6f-20261024/T3/HIDS-all/run4/tool-stats.txt
+tool=HIDS cpu_usec=114626933 ban_ghi=60200202 ban_ghi_giay=996677.0 mat=0
+-- /root/hids/validation/m6f-20261024/T3/HIDS-all/run5/tool-stats.txt
+tool=HIDS cpu_usec=125850034 ban_ghi=65607129 ban_ghi_giay=1086081.5 mat=860094
+-- /root/hids/validation/m6f-20261024/T3/HIDS-all/run6/tool-stats.txt
+tool=HIDS cpu_usec=123661811 ban_ghi=77190028 ban_ghi_giay=1278072.5 mat=2865017
+-- /root/hids/validation/m6f-20261024/T3/HIDS-all/run7/tool-stats.txt
+tool=HIDS cpu_usec=122355692 ban_ghi=72441892 ban_ghi_giay=1199126.3 mat=2542787
+-- /root/hids/validation/m6f-20261024/T3/HIDS-all/run8/tool-stats.txt
+tool=HIDS cpu_usec=122848710 ban_ghi=74476177 ban_ghi_giay=1232304.4 mat=1245580
+-- /root/hids/validation/m6f-20261024/T3/HIDS-all/run9/tool-stats.txt
+tool=HIDS cpu_usec=121713930 ban_ghi=70000169 ban_ghi_giay=1158947.1 mat=1171783
+-- /root/hids/validation/m6f-20261024/T3/HIDS-host/run10/tool-stats.txt
+tool=HIDS cpu_usec=51570960 ban_ghi=32826278 ban_ghi_giay=543446.2 mat=0
+-- /root/hids/validation/m6f-20261024/T3/HIDS-host/run1/tool-stats.txt
+tool=HIDS cpu_usec=49657547 ban_ghi=29090524 ban_ghi_giay=481897.6 mat=0
+-- /root/hids/validation/m6f-20261024/T3/HIDS-host/run2/tool-stats.txt
+tool=HIDS cpu_usec=51347343 ban_ghi=31583298 ban_ghi_giay=523256.6 mat=0
+-- /root/hids/validation/m6f-20261024/T3/HIDS-host/run3/tool-stats.txt
+tool=HIDS cpu_usec=51666617 ban_ghi=31142957 ban_ghi_giay=516621.2 mat=0
+-- /root/hids/validation/m6f-20261024/T3/HIDS-host/run4/tool-stats.txt
+tool=HIDS cpu_usec=51012329 ban_ghi=29759468 ban_ghi_giay=492923.2 mat=0
+-- /root/hids/validation/m6f-20261024/T3/HIDS-host/run5/tool-stats.txt
+tool=HIDS cpu_usec=50613213 ban_ghi=31412722 ban_ghi_giay=520099.7 mat=0
+-- /root/hids/validation/m6f-20261024/T3/HIDS-host/run6/tool-stats.txt
+tool=HIDS cpu_usec=53663194 ban_ghi=34630061 ban_ghi_giay=574317.4 mat=0
+-- /root/hids/validation/m6f-20261024/T3/HIDS-host/run7/tool-stats.txt
+tool=HIDS cpu_usec=53532278 ban_ghi=34902585 ban_ghi_giay=578432.5 mat=0
+-- /root/hids/validation/m6f-20261024/T3/HIDS-host/run8/tool-stats.txt
+tool=HIDS cpu_usec=48708211 ban_ghi=28891269 ban_ghi_giay=479390.4 mat=0
+-- /root/hids/validation/m6f-20261024/T3/HIDS-host/run9/tool-stats.txt
+tool=HIDS cpu_usec=55052016 ban_ghi=36790228 ban_ghi_giay=609755.2 mat=0
+-- /root/hids/validation/m6f-20261024/T3/TETRA-def/run10/tool-stats.txt
+tool=TETRA cpu_usec=821059 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T3/TETRA-def/run1/tool-stats.txt
+tool=TETRA cpu_usec=604858 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T3/TETRA-def/run2/tool-stats.txt
+tool=TETRA cpu_usec=770702 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T3/TETRA-def/run3/tool-stats.txt
+tool=TETRA cpu_usec=750399 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T3/TETRA-def/run4/tool-stats.txt
+tool=TETRA cpu_usec=886248 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T3/TETRA-def/run5/tool-stats.txt
+tool=TETRA cpu_usec=802951 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T3/TETRA-def/run6/tool-stats.txt
+tool=TETRA cpu_usec=811912 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T3/TETRA-def/run7/tool-stats.txt
+tool=TETRA cpu_usec=761106 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T3/TETRA-def/run8/tool-stats.txt
+tool=TETRA cpu_usec=857341 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T3/TETRA-def/run9/tool-stats.txt
+tool=TETRA cpu_usec=758793 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T3/TETRA-sysenter/run10/tool-stats.txt
+tool=TETRA cpu_usec=226524955 ringbuf_lost=0 queue_lost=5.8151038e+07 notify_overflow=99998 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T3/TETRA-sysenter/run1/tool-stats.txt
+tool=TETRA cpu_usec=224496599 ringbuf_lost=0 queue_lost=5.6819461e+07 notify_overflow=101834 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T3/TETRA-sysenter/run2/tool-stats.txt
+tool=TETRA cpu_usec=237112227 ringbuf_lost=0 queue_lost=7.0680386e+07 notify_overflow=186391 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T3/TETRA-sysenter/run3/tool-stats.txt
+tool=TETRA cpu_usec=227430516 ringbuf_lost=0 queue_lost=6.9633823e+07 notify_overflow=112420 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T3/TETRA-sysenter/run4/tool-stats.txt
+tool=TETRA cpu_usec=224435411 ringbuf_lost=0 queue_lost=5.7149048e+07 notify_overflow=94930 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T3/TETRA-sysenter/run5/tool-stats.txt
+tool=TETRA cpu_usec=226727738 ringbuf_lost=0 queue_lost=5.7868869e+07 notify_overflow=101927 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T3/TETRA-sysenter/run6/tool-stats.txt
+tool=TETRA cpu_usec=226346140 ringbuf_lost=0 queue_lost=6.4277193e+07 notify_overflow=135524 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T3/TETRA-sysenter/run7/tool-stats.txt
+tool=TETRA cpu_usec=228310863 ringbuf_lost=0 queue_lost=6.4888038e+07 notify_overflow=115586 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T3/TETRA-sysenter/run8/tool-stats.txt
+tool=TETRA cpu_usec=226625992 ringbuf_lost=0 queue_lost=7.6054585e+07 notify_overflow=117073 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T3/TETRA-sysenter/run9/tool-stats.txt
+tool=TETRA cpu_usec=226619846 ringbuf_lost=0 queue_lost=5.8339399e+07 notify_overflow=99169 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T4/C0/run10/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-20261024/T4/C0/run1/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-20261024/T4/C0/run2/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-20261024/T4/C0/run3/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-20261024/T4/C0/run4/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-20261024/T4/C0/run5/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-20261024/T4/C0/run6/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-20261024/T4/C0/run7/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-20261024/T4/C0/run8/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-20261024/T4/C0/run9/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-20261024/T4/FALCO/run10/tool-stats.txt
+tool=FALCO cpu_usec=39308558 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-20261024/T4/FALCO/run1/tool-stats.txt
+tool=FALCO cpu_usec=38563079 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-20261024/T4/FALCO/run2/tool-stats.txt
+tool=FALCO cpu_usec=40846159 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-20261024/T4/FALCO/run3/tool-stats.txt
+tool=FALCO cpu_usec=37721467 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-20261024/T4/FALCO/run4/tool-stats.txt
+tool=FALCO cpu_usec=39169759 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-20261024/T4/FALCO/run5/tool-stats.txt
+tool=FALCO cpu_usec=34645954 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-20261024/T4/FALCO/run6/tool-stats.txt
+tool=FALCO cpu_usec=38113725 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-20261024/T4/FALCO/run7/tool-stats.txt
+tool=FALCO cpu_usec=39986571 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-20261024/T4/FALCO/run8/tool-stats.txt
+tool=FALCO cpu_usec=36840950 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-20261024/T4/FALCO/run9/tool-stats.txt
+tool=FALCO cpu_usec=38760486 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-20261024/T4/HIDS-all/run10/tool-stats.txt
+tool=HIDS cpu_usec=119563032 ban_ghi=82654885 ban_ghi_giay=1375834.1 mat=26349964
+-- /root/hids/validation/m6f-20261024/T4/HIDS-all/run1/tool-stats.txt
+tool=HIDS cpu_usec=122824779 ban_ghi=86951731 ban_ghi_giay=1447607.9 mat=24513672
+-- /root/hids/validation/m6f-20261024/T4/HIDS-all/run2/tool-stats.txt
+tool=HIDS cpu_usec=120780038 ban_ghi=81919055 ban_ghi_giay=1363739.7 mat=31424093
+-- /root/hids/validation/m6f-20261024/T4/HIDS-all/run3/tool-stats.txt
+tool=HIDS cpu_usec=120195908 ban_ghi=82935765 ban_ghi_giay=1380248.7 mat=30828503
+-- /root/hids/validation/m6f-20261024/T4/HIDS-all/run4/tool-stats.txt
+tool=HIDS cpu_usec=118579160 ban_ghi=79827594 ban_ghi_giay=1328704.3 mat=27269937
+-- /root/hids/validation/m6f-20261024/T4/HIDS-all/run5/tool-stats.txt
+tool=HIDS cpu_usec=120516857 ban_ghi=82804415 ban_ghi_giay=1378125.4 mat=29238824
+-- /root/hids/validation/m6f-20261024/T4/HIDS-all/run6/tool-stats.txt
+tool=HIDS cpu_usec=119137173 ban_ghi=85906170 ban_ghi_giay=1430089.5 mat=24158725
+-- /root/hids/validation/m6f-20261024/T4/HIDS-all/run7/tool-stats.txt
+tool=HIDS cpu_usec=118721289 ban_ghi=83653744 ban_ghi_giay=1392485.8 mat=26616148
+-- /root/hids/validation/m6f-20261024/T4/HIDS-all/run8/tool-stats.txt
+tool=HIDS cpu_usec=117101114 ban_ghi=80253189 ban_ghi_giay=1335992.3 mat=27342518
+-- /root/hids/validation/m6f-20261024/T4/HIDS-all/run9/tool-stats.txt
+tool=HIDS cpu_usec=117684786 ban_ghi=80284491 ban_ghi_giay=1336147.1 mat=26918452
+-- /root/hids/validation/m6f-20261024/T4/HIDS-host/run10/tool-stats.txt
+tool=HIDS cpu_usec=53476947 ban_ghi=43146027 ban_ghi_giay=717878.0 mat=0
+-- /root/hids/validation/m6f-20261024/T4/HIDS-host/run1/tool-stats.txt
+tool=HIDS cpu_usec=46985178 ban_ghi=37980623 ban_ghi_giay=632972.2 mat=0
+-- /root/hids/validation/m6f-20261024/T4/HIDS-host/run2/tool-stats.txt
+tool=HIDS cpu_usec=54095689 ban_ghi=44721671 ban_ghi_giay=745297.3 mat=0
+-- /root/hids/validation/m6f-20261024/T4/HIDS-host/run3/tool-stats.txt
+tool=HIDS cpu_usec=50641776 ban_ghi=38998998 ban_ghi_giay=648872.9 mat=0
+-- /root/hids/validation/m6f-20261024/T4/HIDS-host/run4/tool-stats.txt
+tool=HIDS cpu_usec=49985082 ban_ghi=39965285 ban_ghi_giay=666040.7 mat=0
+-- /root/hids/validation/m6f-20261024/T4/HIDS-host/run5/tool-stats.txt
+tool=HIDS cpu_usec=46815249 ban_ghi=37242758 ban_ghi_giay=620669.3 mat=0
+-- /root/hids/validation/m6f-20261024/T4/HIDS-host/run6/tool-stats.txt
+tool=HIDS cpu_usec=50620477 ban_ghi=40629218 ban_ghi_giay=675994.9 mat=0
+-- /root/hids/validation/m6f-20261024/T4/HIDS-host/run7/tool-stats.txt
+tool=HIDS cpu_usec=52035750 ban_ghi=41842394 ban_ghi_giay=697310.8 mat=0
+-- /root/hids/validation/m6f-20261024/T4/HIDS-host/run8/tool-stats.txt
+tool=HIDS cpu_usec=46863014 ban_ghi=37043727 ban_ghi_giay=617334.7 mat=0
+-- /root/hids/validation/m6f-20261024/T4/HIDS-host/run9/tool-stats.txt
+tool=HIDS cpu_usec=51940028 ban_ghi=41136678 ban_ghi_giay=684443.6 mat=0
+-- /root/hids/validation/m6f-20261024/T4/TETRA-def/run10/tool-stats.txt
+tool=TETRA cpu_usec=303317 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T4/TETRA-def/run1/tool-stats.txt
+tool=TETRA cpu_usec=283510 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T4/TETRA-def/run2/tool-stats.txt
+tool=TETRA cpu_usec=282335 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T4/TETRA-def/run3/tool-stats.txt
+tool=TETRA cpu_usec=290927 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T4/TETRA-def/run4/tool-stats.txt
+tool=TETRA cpu_usec=280317 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T4/TETRA-def/run5/tool-stats.txt
+tool=TETRA cpu_usec=301137 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T4/TETRA-def/run6/tool-stats.txt
+tool=TETRA cpu_usec=287046 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T4/TETRA-def/run7/tool-stats.txt
+tool=TETRA cpu_usec=299899 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T4/TETRA-def/run8/tool-stats.txt
+tool=TETRA cpu_usec=302181 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T4/TETRA-def/run9/tool-stats.txt
+tool=TETRA cpu_usec=276407 ringbuf_lost=0 queue_lost=0 notify_overflow=0 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T4/TETRA-sysenter/run10/tool-stats.txt
+tool=TETRA cpu_usec=239309349 ringbuf_lost=0 queue_lost=1.10168948e+08 notify_overflow=801142 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T4/TETRA-sysenter/run1/tool-stats.txt
+tool=TETRA cpu_usec=237887280 ringbuf_lost=0 queue_lost=1.06554521e+08 notify_overflow=787143 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T4/TETRA-sysenter/run2/tool-stats.txt
+tool=TETRA cpu_usec=237963174 ringbuf_lost=0 queue_lost=1.08077933e+08 notify_overflow=782813 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T4/TETRA-sysenter/run3/tool-stats.txt
+tool=TETRA cpu_usec=238575684 ringbuf_lost=0 queue_lost=1.07134609e+08 notify_overflow=737450 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T4/TETRA-sysenter/run4/tool-stats.txt
+tool=TETRA cpu_usec=237558485 ringbuf_lost=0 queue_lost=1.05579112e+08 notify_overflow=781310 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T4/TETRA-sysenter/run5/tool-stats.txt
+tool=TETRA cpu_usec=230401252 ringbuf_lost=0 queue_lost=1.05849195e+08 notify_overflow=708560 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T4/TETRA-sysenter/run6/tool-stats.txt
+tool=TETRA cpu_usec=237045241 ringbuf_lost=0 queue_lost=1.01863012e+08 notify_overflow=709264 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T4/TETRA-sysenter/run7/tool-stats.txt
+tool=TETRA cpu_usec=238488606 ringbuf_lost=0 queue_lost=1.08994465e+08 notify_overflow=763776 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T4/TETRA-sysenter/run8/tool-stats.txt
+tool=TETRA cpu_usec=238191179 ringbuf_lost=0 queue_lost=1.06319473e+08 notify_overflow=796553 missed_prog_sum=0
+-- /root/hids/validation/m6f-20261024/T4/TETRA-sysenter/run9/tool-stats.txt
+tool=TETRA cpu_usec=236725361 ringbuf_lost=0 queue_lost=1.0403631e+08 notify_overflow=708124 missed_prog_sum=0
+[2026-10-25T02:45:46+07:00] m6f overhead XONG

@@ -1,0 +1,29 @@
+=== sha256 5 file kien truc su ===
+9994b03f359ee5205354515f80bd4dd67f4919daca6b585702f4dc54796648c0  bpf/sys_enter.bpf.c
+39d892e5524de1cb49ace593b152c5b303d99c056e110f0a072d344c8270c7ec  bpf/proc_events.bpf.c
+9f0b4cde1c2e1c6aa560c041eaefaef1a40e5c7d9fc292db1d77dfc971d046cd  analysis/m5f_parse.py
+8c390002870f3ea8ace38a241f803bb5e7ec6c2413fdd403f757de24a6a1be25  analysis/m6c_stats.py
+88ef821eb062855b0189af1568d25e310b53f1e0c1e29e35e360282515d97706  tools/coreclk.c
+=== git ===
+26a364a
+=== images ===
+falcosecurity/falco:latest sha256:69e957f91b3a6beb5c82e2afae33ec3e4479dab2d4421475d288d0cd113cedf6
+quay.io/cilium/tetragon:v1.7.0 sha256:deda51c3f88e4d26b4d76c99ea207f2b05f9e40c210e0f04a37ca632ab7bf527
+=== falco version ===
+2026-10-24T16:47:35+0000: Falco version: 0.45.1 (x86_64)
+2026-10-24T16:47:35+0000: Falco initialized with configuration files:
+2026-10-24T16:47:35+0000:    /etc/falco/config.d/falco.container_plugin.yaml | schema validation: ok
+2026-10-24T16:47:35+0000:    /etc/falco/config.d/falco.iso8601_timeformat.yaml | schema validation: ok
+2026-10-24T16:47:35+0000:    /etc/falco/falco.yaml | schema validation: ok
+2026-10-24T16:47:35+0000: System info: Linux version 6.8.0-142-generic (buildd@lcy02-amd64-049) (x86_64-linux-gnu-gcc-13 (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, GNU ld (GNU Binutils for Ubuntu) 2.42) #142-Ubuntu SMP PREEMPT_DYNAMIC Wed Sep  2 14:24:27 UTC 2026
+Falco version: 0.45.1
+Libs version:  0.26.1
+Plugin API:    3.12.0
+Engine:        0.65.0
+Driver:
+  API version:    11.0.0
+  Schema version: 4.3.0
+  Default driver: 11.0.1+driver
+=== tetra version ===
+level=warn msg="Could not find BPF map root"
+CLI version: v1.7.0

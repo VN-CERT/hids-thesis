@@ -1,0 +1,1 @@
+tool=HIDS cpu_usec=121713930 ban_ghi=70000169 ban_ghi_giay=1158947.1 mat=1171783
