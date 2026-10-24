@@ -1,0 +1,92 @@
+=== CHAN DOAN L=7 2026-10-24T15:03:27+00:00 mem_steps=664718 ===
+--- (a) ghim stress-ng sau khoi dong (L=7) ---
+wl_pid=263846 wl_psr=0 wl_aff= 0
+263872 stress-ng psr=2 aff=1-7
+263875 stress-ng-strea psr=7 aff=1-7
+263876 stress-ng-strea psr=4 aff=1-7
+263877 stress-ng-strea psr=5 aff=1-7
+263878 stress-ng-strea psr=6 aff=1-7
+263879 stress-ng-strea psr=3 aff=1-7
+263880 stress-ng-strea psr=1 aff=1-7
+263881 stress-ng-strea psr=2 aff=1-7
+LOT_STRESS_NG_CPU0=0
+--- (b) top 10 comm @oncpu_ns tren CPU 0 (L=7, cua so 60s) ---
+rank  comm                        oncpu_ns pct_cua_so
+1     swapper/0                46013838234   76.6897%
+2     wl                        9751176984   16.2520%
+3     MainThread                2572595167    4.2877%
+4     libuv-worker               658622077    1.0977%
+5     git                        375922005    0.6265%
+6     kworker/0:0                352692516    0.5878%
+7     V8Worker                   113838556    0.1897%
+8     sshd                        27367780    0.0456%
+9     containerd                  18414657    0.0307%
+10    bpftrace                    17623092    0.0294%
+wl_oncpu_ns=9751176984 (16.2520% cua so)
+other_than_wl_oncpu_ns=50215796794
+other_than_wl_pct_of_60s=83.692995
+top_other_comm=swapper/0 ns=46013838234
+OTHER_PCT=83.692995
+
+=== CHAN DOAN L=6 2026-10-24T15:04:34+00:00 mem_steps=664718 ===
+--- (a) ghim stress-ng sau khoi dong (L=6) ---
+wl_pid=264222 wl_psr=0 wl_aff= 0
+264247 stress-ng psr=2 aff=1-7
+264249 stress-ng-strea psr=4 aff=1-7
+264250 stress-ng-strea psr=5 aff=1-7
+264251 stress-ng-strea psr=7 aff=1-7
+264252 stress-ng-strea psr=1 aff=1-7
+264253 stress-ng-strea psr=3 aff=1-7
+264254 stress-ng-strea psr=6 aff=1-7
+LOT_STRESS_NG_CPU0=0
+--- (b) top 10 comm @oncpu_ns tren CPU 0 (L=6, cua so 60s) ---
+rank  comm                        oncpu_ns pct_cua_so
+1     swapper/0                49477908666   82.4632%
+2     wl                        9001600590   15.0027%
+3     MainThread                1074041109    1.7901%
+4     git                        247341180    0.4122%
+5     kworker/0:0                102263312    0.1704%
+6     V8Worker                    35625627    0.0594%
+7     containerd                   8907147    0.0148%
+8     sshd                         7482104    0.0125%
+9     bash                         5678403    0.0095%
+10    kworker/u16:3                4023302    0.0067%
+wl_oncpu_ns=9001600590 (15.0027% cua so)
+other_than_wl_oncpu_ns=50980694483
+other_than_wl_pct_of_60s=84.967824
+top_other_comm=swapper/0 ns=49477908666
+OTHER_PCT=84.967824
+
+=== XONG chuan doan 2026-10-24T15:05:37+00:00 ===
+
+================================================================
+TINH LAI (loai swapper/idle khoi "comm khac wl" — neu gom idle thi OTHER~84% o ca hai muc, cay quyet dinh vo nghia)
+================================================================
+L=7: other_busy_pct=7.003264%  (idle=76.6897% wl=16.2520% other_gom_idle=83.6930%)
+     top_busy_comm=MainThread ns=2572595167
+L=6: other_busy_pct=2.504643%  (idle=82.4632% wl=15.0027% other_gom_idle=84.9678%)
+     top_busy_comm=MainThread ns=1074041109
+
+(a) LOT_STRESS_NG_CPU0: L7=0 L6=0 (khong worker stress-ng lot CPU 0; aff=1-7)
+
+QUYET DINH (theo other_busy_pct, nguong 1%):
+  L=6 other_busy = 2.5046% >= 1%
+  L=7 other_busy = 7.0033% >= 1%
+  => nhanh 3: L=6 cung >= 1% — DUNG, khong sua tieu chi, khong chay lai D3.
+
+================================================================
+KET LUAN CHAN DOAN (tu dong theo de bai)
+================================================================
+(a) Khong co worker stress-ng lot CPU 0 o ca L=7 va L=6 (aff=1-7, psr != 0).
+(b) OTHER_PCT dung cho cay quyet dinh = tong oncpu cua comm KHAC wl VA KHAC swapper (idle)
+    chia 60 s. (Ban in bpftrace tho gom ca swapper ~76–82%; neu dung so do thi ca hai muc
+    deu ~84% va chi kich nhanh 3 — van dung, nhung mat y nghia so sanh L=6 vs L=7.)
+
+So do (other_busy, loai idle):
+  L=7: 7.003264%  — top busy: MainThread (Cursor/IDE), roi libuv-worker, git, kworker/0:0
+  L=6: 2.504643%  — top busy: MainThread, git, kworker/0:0
+
+Cay quyet dinh:
+  - Nhanh 1 (sua ghim): KHONG — khong lot stress-ng.
+  - Nhanh 2 (doi muc {0,2,4,6}): KHONG — L=6 other_busy = 2.50% >= 1% (khong thoa L=6 < 1%).
+  - Nhanh 3: CO — L=6 cung >= 1% → DUNG. Khong sua tieu chi. Khong chay lai D3/D4/E5/driver.

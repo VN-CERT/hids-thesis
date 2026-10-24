@@ -86,3 +86,21 @@ Lý do: D3 với 12/22 worker trên 7 CPU là quá tải gấp 2–3 lần, thre
 2. Mọi lần chạy wl trong liều, E5, B/N: dùng `-loops <mem_steps>` lấy từ một lần hiệu chuẩn lúc máy rảnh đầu buổi (cơ chế m4.sh), KHÔNG dùng chế độ tự hiệu chuẩn/tự kiểm dưới tải. Ô thiếu số liệu chạy lại tối đa 3 lần; bắt buộc đủ 3/3 lần mỗi mức.
 3. D4/E5: không dùng docker exec. Chạy wl trong scope systemd: `systemd-run --scope -p CPUQuota=<200%|100%|50%> taskset -c 0 ./bin/wl -loops <mem_steps> mem 500` (mức "không giới hạn" = không có CPUQuota); collector lọc `-pid` của wl; nr_throttled/throttled_usec đọc từ cpu.stat của scope đó.
 4. Tiêu chí "thành phần không kỳ vọng đổi < 10 %" đổi thành: |Δ trung vị thành phần không kỳ vọng| < max(10 % của trung vị thành phần kỳ vọng ở mức cao nhất, 100 µs). Tránh chia cho nền 0.
+
+## Phụ lục 1.3 — 24/10/2026 (chẩn đoán rq D3 L=7; DỪNG)
+
+Số đo (máy 201, lab0 dừng, wl `-loops 664718 mem 500` CPU 0, stress-ng `--stream L --taskset 1-7`, không collector; cửa sổ bpftrace 60 s trên CPU 0). File đầy đủ: `validation/lab1-20261024/lieu/D3-chandoan.txt`.
+
+**(a) Ghim stress-ng:** không worker nào `psr=0` hay affinity chứa CPU 0. L=7 và L=6 đều `aff=1-7`. Không phải lỗi ghim.
+
+**(b) Ai chiếm CPU 0 ngoài wl** (other_busy = tổng `@oncpu_ns` của mọi `comm` khác `wl` và khác `swapper/*`, chia 60 s):
+
+| L | other_busy % | top busy comm | wl % | idle (swapper/0) % |
+|---|-------------:|---------------|-----:|-------------------:|
+| 7 | 7.003264 | MainThread (2.573e9 ns, 4.29% cửa sổ) | 16.25 | 76.69 |
+| 6 | 2.504643 | MainThread (1.074e9 ns, 1.79% cửa sổ) | 15.00 | 82.46 |
+
+Top 10 L=7 (thứ tự `@oncpu_ns`): swapper/0, wl, MainThread, libuv-worker, git, kworker/0:0, V8Worker, sshd, containerd, bpftrace.
+Top 10 L=6: swapper/0, wl, MainThread, git, kworker/0:0, V8Worker, containerd, sshd, bash, kworker/u16:3.
+
+**Quyết định:** nhánh 3 của nhiệm vụ chẩn đoán — L=6 other_busy (2.50%) cũng ≥ 1% (cùng L=7 = 7.00%). **DỪNG.** Không đổi mức D3, không sửa ghim, không sửa tiêu chí phụ lục 1.2, không chạy lại D3/D4/E5 trong phiên này. Ghi nhận: tải busy ngoài wl trên CPU 0 chủ yếu là `MainThread`/`libuv-worker`/`V8Worker` (tiến trình IDE/agent trên máy lab), không phải stress-ng.
