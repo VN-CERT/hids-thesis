@@ -3,7 +3,7 @@
 1. Số báo cáo: R036  
    Ngày giờ: 2026-10-24 22:35 (giờ máy; bổ sung E2)  
    Mốc: M6d  
-   Git commit: `PLACEHOLDER`; binary mốc `m6c.3` = `455970a`; tag `m6d`
+   Git commit: `b538b37`; binary mốc `m6c.3` = `455970a`; tag `m6d`
 
 2. Mục tiêu  
    Chốt bảng tranh chấp Bài 1: lặp E1, E3, E4-cache ≥ 3 lần/mức với binary cuối (m6c.3) + dấu tần số; E2 (`--cpu-method int64`) với người dùng vCenter. Không sửa BPF, không sửa m4.sh.
