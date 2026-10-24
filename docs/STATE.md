@@ -208,12 +208,12 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 - (không có)
 
-## Bước đang làm (LAB-1) — DỪNG sau D4 phụ lục 1.5
+## Bước đang làm (LAB-1) — phụ lục 1.6 + driver (2026-10-24)
 
-- D4 wl cpu + CPUQuota none/75/50/25: rq_med=0 → Spearman nan → KHÔNG ĐẠT.
-- rq_mean/dt = 0/24.9/50.0/75.0 % khớp kỳ vọng phụ lục 1.5; chờ kiến trúc sư có đổi tiêu chí sang trung bình không.
-- E5/driver chưa.
+- Phụ lục 1.6 commit `4110c3b`: D4/E5/steal dùng tỉ lệ tổng; D1/D3 giữ trung vị.
+- Chấm lại D4/E5 từ 12 lượt D4v15: D4 Spearman≈1 DAT; E5 Pearson≈1 DAT; |steal|/rq 12 lượt = 0,13% DAT.
+- Driver `hids-lab1-driver` đã khởi động (bước 4→4b→6). Bước 5+7 khi driver xong.
 
 ## Việc đang chạy
 
-- (không có)
+- **hids-lab1-driver** — `bash scripts/lab1_driver.sh` — bắt đầu 2026-10-24T16:36:51Z — dự kiến ~21:40Z — log `validation/lab1-20261024/driver-systemd.log` — status `out/jobs/lab1-driver.status`

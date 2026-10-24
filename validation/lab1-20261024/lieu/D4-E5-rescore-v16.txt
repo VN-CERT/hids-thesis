@@ -1,0 +1,26 @@
+=== D4 bang (ti le tong, phu luc 1.6) ===
+muc	expected	other	runs	quota	rq_ratio_pct	rq_p90_med	thr_usec_med
+0	8.214392012491673e-05	4.5224220116686e-05	3	none	0.0082	0.0	0
+1	0.24937751850452017	0.0009503709224045088	3	75	24.9378	24372829.1	9998395
+2	0.49962511548299005	0.0014080733306506654	3	50	49.9625	50249330.2	30173010
+3	0.7498115096458751	0.0004295921844145967	3	25	74.9812	75519944.9	90345431
+=== D4 tieu chi ===
+spearman_expected	0.9999999999999998
+delta_other_ratio	0.00038436796429791066
+expected_hi_ratio	0.7498115096458751
+thresh_ratio	0.0749811509645875
+other_lo	4.5224220116686e-05
+other_hi	0.0004295921844145967
+tieu_chi_spearman>=0.9	DAT
+tieu_chi_other_phuluc12	DAT
+=== E5 tren 12 luot D4v15 ===
+muc=0 steal/rq_pct_muc=48.082024 (mo ta)
+muc=1 steal/rq_pct_muc=0.380826 (mo ta)
+muc=2 steal/rq_pct_muc=0.277626 (mo ta)
+muc=3 steal/rq_pct_muc=0.055914 (mo ta)
+steal_over_rq_pct_12luot	0.1329777985295052
+pearson_sum_rq_vs_throttled_usec	0.9999999996964739
+tieu_chi_pearson>=0.8	DAT
+tieu_chi_steal_pct<2	DAT
+D4_DAT	True
+E5_DAT	True

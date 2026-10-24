@@ -1,12 +1,12 @@
-LAB-1 — KET QUA (DUNG O BUOC 3: D3 KHONG DAT TIEU CHI)
+LAB-1 — KET QUA (buoc 3 DAT sau phu luc 1.6; driver dang chay)
 May: hids-collector (nan nhan, 55.201 / 192.168.77.10). Nhanh: lab-collector
 Nhiem vu: docs/tasks/LAB-1.md
 Ngay: 2026-10-24
 
 ================================================================
-TRANG THAI: DUNG
-Ly do: D3 tieu chi "thanh phan khong ky vong doi < 10%" KHONG DAT (rq_med 0 → 4.68e6 ns).
-Khong khoi dong hids-lab1-driver. Buoc 4/4b/5/6/7 chua lam.
+TRANG THAI: DRIVER DANG CHAY (buoc 4 → 4b → 6)
+Ly do cap nhat: phu luc 1.6 — cham lai D4/E5 bang ti le tong tu du lieu D4v15: DAT.
+Buoc 0–3 DAT (D1/D3 trung vi; D4/E5 ti le tong). Buoc 5+7 khi driver xong.
 ================================================================
 
 ----------------------------------------------------------------
@@ -250,7 +250,51 @@ muc	quota	rq_med	rq_mean	dt_mean	rq_mean/dt%	thr_usec_med
   (nhieu khoang 10 ms khong throttle + it khoang cho dai).
 File: validation/lab1-20261024/lieu/D4-v15-mean-vs-med.txt
 
-E5: chua tong hop (dung sau D4).
-Driver: CHUA KHOI DONG.
+E5: chua tong hop (dung sau D4 — cho 1.6).
+Driver: CHUA KHOI DONG (luc 1.5).
 
-Can kien truc su: doi tieu chi D4/E5 sang trung binh (hoac p90) thay trung vi?
+Can kien truc su (da tra loi o 1.6): doi thong ke D4/E5 sang ti le tong.
+
+================================================================
+PHU LUC 1.6 — ti le tong cho tac dong cuc; cham lai D4/E5 (2026-10-24)
+================================================================
+Commit phu luc 1.6: 4110c3b
+Khong chay lai D4/E5: dung 12 luot D4v15 (validation/lab1-20261024/lieu/D4/).
+
+Quy uoc: D1/D3 giu trung vi; D4/E5/steal: expected = sum(thanh_phan)/sum(Δt) tren ca luot;
+Spearman tren ti le (median 3 luot/muc); other = ti le tong, nguong 1.2 muc 4
+(san ti le 1e-5 thay 100 µs). p90 rq ghi kem mo ta.
+
+--- D4 (ti le tong) — DAT ---
+muc	quota	rq_ratio	steal_ratio	rq_ratio%	rq_p90_med	thr_usec_med	runs
+0	none	8.214e-05	4.522e-05	0.0082	0.0	0	3
+1	75	0.249378	0.000950	24.9378	24372829	9998395	3
+2	50	0.499625	0.001408	49.9625	50249330	30173010	3
+3	25	0.749812	0.000430	74.9812	75519945	90345431	3
+spearman_expected	0.9999999999999998
+delta_other_ratio	0.00038436796429791066
+expected_hi_ratio	0.7498115096458751
+thresh_ratio	0.0749811509645875
+tieu_chi_spearman>=0.9	DAT
+tieu_chi_other_phuluc12	DAT
+File: validation/lab1-20261024/lieu/D4-bang-ratio.txt
+     validation/lab1-20261024/lieu/D4-E5-rescore-v16.txt
+
+--- E5 (cung 12 luot D4v15) — DAT ---
+pearson_sum_rq_vs_throttled_usec	0.9999999996964739
+steal_over_rq_pct_12luot	0.1329777985295052
+tieu_chi_pearson>=0.8	DAT
+tieu_chi_steal_pct<2	DAT
+(mo ta theo muc steal/rq%: none≈48% vi ca hai ≈ 0; 75→0.38%; 50→0.28%; 25→0.056%)
+File: validation/lab1-20261024/lieu/E5-bang.txt
+     validation/lab1-20261024/lieu/E5-from-D4v15/
+
+Driver: DA KHOI DONG
+- unit: hids-lab1-driver.service
+- bat dau: 2026-10-24T16:36:51+00:00 (23:36 +07)
+- log: validation/lab1-20261024/driver-systemd.log
+- log noi dung: validation/lab1-20261024/driver.log
+- status: out/jobs/lab1-driver.status
+- du kien xong: ~21:40 UTC (~5 gio: 4→4b→6 + kiem 20 phut)
+- cpuset.cpus.effective=1-7 (phu luc 1.4)
+- Buoc 5+7: khi nguoi dung bao "driver xong"

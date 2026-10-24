@@ -1,0 +1,4 @@
+pearson_sum_rq_vs_throttled_usec	0.9999999996964739
+steal_over_rq_pct_12luot	0.1329777985295052
+tieu_chi_pearson>=0.8	DAT
+tieu_chi_steal_pct<2	DAT

@@ -1,0 +1,8 @@
+spearman_expected	0.9999999999999998
+delta_other_ratio	0.00038436796429791066
+expected_hi_ratio	0.7498115096458751
+thresh_ratio	0.0749811509645875
+other_lo	4.5224220116686e-05
+other_hi	0.0004295921844145967
+tieu_chi_spearman>=0.9	DAT
+tieu_chi_other_phuluc12	DAT

@@ -59,3 +59,15 @@ D4v12-cpus1-r3	D4	1	313543148414696	313553417615845	throttled_usec_delta	0	nr_th
 D4v12-cpus0.5-r1	D4	0.5	313557349631909	313567478304145	throttled_usec_delta	72590	nr_throttled_delta=13;rq_med=0.0;steal_med=0.0;phuluc1.2	
 D4v12-cpus0.5-r2	D4	0.5	313571416453252	313581384138605	throttled_usec_delta	11517	nr_throttled_delta=7;rq_med=0.0;steal_med=0.0;phuluc1.2	
 D4v12-cpus0.5-r3	D4	0.5	313585332274479	313595403886411	throttled_usec_delta	59725	nr_throttled_delta=13;rq_med=0.0;steal_med=0.0;phuluc1.2	
+D4v15-nolimit-r1	D4	none	315033084197616	315064211641546	throttled_usec_delta	0	nr_throttled_delta=0;rq_med=0.0;steal_med=0.0;phuluc1.5;wl=cpu	
+D4v15-nolimit-r2	D4	none	315068162204257	315098287408886	throttled_usec_delta	0	nr_throttled_delta=0;rq_med=0.0;steal_med=0.0;phuluc1.5;wl=cpu	
+D4v15-nolimit-r3	D4	none	315102230495737	315132357019198	throttled_usec_delta	0	nr_throttled_delta=0;rq_med=0.0;steal_med=0.0;phuluc1.5;wl=cpu	
+D4v15-q75-r1	D4	75	315136300134860	315177466776069	throttled_usec_delta	10018899	nr_throttled_delta=401;rq_med=0.0;steal_med=0.0;phuluc1.5;wl=cpu	
+D4v15-q75-r2	D4	75	315181414814348	315222576847152	throttled_usec_delta	9998395	nr_throttled_delta=401;rq_med=0.0;steal_med=0.0;phuluc1.5;wl=cpu	
+D4v15-q75-r3	D4	75	315226523136389	315266685098017	throttled_usec_delta	9990908	nr_throttled_delta=400;rq_med=0.0;steal_med=0.0;phuluc1.5;wl=cpu	
+D4v15-q50-r1	D4	50	315270634987908	315331875622355	throttled_usec_delta	30173010	nr_throttled_delta=604;rq_med=0.0;steal_med=0.0;phuluc1.5;wl=cpu	
+D4v15-q50-r2	D4	50	315335827214749	315397063198866	throttled_usec_delta	30184471	nr_throttled_delta=604;rq_med=0.0;steal_med=0.0;phuluc1.5;wl=cpu	
+D4v15-q50-r3	D4	50	315401010957173	315462241878166	throttled_usec_delta	30090467	nr_throttled_delta=602;rq_med=0.0;steal_med=0.0;phuluc1.5;wl=cpu	
+D4v15-q25-r1	D4	25	315466186152633	315587622679738	throttled_usec_delta	90345431	nr_throttled_delta=1205;rq_med=0.0;steal_med=0.0;phuluc1.5;wl=cpu	
+D4v15-q25-r2	D4	25	315591565387438	315713000120115	throttled_usec_delta	90357570	nr_throttled_delta=1205;rq_med=0.0;steal_med=0.0;phuluc1.5;wl=cpu	
+D4v15-q25-r3	D4	25	315716939391936	315838376618400	throttled_usec_delta	90292273	nr_throttled_delta=1205;rq_med=0.0;steal_med=0.0;phuluc1.5;wl=cpu	
