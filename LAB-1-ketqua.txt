@@ -163,3 +163,18 @@ D4 / E5: CHUA CHAY (dung sau D3).
 Driver (buoc 4): CHUA KHOI DONG.
 
 Can kien truc su: L=7 (1 worker/CPU tren 1–7) van sinh rq ~4 ms tren wl CPU 0.
+
+================================================================
+CHAN DOAN D3 L=7 (2026-10-24) — DUNG
+================================================================
+Commit phu luc 1.3: c2f53dcac5e4267e6aa7c8f9130de05abf893d50
+File: validation/lab1-20261024/lieu/D3-chandoan.txt
+
+(a) Ghim: LOT_STRESS_NG_CPU0=0 o ca L=7 va L=6 (aff=1-7). Khong lot.
+
+(b) other_busy % (loai wl + swapper, /60s):
+  L=7: 7.003264%  top=MainThread
+  L=6: 2.504643%  top=MainThread
+
+Quyet dinh: nhanh 3 — L=6 cung >= 1% → DUNG.
+Khong sua tieu chi. Khong chay lai D3/D4/E5. Khong khoi dong driver.

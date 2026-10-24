@@ -188,3 +188,12 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 ## Việc đang chạy
 
 - (không có)
+
+## Bước đang làm (LAB-1) — DỪNG sau chẩn đoán D3 L=7 (phụ lục 1.3)
+
+- (a) không stress-ng lọt CPU 0. (b) other_busy L=7=7.00%, L=6=2.50% — cả hai ≥ 1% → DỪNG.
+- Phụ lục 1.3 đã nối vào `docs/giao-thuc-lab1.md`. Không chạy lại liều / driver.
+
+## Việc đang chạy
+
+- (không có)
