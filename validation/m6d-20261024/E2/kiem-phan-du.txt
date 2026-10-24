@@ -1,0 +1,57 @@
+# kiem-phan-du E2 — khoang dot (nr=230 hoac 35), khong FIRST
+# Δt = ts_enter[i] − ts_enter[i−1] (cung tid); tong = cpu+steal+irq+rq+vol_ns
+# phan_du = Δt − tong; wall_wl_ns = max(ts)−min(ts) moi tid trong export
+# nguon: validation/m6d-20261024/E2/<muc>/run*/export.csv
+
+muc	run	n_burn	burn_nr	med_dt_ns	med_tong_ns	med_phan_du_ns	max_phan_du_ns	n_CLAMPED	wall_wl_ns	wall_wl_s
+Unlimited	1	500	230	10143557.5	10143557.5	0.0	0.0	0	10565784036	10.565784
+Unlimited	2	500	230	10147666.5	10147666.5	0.0	0.0	0	10885362081	10.885362
+Unlimited	3	500	230	9992346.0	9992346.0	0.0	0.0	0	10624304649	10.624305
+36000	1	500	230	10276552.0	10276552.0	0.0	0.0	0	13937524466	13.937524
+36000	2	500	230	10189063.0	10189063.0	0.0	0.0	0	13421582716	13.421583
+36000	3	500	230	10144652.5	10144652.5	0.0	0.0	0	13756488743	13.756489
+24000	1	500	230	10080321.5	10080321.5	0.0	0.0	0	19803823706	19.803824
+24000	2	500	230	10380939.5	10380939.5	0.0	0.0	0	18797030254	18.797030
+24000	3	500	230	10212621.0	10212621.0	0.0	0.0	0	19506954858	19.506955
+12000	1	500	230	10455425.5	10455425.5	0.0	0.0	0	38633825950	38.633826
+12000	2	500	230	10346246.5	10346246.5	0.0	0.0	0	39050906565	39.050907
+12000	3	500	230	10372700.0	10372700.0	0.0	0.0	0	38952922060	38.952922
+
+=== (2) m4.sh E2: dong goi wl (nguyen van) ===
+scripts/m4.sh:184  (trong run_wl_mixed, duoc e2_one_level goi o dong 429):
+	taskset -c "$WL_CPU" "$WL" -loops "$loops" mixed "$rounds" <"$fifo" >"$prefix-wl.log" 2>&1 &
+scripts/m4.sh:429:
+	bin=$(run_wl_mixed "$loops" 500)
+mode: mixed (KHONG phai cpu)
+WL_CPU=20 (m4.sh)
+
+=== (2) So steal E2 bao cao M4 (trich nguyen van) ===
+Nguon chinh hop le: R015 (E2 lan 3) — Steal VM probe %:
+  Unlimited 0,014924 — 36000 38,769864 — 24000 57,657847 — 12000 76,981195
+R015 bang E2 lan 3 burn (trung binh us): steal_mean
+  Unlimited burn steal_mean=30.32  | 36000=7585.53  | 24000=13109.54  | 12000=25116.37
+R012 bang E2 burn (summary.csv) — nguyen van:
+  | Unlimited | 500 | 11010.81 | 40.97 | ... | vm_steal_probe_pct 0.015 | vm_steal_pct 0.014 |
+  | 36000 | 500 | 20277.67 | 8459.10 | ... | 38.701 | 71.176 |
+  | 24000 | 500 | 22637.41 | 10046.10 | ... | 58.590 | 140.495 |
+  | 12000 | 500 | 60083.39 | 40168.89 | ... | 78.425 | 412.908 |
+R015 bang E2 lan 3 burn steal_mean (us) — nguyen van:
+  Unlimited 30.32 | 36000 7585.53 | 24000 13109.54 | 12000 25116.37
+R011 E2-lan1 steal_mean_us: Unlimited 49.55 | 36000 4566.10 | 12000 39346.38
+R009 (khong hop le, sau R010): trung vi steal ≈ 0 us moi muc
+
+=== (3) Dau tan so E2 — CPU ===
+scripts/m6d_e2.sh: freq_pair "E2-$label" "$WL_CPU"  voi WL_CPU=20
+lenh: bash scripts/freq_stamp.sh 20
+freq_stamp.sh: taskset -c <cpu> bin/coreclk (3 lan), trung vi GHz_wall
+Mau file truoc Unlimited:
+  2026-10-24T22:01:26+07:00
+  lan 1: GHz_wall=1.9911
+  lan 2: GHz_wall=1.9333
+  lan 3: GHz_wall=1.9346
+  trung vi GHz_wall=1.9346
+freq-lech (da do):
+  freq E2-Unlimited: truoc=1.9346 sau=1.9329 lech=0.09%
+  freq E2-36000: truoc=1.6156 sau=1.6516 lech=2.23% LECH_>2%
+  freq E2-24000: truoc=0.9891 sau=1.2165 lech=22.99% LECH_>2%
+  freq E2-12000: truoc=0.5161 sau=0.4965 lech=3.80% LECH_>2%
