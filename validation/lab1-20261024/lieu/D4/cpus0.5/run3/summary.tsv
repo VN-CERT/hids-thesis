@@ -1,0 +1,8 @@
+n	500
+cpu_med	9647049.5
+steal_med	0.0
+irq_med	59273.0
+rq_med	0.0
+vol_ns_med	0.0
+burn_nr	230
+syscall_counts	{0: 4, 257: 1, 5: 1, 3: 1, 9: 1, 230: 500, 110: 500, 11: 1}

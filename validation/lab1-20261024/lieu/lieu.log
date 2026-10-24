@@ -1,5 +1,6 @@
-LAB-1 lieu bat dau 2026-10-24T14:13:12+00:00 ONLY=d3d4e5
+LAB-1 lieu bat dau 2026-10-24T15:19:31+00:00 ONLY=d3d4e5 D3_LEVELS=0 2 4 7
+sanitize_cpu0: user.slice cpuset.cpus.effective=1-7
 dung lab0-postgres lab0-nginx
-=== hieu chuan wl/mem luc may ranh (CPU 0) ===
-DUNG sau D3 FAIL=1
+=== hieu chuan wl/mem luc may ranh (CPU 0, system.slice) ===
+DUNG sau D4 FAIL=1
 khoi dong lai lab0-postgres lab0-nginx

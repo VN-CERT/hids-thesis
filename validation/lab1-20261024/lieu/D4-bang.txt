@@ -1,1 +1,13 @@
 muc	expected	other	runs	cpus
+0.0	0.0	0.0	3	none
+1.0	0.0	0.0	3	2
+2.0	0.0	0.0	3	1
+3.0	0.0	0.0	3	0.5
+spearman_expected	nan
+delta_other_ns	0.0
+expected_hi_ns	0.0
+thresh_ns	100000.0
+other_lo	0.0
+other_hi	0.0
+tieu_chi_spearman>=0.9	KHONG_DAT
+tieu_chi_other_phuluc12	DAT

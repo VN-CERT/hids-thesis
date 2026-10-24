@@ -1,8 +1,8 @@
 spearman_expected	0.9999999999999998
-delta_other_ns	4281949.0
-expected_hi_ns	19886359.0
-thresh_ns	1988635.9000000001
+delta_other_ns	1288650.0
+expected_hi_ns	18704771.0
+thresh_ns	1870477.1
 other_lo	0.0
-other_hi	4281949.0
+other_hi	1288650.0
 tieu_chi_spearman>=0.9	DAT
-tieu_chi_other_phuluc12	KHONG_DAT
+tieu_chi_other_phuluc12	DAT

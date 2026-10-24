@@ -1,11 +1,11 @@
 n	500
-cpu_med	19886359.0
+cpu_med	18677970.5
 steal_med	0.0
-irq_med	227593.0
-rq_med	4281949.0
+irq_med	167166.5
+rq_med	1284778.5
 vol_ns_med	0.0
 burn_nr	230
 syscall_counts	{0: 4, 257: 1, 5: 1, 3: 1, 9: 1, 230: 500, 110: 500, 11: 1}
-cpi_med	2.737788196748168
-inst_med	18612197.0
-cyc_med	50956256.0
+cpi_med	2.6636992063393556
+inst_med	18005126.0
+cyc_med	47960242.5

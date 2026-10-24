@@ -18,8 +18,43 @@ FAIL=0
 ONLY="${LAB1_ONLY:-all}"  # all | d3d4e5
 BURN_LOOPS=""
 MEM_STEPS=""
+# phu luc 1.4: muc D3 (GIU {0,2,4,7} khi other_busy L7 < 1%)
+D3_LEVELS="${LAB1_D3_LEVELS:-0 2 4 7}"
+COLLECT_CPUS="${LAB1_COLLECT_CPUS:-1-7}"
 
 mono_ns() { python3 -c 'import time; print(time.monotonic_ns())'; }
+
+# Phu luc 1.4: day user.slice ra CPU 1-7 (runtime)
+sanitize_cpu0() {
+	systemctl set-property --runtime user.slice AllowedCPUs=1-7
+	local eff
+	eff=$(cat /sys/fs/cgroup/user.slice/cpuset.cpus.effective)
+	echo "sanitize_cpu0: user.slice cpuset.cpus.effective=$eff" | tee -a "$OUTROOT/lieu.log"
+	echo "$eff" >"$OUTROOT/cpuset-effective.txt"
+	[[ $eff == 1-7 ]] || { echo "FAIL: cpuset.effective=$eff (can 1-7)" >&2; exit 1; }
+}
+
+# wl tren CPU 0 phai chay trong system.slice (user.slice bi AllowedCPUs=1-7)
+# Dat bien toan cuc WL_PID + WL_SCOPE_PID (KHONG dung $(...) — mat bien).
+start_wl_cpu0() {
+	# start_wl_cpu0 <fifo> <wl.log> <args...>
+	local fifo=$1 wlog=$2
+	shift 2
+	local unit="lab1-wl-$(date +%s%N)" i
+	WL_PID=""
+	WL_SCOPE_PID=""
+	systemd-run --scope --quiet --slice=system.slice \
+		--working-directory="$(pwd)" --unit="$unit" \
+		-- /bin/bash -c "exec taskset -c 0 ./bin/wl $*" \
+		<"$fifo" >"$wlog" 2>&1 &
+	WL_SCOPE_PID=$!
+	for ((i = 0; i < 100; i++)); do
+		WL_PID=$(pgrep -n -f './bin/wl' 2>/dev/null || true)
+		[[ -n $WL_PID ]] && kill -0 "$WL_PID" 2>/dev/null && break
+		WL_PID=""
+		sleep 0.05
+	done
+}
 
 wait_ready() {
 	local log=$1 i
@@ -82,25 +117,27 @@ start_lab0() {
 
 # Hieu chuan mot lan luc may ranh (cơ chế m4.sh) — phu luc 1.2 muc 2
 calibrate_loops_idle() {
-	echo "=== hieu chuan wl/mem luc may ranh (CPU $WL_CPU) ===" | tee -a "$OUTROOT/lieu.log"
+	echo "=== hieu chuan wl/mem luc may ranh (CPU $WL_CPU, system.slice) ===" | tee -a "$OUTROOT/lieu.log"
 	mkdir -p out /root/hids/out
-	# burn_loops qua mixed 1
 	local fifo wl_pid
 	fifo=$(mktemp -u out/lab1-cal-XXXX.fifo)
 	mkfifo "$fifo"
-	taskset -c "$WL_CPU" "$WL" mixed 1 <"$fifo" >"$OUTROOT/cal-wl.log" 2>&1 &
-	wl_pid=$!
+	exec 9<>"$fifo"
+	start_wl_cpu0 "$fifo" "$OUTROOT/cal-wl.log" mixed 1
+	wl_pid=$WL_PID
 	sleep 3
-	kill "$wl_pid" 2>/dev/null || true
-	wait "$wl_pid" 2>/dev/null || true
+	kill "$wl_pid" "${WL_SCOPE_PID:-}" 2>/dev/null || true
+	wait "${WL_SCOPE_PID:-}" 2>/dev/null || true
+	exec 9>&-
 	rm -f "$fifo"
-	# mem_steps qua mem 1 (tu hieu chuan khi may ranh — chi o buoc nay)
-	taskset -c "$WL_CPU" "$WL" mem 1 >"$OUTROOT/cal-mem.out" 2>"$OUTROOT/cal-mem.log" &
-	wl_pid=$!
+	# mem 1 — khong can fifo wait_go neu mem tu calibrate; van dung system.slice
+	systemd-run --scope --quiet --slice=system.slice --working-directory="$(pwd)" \
+		--unit="lab1-cal-mem" -- taskset -c 0 ./bin/wl mem 1 \
+		>"$OUTROOT/cal-mem.out" 2>"$OUTROOT/cal-mem.log" &
+	local sp=$!
 	sleep 25
-	kill "$wl_pid" 2>/dev/null || true
-	wait "$wl_pid" 2>/dev/null || true
-	# dong bo ca hai duong dan
+	kill "$sp" 2>/dev/null || true
+	wait "$sp" 2>/dev/null || true
 	if [[ -f out/m4-loops.txt && ! -f $LOOPS_FILE ]]; then
 		cp out/m4-loops.txt "$LOOPS_FILE"
 	fi
@@ -111,7 +148,6 @@ calibrate_loops_idle() {
 	MEM_STEPS=$(awk '/^mem_steps/{print $2}' "$LOOPS_FILE")
 	[[ -n $BURN_LOOPS && $BURN_LOOPS -gt 0 ]] || { echo "calibrate: thieu burn_loops" >&2; exit 1; }
 	[[ -n $MEM_STEPS && $MEM_STEPS -gt 0 ]] || { echo "calibrate: thieu mem_steps" >&2; exit 1; }
-	# phu luc: -loops <mem_steps> — truyen mem_steps vao -loops; mem_steps van trong file
 	echo "calibrate: burn_loops=$BURN_LOOPS mem_steps=$MEM_STEPS (file=$LOOPS_FILE)" | tee "$OUTROOT/calibrate.txt"
 }
 
@@ -134,14 +170,20 @@ run_d3_one() {
 		rm -f "$fifo" "$dir/ok"
 		mkfifo "$fifo"
 		exec 9<>"$fifo"
-		taskset -c "$WL_CPU" "$WL" -loops "$MEM_STEPS" mem 500 <"$fifo" >"$dir/wl.log" 2>&1 &
-		wl_pid=$!
+		start_wl_cpu0 "$fifo" "$dir/wl.log" -loops "$MEM_STEPS" mem 500
+		wl_pid=$WL_PID
+		if [[ -z $wl_pid ]]; then
+			exec 9>&-; rm -f "$fifo"
+			echo "D3 L=$L run=$run attempt=$attempt: khong co wl" | tee -a "$dir/ketqua.txt"
+			continue
+		fi
 		sleep 0.3
-		"$COLLECT" -pid "$wl_pid" -zstd-level 0 -pmu on -out "$bin" 2>"$dir/collect.log" &
+		taskset -c "$COLLECT_CPUS" "$COLLECT" -pid "$wl_pid" -zstd-level 0 -pmu on -out "$bin" 2>"$dir/collect.log" &
 		cpid=$!
 		if ! wait_ready "$dir/collect.log"; then
-			kill "$wl_pid" "$cpid" 2>/dev/null || true
-			wait "$wl_pid" "$cpid" 2>/dev/null || true
+			kill "$wl_pid" "$cpid" "${WL_SCOPE_PID:-}" 2>/dev/null || true
+			wait "$cpid" 2>/dev/null || true
+			wait "${WL_SCOPE_PID:-}" 2>/dev/null || true
 			exec 9>&-
 			rm -f "$fifo"
 			echo "D3 L=$L run=$run attempt=$attempt KHONG_READY" | tee -a "$dir/ketqua.txt"
@@ -165,7 +207,7 @@ run_d3_one() {
 		wait "$cpid" 2>/dev/null || true
 		printf '.' >&9
 		exec 9>&-
-		wait "$wl_pid" 2>/dev/null || true
+		wait "${WL_SCOPE_PID:-}" 2>/dev/null || true
 		[[ -n $stress_pid ]] && kill "$stress_pid" 2>/dev/null && wait "$stress_pid" 2>/dev/null || true
 		rm -f "$fifo"
 
@@ -212,17 +254,15 @@ run_throttle_one() {
 		mkfifo "$fifo"
 		exec 9<>"$fifo"
 
-		local -a scope_cmd=(systemd-run --scope --quiet)
+		local -a scope_cmd=(systemd-run --scope --quiet --slice=system.slice)
 		if [[ -n $quota_pct ]]; then
 			scope_cmd+=(-p "CPUQuota=$quota_pct")
 		fi
 		scope_cmd+=(--working-directory="$(pwd)" --unit="lab1-${mode}-${tag}-r${run}-a${attempt}")
-		# wl doc stdin tu fifo (fd ke thua)
 		"${scope_cmd[@]}" -- /bin/bash -c "exec taskset -c 0 ./bin/wl -loops '$MEM_STEPS' mem 500" \
 			<"$fifo" >"$dir/wl.log" 2>&1 &
 		local scope_pid=$!
 		sleep 0.5
-		# tim pid wl (con cua bash trong scope)
 		local wl_pid="" i
 		for ((i = 0; i < 100; i++)); do
 			wl_pid=$(pgrep -n -f './bin/wl -loops' 2>/dev/null || true)
@@ -249,7 +289,7 @@ run_throttle_one() {
 		thr0=$(awk '/^throttled_usec/{print $2}' "$cg_path/cpu.stat" 2>/dev/null || echo 0)
 		nr0=$(awk '/^nr_throttled/{print $2}' "$cg_path/cpu.stat" 2>/dev/null || echo 0)
 
-		"$COLLECT" -pid "$wl_pid" -zstd-level 0 -out "$bin" 2>"$dir/collect.log" &
+		taskset -c "$COLLECT_CPUS" "$COLLECT" -pid "$wl_pid" -zstd-level 0 -out "$bin" 2>"$dir/collect.log" &
 		local cpid=$!
 		if ! wait_ready "$dir/collect.log"; then
 			kill -INT "$cpid" 2>/dev/null || true
@@ -316,7 +356,8 @@ aggregate_d3() {
 	local f="$OUTROOT/D3/bang.tsv"
 	printf 'muc\texpected\tother\tcpi\truns\n' >"$f"
 	local L
-	for L in 0 2 4 7; do
+	# shellcheck disable=SC2086
+	for L in $D3_LEVELS; do
 		local cpus=() rqs=() cpis=()
 		local run n_ok=0
 		for run in 1 2 3; do
@@ -478,29 +519,31 @@ stop_if_fail() {
 # ========== main ==========
 ensure_nhan_header
 : >"$OUTROOT/lieu.log"
-echo "LAB-1 lieu bat dau $(date -Is) ONLY=$ONLY" | tee -a "$OUTROOT/lieu.log"
+echo "LAB-1 lieu bat dau $(date -Is) ONLY=$ONLY D3_LEVELS=$D3_LEVELS" | tee -a "$OUTROOT/lieu.log"
 
+sanitize_cpu0
 stop_lab0
 calibrate_loops_idle
 
 if [[ $ONLY == all ]]; then
 	append_nhan "D2-HOAN" "D2" "na" "0" "0" "na" "na" "D2 hoan: can vCenter"
 	echo "D2 hoan: can vCenter" | tee "$OUTROOT/D2-hoan.txt"
-	echo "ONLY=all: D1 khong nam trong phu luc 1.2 re-run; dung LAB1_ONLY=d3d4e5 de chay lai" | tee -a "$OUTROOT/lieu.log"
+	echo "ONLY=all: dung LAB1_ONLY=d3d4e5 de chay lai D3/D4/E5" | tee -a "$OUTROOT/lieu.log"
 	FAIL=1
 	stop_if_fail "chi-dinh-ONLY"
 fi
 
 # --- D3 ---
-freq_stamp_block "truoc-D3-v12"
+freq_stamp_block "truoc-D3-v14"
 rm -rf "$OUTROOT/D3"
 mkdir -p "$OUTROOT/D3"
-for L in 0 2 4 7; do
+# shellcheck disable=SC2086
+for L in $D3_LEVELS; do
 	for run in 1 2 3; do
 		run_d3_one "$L" "$run" || true
 	done
 done
-freq_stamp_block "sau-D3-v12"
+freq_stamp_block "sau-D3-v14"
 aggregate_d3
 stop_if_fail "D3"
 

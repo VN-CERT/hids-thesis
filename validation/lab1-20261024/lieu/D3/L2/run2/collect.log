@@ -4,23 +4,23 @@ stealclock: bat (8/8 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
 stealclock_evidence: journalctl
 doi chieu vmw_steal_time voi rq->prev_steal_time trong 3s (lan 1)...
    cpu         vmw_ns    rq_steal_ns      lech_ns    nguong_ns
-     0        4650194        4650194            0      2000000
-     1        4628245        4628245            0      2000000
-     2        5523873        5523873            0      2000000
-     3        5021878        5021878            0      2000000
-     4        4421699        4421699            0      2000000
-     5        4081349        4081350           -1      2000000
-     6        4969464        4941372        28092      2000000
-     7        5856835        5856836           -1      2000000
-  TONG       39153537       39125447        28090      5000000
-STEALCHECK lan=1 tong_vmw_ns=39153537 tong_rq_ns=39125447 lech_ns=28090 nguong_ns=5000000 cpu_lech_max=6:28092 ket_qua=DAT
-doi chieu xong: |tong_vmw - tong_rq| = 28090 ns, nguong max(5000000 ns, 1% x tong_vmw); cpu lech max 6: 28092 ns
+     0        5435783        5435784           -1      2000000
+     1        3759491        3759492           -1      2000000
+     2        4423089        4397749        25340      2000000
+     3        4605972        4600209         5763      2000000
+     4        4314110        4314111           -1      2000000
+     5        4837210        4837210            0      2000000
+     6        5480032        5480033           -1      2000000
+     7        4918955        4918955            0      2000000
+  TONG       37774642       37743543        31099      5000000
+STEALCHECK lan=1 tong_vmw_ns=37774642 tong_rq_ns=37743543 lech_ns=31099 nguong_ns=5000000 cpu_lech_max=2:25340 ket_qua=DAT
+doi chieu xong: |tong_vmw - tong_rq| = 31099 ns, nguong max(5000000 ns, 1% x tong_vmw); cpu lech max 2: 25340 ns
 ghi vao out/lab1-d3-L2-r2-a1.bin
-loc pid: 229988 | loc cgroup: khong co | ring buffer: 64 MiB
+loc pid: 281724 | loc cgroup: khong co | ring buffer: 64 MiB
 READY
 ban ghi doc duoc: 1010 | so lan dinh ghi: 1010 | mat: 0
-irq cong don (ns): hard 471720 | soft 144315274 | vector 580321745 | tong 725108739
-soft_raw cong don (ns): 144748578 (ke ca hard/vector long ben trong, de so voi softirqs-bpfcc)
+irq cong don (ns): hard 613460 | soft 140870017 | vector 585713497 | tong 727196974
+soft_raw cong don (ns): 141254639 (ke ca hard/vector long ben trong, de so voi softirqs-bpfcc)
 irq bat thuong: 0 khoang, 0 ns | loai con dang hoat dong: 0
 recursion_misses (bpf_prog_info), tong 0 tren 31 chuong trinh:
   hids_irq_call_function_entry             0
@@ -54,6 +54,6 @@ recursion_misses (bpf_prog_info), tong 0 tren 31 chuong trinh:
   hids_sched_wakeup_new                    0
   hids_sys_enter                           0
   hids_sys_enter_fentry                    0
-thoi gian chay: 21.795 s | CPU collector: user 0.175 s, sys 0.228 s (getrusage RUSAGE_SELF)
+thoi gian chay: 21.537 s | CPU collector: user 0.185 s, sys 0.216 s (getrusage RUSAGE_SELF)
 kich thuoc file: 65799 byte
 du lieu: out/lab1-d3-L2-r2-a1.bin | thong ke: out/lab1-d3-L2-r2-a1.bin.stats | theo doi: out/lab1-d3-L2-r2-a1.bin.periodic

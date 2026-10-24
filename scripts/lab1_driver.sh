@@ -19,8 +19,19 @@ DRIVER_LOG="$VAL/driver.log"
 STATUS_DIR="$VAL"
 mkdir -p "$BN_DIR" "$BEN_DIR" "$DATADIR" "$GEN_LOG" lab out
 : >"$DRIVER_LOG"
+COLLECT_CPUS="${LAB1_COLLECT_CPUS:-1-7}"
 
 log() { echo "[$(date -Is)] $*" | tee -a "$DRIVER_LOG"; }
+
+# Phu luc 1.4: ve sinh CPU 0 (runtime)
+sanitize_cpu0() {
+	systemctl set-property --runtime user.slice AllowedCPUs=1-7
+	local eff
+	eff=$(cat /sys/fs/cgroup/user.slice/cpuset.cpus.effective)
+	log "sanitize_cpu0: cpuset.cpus.effective=$eff"
+	echo "$eff" | tee "$VAL/cpuset-effective.txt"
+	[[ $eff == 1-7 ]] || die "cpuset.effective=$eff (can 1-7)"
+}
 die() {
 	log "LOI: $*"
 	echo "$*" >"$VAL/driver-loi.txt"
@@ -56,7 +67,7 @@ start_collector_datadir() {
 	local attempt
 	for attempt in 1 2; do
 		: >"$logf"
-		"$COLLECT" -datadir "$dd" \
+		taskset -c "$COLLECT_CPUS" "$COLLECT" -datadir "$dd" \
 			-cgroup "$cg_ng" -cgroup "$cg_pg" \
 			-min-free-gb 50 -pmu sample=20 "$@" \
 			>>"$logf" 2>&1 &
@@ -112,6 +123,9 @@ cleanup_partial() {
 	pkill -f 'stress-ng --cpu' 2>/dev/null || true
 	pkill -f 'stress-ng --stream' 2>/dev/null || true
 }
+
+# Phu luc 1.4: ve sinh truoc moi phien do
+sanitize_cpu0
 
 # --- dam bao container Up ---
 docker start lab0-postgres lab0-nginx >/dev/null 2>&1 || true
@@ -411,13 +425,16 @@ CG_PG=$(cgroup_of lab0-postgres)
 START_WALL=$(date -Is)
 START_MONO=$(mono_ns)
 
-# collector — Restart=always, KHONG -duration
+# Phu luc 1.4: dat lai AllowedCPUs truoc nen 7 ngay (runtime mat khi reboot)
+sanitize_cpu0
+
+# collector — Restart=always, KHONG -duration; taskset 1-7
 systemd-run --unit=hids-lab1-collector --collect \
 	--property=Restart=always --property=RestartSec=5 \
 	--property=WorkingDirectory="$REPO" \
 	--property=StandardOutput=append:"$VAL/benign-collector-systemd.log" \
 	--property=StandardError=append:"$VAL/benign-collector-systemd.log" \
-	"$REPO/bin/hids-collect" \
+	/usr/bin/taskset -c "$COLLECT_CPUS" "$REPO/bin/hids-collect" \
 	-datadir "$DATADIR" \
 	-cgroup "$CG_NG" -cgroup "$CG_PG" \
 	-min-free-gb 50 -pmu sample=20

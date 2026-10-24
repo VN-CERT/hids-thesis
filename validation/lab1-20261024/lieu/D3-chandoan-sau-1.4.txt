@@ -1,0 +1,91 @@
+cpuset.cpus.effective=1-7
+=== CHAN DOAN SAU 1.4 L=7 2026-10-24T15:13:04+00:00 mem_steps=664718 ===
+--- ps CPU 0 (truoc do) ---
+      1   0 0::/init.scope              systemd
+      3   0 -                           pool_workqueue_release
+      4   0 -                           kworker/R-rcu_g
+      5   0 -                           kworker/R-rcu_p
+      6   0 -                           kworker/R-slub_
+      7   0 -                           kworker/R-netns
+     12   0 -                           kworker/R-mm_pe
+     13   0 -                           rcu_tasks_kthread
+     14   0 -                           rcu_tasks_rude_kthread
+     15   0 -                           rcu_tasks_trace_kthread
+     16   0 -                           ksoftirqd/0
+     18   0 -                           migration/0
+     19   0 -                           idle_inject/0
+     20   0 -                           cpuhp/0
+     80   0 -                           kworker/R-tpm_d
+     86   0 -                           watchdogd
+     87   0 -                           kworker/R-quota
+     94   0 -                           scsi_eh_0
+    161   0 -                           kworker/0:1H-kblockd
+    200   0 -                           scsi_eh_2
+    201   0 -                           kworker/R-scsi_
+    207   0 -                           scsi_eh_5
+    238   0 -                           scsi_eh_12
+    259   0 -                           scsi_eh_22
+    261   0 -                           kworker/R-scsi_
+    264   0 -                           kworker/R-scsi_
+    265   0 -                           scsi_eh_24
+    266   0 -                           kworker/R-scsi_
+    268   0 -                           scsi_eh_25
+    269   0 -                           kworker/R-scsi_
+    271   0 -                           kworker/R-scsi_
+    273   0 -                           kworker/R-scsi_
+    275   0 -                           kworker/R-scsi_
+    277   0 -                           kworker/R-scsi_
+    279   0 -                           kworker/R-scsi_
+    281   0 -                           kworker/R-scsi_
+    283   0 -                           kworker/R-scsi_
+    354   0 -                           kworker/R-raid5
+    397   0 -                           kworker/R-ext4-
+    507   0 -                           kworker/R-kmpat
+    639   0 -                           kworker/0:2H
+   1115   0 0::/system.slice/cron.servi cron
+   7814   0 -                           psimon
+   7823   0 0::/system.slice/systemd-re systemd-resolve
+ 119321   0 0::/system.slice/open-vm-to vmtoolsd
+ 119426   0 0::/system.slice/system-pos postgres
+ 215844   0 -                           kworker/0:0-events
+ 262528   0 -                           kworker/u16:2-events_unbound
+ 262650   0 0::/user.slice/user-0.slice sftp-server
+ 262879   0 -                           kworker/u16:3-flush-8:0
+ 263535   0 -                           kworker/0:1-cgroup_free
+ 263577   0 -                           kworker/u16:5-flush-252:0
+ 265441   0 -                           kworker/0:2-events
+ 266843   0 0::/system.slice/hids-lab1- bash
+wl_pid=266850 scope_pid=266850 wl_psr=0
+--- (a) ghim stress-ng ---
+266888 stress-ng psr=1 aff= 1-7
+266890 stress-ng-strea psr=5 aff= 1-7
+266891 stress-ng-strea psr=3 aff= 1-7
+266892 stress-ng-strea psr=6 aff= 1-7
+266893 stress-ng-strea psr=7 aff= 1-7
+266894 stress-ng-strea psr=2 aff= 1-7
+266895 stress-ng-strea psr=4 aff= 1-7
+266896 stress-ng-strea psr=1 aff= 1-7
+--- (b) top 15 @oncpu_ns CPU 0 ---
+rank  comm                          oncpu_ns       pct
+1     swapper/0                  50127999906  83.5467%
+2     wl                          9477292288  15.7955%
+3     kworker/0:0                  294156952   0.4903%
+4     containerd                    54198091   0.0903%
+5     dockerd                       11013044   0.0184%
+6     kworker/u16:3                  6532344   0.0109%
+7     postgres                       6518552   0.0109%
+8     kworker/u16:0                  6082997   0.0101%
+9     multipathd                     3560918   0.0059%
+10    vmtoolsd                       2074898   0.0035%
+11    rcu_preempt                    1812079   0.0030%
+12    systemd                         288241   0.0005%
+13    systemd-resolve                 278033   0.0005%
+14    migration/0                     229454   0.0004%
+15    systemd-journal                 119932   0.0002%
+wl_pct=15.795487
+idle_pct=83.546667
+OTHER_BUSY_PCT=0.645058
+user_space_pct=0.129733
+user_space_comms=['containerd', 'dockerd', 'postgres', 'multipathd', 'vmtoolsd', 'systemd-resolve', 'systemd-journal', 'cron']
+DECISION=GIU_0247
+=== XONG 2026-10-24T15:14:08+00:00 ===

@@ -197,3 +197,13 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 ## Việc đang chạy
 
 - (không có)
+
+## Bước đang làm (LAB-1) — DỪNG sau D4 (phụ lục 1.4)
+
+- Phụ lục 1.4: AllowedCPUs=1-7; chẩn đoán L=7 other_busy=0.645% → giữ D3 {0,2,4,7}.
+- D3 ĐẠT (Spearman≈1; rq L7=1.29 ms < thresh 1.87 ms).
+- D4 KHÔNG ĐẠT: rq_med=0 mọi mức, Spearman nan. E5/driver chưa. Chờ kiến trúc sư.
+
+## Việc đang chạy
+
+- (không có)
