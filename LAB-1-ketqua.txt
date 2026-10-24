@@ -298,3 +298,9 @@ Driver: DA KHOI DONG
 - du kien xong: ~21:40 UTC (~5 gio: 4→4b→6 + kiem 20 phut)
 - cpuset.cpus.effective=1-7 (phu luc 1.4)
 - Buoc 5+7: khi nguoi dung bao "driver xong"
+
+--- Kiem 10 phut dau driver (2026-10-24T16:47Z) ---
+systemctl is-active hids-lab1-driver = active
+phien: B1-D1N0 (period=10s) — collector READY pid=363609
+lab1_http_client.py xcfgd-beacon dang chay; generator wrk2+pgbench dang chay
+cpuset.effective=1-7; khong co driver-loi.txt

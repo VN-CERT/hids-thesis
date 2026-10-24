@@ -217,3 +217,4 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 ## Việc đang chạy
 
 - **hids-lab1-driver** — `bash scripts/lab1_driver.sh` — bắt đầu 2026-10-24T16:36:51Z — dự kiến ~21:40Z — log `validation/lab1-20261024/driver-systemd.log` — status `out/jobs/lab1-driver.status`
+- Kiểm 10 phút đầu (16:47Z): OK — phiên B1-D1N0, collector READY, beacon period=10s, không `driver-loi.txt`.
