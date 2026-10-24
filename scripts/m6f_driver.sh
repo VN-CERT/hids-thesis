@@ -22,7 +22,7 @@ docker rm -f m6f-falco m6f-tetra pgtest m5-nginx >/dev/null 2>&1 || true
 systemctl set-property --runtime user.slice AllowedCPUs= 2>/dev/null || true
 # kernel sach: khong con prog hids_/falco/tetragon
 sleep 2
-n=$(bpftool prog show 2>/dev/null | rg -c 'name hids_|falco|tetragon|scap' || true)
+n=$(bpftool prog show 2>/dev/null | grep -cE 'name hids_|falco|tetragon|scap' || true)
 echo "bpf_leftover_match=$n"
 echo "$ec" >out/jobs/m6f.exit
 exit "$ec"

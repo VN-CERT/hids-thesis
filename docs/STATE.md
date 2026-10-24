@@ -111,9 +111,10 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 - **hids-m6f** (M6f overhead vs Falco/Tetragon, T1/T3/T4 × 6 điều kiện × 10)
   - lệnh: `systemd-run --unit=hids-m6f --collect bash -c 'cd /root/hids && bash scripts/m6f_driver.sh'`
-  - bắt đầu: (sắp ghi khi start)
-  - dự kiến xong: ~4–5 giờ sau khi start
+  - bắt đầu: 2026-10-24 23:44 (+07)
+  - dự kiến xong: ~2026-10-25 04:00–05:00 (+07)
   - log: `out/jobs/m6f.log`
   - trạng thái: `out/jobs/m6f.status`
   - dữ liệu: `validation/m6f-20261024/`
+  - unit: `hids-m6f.service` (c53b4e5)
 

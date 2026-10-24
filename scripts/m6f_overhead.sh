@@ -8,9 +8,10 @@ export HOME="${HOME:-/root}" GOPATH="${GOPATH:-/root/go}" PATH="/usr/local/go/bi
 source scripts/hids_data_policy.sh
 
 OUTROOT="${1:?can thu muc output}"
+mkdir -p "$OUTROOT"
+OUTROOT=$(readlink -f "$OUTROOT")
 RUNS="${M6F_RUNS:-10}"
 REST="${M6F_REST:-5}"
-mkdir -p "$OUTROOT"
 LOG="$OUTROOT/overhead.log"
 exec >>"$LOG" 2>&1
 COLLECT=./bin/hids-collect
@@ -100,6 +101,8 @@ require_bpf_attached() {
 # --- tool lifecycle ---
 start_falco() {
 	local dir=$1
+	# Docker -v can absolute path (relative bi hieu la ten volume).
+	dir=$(readlink -f "$dir")
 	mkdir -p "$dir/falco-metrics"
 	rm -f "$dir/falco-metrics"/* "$dir/falco.log"
 	BPF_BEFORE=$(bpf_prog_count)
@@ -158,6 +161,7 @@ start_falco() {
 
 start_tetra() {
 	local dir=$1 mode=$2 # def|sysenter
+	dir=$(readlink -f "$dir")
 	rm -f "$dir/tetra.log" "$dir/tetra-metrics.txt"
 	BPF_BEFORE=$(bpf_prog_count)
 	docker rm -f m6f-tetra >/dev/null 2>&1 || true
