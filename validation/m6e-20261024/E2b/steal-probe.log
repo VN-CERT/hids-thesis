@@ -1,0 +1,4 @@
+ghi vao validation/m6e-20261024/E2b/steal-probe.csv
+co che BPF: SEC(syscall) + BPF_PROG_RUN, bpf_per_cpu_ptr(vmw_steal_time) + bpf_per_cpu_ptr(runqueues)
+tsc_khz=1995312 nr_cpus=24 user_hz=100 interval=1s duration=khong gioi han
+da ghi 1893 chu ky x 24 CPU vao validation/m6e-20261024/E2b/steal-probe.csv

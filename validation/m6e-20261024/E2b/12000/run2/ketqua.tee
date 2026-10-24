@@ -1,0 +1,24 @@
+marker_nr=110 so_khoang=1500 so_pmu=1500 so_ban_ghi_wl=1504
+dt_ns=9847394.0
+cpu_ns=9789312.5
+steal_ns=0.0
+rq_ns=0.0
+steal_off_ns=0.0
+phan_du_ns=0.0
+phan_du_max_ns=0.0
+CPI=1.2431
+GHz=1.9794
+sum_steal_ns=41083792185
+sum_steal_off_ns=334650531
+sum_hids_steal_plus_off_ns=41418442716
+oracle_steal_delta_ns_cpu20=41420000000
+oracle_steal_delta_ns_vm=993260000000
+ti_le_hids_tren_cpu20=0.999962
+ti_le_hids_tren_vm=0.041699
+oracle_sau cpu20_steal_jiffies=178129 cpu_steal_jiffies=4113803
+oracle_truoc cpu20_steal_jiffies=173987 cpu_steal_jiffies=4014477
+oracle_steal_delta_jiffies_cpu20=4142
+oracle_steal_delta_jiffies_vm=99326
+oracle_steal_delta_ns_cpu20=41420000000
+oracle_steal_delta_ns_vm=993260000000
+ORACLE cpu20_steal_delta_ns=41420000000 vm_steal_delta_ns=993260000000 hids_sum_steal+off_ns=41418442716 ti_le_hids/cpu20=0.999962 ti_le_hids/vm=0.041699

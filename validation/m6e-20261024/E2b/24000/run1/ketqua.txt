@@ -1,0 +1,29 @@
+marker_nr=110 so_khoang=1500 so_pmu=1500 so_ban_ghi_wl=1504
+dt_ns=9861236.0
+cpu_ns=9807638.5
+steal_ns=0.0
+rq_ns=0.0
+steal_off_ns=0.0
+phan_du_ns=0.0
+phan_du_max_ns=0.0
+CPI=1.2510
+GHz=1.9800
+sum_steal_ns=13305021904
+sum_steal_off_ns=391814215
+sum_hids_steal_plus_off_ns=13696836119
+oracle_steal_delta_ns_cpu20=13700000000
+oracle_steal_delta_ns_vm=328770000000
+ti_le_hids_tren_cpu20=0.999769
+ti_le_hids_tren_vm=0.041661
+oracle_sau cpu20_steal_jiffies=138586 cpu_steal_jiffies=3172118
+oracle_truoc cpu20_steal_jiffies=137216 cpu_steal_jiffies=3139241
+oracle_steal_delta_jiffies_cpu20=1370
+oracle_steal_delta_jiffies_vm=32877
+oracle_steal_delta_ns_cpu20=13700000000
+oracle_steal_delta_ns_vm=328770000000
+vm_steal_pct=45.392
+GHz_wall_truoc=0.9883
+so_attempt=1
+cpu_method=int64
+wl=taskset -c 20 ./bin/wl -loops 2586241 cpu 10000 1500
+collect=taskset -c 21

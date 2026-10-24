@@ -1,0 +1,1 @@
+oracle_truoc cpu20_steal_jiffies=127898 cpu_steal_jiffies=2919854

@@ -197,15 +197,70 @@ Unlimited	trung_vi	0.025	9849657.5000	69138.5000	35716.5000	0.0000	1.2484	155175
 
 READY E2: 12/12 attempt=1. File: `validation/m6d-20261024/E2/`.
 
+### E2b (M6e; wl cpu liên tục + oracle /proc/stat)
+
+Script: `scripts/m6e_e2b.sh` (bản sao `m6d_e2.sh`, không sửa gốc).  
+Khác ba điểm: (1) `taskset -c 20 ./bin/wl -loops <burn_loops> cpu 10000 1500` (marker getppid=110 như S1); (2) collector `taskset -c 21 -pmu on`; (3) oracle `cpu20` + `cpu` trước/sau mỗi lượt.  
+Unit/thời gian: 22:53→23:25 (+07), status=done, 12/12 attempt=1.  
+Dữ liệu: `validation/m6e-20261024/E2b/`.
+
+vm_steal_pct (/proc/stat 10 s):
+
+```
+Unlimited	0.037%
+36000	29.992%
+24000	45.392%
+12000	68.052%
+Unlimited-cuoi (lan1 sau dat lai)	67.658%
+Unlimited-cuoi (lan2)	0.025%
+```
+
+Dấu tần số (CPU 20):
+
+```
+freq E2b-Unlimited: truoc=2.5212 sau=1.9164 lech=23.99% LECH_>2%
+freq E2b-36000: truoc=1.5477 sau=1.6408 lech=6.02% LECH_>2%
+freq E2b-24000: truoc=0.9883 sau=1.0327 lech=4.49% LECH_>2%
+freq E2b-12000: truoc=0.4958 sau=0.5132 lech=3.51% LECH_>2%
+```
+
+Bảng mỗi mức×lượt (marker nr=110, 1500 khoảng; nguyên văn `E2b/bang.tsv`):
+
+```
+muc	run	med_dt_ns	med_cpu_ns	med_steal_ns	med_rq_ns	med_steal_off_ns	CPI	GHz	med_phan_du_ns	oracle_cpu20_ns	oracle_vm_ns	hids_sum_ns	ti_le_hids_cpu20
+Unlimited	1	7560041.0	7529941.5	0.0	0.0	0.0	1.2499	2.5791	0.0	0	230000000	89821	inf
+Unlimited	2	7560732.0	7526835.5	0.0	0.0	0.0	1.2509	2.5793	0.0	0	230000000	13403	inf
+Unlimited	3	7573361.5	7544839.0	0.0	0.0	0.0	1.2512	2.5783	0.0	0	240000000	336272	inf
+36000	1	9842015.5	9793799.5	0.0	0.0	0.0	1.2515	1.9828	0.0	5370000000	129640000000	5375160955	1.000961
+36000	2	9856657.0	9809727.5	0.0	0.0	0.0	1.2527	1.9818	0.0	5520000000	132900000000	5525338320	1.000967
+36000	3	9833817.0	9788868.5	0.0	0.0	0.0	1.2510	1.9833	0.0	5610000000	135050000000	5616247047	1.001114
+24000	1	9861236.0	9807638.5	0.0	0.0	0.0	1.2510	1.9800	0.0	13700000000	328770000000	13696836119	0.999769
+24000	2	9782459.5	9677725.5	0.0	0.0	0.0	1.2287	1.9768	0.0	11090000000	266730000000	10702221759	0.965034
+24000	3	9886587.5	9828687.5	0.0	0.0	0.0	1.2538	1.9792	0.0	12400000000	295910000000	12394254408	0.999537
+12000	1	9847216.0	9786973.0	0.0	0.0	0.0	1.2449	1.9795	0.0	42040000000	1008760000000	42031942426	0.999808
+12000	2	9847394.0	9789312.5	0.0	0.0	0.0	1.2431	1.9794	0.0	41420000000	993260000000	41418442716	0.999962
+12000	3	9842464.0	9777546.5	0.0	0.0	0.0	1.2416	1.9794	0.0	42700000000	1025240000000	42702395069	1.000056
+```
+
+Đối chiếu oracle (mẫu run1 mỗi mức, nguyên văn từ `ketqua.txt`):
+
+```
+Unlimited/run1: oracle_cpu20=0  oracle_vm=230000000  hids_sum=89821  ti_le_hids/cpu20=inf  ti_le_hids/vm=0.000391
+36000/run1:     oracle_cpu20=5370000000  oracle_vm=129640000000  hids_sum=5375160955  ti_le_hids/cpu20=1.000961  ti_le_hids/vm=0.041462
+24000/run1:     oracle_cpu20=13700000000 oracle_vm=328770000000  hids_sum=13696836119 ti_le_hids/cpu20=0.999769  ti_le_hids/vm=0.041661
+12000/run1:     oracle_cpu20=42040000000 oracle_vm=1008760000000 hids_sum=42031942426 ti_le_hids/cpu20=0.999808  ti_le_hids/vm=0.041667
+```
+
 ### Chốt READY
 
-READY phần A (30/30) và E2 (12/12). Không chạy lại phần A (kiến trúc sư chấp nhận).
+READY phần A (30/30), E2 (12/12), E2b (12/12). Không chạy lại phần A (kiến trúc sư chấp nhận).
 
 6. File dữ liệu đã tạo  
    - `validation/m6d-20261024/` (E1, E2, E3, E4-cache; mỗi lượt `collect.bin` + `export.csv` + `ketqua.txt`)  
    - `validation/m6d-20261024/bang-tong-hop.tsv`, `E2/bang-tong-hop.tsv`  
    - `validation/m6d-20261024/freq-lech.txt`, `E2/freq-lech.txt`  
-   - `out/jobs/m6d-a.log`, `out/jobs/m6d-e2.log`  
+   - `validation/m6e-20261024/E2b/` (`bang.tsv`, `oracle.txt` mỗi lượt)  
+   - `out/jobs/m6d-a.log`, `out/jobs/m6d-e2.log`, `out/jobs/m6e-e2b.log`  
    - `out/m6d-build.log`
 
 7. Quyết định đã tự đưa ra và lý do  
@@ -221,19 +276,16 @@ READY phần A (30/30) và E2 (12/12). Không chạy lại phần A (kiến trú
    (Không còn — E2 đã chạy xong.)
 
 10. Lỗi còn tồn tại, việc tiếp theo  
-    - M6d đóng: tag `m6d`, push.  
-    - Không còn lỗi mở trong phạm vi M6d.
+    - M6d đóng (tag `m6d`). E2b đã nối vào R036.  
+    - Không còn lỗi mở trong phạm vi M6d/E2b.
 
 ### Thay đổi ngoài phạm vi (`git diff --stat m6c.3..HEAD -- scripts analysis internal cmd tools`)
 
 ```
- scripts/m6d_a_driver.sh |  48 +++++
- scripts/m6d_e2.sh       | 379 ++++++++++++++++++++++++++++++++++++++++
- scripts/m6d_eseries.sh  | 449 ++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 876 insertions(+)
+(xem commit E2b; thêm scripts/m6e_e2b.sh; không sửa m6d_e2.sh / BPF)
 ```
 
-(analysis / internal / cmd / tools: không đổi)
+(analysis / internal / cmd / tools: không đổi so với m6c.3 trừ script mới)
 
 ### sha256 5 file (lúc viết báo cáo)
 

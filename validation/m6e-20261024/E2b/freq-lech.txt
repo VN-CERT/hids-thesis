@@ -1,0 +1,4 @@
+freq E2b-Unlimited: truoc=2.5212 sau=1.9164 lech=23.99% LECH_>2%
+freq E2b-36000: truoc=1.5477 sau=1.6408 lech=6.02% LECH_>2%
+freq E2b-24000: truoc=0.9883 sau=1.0327 lech=4.49% LECH_>2%
+freq E2b-12000: truoc=0.4958 sau=0.5132 lech=3.51% LECH_>2%

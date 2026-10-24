@@ -1,0 +1,6 @@
+E2b Unlimited vm_steal_pct_check=0.037%
+E2b 36000 vm_steal_pct_check=29.992%
+E2b 24000 vm_steal_pct_check=45.392%
+E2b 12000 vm_steal_pct_check=68.052%
+vm_steal_pct_sau_Unlimited=67.658%
+vm_steal_pct_sau_Unlimited_lan2=0.025%

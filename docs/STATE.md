@@ -63,108 +63,6 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 ## Việc đang chạy
 
-- (không có) — M6d đóng. `hids_` = 0, 12 container chạy.
-
-
-## Bước đang làm (M6c-1)
-
-- Nhiệm vụ: `docs/tasks/M6c-1.md`. Thứ tự: 1 → 2 → 3 → 5 → 4 → 6. Báo cáo R033, tag `m6c.1`.
-- LƯU Ý: `tools/coreclk.c` sha256 thực tế `3d2c9005…` KHÁC giá trị trong nhiệm vụ (`88ef821e…`) → theo lệnh "sai → DỪNG", KHÔNG dùng coreclk (mục 5b dừng, ghi vào R033 mục 8). Nội dung file đúng mô tả coreclk; không sửa.
-- Phần 1 XONG: 1a `-pmu off|host|on` mặc định host (commit `d2db255`), 1b STEALCHECK thử lại 3 cửa sổ, 1c pre24h đếm tổng đoạn host, 1d bản sao `m6c1_overhead.sh`/`m6c1_e4p.sh`/`g3_swap.sh` (READY 20s + KHONG_READY chạy lại; production `-pmu host`; wrk gốc `/usr/bin/wrk`; pgtest theo M5h). `make build` xong.
-- Cập nhật: `tools/coreclk.c` đã được người dùng thay bằng bản đúng `88ef821e…` (commit "M6c-1: tools/coreclk.c ban kien truc su 88ef821e") → mục 5b ĐƯỢC làm. Bản cũ trong repo lúc bắt đầu là `3d2c9005…` (ghi vào R033 mục 7).
-- Phần 2 XONG: G7a ×4 mất 0, header `pmu:` host/on/off/host(mặc định) đúng; G3 mặc định host: phần dư max ≤ 500 ns, CLAMPED 0/tổng, recursion_misses = 0 (27 chương trình × S1–S5); hostcheck host = số, off = `na`. Lệch rq G3 so với bpftrace TONG (S2 10,56%, S3 26,33%, S5 7,64%) là đối tượng chẩn đoán của phần 3, không phải tiêu chí phần 2.
-- Phần 3 XONG (dữ liệu `validation/m6c1-20261021/part3/`, file `pair3d.txt` + `pair3d-swap.txt`): thứ tự thường + on: trung vị hiệu (bpftrace − collector) S2 = +7,769 µs; off: −1,403 µs; thứ tự đảo: on +0,451 µs, off +0,382 µs (S2). Đã sửa 2 lỗi của bản sao: STEALCHECK in `nguong_ns=0` khi lệch âm lớn nhất (commit 1b-fix, đã build lại) và `g3_swap.sh` thừa ký tự `\&\&` khiến lượt swap đầu không chạy kịch bản nào (đã chạy lại).
-- Phần 5a: E4 gốc (`scripts/m4.sh`) khởi động KHÁC mô tả — hiệu chuẩn ở bước `calibrate` riêng trên máy rảnh (dòng 487), lúc chạy `e4_workers` (dòng 308) thì stress-ng chạy TRƯỚC (dòng 315), `sleep 2` (dòng 318), rồi wl mới chạy với `-loops` đọc `mem_steps` từ file (không hiệu chuẩn lại). Theo BỔ SUNG đề bài của người dùng (đã lưu nguyên văn vào `docs/tasks/M6c-1.md`): KHÔNG dừng nữa; `scripts/m6c1_e4p.sh` chạy theo giao thức kiến trúc sư (wl hiệu chuẩn + tự kiểm mem khi máy rảnh → stress-ng → chờ 10 s → go), khác biệt ghi vào R033.
-- Phần 4 XONG (unit `hids-m6c1p4`, 2026-10-21 19:19 → 23:34 +07, `overhead_exit=0`, dữ liệu `validation/m6c1-20261021/part4/`): overhead chính xong; đường CPU theo tốc độ xong; G7-cap nproc=1 `recs=57203693 mat=0`, nproc=2 `recs=53262308 mat=64071301` (exit=1), nproc=4 `recs=52486414 mat=204385788` (exit=1). 12 container đã chạy lại, kernel sạch (hids_ = 0).
-- Phần 5b XONG (`validation/m6c1-20261021/coreclk/coreclk.log`): cycles:u ≈ 2,494 tỉ vs chu_ky_ky_vong 2,4 tỉ (tỉ số ≈ 1,039); GHz_wall 1,888–1,933; chi tiết tính trong R033.
-- Phần 5a XONG (3 job: job đầu chết vì STEALCHECK từ chối 1 lần + `wait_ready` của bản sao dùng `exit 1`; đã sửa bản sao, chạy lại đủ 9/9 ô): L0 CPI 1,92–1,94; L12 CPI 3,68–3,74; L22 CPI 5,95–6,40; GHz hiệu dụng 1,95–1,98; inst tăng theo L (câu 8.2 của R033).
-- M6c-1 ĐÓNG: R033 viết xong, tag `m6c.1`, đã push (remote khớp local). Việc đang chạy: (không có) — unit `hids-*` trống, `bpftool prog show | grep -c hids_` = 0, 12 container chạy. Chờ kiến trúc sư trả lời 6 câu hỏi mục 8 của R033.
-
-## Bước đang làm (M6c-2)
-
-- Nhiệm vụ: `docs/tasks/M6c-2.md`. Báo cáo R034, tag `m6c.2`.
-- Phần 1 XONG (chỉ dùng dữ liệu cũ, file `validation/m6c2-20261022/part1.txt`): C1 bản ghi/giây 10 lượt mỗi ô (T1 trung vị 1.261.136,9/s, mất tổng 0); C2 = 0 bản ghi mọi lượt (cgroup decoy). Đối chiếu 1c: R026/M5h T1 C0 141,84 ns, T3 C0 4901,59 TPS, T4 C0 140081 RPS; R021/M5f T3 C0 ≈ 4965 TPS, T4 C0 142675 RPS.
-- Phần 2 XONG: STEALCHECK theo TỔNG mọi CPU (|Σvmw − Σrq| ≤ max(5 ms, 1% Σvmw)), bảng per-CPU mỗi cửa sổ; G7a ×1 mất 0; G3 ×1: G5 max ≤ 500, CLAMPED 0/tổng, recursion_misses = 0 trên 31 chương trình. Dữ liệu `validation/m6c2-20261022/part23/`.
-- Phần 3 XONG: `scripts/freq_stamp.sh`; CPU 12 trung vị 1,9359 GHz, CPU 20 trung vị 1,9349 GHz (máy rảnh, container dừng). Quy ước đã ghi vào `.cursor/rules/hids.mdc`.
-- Phần 4 XONG: E4p cơ chế gốc đủ 9/9 ô, attempt 1, 500/500 khoảng mỗi ô; inst 14170548–14170579 ở mọi mức; dấu tần số L=22 là 2,5239 GHz (khác L0/L12 ~1,93 — câu 8.1 của R034).
-- M6c-2 ĐÓNG: R034 viết xong, tag `m6c.2`, đã push. Việc đang chạy: (không có) — unit `hids-*` trống, `bpftool prog show | grep -c hids_` = 0, 12 container chạy.
-- Trả lời của kiến trúc sư về R034 mục 8 (nhận 2026-10-22, ghi nguyên văn):
-  1. Không đo lại L=22; so sánh giữa các mức bằng cyc, CPI, inst (không phụ thuộc tần số); cpu_ns luôn kèm GHz hiệu dụng của mức đó; việc tần số nhảy 1,93→2,52 GHz là phát hiện: turbo có nhưng host dùng chung nên lúc có lúc không; quy ước bổ sung: freq_stamp trước VÀ sau mỗi khối đo, lệch >2% thì ghi chú khối đó.
-  2. Câu 8.2 của R033 đóng: inst không đổi với cơ chế -loops. Ghi nhận lỗi trong tools/wl.c self_test_mem_10ms: biến sum không được cộng dồn nên nhánh điều chỉnh mem_steps là mã chết; không sửa trong nhiệm vụ nào hiện tại.
-
-## Bước đang làm (M6c-3)
-
-- Nhiệm vụ: `docs/tasks/M6c-3.md`. Báo cáo R035, tag `m6c.3`. BPF mới của kiến trúc sư `9994b03f…` (lấy mẫu PMU), đã commit và build đạt.
-- Phần 2 XONG (commit `30b221b`): `-pmu sample=K` (K 2…1000; nạp `hids_pmu_sample`, header `pmu: sample=K`); STEALCHECK in thêm dòng `STEALCHECK canh_bao cpu=<n> lech_ns=<...>` khi tổng đạt nhưng một CPU lệch > 50 ms.
-- Phần 3 XONG: G7a ×4 mất 0, header đúng 4 chế độ; G3 sample=20 (phần dư ≤ 500, CLAMPED 0, recursion 0, PMU 4,97–4,99%) và on (PMU 100%); G11 lệch inst 43, cyc 7761, cờ 100%; G11s đạt (sample20: 15 khoảng, inst +0,79%, cyc +1,55%; sample50: 6 khoảng, +0,77%/+1,04%); T1: C0 186,5 / host 817,9 / sample50 805,7 / sample20 952,9 / on 3766,5 ns/syscall; pre24h10 sample=20: CPU 0,80% lõi, RSS 183730176 B, drops 0, host 600 dòng, PMU 4,9883%. Hai lần G3 đầu hỏng do wrapper/driver cùng dừng container và wl trượt tự kiểm — đã chạy lại nguyên trạng.
-- M6c-3 ĐÓNG: R035 viết xong, tag `m6c.3`, đã push. Việc đang chạy: (không có) — unit `hids-*` trống, `bpftool prog show | grep -c hids_` = 0, 12 container chạy.
-- Trả lời của kiến trúc sư về R035 mục 8 (nhận 2026-10-22, ghi nguyên văn):
-  1. K = 20 cho LAB-1 và thu dữ liệu Bài 2 (`-pmu sample=20`); chi phí đo được +135 ns/syscall so với host ở vi mô xấu nhất, tức ≈1,5% CPU ở tải PostgreSQL kịch trần (436k bản ghi/giây trên 4 CPU) — chấp nhận. Mặc định production vẫn host.
-  2. Không đo lại cặp host/sample=50. Ghi nhận chưa giải thích: theo số đếm lần đọc (một khoảng lấy mẫu = 2 lần pmu_read = 4 RDPMC ≈ 5,9 µs cho mỗi K syscall) thì kỳ vọng sample=20 ≈ +295 ns, sample=50 ≈ +118 ns; đo được +135 và −12, đều thấp hơn kỳ vọng ~160 ns. Không ảnh hưởng quyết định. G11s lần sau chạy wl với -loops cố định cho cả hai lần.
-
-## M6c: ĐÓNG (R032)
-
-- Bản ghi 64 byte + PMU xong: recfmt 48/56/64, loader `-pmu auto|on|off`, header `pmu:`, host `pmu_inst_delta`/`pmu_cyc_delta`, rec-export `inst,cyc,pmu_ok`, rec-stat tỉ lệ PMU. Đồng bộ Go `irqState.Gen`.
-- Cổng: file cũ 1003=1003=1003; G7a on/off mất 0; G7b khớp tuyệt đối (mất 6,5–18,8%); G7b-nhỏ khớp 6770559; G3 ×4 phần dư ≤500, CLAMPED 0/tổng, recursion 0; G11 lệch inst 43 (≈0%), cyc ≤0,0002%, cờ PMU 100%; G8/G9a/G9b/G10 PASS (host lines=471 là lỗi đếm một đoạn xoay của pre24h, tổng thật 602).
-- Overhead cuối (mỗi ô 10 lượt): T1 C0 184, C1 3746, C1n 797, C2 243 ns/syscall; T4 C1 −27,0%, C1n −8,5%; T3 C1 −69,4% TPS; T4-R50 C1 độ trễ sụp (p99 335 ms). Đường CPU (-pmu on): 1.5k→1,87%, 10k→4,43%, 99k→23,62%, đạt tối đa ~207k/s ở mức đích 500k (CPU 47,97%, drops 0). G7-cap: 267k/528k/874k bản ghi/giây (1/2/4 proc), mất 0.
-- E4p đủ 9 ô: CPI 1,71 (L0) → 3,05–3,25 (L12) → 5,04–5,68 (L22); GHz hiệu dụng 1,90–1,97 không đổi; inst giảm theo L do wl hiệu chuẩn lại dưới tải.
-- Chờ kiến trúc sư: (1) chấp nhận chi phí PMU? (2) lệch rq G3 đổi chiều theo PMU (on: thấp hơn 16–41%; off: cao hơn 3,6–8,8%); (3) sửa cách đếm host lines của pre24h? Tag `m6c`, R032.
-
-## Kết quả cổng cuối M6b-1.2 (binary fa60c56)
-
-- G7b lần 1: `tong bo dem mat: 54193` (tiêu chí = 0, không đạt); chạy lại xác nhận: mất = 0. Cả hai lần ghi nguyên văn trong R030.
-- pre24h lần 1 (trong job final): G3 S5 max=6298 → dừng trước G9b; lần 2 (`final2/`): đạt toàn bộ — G7a, G7b-nho (mat=seq_thieu=2401672), G3 max ≤500, G9b (lo_hong=0, seq_thieu=0, mat=0), host 600 dòng.
-- gate: đạt toàn bộ (G7a, G3, G8 khớp perf, G9a rec-chain 0/0, G10 PAUSE/RESUME/bo_vi_dia=16815920/mat=0, host).
-- Chạy 1 giờ: CPU 1.42% một lõi, RSS 193466368 B, records_per_sec không âm, kernel drops = 0, proc drops = 0.
-- Sau cùng: `bpftool prog show | grep -c hids_` = 0, không còn collector. Tag `m6b1.2`, R030 đã viết; chờ kiến trúc sư quyết về lệch rq (câu 2) và mất G7b lần 1.
-
-## Kết quả M6b-1.2 tới trước cổng cuối
-
-- Câu 1: sau 1.1 (proc bỏ deadline) idle 1.98% / 24h ~6.9%; sau 1.2 (`-rb-poll` 200ms) idle 0.25% / 24h 1.34–1.46% lõi. Đường CPU theo tốc độ (ổn định, từ status.tsv): ~1.5k/s → 1.43%; ~10k/s → 3.83%; ~97k/s → 21.37%; ~475k/s → 114.97%; mất kernel = 0 ở mọi mức.
-- Câu 2: bpftrace đã thêm `@rq_sau_preempt_ns` + `@rq_tong_ns` (sửa lỗi lấy `nsecs` hai lần bằng một biến `$now`). Lệch rq so với TỔNG bpftrace: container dừng — S2 9.13%, S3 11.02%, S5 3.21%; container chạy — S2 7.80%, S3 9.88%, S5 7.13%. Tiêu chí ≤5% không đạt (trừ S5 lúc dừng container). G5 max ≤500 cả hai lần; file `validation/m6b12-20261020/cau2-summary.txt`.
-- Phần dư S5 7979: bản ghi chỉ số 1277 của tid 281298 trong `out/g3-S5-200335.bin`, cờ CLAMPED, irq_ns=17361 > dt_ns=9382, cpu_ns=0. File `validation/m6b12-20261020/s5-residual/s5-7979.txt`. Không sửa gì.
-
-## Dọn trước M6b-1.2 (xong 2026-10-20)
-
-- Đã ghi nhận lọc lịch sử lần 2 ở mục trên (bảng đối chiếu `docs/commit-map-loc-2.txt`, dùng TAG).
-- `.gitignore` đã thêm `hey.csv`; không commit log/dữ liệu thô (`pgbench.log`, `pglog.*`, `perf.data`, `hey.csv`, `*.bin`, `*.bin.zst`).
-- Đã commit `validation/m6b1-20261010/`, `validation/m6b1-20261019/`, `validation/m6b1-pre24h-20261019/` (150 file, chỉ kết quả tóm tắt). File > 10 MB trong các thư mục này chỉ gồm 3 file `.bin` (1.7 GB, 1.7 GB, 9.4 GB ở `m6b1-20261019/g9|g10/`) — dữ liệu thô, đã bị `.gitignore` loại, không commit.
-- `make build` tạo lại đúng `internal/syscallbpf/sysenter_x86_bpfel.o` (151576 B) và `internal/procbpf/procevents_x86_bpfel.o` (41200 B) từ nguồn BPF (sha256 ở mục sha256 của R029); đã commit cả hai.
-- Đã `git push github --all` (master `50b3668..d2b461a`) và `git push github --tags` (Everything up-to-date); remote khớp local: master `d2b461a`, tag `m6b1` `59c0211`, tag `m6b1.1` `0f7f948`.
-
-## Kết quả C đợt 3 (unit hids-m6b11-c3)
-
-- gate exit=0, đạt toàn bộ: G7a, G3 đầy đủ, G8 (exec/fork/exit khớp perf, `/true` = 500), G9 (rec-chain lo_hong=0, seq_thieu=0), G10 (PAUSE_DISK, RESUME_DISK, bo_vi_dia=17282608, kernel mat=0), host ~600 dòng, cpu_user không giảm. Sau chạy: `bpftool prog show | grep -c hids_` = 0, không còn collector.
-
-## Kết quả C đợt 2 (unit hids-m6b11-c2)
-
-- pre24h exit=0, đạt toàn bộ: G7a (1000001, mat=0), G7b-nho (mat=seq_thieu=(perf-ban_ghi)=4211457), G3 recursion_misses=0, G5 max S1=0, S2=499, S3=499, S4=0, S5=499 (≤500), G9b (lo_hong=0, seq_thieu=0, kernel_mat=0), host 600 dòng, bộ đếm không giảm.
-- Lệch rq collector so với bpftrace đợt 2: S2=5.02%, S3=8.43%, S5=0.96% (đợt 1: S2=3.32%, S3=10.91%, S5=5.05%). Tiêu chí thêm ≤5%: S3 vượt cả hai đợt; S2/S5 lúc vượt lúc không.
-- gate đợt 2: G7a PASS; G3 đầy đủ (gồm G-real, G-irq, G7d) chạy xong; **G8 FAIL: exit collector=501, perf=502** (exec 501=501, fork 501=501). gate dừng tại G8 nên G9/G10/host-stats của gate chưa chạy.
-
-## Kết quả C đợt 1 (unit hids-m6b11-c, binary 8faaec1)
-
-- G7a PASS (ban_ghi=1000001 mat=0); G7b-nho PASS (mat=seq_thieu=(perf-ban_ghi)=3288965).
-- G3 (pre24h): recursion_misses=0; G5 max S1=0, S2=500, S3=500, S4=0, **S5=7979 ns → FAIL tiêu chí ≤500** (1/1502 khoảng >1000 ns). pre24h dừng tại đây (chưa chạy G9b, host10m).
-- rq collector lệch bpftrace: S2=3.32%, **S3=10.91%**, **S5=5.05%** (tiêu chí thêm ≤5%: S3, S5 vượt). File: `validation/m6b11-20261020/C/g3-bpftrace-compare.txt`.
-- gate.sh đợt 1: G3 lỗi do `wl` tự kiểm hiệu chuẩn lệch >5% rồi thoát sớm (không phải tiêu chí collector); G8/G10 chưa chạy.
-- Chạy 1 giờ (C/run1h): CPU 9.87% một lõi (346.816s/3513s), RSS cuối 193638400 B, records_per_sec min 385.72 max 408.32, **số dòng âm = 0** (kể cả qua xoay file 14:00Z), kernel drops = 0, proc drops = 0.
-
-## Vướng mắc / chờ kiến trúc sư
-
-- A3: mục tiêu CPU ≤2% lõi không đạt trong phạm vi sửa được phép (nguyên nhân ở tương tác đường đọc ring buffer 10 ms với sysmon Go). Cần kiến trúc sư quyết định (câu hỏi mục 8 trong R029).
-- C/G3: lệch rq collector so với bpftrace ở S3 vượt 5% trong cả hai đợt đo (10.91% và 8.43%); S2, S5 có đợt vượt nhẹ. Cần kiến trúc sư quyết định tiêu chí/định nghĩa (mục 8 trong R029).
-
-## Bước đang làm (M6d)
-
-- Nhiệm vụ: `docs/tasks/M6d.md`. Báo cáo R036, tag `m6d`. Không sửa BPF, không sửa m4.sh.
-- File kiến trúc sư sha256 (kiểm trước build): sys_enter `9994b03f…`, proc_events `39d892e552…`, m5f_parse `9f0b4cde…`, m6c_stats `8c390002…`, coreclk `88ef821e…` — khớp.
-- Script: `scripts/m6d_eseries.sh` (E1/E3/E4-cache), `scripts/m6d_e2.sh` (E2 + int64), `scripts/m6d_a_driver.sh`.
-- Phần A: unit `hids-m6d-a` (~2 giờ). Phần B: chờ người dùng vCenter (`bash scripts/m6d_e2.sh`).
-- Cập nhật: 2026-10-24 20:07 (giờ máy).
-
-## Việc đang chạy
-
 - **hids-m6d-a** (M6d phần A: calibrate → E1 → E3 → E4-cache, 3 lần/mức + freq_stamp)
   - lệnh: `systemd-run --unit=hids-m6d-a --collect bash -c 'cd /root/hids && bash scripts/m6d_a_driver.sh'`
   - bắt đầu: 2026-10-24 20:08
@@ -188,3 +86,15 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
   2. E1: cpu_ns chỉ so tuyệt đối trong cùng dải GHz; bảng bài dùng rq và cyc; ghi tần số nhảy 1,93↔2,53; rq 9/12/26 ms nhất quán với CFS chia đều.
   3. E3 là kiểm không gán nhầm: vol = 300 s, cpu/rq vài chục µs, steal 0 — đạt.
 - Cập nhật: 2026-10-24 22:33.
+
+## Bước đang làm (M6e-E2b)
+
+- XONG: `scripts/m6e_e2b.sh`, dữ liệu `validation/m6e-20261024/E2b/`, đã nối R036 mục E2b.
+- 12/12 attempt=1; vm_steal_pct Unlimited 0,037% → 36000 29,992% → 24000 45,392% → 12000 68,052%; Unlimited cuối 0,025%.
+- Oracle cpu20 vs hids_sum (steal+off): ti_le ≈ 1,00 ở các mức có limit (36000/24000/12000).
+- Cập nhật: 2026-10-24 23:27.
+
+## Việc đang chạy
+
+- (không có) — E2b xong. 12 container chạy, `hids_` = 0.
+

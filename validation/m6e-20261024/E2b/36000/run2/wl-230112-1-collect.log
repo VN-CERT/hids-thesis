@@ -1,0 +1,73 @@
+stealclock: bat (24/24 dong "vmware-stealtime" trong journalctl -k -b --no-pager)
+stealclock_evidence: journalctl
+doi chieu vmw_steal_time voi rq->prev_steal_time trong 3s (lan 1)...
+   cpu         vmw_ns    rq_steal_ns      lech_ns    nguong_ns
+     0      825791754      825791755           -1      8257917
+     1      827622733      827622733            0      8276227
+     2      821610907      821610908           -1      8216109
+     3      821454896      821454897           -1      8214548
+     4      823491221      823491221            0      8234912
+     5      821913740      821913740            0      8219137
+     6      820235788      820235788            0      8202357
+     7      821201047      821201047            0      8212010
+     8      822105901      822105901            0      8221059
+     9      828244435      828244436           -1      8282444
+    10      832835640      832835640            0      8328356
+    11      822378712      822378712            0      8223787
+    12      820097509      820097509            0      8200975
+    13      820531237      820531237            0      8205312
+    14      824003046      824003046            0      8240030
+    15      826212012      826212013           -1      8262120
+    16      822729707      822729707            0      8227297
+    17      825842608      825842608            0      8258426
+    18      822573457      822573457            0      8225734
+    19      821600821      821600821            0      8216008
+    20      870855149      870850035         5114      8708500
+    21      869900466      869900467           -1      8699004
+    22      822989690      822989690            0      8229896
+    23      828591642      828591643           -1      8285916
+  TONG    19864814118    19864809011         5107    198648141
+STEALCHECK lan=1 tong_vmw_ns=19864814118 tong_rq_ns=19864809011 lech_ns=5107 nguong_ns=198648141 cpu_lech_max=20:5114 ket_qua=DAT
+doi chieu xong: |tong_vmw - tong_rq| = 5107 ns, nguong max(5000000 ns, 1% x tong_vmw); cpu lech max 20: 5114 ns
+ghi vao validation/m6e-20261024/E2b/36000/run2/wl-230112-1.bin
+loc pid: 605469 | loc cgroup: khong co | ring buffer: 64 MiB
+READY
+ban ghi doc duoc: 1504 | so lan dinh ghi: 1504 | mat: 0
+irq cong don (ns): hard 1791267 | soft 318302261 | vector 5818552166 | tong 6138645694
+soft_raw cong don (ns): 319092227 (ke ca hard/vector long ben trong, de so voi softirqs-bpfcc)
+irq bat thuong: 0 khoang, 0 ns | loai con dang hoat dong: 0
+recursion_misses (bpf_prog_info), tong 0 tren 31 chuong trinh:
+  hids_irq_call_function_entry             0
+  hids_irq_call_function_exit              0
+  hids_irq_call_function_single_entry      0
+  hids_irq_call_function_single_exit       0
+  hids_irq_deferred_error_apic_entry       0
+  hids_irq_deferred_error_apic_exit        0
+  hids_irq_error_apic_entry                0
+  hids_irq_error_apic_exit                 0
+  hids_irq_irq_handler_entry               0
+  hids_irq_irq_handler_exit                0
+  hids_irq_irq_work_entry                  0
+  hids_irq_irq_work_exit                   0
+  hids_irq_local_timer_entry               0
+  hids_irq_local_timer_exit                0
+  hids_irq_reschedule_entry                0
+  hids_irq_reschedule_exit                 0
+  hids_irq_softirq_entry                   0
+  hids_irq_softirq_exit                    0
+  hids_irq_spurious_apic_entry             0
+  hids_irq_spurious_apic_exit              0
+  hids_irq_thermal_apic_entry              0
+  hids_irq_thermal_apic_exit               0
+  hids_irq_threshold_apic_entry            0
+  hids_irq_threshold_apic_exit             0
+  hids_irq_x86_platform_ipi_entry          0
+  hids_irq_x86_platform_ipi_exit           0
+  hids_sched_switch                        0
+  hids_sched_wakeup                        0
+  hids_sched_wakeup_new                    0
+  hids_sys_enter                           0
+  hids_sys_enter_fentry                    0
+thoi gian chay: 90.014 s | CPU collector: user 0.245 s, sys 0.325 s (getrusage RUSAGE_SELF)
+kich thuoc file: 1191 byte
+du lieu: validation/m6e-20261024/E2b/36000/run2/wl-230112-1.bin | thong ke: validation/m6e-20261024/E2b/36000/run2/wl-230112-1.bin.stats | theo doi: validation/m6e-20261024/E2b/36000/run2/wl-230112-1.bin.periodic

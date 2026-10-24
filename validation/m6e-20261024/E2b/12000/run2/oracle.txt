@@ -1,0 +1,6 @@
+oracle_truoc cpu20_steal_jiffies=173987 cpu_steal_jiffies=4014477
+oracle_sau cpu20_steal_jiffies=178129 cpu_steal_jiffies=4113803
+steal_delta_jiffies_cpu20=4142
+steal_delta_jiffies_vm=99326
+steal_delta_ns_cpu20=41420000000
+steal_delta_ns_vm=993260000000
