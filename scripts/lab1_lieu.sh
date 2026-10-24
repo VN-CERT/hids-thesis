@@ -232,16 +232,16 @@ run_d3_one() {
 	return 1
 }
 
-# --- D4 / E5: systemd-run --scope + CPUQuota, wl -loops mem 500 ---
+# --- D4 / E5 (phu luc 1.5): wl cpu lien tuc + CPUQuota none/75/50/25 ---
 run_throttle_one() {
-	local mode=$1 cpus_arg=$2 run=$3  # none|2|1|0.5
+	local mode=$1 quota_arg=$2 run=$3  # none|75|50|25
 	local tag muc quota_pct
-	case $cpus_arg in
+	case $quota_arg in
 		none) tag="nolimit"; muc="none"; quota_pct="" ;;
-		2) tag="cpus2"; muc="2"; quota_pct="200%" ;;
-		1) tag="cpus1"; muc="1"; quota_pct="100%" ;;
-		0.5) tag="cpus0.5"; muc="0.5"; quota_pct="50%" ;;
-		*) echo "cpus_arg sai: $cpus_arg" >&2; return 1 ;;
+		75) tag="q75"; muc="75"; quota_pct="75%" ;;
+		50) tag="q50"; muc="50"; quota_pct="50%" ;;
+		25) tag="q25"; muc="25"; quota_pct="25%" ;;
+		*) echo "quota_arg sai: $quota_arg" >&2; return 1 ;;
 	esac
 	local dir="$OUTROOT/${mode}/${tag}/run${run}"
 	mkdir -p "$dir"
@@ -259,7 +259,8 @@ run_throttle_one() {
 			scope_cmd+=(-p "CPUQuota=$quota_pct")
 		fi
 		scope_cmd+=(--working-directory="$(pwd)" --unit="lab1-${mode}-${tag}-r${run}-a${attempt}")
-		"${scope_cmd[@]}" -- /bin/bash -c "exec taskset -c 0 ./bin/wl -loops '$MEM_STEPS' mem 500" \
+		# phu luc 1.5: wl -loops <burn_loops> cpu 10000 3000 (dot lien tuc)
+		"${scope_cmd[@]}" -- /bin/bash -c "exec taskset -c 0 ./bin/wl -loops '$BURN_LOOPS' cpu 10000 3000" \
 			<"$fifo" >"$dir/wl.log" 2>&1 &
 		local scope_pid=$!
 		sleep 0.5
@@ -306,8 +307,14 @@ run_throttle_one() {
 		printf '.' >&9
 		wait_wchan "$wl_pid" eq || true
 		printf '.' >&9
-		wait_wchan "$wl_pid" ne || true
-		wait_wchan "$wl_pid" eq || true
+		# cpu 3000 * 10ms = 30s; o 25% quota ~120s — cho toi 180s
+		local waited=0 w
+		while kill -0 "$wl_pid" 2>/dev/null && ((waited < 180)); do
+			w=$(cat "/proc/$wl_pid/wchan" 2>/dev/null || true)
+			[[ $w == pipe_read ]] && break
+			sleep 1
+			waited=$((waited + 1))
+		done
 		t1=$(mono_ns)
 		thr1=$(awk '/^throttled_usec/{print $2}' "$cg_path/cpu.stat" 2>/dev/null || echo 0)
 		nr1=$(awk '/^nr_throttled/{print $2}' "$cg_path/cpu.stat" 2>/dev/null || echo 0)
@@ -324,8 +331,8 @@ run_throttle_one() {
 		./bin/rec-export "$bin" >"$dir/export.csv"
 		python3 "$STATS" summarize "$dir/export.csv" "$wl_pid" >"$dir/summary.tsv" || true
 		{
-			echo "=== ${mode} cpus=$cpus_arg quota=${quota_pct:-none} run=$run attempt=$attempt ==="
-			echo "wl_pid=$wl_pid t0=$t0 t1=$t1 cgroup=$cg_path"
+			echo "=== ${mode} quota=${quota_pct:-none} run=$run attempt=$attempt burn_loops=$BURN_LOOPS ==="
+			echo "wl_pid=$wl_pid t0=$t0 t1=$t1 cgroup=$cg_path waited_s=$waited"
 			echo "nr_throttled_delta=$d_nr"
 			echo "throttled_usec_delta=$d_thr"
 			cat "$dir/summary.tsv"
@@ -334,15 +341,16 @@ run_throttle_one() {
 			local rq_med steal_med muc_num
 			rq_med=$(awk -F'\t' '/^rq_med/{print $2}' "$dir/summary.tsv")
 			steal_med=$(awk -F'\t' '/^steal_med/{print $2}' "$dir/summary.tsv")
-			case $cpus_arg in
+			# muc_num tang theo do chat (none→75→50→25) de Spearman
+			case $quota_arg in
 				none) muc_num=0 ;;
-				2) muc_num=1 ;;
-				1) muc_num=2 ;;
-				0.5) muc_num=3 ;;
+				75) muc_num=1 ;;
+				50) muc_num=2 ;;
+				25) muc_num=3 ;;
 			esac
-			append_nhan "${mode}v12-${tag}-r${run}" "$mode" "$muc" "$t0" "$t1" \
-				"throttled_usec_delta" "$d_thr" "nr_throttled_delta=${d_nr};rq_med=${rq_med};steal_med=${steal_med};phuluc1.2"
-			printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$muc_num" "$rq_med" "$steal_med" "$d_thr" "$d_nr" "$cpus_arg" \
+			append_nhan "${mode}v15-${tag}-r${run}" "$mode" "$muc" "$t0" "$t1" \
+				"throttled_usec_delta" "$d_thr" "nr_throttled_delta=${d_nr};rq_med=${rq_med};steal_med=${steal_med};phuluc1.5;wl=cpu"
+			printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$muc_num" "$rq_med" "$steal_med" "$d_thr" "$d_nr" "$quota_arg" \
 				>>"$OUTROOT/${mode}/runs.tsv"
 			echo ok >"$dir/ok"
 			return 0
@@ -419,9 +427,8 @@ with open(dst, "a") as out:
         cpus = by[muc][0][2]
         out.write(f"{muc}\t{statistics.median(rqs)}\t{statistics.median(steals)}\t{len(rqs)}\t{cpus}\n")
 PY
-	# bat buoc 3/3 moi muc
 	local tag
-	for tag in nolimit cpus2 cpus1 cpus0.5; do
+	for tag in nolimit q75 q50 q25; do
 		local n=0 r
 		for r in 1 2 3; do
 			[[ -f $OUTROOT/D4/$tag/run$r/ok ]] && n=$((n + 1))
@@ -487,9 +494,8 @@ print(open(outdir + "/tieu-ci.txt").read() if False else open(outdir + "/tieu-ch
 sys.exit(0 if (ok_p and steal_ok) else 1)
 PY
 	local ec=$?
-	# 3/3
 	local tag
-	for tag in nolimit cpus2 cpus1 cpus0.5; do
+	for tag in nolimit q75 q50 q25; do
 		local n=0 r
 		for r in 1 2 3; do
 			[[ -f $OUTROOT/E5/$tag/run$r/ok ]] && n=$((n + 1))
@@ -528,50 +534,51 @@ calibrate_loops_idle
 if [[ $ONLY == all ]]; then
 	append_nhan "D2-HOAN" "D2" "na" "0" "0" "na" "na" "D2 hoan: can vCenter"
 	echo "D2 hoan: can vCenter" | tee "$OUTROOT/D2-hoan.txt"
-	echo "ONLY=all: dung LAB1_ONLY=d3d4e5 de chay lai D3/D4/E5" | tee -a "$OUTROOT/lieu.log"
+	echo "ONLY=all: dung LAB1_ONLY=d3d4e5|d4e5" | tee -a "$OUTROOT/lieu.log"
 	FAIL=1
 	stop_if_fail "chi-dinh-ONLY"
 fi
 
-# --- D3 ---
-freq_stamp_block "truoc-D3-v14"
-rm -rf "$OUTROOT/D3"
-mkdir -p "$OUTROOT/D3"
-# shellcheck disable=SC2086
-for L in $D3_LEVELS; do
-	for run in 1 2 3; do
-		run_d3_one "$L" "$run" || true
+if [[ $ONLY == d3d4e5 || $ONLY == d3 ]]; then
+	freq_stamp_block "truoc-D3-v14"
+	rm -rf "$OUTROOT/D3"
+	mkdir -p "$OUTROOT/D3"
+	# shellcheck disable=SC2086
+	for L in $D3_LEVELS; do
+		for run in 1 2 3; do
+			run_d3_one "$L" "$run" || true
+		done
 	done
-done
-freq_stamp_block "sau-D3-v14"
-aggregate_d3
-stop_if_fail "D3"
+	freq_stamp_block "sau-D3-v14"
+	aggregate_d3
+	stop_if_fail "D3"
+fi
 
-# --- D4 ---
-freq_stamp_block "truoc-D4-v12"
+# --- D4 (phu luc 1.5) ---
+freq_stamp_block "truoc-D4-v15"
 rm -rf "$OUTROOT/D4"
 mkdir -p "$OUTROOT/D4"
 : >"$OUTROOT/D4/runs.tsv"
-for cpus in none 2 1 0.5; do
+for q in none 75 50 25; do
 	for run in 1 2 3; do
-		run_throttle_one D4 "$cpus" "$run" || true
+		run_throttle_one D4 "$q" "$run" || true
 	done
 done
-freq_stamp_block "sau-D4-v12"
+freq_stamp_block "sau-D4-v15"
 aggregate_d4
 stop_if_fail "D4"
 
-# --- E5 ---
-freq_stamp_block "truoc-E5-v12"
+# --- E5 (phu luc 1.5) ---
+freq_stamp_block "truoc-E5-v15"
 rm -rf "$OUTROOT/E5"
 mkdir -p "$OUTROOT/E5"
 : >"$OUTROOT/E5/runs.tsv"
-for cpus in none 2 1 0.5; do
+for q in none 75 50 25; do
 	for run in 1 2 3; do
-		run_throttle_one E5 "$cpus" "$run" || true
+		run_throttle_one E5 "$q" "$run" || true
 	done
 done
-freq_stamp_block "sau-E5-v12"
+freq_stamp_block "sau-E5-v15"
 aggregate_e5
 stop_if_fail "E5"
 

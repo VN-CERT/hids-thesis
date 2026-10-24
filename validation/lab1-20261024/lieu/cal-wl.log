@@ -1,7 +1,7 @@
-268299
-wl: loops_per_us=343.114585 loops_10ms=3431145 (hieu chinh 201099 us)
-wl: tu kiem 1/5 mono=10027 us thread_cpu=10026 us
-wl: tu kiem 2/5 mono=9939 us thread_cpu=9939 us
-wl: tu kiem 3/5 mono=9760 us thread_cpu=9759 us
-wl: tu kiem 4/5 mono=9806 us thread_cpu=9806 us
-wl: tu kiem 5/5 mono=10024 us thread_cpu=10023 us
+349859
+wl: loops_per_us=343.382668 loops_10ms=3433826 (hieu chinh 200942 us)
+wl: tu kiem 1/5 mono=10030 us thread_cpu=10029 us
+wl: tu kiem 2/5 mono=10043 us thread_cpu=10043 us
+wl: tu kiem 3/5 mono=10032 us thread_cpu=10032 us
+wl: tu kiem 4/5 mono=9742 us thread_cpu=9742 us
+wl: tu kiem 5/5 mono=9784 us thread_cpu=9784 us

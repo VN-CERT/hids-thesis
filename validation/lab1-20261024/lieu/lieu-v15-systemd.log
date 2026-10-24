@@ -1,0 +1,170 @@
+LAB-1 lieu bat dau 2026-10-24T15:51:03+00:00 ONLY=d4e5 D3_LEVELS=0 2 4 7
+sanitize_cpu0: user.slice cpuset.cpus.effective=1-7
+dung lab0-postgres lab0-nginx
+=== hieu chuan wl/mem luc may ranh (CPU 0, system.slice) ===
+calibrate: burn_loops=3433826 mem_steps=653967 (file=/root/hids/out/m4-loops.txt)
+2026-10-24T15:51:32+00:00
+lan 1: GHz_wall=2.5276
+lan 2: GHz_wall=2.5304
+lan 3: GHz_wall=2.5303
+trung vi GHz_wall=2.5303
+=== D4 quota=none run=1 attempt=1 burn_loops=3433826 ===
+wl_pid=350060 t0=315033084197616 t1=315064211641546 cgroup=/sys/fs/cgroup/system.slice/lab1-D4-nolimit-r1-a1.scope waited_s=31
+nr_throttled_delta=0
+throttled_usec_delta=0
+n	3000
+cpu_med	10018727.5
+steal_med	0.0
+irq_med	31640.5
+rq_med	0.0
+vol_ns_med	0.0
+burn_nr	110
+syscall_counts	{0: 2, 110: 3000}
+=== D4 quota=none run=2 attempt=1 burn_loops=3433826 ===
+wl_pid=350819 t0=315068162204257 t1=315098287408886 cgroup=/sys/fs/cgroup/system.slice/lab1-D4-nolimit-r2-a1.scope waited_s=30
+nr_throttled_delta=0
+throttled_usec_delta=0
+n	3000
+cpu_med	10017746.0
+steal_med	0.0
+irq_med	31057.0
+rq_med	0.0
+vol_ns_med	0.0
+burn_nr	110
+syscall_counts	{0: 2, 110: 3000}
+=== D4 quota=none run=3 attempt=1 burn_loops=3433826 ===
+wl_pid=351610 t0=315102230495737 t1=315132357019198 cgroup=/sys/fs/cgroup/system.slice/lab1-D4-nolimit-r3-a1.scope waited_s=30
+nr_throttled_delta=0
+throttled_usec_delta=0
+n	3000
+cpu_med	10019669.5
+steal_med	0.0
+irq_med	31557.0
+rq_med	0.0
+vol_ns_med	0.0
+burn_nr	110
+syscall_counts	{0: 2, 110: 3000}
+=== D4 quota=75% run=1 attempt=1 burn_loops=3433826 ===
+wl_pid=352411 t0=315136300134860 t1=315177466776069 cgroup=/sys/fs/cgroup/system.slice/lab1-D4-q75-r1-a1.scope waited_s=41
+nr_throttled_delta=401
+throttled_usec_delta=10018899
+n	3000
+cpu_med	10019727.5
+steal_med	0.0
+irq_med	33422.0
+rq_med	0.0
+vol_ns_med	0.0
+burn_nr	110
+syscall_counts	{0: 2, 110: 3000}
+=== D4 quota=75% run=2 attempt=1 burn_loops=3433826 ===
+wl_pid=353218 t0=315181414814348 t1=315222576847152 cgroup=/sys/fs/cgroup/system.slice/lab1-D4-q75-r2-a1.scope waited_s=41
+nr_throttled_delta=401
+throttled_usec_delta=9998395
+n	3000
+cpu_med	10019633.5
+steal_med	0.0
+irq_med	32964.5
+rq_med	0.0
+vol_ns_med	0.0
+burn_nr	110
+syscall_counts	{0: 2, 110: 3000}
+=== D4 quota=75% run=3 attempt=1 burn_loops=3433826 ===
+wl_pid=354025 t0=315226523136389 t1=315266685098017 cgroup=/sys/fs/cgroup/system.slice/lab1-D4-q75-r3-a1.scope waited_s=40
+nr_throttled_delta=400
+throttled_usec_delta=9990908
+n	3000
+cpu_med	10015266.5
+steal_med	0.0
+irq_med	33185.5
+rq_med	0.0
+vol_ns_med	0.0
+burn_nr	110
+syscall_counts	{0: 2, 110: 3000}
+=== D4 quota=50% run=1 attempt=1 burn_loops=3433826 ===
+wl_pid=354828 t0=315270634987908 t1=315331875622355 cgroup=/sys/fs/cgroup/system.slice/lab1-D4-q50-r1-a1.scope waited_s=61
+nr_throttled_delta=604
+throttled_usec_delta=30173010
+n	3000
+cpu_med	10025847.0
+steal_med	0.0
+irq_med	34693.0
+rq_med	0.0
+vol_ns_med	0.0
+burn_nr	110
+syscall_counts	{0: 2, 110: 3000}
+=== D4 quota=50% run=2 attempt=1 burn_loops=3433826 ===
+wl_pid=355641 t0=315335827214749 t1=315397063198866 cgroup=/sys/fs/cgroup/system.slice/lab1-D4-q50-r2-a1.scope waited_s=61
+nr_throttled_delta=604
+throttled_usec_delta=30184471
+n	3000
+cpu_med	10026205.0
+steal_med	0.0
+irq_med	34602.5
+rq_med	0.0
+vol_ns_med	0.0
+burn_nr	110
+syscall_counts	{0: 2, 110: 3000}
+=== D4 quota=50% run=3 attempt=1 burn_loops=3433826 ===
+wl_pid=356513 t0=315401010957173 t1=315462241878166 cgroup=/sys/fs/cgroup/system.slice/lab1-D4-q50-r3-a1.scope waited_s=61
+nr_throttled_delta=602
+throttled_usec_delta=30090467
+n	3000
+cpu_med	10022114.5
+steal_med	0.0
+irq_med	34447.0
+rq_med	0.0
+vol_ns_med	0.0
+burn_nr	110
+syscall_counts	{0: 2, 110: 3000}
+=== D4 quota=25% run=1 attempt=1 burn_loops=3433826 ===
+wl_pid=357399 t0=315466186152633 t1=315587622679738 cgroup=/sys/fs/cgroup/system.slice/lab1-D4-q25-r1-a1.scope waited_s=121
+nr_throttled_delta=1205
+throttled_usec_delta=90345431
+n	3000
+cpu_med	10018360.5
+steal_med	0.0
+irq_med	37634.5
+rq_med	0.0
+vol_ns_med	0.0
+burn_nr	110
+syscall_counts	{0: 2, 110: 3000}
+=== D4 quota=25% run=2 attempt=1 burn_loops=3433826 ===
+wl_pid=358508 t0=315591565387438 t1=315713000120115 cgroup=/sys/fs/cgroup/system.slice/lab1-D4-q25-r2-a1.scope waited_s=121
+nr_throttled_delta=1205
+throttled_usec_delta=90357570
+n	3000
+cpu_med	10022091.5
+steal_med	0.0
+irq_med	37606.0
+rq_med	0.0
+vol_ns_med	0.0
+burn_nr	110
+syscall_counts	{0: 2, 110: 3000}
+=== D4 quota=25% run=3 attempt=1 burn_loops=3433826 ===
+wl_pid=359572 t0=315716939391936 t1=315838376618400 cgroup=/sys/fs/cgroup/system.slice/lab1-D4-q25-r3-a1.scope waited_s=121
+nr_throttled_delta=1205
+throttled_usec_delta=90292273
+n	3000
+cpu_med	10019470.0
+steal_med	0.0
+irq_med	38254.0
+rq_med	0.0
+vol_ns_med	0.0
+burn_nr	110
+syscall_counts	{0: 2, 110: 3000}
+2026-10-24T16:05:04+00:00
+lan 1: GHz_wall=2.5295
+lan 2: GHz_wall=2.5298
+lan 3: GHz_wall=2.5299
+trung vi GHz_wall=2.5298
+spearman_expected	nan
+delta_other_ns	0.0
+expected_hi_ns	0.0
+thresh_ns	100000.0
+other_lo	0.0
+other_hi	0.0
+tieu_chi_spearman>=0.9	KHONG_DAT
+tieu_chi_other_phuluc12	DAT
+DUNG sau D4 FAIL=1
+khoi dong lai lab0-postgres lab0-nginx
+FAIL=1

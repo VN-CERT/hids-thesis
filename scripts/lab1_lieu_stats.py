@@ -71,9 +71,11 @@ def summarize_export(path, tid, want_pmu=False):
     if not rows:
         return None
     cnt = Counter(int(r["syscall_nr"]) for r in rows)
-    # uu tien burn (clock_nanosleep/nanosleep) neu co; khong thi tat ca
+    # uu tien khoang dot: getppid (110, wl cpu) hoac nanosleep (230/35)
     burn_nr = None
-    if cnt.get(230, 0) >= 50 or cnt.get(35, 0) >= 50:
+    if cnt.get(110, 0) >= 50:
+        burn_nr = 110
+    elif cnt.get(230, 0) >= 50 or cnt.get(35, 0) >= 50:
         burn_nr = 230 if cnt.get(230, 0) >= cnt.get(35, 0) else 35
     use = [r for r in rows if burn_nr is None or int(r["syscall_nr"]) == burn_nr]
     if want_pmu:

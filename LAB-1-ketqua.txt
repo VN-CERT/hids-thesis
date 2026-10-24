@@ -223,3 +223,34 @@ E5: chua tong hop (dung sau D4).
 Driver: CHUA KHOI DONG.
 
 Can kien truc su: D4/E5 voi wl mem 500 + CPUQuota — throttle xuat hien o cpu.stat nhung khong vao rq_med ban ghi; co doi cach chon khoang / workload khong?
+
+================================================================
+PHU LUC 1.5 — D4/E5 wl cpu + CPUQuota none/75/50/25 (2026-10-24)
+================================================================
+Commit phu luc 1.5: 4a2e041
+Lenh: wl -loops <burn_loops> cpu 10000 3000; systemd-run --scope CPUQuota=...
+
+--- D4 (tieu chi 1.2 trung vi) — KHONG DAT ---
+muc	expected(rq_med)	other(steal_med)	runs	quota
+0	0.0	0.0	3	none
+1	0.0	0.0	3	75
+2	0.0	0.0	3	50
+3	0.0	0.0	3	25
+spearman_expected	nan
+tieu_chi_spearman>=0.9	KHONG_DAT
+tieu_chi_other_phuluc12	DAT
+
+Bo sung (khong dung de chot tieu chi): rq_mean / dt_mean
+muc	quota	rq_med	rq_mean	dt_mean	rq_mean/dt%	thr_usec_med
+0	none	0	824	10032879	0.0%	0
+1	75	0	3334305	13383340	24.9%	~10.0e6
+2	50	0	10060304	20135705	50.0%	~30.2e6
+3	25	0	30120539	40166050	75.0%	~90.3e6
+→ trung binh khop dung ky vong ≈ 0/25/50/75 % Δt; trung vi = 0 vi phan bo 2 dinh
+  (nhieu khoang 10 ms khong throttle + it khoang cho dai).
+File: validation/lab1-20261024/lieu/D4-v15-mean-vs-med.txt
+
+E5: chua tong hop (dung sau D4).
+Driver: CHUA KHOI DONG.
+
+Can kien truc su: doi tieu chi D4/E5 sang trung binh (hoac p90) thay trung vi?

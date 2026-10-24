@@ -1,0 +1,12 @@
+=== D4 quota=75% run=2 attempt=1 burn_loops=3433826 ===
+wl_pid=353218 t0=315181414814348 t1=315222576847152 cgroup=/sys/fs/cgroup/system.slice/lab1-D4-q75-r2-a1.scope waited_s=41
+nr_throttled_delta=401
+throttled_usec_delta=9998395
+n	3000
+cpu_med	10019633.5
+steal_med	0.0
+irq_med	32964.5
+rq_med	0.0
+vol_ns_med	0.0
+burn_nr	110
+syscall_counts	{0: 2, 110: 3000}

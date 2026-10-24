@@ -1,12 +1,12 @@
-wl: tu kiem mem 1/5 mono=8704 us thread_cpu=8705 us
-wl: tu kiem mem 2/5 mono=8588 us thread_cpu=8588 us
-wl: tu kiem mem 3/5 mono=8337 us thread_cpu=8337 us
-wl: tu kiem mem 4/5 mono=8202 us thread_cpu=8202 us
-wl: tu kiem mem 5/5 mono=7973 us thread_cpu=7974 us
-wl: dieu chinh mem_steps=643037 (trung binh 8360 us)
-wl: tu kiem mem 1/5 mono=9693 us thread_cpu=9694 us
-wl: tu kiem mem 2/5 mono=9549 us thread_cpu=9550 us
-wl: tu kiem mem 3/5 mono=9754 us thread_cpu=9754 us
-wl: tu kiem mem 4/5 mono=9578 us thread_cpu=9579 us
-wl: tu kiem mem 5/5 mono=9944 us thread_cpu=9932 us
-wl: mem_steps=643037
+wl: tu kiem mem 1/5 mono=8411 us thread_cpu=8410 us
+wl: tu kiem mem 2/5 mono=8313 us thread_cpu=8315 us
+wl: tu kiem mem 3/5 mono=8190 us thread_cpu=8191 us
+wl: tu kiem mem 4/5 mono=8151 us thread_cpu=8152 us
+wl: tu kiem mem 5/5 mono=8179 us thread_cpu=8180 us
+wl: dieu chinh mem_steps=653967 (trung binh 8248 us)
+wl: tu kiem mem 1/5 mono=9822 us thread_cpu=9823 us
+wl: tu kiem mem 2/5 mono=9981 us thread_cpu=9981 us
+wl: tu kiem mem 3/5 mono=10087 us thread_cpu=10089 us
+wl: tu kiem mem 4/5 mono=9957 us thread_cpu=9958 us
+wl: tu kiem mem 5/5 mono=10018 us thread_cpu=10018 us
+wl: mem_steps=653967

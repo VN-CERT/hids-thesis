@@ -207,3 +207,13 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 ## Việc đang chạy
 
 - (không có)
+
+## Bước đang làm (LAB-1) — DỪNG sau D4 phụ lục 1.5
+
+- D4 wl cpu + CPUQuota none/75/50/25: rq_med=0 → Spearman nan → KHÔNG ĐẠT.
+- rq_mean/dt = 0/24.9/50.0/75.0 % khớp kỳ vọng phụ lục 1.5; chờ kiến trúc sư có đổi tiêu chí sang trung bình không.
+- E5/driver chưa.
+
+## Việc đang chạy
+
+- (không có)

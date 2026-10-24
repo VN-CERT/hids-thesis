@@ -1,0 +1,10 @@
+LAB-1 D4 phu luc 1.5 — so sanh trung vi vs trung binh rq (khoang getppid/cpu)
+muc	quota	rq_med	rq_mean	dt_mean	rq_mean/dt%	thr_usec_med	steal_med	runs
+0	none	0.0	824.1	10032878.9	0.0	0	0.0	3
+1	75	0.0	3334304.7	13383340.4	24.9	9998395	0.0	3
+2	50	0.0	10060304.1	20135705.3	50.0	30173010	0.0	3
+3	25	0.0	30120539.4	40166049.6	75.0	90345431	0.0	3
+
+Ky vong phu luc 1.5: rq/dt ≈ 0/25/50/75 % theo muc none/75/50/25.
+Tieu chi 1.2 dung TRUNG VI → rq_med=0 moi muc → Spearman nan → KHONG_DAT.
+Trung binh khop dung ky vong (0.0/24.9/50.0/75.0 %).
