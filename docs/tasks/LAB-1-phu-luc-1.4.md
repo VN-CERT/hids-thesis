@@ -1,0 +1,7 @@
+LAB-1: nguyên nhân rq ở D3 là thread của cursor-server (MainThread/libuv-worker/git) chạy trên CPU 0 khi CPU 1–7 bão hoà — lỗi vệ sinh máy lab, không phải liều. Nối Phụ lục 1.4 vào cuối docs/giao-thuc-lab1.md (commit riêng), rồi làm theo:
+
+## Phụ lục 1.4 — 24/10/2026 (vệ sinh CPU 0 trên máy nạn nhân)
+Chẩn đoán (D3-chandoan.txt): không worker stress-ng nào lọt CPU 0; phần bận ngoài wl trên CPU 0 là MainThread/libuv-worker/git của cursor-server: 7,0 % ở L=7, 2,5 % ở L=6; kworker/0:0 0,6 %/0,2 %.
+1. Trước mọi phiên đo (liều, B/N, benign dưới liều, nền 7 ngày): `systemctl set-property --runtime user.slice AllowedCPUs=1-7`; kiểm `cat /sys/fs/cgroup/user.slice/cpuset.cpus.effective` = 1-7 và `ps -eo pid,psr,cgroup,comm | awk '$2==0'` chỉ còn kernel thread + wl + unit đo. Collector trong mọi phiên liều/B/N chạy `taskset -c 1-7 ./bin/hids-collect …` (không cần CPU 0). Thiết lập là --runtime (mất khi reboot): driver và lệnh khởi động nền 7 ngày tự đặt lại ở đầu và ghi cpuset.cpus.effective vào log mỗi phiên.
+2. Chạy lại chẩn đoán (b) 60 s ở L=7 sau khi giới hạn, tính other_busy loại swapper: < 1 % → giữ D3 {0,2,4,7}; 1–2 % và phần dư toàn kernel thread (kworker/ksoftirqd/rcu) → D3 {0,2,4,6} với điều kiện L=6 < 1 %; còn tiến trình user-space nào ngoài wl, hoặc ≥ 2 % → DỪNG, dán bảng.
+3. Chạy lại D3 với mức đã chốt (tiêu chí phụ lục 1.2), rồi D4, E5, rồi đúng LAB-1.md từ bước 4 (driver). Ghi mục "phụ lục 1.4" + bảng chẩn đoán sau giới hạn vào LAB-1-ketqua.txt.
