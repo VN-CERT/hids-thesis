@@ -153,3 +153,16 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 - A3: mục tiêu CPU ≤2% lõi không đạt trong phạm vi sửa được phép (nguyên nhân ở tương tác đường đọc ring buffer 10 ms với sysmon Go). Cần kiến trúc sư quyết định (câu hỏi mục 8 trong R029).
 - C/G3: lệch rq collector so với bpftrace ở S3 vượt 5% trong cả hai đợt đo (10.91% và 8.43%); S2, S5 có đợt vượt nhẹ. Cần kiến trúc sư quyết định tiêu chí/định nghĩa (mục 8 trong R029).
+
+## Bước đang làm (M6d)
+
+- Nhiệm vụ: `docs/tasks/M6d.md`. Báo cáo R036, tag `m6d`. Không sửa BPF, không sửa m4.sh.
+- File kiến trúc sư sha256 (kiểm trước build): sys_enter `9994b03f…`, proc_events `39d892e552…`, m5f_parse `9f0b4cde…`, m6c_stats `8c390002…`, coreclk `88ef821e…` — khớp.
+- Script: `scripts/m6d_eseries.sh` (E1/E3/E4-cache), `scripts/m6d_e2.sh` (E2 + int64), `scripts/m6d_a_driver.sh`.
+- Phần A: unit `hids-m6d-a` (~2 giờ). Phần B: chờ người dùng vCenter (`bash scripts/m6d_e2.sh`).
+- Cập nhật: 2026-10-24 20:07 (giờ máy).
+
+## Việc đang chạy
+
+- (sẽ ghi khi khởi động hids-m6d-a)
+
