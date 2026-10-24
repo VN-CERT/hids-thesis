@@ -1,12 +1,12 @@
 # R036 — M6d phần A (E1/E3/E4-cache); E2 chờ
 
 1. Số báo cáo: R036  
-   Ngày giờ: 2026-10-24 21:30 (giờ máy)  
+   Ngày giờ: 2026-10-24 22:35 (giờ máy; bổ sung E2)  
    Mốc: M6d  
-   Git commit: `cb66e80`; binary mốc `m6c.3` = `455970a`
+   Git commit: (gắn sau commit E2 + tag `m6d`); binary mốc `m6c.3` = `455970a`
 
 2. Mục tiêu  
-   Chốt bảng tranh chấp Bài 1: lặp E1, E3, E4-cache ≥ 3 lần/mức với binary cuối (m6c.3) + dấu tần số; E2 (`--cpu-method int64`) chờ người dùng vCenter. Không sửa BPF, không sửa m4.sh.
+   Chốt bảng tranh chấp Bài 1: lặp E1, E3, E4-cache ≥ 3 lần/mức với binary cuối (m6c.3) + dấu tần số; E2 (`--cpu-method int64`) với người dùng vCenter. Không sửa BPF, không sửa m4.sh.
 
 3. Đã làm gì  
    - Lưu nguyên văn `docs/tasks/M6d.md`.  
@@ -14,8 +14,9 @@
    - `make build` đạt; không sửa BPF.  
    - Script mới: `scripts/m6d_eseries.sh`, `scripts/m6d_a_driver.sh`, `scripts/m6d_e2.sh` (gọi đúng mức m4.sh; không sửa m4.sh).  
    - Phần A: unit `hids-m6d-a`, 20:08→21:29 (+07), exit=0. 12 container dừng lúc đo, `docker start` lại khi xong.  
-   - READY: mọi lượt `so_attempt=1` (30/30); không có KHONG_READY.  
-   - E2: **chờ** — chạy `sudo bash scripts/m6d_e2.sh` khi ngồi vCenter. Tag `m6d` sau khi B xong.
+   - READY phần A: mọi lượt `so_attempt=1` (30/30); không có KHONG_READY.  
+   - Phần B: `scripts/m6d_e2.sh`, 22:00→22:30 (+07), status=done; stress-ng `--cpu-method int64`; 12/12 attempt=1; Unlimited cuối vm_steal_pct=0.021%.  
+   - Kiến trúc sư duyệt phần A: CHẤP NHẬN, không chạy lại (phụ lục cuối báo cáo). Tag `m6d`.
 
 4. Lệnh build, lệnh chạy  
 ```bash
@@ -149,19 +150,62 @@ muc	run	cpu_ns	rq_ns	steal_ns	irq_ns	vol_us	CPI	inst	GHz	GHz_wall_truoc	GHz_wall
 22	trung_vi	13897588.5000	0.0000	0.0000	128476.0000	0.0000	1.7337	14170547.0000	1.9490	1.9326	1.9359
 ```
 
-### E2
+### E2 (steal; `--cpu-method int64`; `-pmu on`; 3 lần/mức)
 
-**E2 chờ.** Chưa chạy. Tag `m6d` chưa gắn.
+Mức limit (m4.sh): Unlimited, 36000, 24000, 12000 MHz.  
+stress-ng: `--cpu 22 --cpu-method int64 --taskset 0-19,22-23` (KHÁC m4.sh gốc).  
+Kỳ vọng (không phải tiêu chí): steal tăng theo mức; cpu/CPI không đổi.
+
+vm_steal_pct (/proc/stat, 10 s, trước mỗi mức):
+
+```
+Unlimited	0.025%
+36000	17.794%
+24000	45.757%
+12000	68.333%
+Unlimited-cuoi (sau khi đặt lại)	0.021%
+```
+
+Dấu tần số E2:
+
+```
+freq E2-Unlimited: truoc=1.9346 sau=1.9329 lech=0.09%
+freq E2-36000: truoc=1.6156 sau=1.6516 lech=2.23% LECH_>2%
+freq E2-24000: truoc=0.9891 sau=1.2165 lech=22.99% LECH_>2%
+freq E2-12000: truoc=0.5161 sau=0.4965 lech=3.80% LECH_>2%
+```
+
+```
+muc	run	vm_steal_pct	cpu_ns	steal_ns	rq_ns	steal_off_ns	CPI	inst	cyc	GHz_hieu_dung	GHz_wall_truoc	GHz_wall_sau
+Unlimited	1	0.025	9858542.5	72813.5	15240.5	0.0	1.2485	15517539.0	19373114.5	1.9651	1.9346	1.9329
+Unlimited	2	0.025	9849657.5	69138.5	35716.5	0.0	1.2472	15517539.0	19354124.5	1.9650	1.9346	1.9329
+Unlimited	3	0.025	9789286.5	60761.0	57216.0	0.0	1.2484	15517539.0	19372580.0	1.9790	1.9346	1.9329
+Unlimited	trung_vi	0.025	9849657.5000	69138.5000	35716.5000	0.0000	1.2484	15517539.0000	19372580.0000	1.9651	1.9346	1.9329
+36000	1	17.794	9875389.0	87547.5	25037.5	0.0	1.2478	15517539.0	19363374.0	1.9608	1.6156	1.6516
+36000	2	17.794	9865210.0	79280.5	26313.0	0.0	1.2456	15517539.0	19328410.0	1.9592	1.6156	1.6516
+36000	3	17.794	9844791.5	77993.0	20336.0	0.0	1.2467	15517539.0	19345251.5	1.9650	1.6156	1.6516
+36000	trung_vi	17.794	9865210.0000	79280.5000	25037.5000	0.0000	1.2467	15517539.0000	19345251.5000	1.9608	1.6156	1.6516
+24000	1	45.757	9870713.5	15216.5	0.0	0.0	1.2528	15517539.0	19440420.5	1.9695	0.9891	1.2165
+24000	2	45.757	9926188.0	86249.5	23062.5	0.0	1.2420	15517539.0	19272367.5	1.9416	0.9891	1.2165
+24000	3	45.757	9896448.5	66246.5	0.0	0.0	1.2465	15517539.0	19342900.0	1.9545	0.9891	1.2165
+24000	trung_vi	45.757	9896448.5000	66246.5000	0.0000	0.0000	1.2465	15517539.0000	19342900.0000	1.9545	0.9891	1.2165
+12000	1	68.333	9993109.0	87347.0	0.0	0.0	1.2473	15517539.0	19355293.5	1.9369	0.5161	0.4965
+12000	2	68.333	9923010.0	70746.0	22750.0	0.0	1.2468	15517539.0	19346600.0	1.9497	0.5161	0.4965
+12000	3	68.333	9931545.0	55190.0	12124.5	0.0	1.2479	15517540.0	19364793.5	1.9498	0.5161	0.4965
+12000	trung_vi	68.333	9931545.0000	70746.0000	12124.5000	0.0000	1.2473	15517539.0000	19355293.5000	1.9497	0.5161	0.4965
+```
+
+READY E2: 12/12 attempt=1. File: `validation/m6d-20261024/E2/`.
 
 ### Chốt READY
 
-READY (30/30 attempt=1, KHONG_READY=0). Không cần chạy lại phần A.
+READY phần A (30/30) và E2 (12/12). Không chạy lại phần A (kiến trúc sư chấp nhận).
 
 6. File dữ liệu đã tạo  
-   - `validation/m6d-20261024/` (E1, E3, E4-cache; mỗi lượt `collect.bin` + `export.csv` + `ketqua.txt`)  
-   - `validation/m6d-20261024/bang-tong-hop.tsv`  
-   - `validation/m6d-20261024/freq-lech.txt`  
-   - `out/jobs/m6d-a.log`, `out/jobs/m6d-a.status`  
+   - `validation/m6d-20261024/` (E1, E2, E3, E4-cache; mỗi lượt `collect.bin` + `export.csv` + `ketqua.txt`)  
+   - `validation/m6d-20261024/bang-tong-hop.tsv`, `E2/bang-tong-hop.tsv`  
+   - `validation/m6d-20261024/freq-lech.txt`, `E2/freq-lech.txt`  
+   - `out/jobs/m6d-a.log`, `out/jobs/m6d-e2.log`  
    - `out/m6d-build.log`
 
 7. Quyết định đã tự đưa ra và lý do  
@@ -171,21 +215,14 @@ READY (30/30 attempt=1, KHONG_READY=0). Không cần chạy lại phần A.
    - Driver phần A dừng/khởi động lại container trong `m6d_a_driver.sh`.
 
 8. Cần kiến trúc sư quyết định  
-   1. E4-cache lần này: inst ổn (~14170547) nhưng CPI trung vị **giảm** theo mức (L0=1.9178 → L4=1.7222 → L12=1.7083 → L22=1.7337), khác hướng CPI tăng ở E4p/stream (R034). Có chấp nhận bảng cache này cho Bài 1, hay cần chạy lại với tham số stress-ng khác?  
-   2. E1: dấu tần số L1 và L2 lệch >2% (sau mức ~2.53 GHz vs trước ~1.93). So sánh tuyệt đối giữa các mức E1 có được phép khi GHz_wall lệch, hay chỉ so trong nhóm cùng dải GHz?  
-   3. E3: vol_us ~300000130 ở cả idle và stress2 (đúng sleep 300s của m4_e3). “vol tăng theo mức” trong kỳ vọng có áp dụng cho cặp idle/stress2 này không, hay E3 chỉ để xác nhận vol ≈ 300s?
+   (Đã trả lời — xem phụ lục. Không còn câu hỏi mở về phần A.)
 
 9. Việc người dùng cần làm tay  
-   1. Ngồi máy có vCenter, mở Edit Settings của VM **55.195-Test-NB**.  
-   2. Trên máy 195: `sudo bash scripts/m6d_e2.sh`  
-   3. Làm đúng từng dòng tiếng Việt trên màn hình: đặt CPU limit = Unlimited / 36000 / 24000 / 12000 MHz rồi Enter; cuối cùng đặt lại **Unlimited** rồi Enter.  
-   4. Nếu ngắt giữa chừng: đặt lại Unlimited ngay (script cũng in nhắc).  
-   5. Báo lại khi E2 xong để Cursor viết bổ sung R036/E2, gắn tag `m6d`, push.
+   (Không còn — E2 đã chạy xong.)
 
 10. Lỗi còn tồn tại, việc tiếp theo  
-    - E2 chưa chạy.  
-    - Tag `m6d` chưa gắn (theo nhiệm vụ: gắn sau B).  
-    - Sau E2: cập nhật R036 bảng E2, commit, tag `m6d`, `git push --all --tags`.
+    - M6d đóng: tag `m6d`, push.  
+    - Không còn lỗi mở trong phạm vi M6d.
 
 ### Thay đổi ngoài phạm vi (`git diff --stat m6c.3..HEAD -- scripts analysis internal cmd tools`)
 
@@ -207,3 +244,15 @@ READY (30/30 attempt=1, KHONG_READY=0). Không cần chạy lại phần A.
 8c390002870f3ea8ace38a241f803bb5e7ec6c2413fdd403f757de24a6a1be25  analysis/m6c_stats.py
 88ef821eb062855b0189af1568d25e310b53f1e0c1e29e35e360282515d97706  tools/coreclk.c
 ```
+
+---
+
+## Phụ lục — Trả lời kiến trúc sư về R036 phần A (nhận 2026-10-24)
+
+**CHẤP NHẬN, không chạy lại.**
+
+1. **E4-cache:** inst không đổi, CPI giảm ~10 %, cpu_ns giảm 7 % — ghi là quan sát: `--cache` ở các mức này không bão hoà băng thông; CPI giảm phù hợp giả thuyết tần số uncore/mesh tăng khi lõi khác bận; E4-stream (R034) là ca tranh chấp bộ nhớ chính.
+
+2. **E1:** cpu_ns chỉ so tuyệt đối trong cùng dải GHz; bảng bài dùng rq và cyc; ghi tần số nhảy 1,93↔2,53; rq 9/12/26 ms nhất quán với CFS chia đều.
+
+3. **E3** là kiểm không gán nhầm: vol = 300 s, cpu/rq vài chục µs, steal 0 — đạt.

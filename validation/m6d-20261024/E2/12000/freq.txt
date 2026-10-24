@@ -1,0 +1,3 @@
+GHz_wall_truoc=0.5161
+GHz_wall_sau=0.4965
+vm_steal_pct=68.333

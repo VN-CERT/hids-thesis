@@ -63,8 +63,7 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 ## Việc đang chạy
 
-- (không có) — `hids-m6d-a` exit=0 (20:08–21:29 +07). 12 container chạy, `hids_` = 0.
-- **E2 chờ người dùng vCenter:** `sudo bash scripts/m6d_e2.sh`
+- (không có) — M6d đóng. `hids_` = 0, 12 container chạy.
 
 
 ## Bước đang làm (M6c-1)
@@ -179,3 +178,13 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 - Unit `hids-m6d-a` exit=0; dữ liệu `validation/m6d-20261024/`.
 - READY 30/30 (attempt=1). Báo cáo R036 (E2 chờ). Tag `m6d` chưa gắn.
 - Cập nhật: 2026-10-24 21:31.
+
+## M6d: ĐÓNG (R036, tag m6d)
+
+- Phần A: E1/E3/E4-cache ×3/mức, READY 30/30, `validation/m6d-20261024/`.
+- Phần B: E2 ×3/mức, `--cpu-method int64`, vm_steal_pct Unlimited 0,025% → 36000 17,794% → 24000 45,757% → 12000 68,333%; Unlimited cuối 0,021%. CPI ≈ 1,25; 12/12 attempt=1.
+- Trả lời kiến trúc sư về R036 phần A (nhận 2026-10-24, CHẤP NHẬN, không chạy lại; ghi nguyên văn):
+  1. E4-cache: inst không đổi, CPI giảm ~10 %, cpu_ns giảm 7 % — ghi là quan sát: `--cache` ở các mức này không bão hoà băng thông; CPI giảm phù hợp giả thuyết tần số uncore/mesh tăng khi lõi khác bận; E4-stream (R034) là ca tranh chấp bộ nhớ chính.
+  2. E1: cpu_ns chỉ so tuyệt đối trong cùng dải GHz; bảng bài dùng rq và cyc; ghi tần số nhảy 1,93↔2,53; rq 9/12/26 ms nhất quán với CFS chia đều.
+  3. E3 là kiểm không gán nhầm: vol = 300 s, cpu/rq vài chục µs, steal 0 — đạt.
+- Cập nhật: 2026-10-24 22:33.

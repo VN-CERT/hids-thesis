@@ -1,0 +1,6 @@
+CANH BAO: binary build tu cay lam viec con thay doi chua commit (git_commit=0b6e69f-dirty).
+CANH BAO: du lieu ghi ra khong tai lap duoc tu git. Commit truoc khi do that.
+ghi vao validation/m6d-20261024/E2/steal-probe.csv
+co che BPF: SEC(syscall) + BPF_PROG_RUN, bpf_per_cpu_ptr(vmw_steal_time) + bpf_per_cpu_ptr(runqueues)
+tsc_khz=1995312 nr_cpus=24 user_hz=100 interval=1s duration=khong gioi han
+da ghi 1808 chu ky x 24 CPU vao validation/m6d-20261024/E2/steal-probe.csv
