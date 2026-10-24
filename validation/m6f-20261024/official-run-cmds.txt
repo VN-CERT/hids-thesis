@@ -1,0 +1,22 @@
+# Falco — Fully Privileged / Modern eBPF
+# Nguồn: https://falco.org/docs/setup/container/
+docker pull falcosecurity/falco:0.45.0
+docker run --rm -it \
+           --privileged \
+           -v /sys/kernel/tracing:/sys/kernel/tracing:ro \
+           -v /var/run/docker.sock:/host/var/run/docker.sock \
+           -v /proc:/host/proc:ro \
+           -v /etc:/host/etc:ro \
+           falcosecurity/falco:0.45.0
+
+# M6f dùng falcosecurity/falco:latest (= 0.45.1 tại thời điểm pull) + -o engine.kind=modern_ebpf
+# và tắt output trừ file_output=/dev/null, bật metrics.
+
+# Tetragon — Stable versions (v1.7.0)
+# Nguồn: https://tetragon.io/docs/installation/container/
+docker run --name tetragon --rm -d                   \
+    --pid=host --cgroupns=host --privileged          \
+    -v /sys/kernel/btf/vmlinux:/var/lib/tetragon/btf \
+    quay.io/cilium/tetragon:v1.7.0
+
+# (latest tag không tồn tại trên quay.io/cilium/tetragon; docs chỉ stable versioned)

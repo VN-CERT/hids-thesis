@@ -100,7 +100,20 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 - Cập nhật: 2026-10-24 23:32.
 
 
+## Bước đang làm (M6f)
+
+- Nhiệm vụ: `docs/tasks/M6f.md` (so overhead Falco / Tetragon / HIDS trên T1/T3/T4).
+- Đã: pull `falcosecurity/falco:latest` (= 0.45.1), `quay.io/cilium/tetragon:v1.7.0` (tag `latest` không có trên quay); sha256 5 file khớp; script `scripts/m6f_overhead.sh`, `scripts/m6f_driver.sh`, TracingPolicy `scripts/m6f-tetragon-sysenter.yaml`.
+- Không sửa BPF / analysis / file kiến trúc sư.
+- Tiếp: systemd-run `hids-m6f` (~4–5 giờ) → R037, tag `m6f`, push, DỪNG.
+
 ## Việc đang chạy
 
-- (không có) — E2b xong. 12 container chạy, `hids_` = 0.
+- **hids-m6f** (M6f overhead vs Falco/Tetragon, T1/T3/T4 × 6 điều kiện × 10)
+  - lệnh: `systemd-run --unit=hids-m6f --collect bash -c 'cd /root/hids && bash scripts/m6f_driver.sh'`
+  - bắt đầu: (sắp ghi khi start)
+  - dự kiến xong: ~4–5 giờ sau khi start
+  - log: `out/jobs/m6f.log`
+  - trạng thái: `out/jobs/m6f.status`
+  - dữ liệu: `validation/m6f-20261024/`
 
