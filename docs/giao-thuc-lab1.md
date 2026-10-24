@@ -113,3 +113,6 @@ Chẩn đoán (D3-chandoan.txt): không worker stress-ng nào lọt CPU 0; phầ
 
 ## Phụ lục 1.5 — 24/10/2026 (D4/E5: wl cpu liên tục + CPUQuota)
 D4/E5 dùng wl chế độ cpu (đốt liên tục, marker mỗi 10 ms, như S1 của G3: `wl -loops <burn_loops> cpu 10000 3000`, không ngủ) thay cho mixed, vì quota chỉ có tác dụng khi nhu cầu vượt quota. Mức CPUQuota = none, 75%, 50%, 25% (systemd-run --scope, như 1.2 mục 3). Thành phần kỳ vọng: rq trong khoảng đốt tăng theo mức (≈ 0/25/50/75 % của Δt); oracle: throttled_usec_delta của scope; steal ≈ 0. Tiêu chí như 1.2 mục 4.
+
+## Phụ lục 1.6 — 24/10/2026 (thống kê tỉ lệ tổng cho tác động cục)
+Với các trục có tác động theo cục (D4 throttle, E5, và steal nói chung), thống kê của thành phần kỳ vọng là TỈ LỆ = tổng thành phần / tổng Δt trên cả lượt (p90 ghi kèm để mô tả), không phải trung vị; Spearman tính trên tỉ lệ này; thành phần không kỳ vọng tính trên tỉ lệ tổng, ngưỡng như 1.2 mục 4. D1/D3 giữ trung vị (tác động đều). E5 tính trên chính 12 lượt D4 (cùng workload, cùng scope): Pearson giữa tổng rq và throttled_usec_delta, và |steal|/rq < 2 % — không chạy lại lượt riêng.
