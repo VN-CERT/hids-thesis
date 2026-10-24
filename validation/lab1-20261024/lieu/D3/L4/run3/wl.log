@@ -1,13 +1,2 @@
-165369
-wl: tu kiem mem 1/5 mono=9318 us thread_cpu=9318 us
-wl: tu kiem mem 2/5 mono=8872 us thread_cpu=8873 us
-wl: tu kiem mem 3/5 mono=8839 us thread_cpu=8840 us
-wl: tu kiem mem 4/5 mono=8676 us thread_cpu=8677 us
-wl: tu kiem mem 5/5 mono=8877 us thread_cpu=8877 us
-wl: dieu chinh mem_steps=629092 (trung binh 8916 us)
-wl: tu kiem mem 1/5 mono=10077 us thread_cpu=10077 us
-wl: tu kiem mem 2/5 mono=9586 us thread_cpu=9587 us
-wl: tu kiem mem 3/5 mono=9624 us thread_cpu=9626 us
-wl: tu kiem mem 4/5 mono=9510 us thread_cpu=9511 us
-wl: tu kiem mem 5/5 mono=9615 us thread_cpu=9615 us
-wl: mem_steps=629092
+244208
+wl: dung -loops 664718 (bo qua hieu chinh)

@@ -1,13 +1,13 @@
-=== D3 L=4 run=2 attempt=2 ===
-wl_pid=161160 t0=307879625323133 t1=307902457876199
+=== D3 L=4 run=2 attempt=1 loops=664718 ===
+wl_pid=240513 t0=309307152669547 t1=309330240431500
 n	500
-cpu_med	14949440.5
+cpu_med	15549313.5
 steal_med	0.0
-irq_med	82397.0
+irq_med	87221.5
 rq_med	0.0
 vol_ns_med	0.0
 burn_nr	230
 syscall_counts	{0: 4, 257: 1, 5: 1, 3: 1, 9: 1, 230: 500, 110: 500, 11: 1}
-cpi_med	2.1347685401119403
-inst_med	18009600.0
-cyc_med	38446327.5
+cpi_med	2.1494609567247007
+inst_med	18612189.0
+cyc_med	40006172.5

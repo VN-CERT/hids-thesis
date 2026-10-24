@@ -1,4 +1,8 @@
 spearman_expected	0.9999999999999998
-other_change_pct	inf
+delta_other_ns	4281949.0
+expected_hi_ns	19886359.0
+thresh_ns	1988635.9000000001
+other_lo	0.0
+other_hi	4281949.0
 tieu_chi_spearman>=0.9	DAT
-tieu_chi_other<10pct	KHONG_DAT
+tieu_chi_other_phuluc12	KHONG_DAT

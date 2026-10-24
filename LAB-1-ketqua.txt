@@ -121,3 +121,45 @@ LOI CON TON TAI / VIEC TIEP
 - D3 tieu chi other<10% that bai — chan toan LAB-1.
 - D4 docker exec + fifo deadlock (chua sua vi da DUNG).
 - Cho kien truc su quyet muc tren.
+
+================================================================
+CHAY LAI THEO PHU LUC 1.2 (2026-10-24)
+================================================================
+Commit giao thuc phu luc: f552dbd (LAB-1: phu luc 1.2 giao thuc (kien truc su))
+git rev-parse: f552dbd5d4e684070be5242e325ffe9c520ee1b0
+
+Diff script: validation/lab1-20261024/lieu/diff-phuluc12.txt
+Thay doi chinh:
+1. D3 muc worker = {0,2,4,7}; driver 4b D3 ∈ {4,7}
+2. calibrate_loops_idle mot lan (may ranh); wl -loops <mem_steps> mem 500; thu lai toi da 3; bat buoc 3/3
+3. D4/E5: systemd-run --scope -p CPUQuota=... (chua chay vi dung o D3)
+4. Tieu chi other: |Δ other| < max(10%×expected_hi, 100 µs)
+
+Hieu chuan:
+calibrate: burn_loops=3434749 mem_steps=664718 (file=/root/hids/out/m4-loops.txt)
+
+D1: GIU ket qua cu (DAT) — khong chay lai.
+
+--- D3 (phu luc 1.2) — KHONG DAT — ly do DUNG ---
+# expected=cpu_med_ns other=rq_med_ns
+muc	expected	other	cpi	runs
+0	9920694.0	0.0	1.3711572146050788	3
+2	12988749.0	0.0	1.7952534430936806	3
+4	15362450.5	0.0	2.1225480012719045	3
+7	19886359.0	4281949.0	2.7373264367062267	3
+spearman_expected	0.9999999999999998
+delta_other_ns	4281949.0
+expected_hi_ns	19886359.0
+thresh_ns	1988635.9000000001
+other_lo	0.0
+other_hi	4281949.0
+tieu_chi_spearman>=0.9	DAT
+tieu_chi_other_phuluc12	KHONG_DAT
+
+Ghi chu: L=0,2,4 rq_med=0; chi L=7 rq_med≈4.28 ms > nguong max(10%×cpu_L7, 100µs)≈1.99 ms.
+Du 3/3 moi muc, attempt 1. Unit hids-lab1-lieu-v12 dung sau D3 (khong chay D4/E5).
+
+D4 / E5: CHUA CHAY (dung sau D3).
+Driver (buoc 4): CHUA KHOI DONG.
+
+Can kien truc su: L=7 (1 worker/CPU tren 1–7) van sinh rq ~4 ms tren wl CPU 0.

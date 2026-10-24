@@ -1,2 +1,5 @@
-LAB-1 lieu bat dau 2026-10-24T13:20:45+00:00
+LAB-1 lieu bat dau 2026-10-24T14:13:12+00:00 ONLY=d3d4e5
 dung lab0-postgres lab0-nginx
+=== hieu chuan wl/mem luc may ranh (CPU 0) ===
+DUNG sau D3 FAIL=1
+khoi dong lai lab0-postgres lab0-nginx

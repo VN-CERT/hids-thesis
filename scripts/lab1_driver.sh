@@ -386,7 +386,8 @@ for muc in 2 4; do
 		run_ben_lieu D1 "$muc" "$rep"
 	done
 done
-for muc in 12 22; do
+# phu luc 1.2: D3 worker ∈ {4, 7} (khong 12/22)
+for muc in 4 7; do
 	for rep in 1 2; do
 		run_ben_lieu D3 "$muc" "$rep"
 	done

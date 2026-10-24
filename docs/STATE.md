@@ -174,3 +174,17 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 ## Việc đang chạy
 
 - (không có) — `bpftool prog show | grep -c hids_` = 0; lab0-postgres/nginx Up.
+
+## Việc đang chạy (LAB-1 phu luc 1.2)
+
+- **hids-lab1-lieu-v12** LAB1_ONLY=d3d4e5 — bắt đầu 2026-10-24T14:13:14+00:00 — log validation/lab1-20261024/lieu/lieu-v12-systemd.log
+
+## Bước đang làm (LAB-1) — DỪNG sau phụ lục 1.2 (2026-10-24)
+
+- Commit phụ lục: `f552dbd`. Chạy lại D3 với worker {0,2,4,7}, `-loops mem_steps`, tiêu chí mới.
+- D3 KHÔNG ĐẠT: rq_med L7 = 4281949 ns > thresh 1988636 ns (Spearman cpu ĐẠT). D1 giữ ĐẠT.
+- D4/E5/driver chưa chạy. Báo cáo cập nhật `LAB-1-ketqua.txt`.
+
+## Việc đang chạy
+
+- (không có)

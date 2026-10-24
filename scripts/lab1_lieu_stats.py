@@ -148,26 +148,32 @@ def main():
         print(f"pearson\t{pearson(xs, ys)}")
         return
     if cmd.startswith("check-"):
-        # table.tsv: muc \t med_expected \t med_other (cpu for d1, steal for d4, ...)
+        # table.tsv: muc \t expected \t other
+        # Phu luc 1.2: |Δ other| < max(10% * expected_hi, 100 µs = 100000 ns)
+        # expected/other cung don vi ns (D3: expected=cpu_ns, other=rq_ns).
         rows = []
         with open(sys.argv[2]) as f:
             for r in csv.DictReader(f, delimiter="\t"):
                 rows.append(r)
         levels = [float(r["muc"]) for r in rows]
         exp = [float(r["expected"]) for r in rows]
+        others = [float(r["other"]) for r in rows]
         rho = spearman(levels, exp)
-        other_lo = float(rows[0]["other"])
-        other_hi = float(rows[-1]["other"])
-        if other_lo == 0:
-            other_pct = float("inf") if other_hi != 0 else 0.0
-        else:
-            other_pct = abs(other_hi - other_lo) / abs(other_lo) * 100.0
+        other_lo = others[0]
+        other_hi = others[-1]
+        delta_other = abs(other_hi - other_lo)
+        exp_hi = exp[-1]
+        thresh = max(0.10 * abs(exp_hi), 100_000.0)  # 100 µs
         print(f"spearman_expected\t{rho}")
-        print(f"other_change_pct\t{other_pct}")
+        print(f"delta_other_ns\t{delta_other}")
+        print(f"expected_hi_ns\t{exp_hi}")
+        print(f"thresh_ns\t{thresh}")
+        print(f"other_lo\t{other_lo}")
+        print(f"other_hi\t{other_hi}")
         ok_s = rho >= 0.9
-        ok_o = other_pct < 10.0
+        ok_o = delta_other < thresh
         print(f"tieu_chi_spearman>=0.9\t{'DAT' if ok_s else 'KHONG_DAT'}")
-        print(f"tieu_chi_other<10pct\t{'DAT' if ok_o else 'KHONG_DAT'}")
+        print(f"tieu_chi_other_phuluc12\t{'DAT' if ok_o else 'KHONG_DAT'}")
         sys.exit(0 if (ok_s and ok_o) else 1)
     print(f"lenh khong biet: {cmd}", file=sys.stderr)
     sys.exit(2)
