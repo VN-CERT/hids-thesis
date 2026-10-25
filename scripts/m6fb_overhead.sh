@@ -508,7 +508,6 @@ say "m6fb overhead bat dau, RUNS=$RUNS, out=$OUTROOT, conds=${CONDS[*]}"
 command -v wrk >/dev/null || { say "DUNG: khong co wrk goc"; exit 1; }
 test -x "$COLLECT" || { say "DUNG: thieu $COLLECT"; exit 1; }
 test -x "$SYSINJ" || { say "DUNG: thieu $SYSINJ"; exit 1; }
-test -f "$TP_YAML" || { say "DUNG: thieu $TP_YAML"; exit 1; }
 
 say "set user.slice AllowedCPUs=0-11,21-23"
 systemctl set-property --runtime user.slice AllowedCPUs=0-11,21-23

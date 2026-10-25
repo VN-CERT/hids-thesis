@@ -122,7 +122,7 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 - **hids-m6fb** (M6f-b: C0 / FALCO-all / HIDS-host × T1/T3/T4 × 10)
   - lệnh: `systemd-run --unit=hids-m6fb --collect bash -c 'cd /root/hids && bash scripts/m6fb_driver.sh'`
-  - bắt đầu: (ghi khi start)
+  - bắt đầu: 2026-10-25 09:40 (+07) (lần 2; lần 1 exit=1 do TP_YAML)
   - dự kiến xong: ~1,5 giờ sau start
   - log: `out/jobs/m6fb.log`
   - trạng thái: `out/jobs/m6fb.status`
