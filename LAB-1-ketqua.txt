@@ -1,12 +1,12 @@
-LAB-1 — KET QUA (buoc 3 DAT sau phu luc 1.6; driver dang chay)
+LAB-1 — KET QUA (phu luc 1.7; driver resume dang chay)
 May: hids-collector (nan nhan, 55.201 / 192.168.77.10). Nhanh: lab-collector
 Nhiem vu: docs/tasks/LAB-1.md
-Ngay: 2026-10-24
+Ngay: 2026-10-24 / 2026-10-25
 
 ================================================================
-TRANG THAI: DRIVER DANG CHAY (buoc 4 → 4b → 6)
-Ly do cap nhat: phu luc 1.6 — cham lai D4/E5 bang ti le tong tu du lieu D4v15: DAT.
-Buoc 0–3 DAT (D1/D3 trung vi; D4/E5 ti le tong). Buoc 5+7 khi driver xong.
+TRANG THAI: DRIVER RESUME (phu luc 1.7) — buoc 4 → 4b → 6 → hids-lab1-slow
+Buoc 0–3 DAT. Driver lan 1 hong o B1 D1-N=2 (period=60, cycles=8<20).
+Phu luc 1.7: B1/N1 luon 10s; chu ky cham tren nen 7 ngay. Buoc 5+7 khi driver+slow xong.
 ================================================================
 
 ----------------------------------------------------------------
@@ -304,3 +304,33 @@ systemctl is-active hids-lab1-driver = active
 phien: B1-D1N0 (period=10s) — collector READY pid=363609
 lab1_http_client.py xcfgd-beacon dang chay; generator wrk2+pgbench dang chay
 cpuset.effective=1-7; khong co driver-loi.txt
+
+================================================================
+PHU LUC 1.7 — chu ky beacon tach muc tranh chap (2026-10-25)
+================================================================
+Commit phu luc 1.7: 8a6fabc
+
+Loi driver lan 1: B1 D1-N=2 period=60 → cycles=8 < 20 (driver-loi.txt da xoa).
+N1-D1N0 (period=10) da dat truoc khi hong; tai dung cung B1-D1N0.
+
+Thay doi driver:
+- B1/N1 chu ky 10 s o ca 3 muc D1 N∈{0,2,4}; B4/N4 giu nguyen
+- Resume: phien co xac-nhan ok_cycles_ge20=1 → TAI DUNG, khong chay lai
+- Sau buoc 6: unit hids-lab1-slow (B1-60s 30p, N1-60s 30p, B1-300s 120p, N1-300s 120p tren nen 7 ngay)
+Script: scripts/lab1_slow.sh
+
+--- TAI DUNG ---
+B1-D1N0: cycles=49 period=10 — TAI DUNG
+N1-D1N0: cycles=50 period=10 — TAI DUNG (cung dat, period dung 1.7)
+
+--- Resume ---
+Xoa B1-D1N2 (hong). Tiep tu B1 D1-N=2 (period=10) → het B1/N1/B4/N4 → 4b → 6 → hids-lab1-slow
+LAB1_DAY=20261024 (giu thu muc validation/lab1-20261024)
+Driver resume bat dau: 2026-10-25T02:35:56+00:00 (09:35 +07)
+Du kien driver xong ~07:45 UTC (~5.5 gio BN con lai + 4b + 20p); sau do hids-lab1-slow ~5 gio.
+
+--- Kiem 10 phut resume (2026-10-25T02:46Z) ---
+hids-lab1-driver=active
+TAI DUNG B1-D1N0 + N1-D1N0 xong ngay luc bat dau
+phien dang chay: B1 D1-N=2 period=10 — collector READY
+khong driver-loi.txt

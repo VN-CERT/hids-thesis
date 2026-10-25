@@ -1,0 +1,5 @@
+kind=B1 N=0 period=10
+t0_mono=317934743404711 t1_mono=318534767176568
+wall 2026-10-24T16:40:00+00:00 -> 2026-10-24T16:50:00+00:00
+cycles=49 ok_cycles_ge20=1
+oracle=client_cycles=49;log=validation/lab1-20261024/bn/B1-D1N0/client.log

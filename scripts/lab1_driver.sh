@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# lab1_driver.sh — buoc 4 (B/N) -> 4b (benign duoi lieu) -> 6 (nen 7 ngay).
+# lab1_driver.sh — buoc 4 (B/N) -> 4b (benign duoi lieu) -> 6 (nen 7 ngay) -> hids-lab1-slow.
 # Chay trong unit hids-lab1-driver (Restart=no). Loi -> ghi file, exit != 0.
+# Phu luc 1.7: B1/N1 chu ky 10s moi muc; chu ky cham tren nen 7 ngay (unit slow).
 set -euo pipefail
 cd "$(dirname "$0")/.." || exit 1
 [[ $EUID -eq 0 ]] || { echo "can root" >&2; exit 1; }
@@ -18,7 +19,11 @@ REPO=/root/collector
 DRIVER_LOG="$VAL/driver.log"
 STATUS_DIR="$VAL"
 mkdir -p "$BN_DIR" "$BEN_DIR" "$DATADIR" "$GEN_LOG" lab out
-: >"$DRIVER_LOG"
+# Resume: khong xoa log cu — ghi moc
+{
+	echo ""
+	echo "=== DRIVER START $(date -Is) DAY=$DAY phuluc1.7 ==="
+} >>"$DRIVER_LOG"
 COLLECT_CPUS="${LAB1_COLLECT_CPUS:-1-7}"
 
 log() { echo "[$(date -Is)] $*" | tee -a "$DRIVER_LOG"; }
@@ -89,9 +94,16 @@ start_collector_datadir() {
 stop_pidfile() {
 	local pf=$1
 	[[ -f $pf ]] || return 0
-	local p
+	local p i
 	p=$(cat "$pf")
 	kill -INT "$p" 2>/dev/null || kill -TERM "$p" 2>/dev/null || true
+	for i in 1 2 3 4 5; do
+		kill -0 "$p" 2>/dev/null || break
+		sleep 1
+	done
+	kill -KILL "$p" 2>/dev/null || true
+	# kill ca cay con (wrk2/pgbench) neu con
+	pkill -KILL -P "$p" 2>/dev/null || true
 	wait "$p" 2>/dev/null || true
 	rm -f "$pf"
 }
@@ -118,10 +130,19 @@ append_nhan_tc() {
 cleanup_partial() {
 	stop_pidfile /tmp/lab1-driver-collect.pid 2>/dev/null || true
 	stop_pidfile /tmp/lab1-driver-gen.pid 2>/dev/null || true
-	pkill -f 'lab1_benign_gen.sh' 2>/dev/null || true
-	pkill -f 'lab1_http_client.py' 2>/dev/null || true
-	pkill -f 'stress-ng --cpu' 2>/dev/null || true
-	pkill -f 'stress-ng --stream' 2>/dev/null || true
+	pkill -KILL -f 'lab1_benign_gen.sh' 2>/dev/null || true
+	pkill -KILL -f 'lab1_http_client.py' 2>/dev/null || true
+	pkill -KILL -f 'stress-ng --cpu' 2>/dev/null || true
+	pkill -KILL -f 'stress-ng --stream' 2>/dev/null || true
+	pkill -KILL -f 'wrk2 ' 2>/dev/null || true
+	pkill -KILL -x hids-collect 2>/dev/null || true
+}
+
+# Phu luc 1.7 / resume: phien da dat (ok_cycles_ge20=1) → tai dung, khong chay lai.
+session_done() {
+	local kind=$1 N=$2
+	local f="$BN_DIR/${kind}-D1N${N}/xac-nhan.txt"
+	[[ -f $f ]] && grep -q 'ok_cycles_ge20=1' "$f"
 }
 
 # Phu luc 1.4: ve sinh truoc moi phien do
@@ -141,8 +162,8 @@ echo $! >/tmp/lab1-driver-gen.pid
 sleep 5
 
 # ========== BUOC 4: B1/N1/B4/N4 × D1 N∈{0,2,4} ==========
-# B1 chu ky: N0→10s, N2→60s, N4→300s (co B1-cham-300s cho buoc 5)
-log "=== BUOC 4: B/N ==="
+# Phu luc 1.7: B1/N1 chu ky 10s o moi muc; chu ky 60/300 tren nen 7 ngay (lab1_slow).
+log "=== BUOC 4: B/N (phu luc 1.7) ==="
 ensure_nhan_tc
 
 run_bn_session() {
@@ -150,6 +171,23 @@ run_bn_session() {
 	local N=$2      # 0|2|4
 	local period=$3 # cho B1/N1; bo qua neu B4/N4
 	local sess_dir="$BN_DIR/${kind}-D1N${N}"
+	if session_done "$kind" "$N"; then
+		log "TAI DUNG phien $kind D1-N=$N (da dat, giu nguyen $sess_dir)"
+		echo "TAI DUNG $kind D1-N=$N" | tee -a "$sess_dir/tai-dung.txt"
+		cat "$sess_dir/xac-nhan.txt" | tee -a "$DRIVER_LOG"
+		return 0
+	fi
+	# phien hong / chua dat: xoa de chay lai sach
+	if [[ -d $sess_dir ]]; then
+		log "xoa phien chua dat: $sess_dir"
+		rm -rf "$sess_dir"
+	fi
+	# go dong nhan that bai cung run_id neu co
+	if [[ -f $NHAN_TC ]]; then
+		local rid="${kind}-D1N${N}-${DAY}"
+		grep -v "^${rid}	" "$NHAN_TC" >"${NHAN_TC}.tmp" || true
+		mv "${NHAN_TC}.tmp" "$NHAN_TC"
+	fi
 	mkdir -p "$sess_dir"
 	local dd="$sess_dir/data"
 	mkdir -p "$dd"
@@ -298,11 +336,10 @@ run_bn_session() {
 	sleep 120
 }
 
-# 12 phien
-declare -A B1_PERIOD=([0]=10 [2]=60 [4]=300)
+# 12 phien — phu luc 1.7: B1/N1 luon period=10
 for N in 0 2 4; do
-	run_bn_session B1 "$N" "${B1_PERIOD[$N]}"
-	run_bn_session N1 "$N" "${B1_PERIOD[$N]}"
+	run_bn_session B1 "$N" 10
+	run_bn_session N1 "$N" 10
 done
 for N in 0 2 4; do
 	run_bn_session B4 "$N" ""
@@ -527,8 +564,21 @@ if ((ec != 0)); then
 	die "kiem suc-khoe 20 phut khong dat (xem driver-loi.txt)"
 fi
 
+# Phu luc 1.7: len lich chu ky cham tren nen 7 ngay (khong cho nguoi)
+log "=== khoi dong hids-lab1-slow (phu luc 1.7) ==="
+systemctl stop hids-lab1-slow 2>/dev/null || true
+systemctl reset-failed hids-lab1-slow 2>/dev/null || true
+systemd-run --unit=hids-lab1-slow --collect \
+	--property=WorkingDirectory="$REPO" \
+	--property=StandardOutput=append:"$VAL/slow-systemd.log" \
+	--property=StandardError=append:"$VAL/slow-systemd.log" \
+	--property=Environment="LAB1_DAY=$DAY" \
+	/bin/bash "$REPO/scripts/lab1_slow.sh"
+log "hids-lab1-slow da len lich (B1/N1 60s+300s tren nen 7 ngay)"
+
 echo "driver xong $(date -Is)" | tee "$VAL/driver-xong.txt"
 cat "$VAL/benign-khoi-dong.txt" >>"$VAL/driver-xong.txt"
 cat "$VAL/suc-khoe-20m.txt" >>"$VAL/driver-xong.txt"
-log "DRIVER XONG — nen benign dang chay"
+echo "hids-lab1-slow=started" >>"$VAL/driver-xong.txt"
+log "DRIVER XONG — nen benign + hids-lab1-slow dang chay"
 exit 0

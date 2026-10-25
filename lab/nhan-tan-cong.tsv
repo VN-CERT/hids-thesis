@@ -1,0 +1,3 @@
+run_id	lop	id	att_ck	cong_cu	nhip_tham_so	muc_tranh_chap	song_sinh_cua	t_bat_dau_mono_ns	t_ket_thuc_mono_ns	t_bat_dau_wall	t_ket_thuc_wall	oracle_ket_qua	ghi_chu
+B1-D1N0-20261024	B	B1	LAB1	local	period=10	D1-N=0		317934743404711	318534767176568	2026-10-24T16:40:00+00:00	2026-10-24T16:50:00+00:00	client_cycles=49;log=validation/lab1-20261024/bn/B1-D1N0/client.log	sess=validation/lab1-20261024/bn/B1-D1N0
+N1-D1N0-20261024	N	N1	LAB1	local	period=10	D1-N=0	B1	318840419775052	319440443655678	2026-10-24T16:55:06+00:00	2026-10-24T17:05:06+00:00	client_cycles=50;log=validation/lab1-20261024/bn/N1-D1N0/client.log	sess=validation/lab1-20261024/bn/N1-D1N0

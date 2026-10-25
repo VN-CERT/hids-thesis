@@ -208,13 +208,12 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 - (không có)
 
-## Bước đang làm (LAB-1) — phụ lục 1.6 + driver (2026-10-24)
+## Bước đang làm (LAB-1) — phụ lục 1.7 + driver resume (2026-10-25)
 
-- Phụ lục 1.6 commit `4110c3b`: D4/E5/steal dùng tỉ lệ tổng; D1/D3 giữ trung vị.
-- Chấm lại D4/E5 từ 12 lượt D4v15: D4 Spearman≈1 DAT; E5 Pearson≈1 DAT; |steal|/rq 12 lượt = 0,13% DAT.
-- Driver `hids-lab1-driver` đã khởi động (bước 4→4b→6). Bước 5+7 khi driver xong.
+- Phụ lục 1.7 commit `8a6fabc`: B1/N1 luôn 10 s; chu kỳ chậm trên nền 7 ngày (`hids-lab1-slow`).
+- Driver lần 1 hỏng ở B1 D1-N=2 (period=60, cycles=8). Đã xoá `driver-loi.txt`, tái dùng B1-D1N0 + N1-D1N0.
+- Resume `LAB1_DAY=20261024` từ B1 D1-N=2 → hết BN → 4b → 6 → slow. Bước 5+7 khi driver+slow xong.
 
 ## Việc đang chạy
 
-- **hids-lab1-driver** — `bash scripts/lab1_driver.sh` — bắt đầu 2026-10-24T16:36:51Z — dự kiến ~21:40Z — log `validation/lab1-20261024/driver-systemd.log` — status `out/jobs/lab1-driver.status`
-- Kiểm 10 phút đầu (16:47Z): OK — phiên B1-D1N0, collector READY, beacon period=10s, không `driver-loi.txt`.
+- **hids-lab1-driver** (resume) — xem `out/jobs/lab1-driver.status` — log `validation/lab1-20261024/driver-systemd.log`
