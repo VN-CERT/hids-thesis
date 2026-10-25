@@ -116,3 +116,6 @@ D4/E5 dùng wl chế độ cpu (đốt liên tục, marker mỗi 10 ms, như S1 
 
 ## Phụ lục 1.6 — 24/10/2026 (thống kê tỉ lệ tổng cho tác động cục)
 Với các trục có tác động theo cục (D4 throttle, E5, và steal nói chung), thống kê của thành phần kỳ vọng là TỈ LỆ = tổng thành phần / tổng Δt trên cả lượt (p90 ghi kèm để mô tả), không phải trung vị; Spearman tính trên tỉ lệ này; thành phần không kỳ vọng tính trên tỉ lệ tổng, ngưỡng như 1.2 mục 4. D1/D3 giữ trung vị (tác động đều). E5 tính trên chính 12 lượt D4 (cùng workload, cùng scope): Pearson giữa tổng rq và throttled_usec_delta, và |steal|/rq < 2 % — không chạy lại lượt riêng.
+
+## Phụ lục 1.7 — 25/10/2026 (chu kỳ beacon tách khỏi mức tranh chấp)
+Trong driver (§5): B1 và N1 dùng chu kỳ 10 s (jitter 0–50 %) ở cả 3 mức nền D1 N∈{0,2,4}; B4/N4 giữ nguyên. Chu kỳ chậm chạy TRÊN NỀN 7 ngày sau khi nền bật, không liều, tuần tự, có nhãn trong `lab/nhan-tan-cong.tsv`: B1-60s 30 phút, N1-60s 30 phút, B1-300s 120 phút, N1-300s 120 phút (đều ≥ 20 chu kỳ); driver tự lên lịch bằng unit phụ `hids-lab1-slow` sau bước 6, không chờ người. Tiêu chí ≥ 20 chu kỳ giữ nguyên.
