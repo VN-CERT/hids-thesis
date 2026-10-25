@@ -133,6 +133,7 @@ log "cho 20 phut roi kiem suc-khoe"
 sleep 1200
 bash "$REPO/scripts/lab1_watch.sh" || true
 
+set +e
 python3 - "$DATADIR/suc-khoe.tsv" "$VAL" <<'PY'
 import sys
 tsv, val = sys.argv[1], sys.argv[2]
@@ -165,6 +166,7 @@ if not ok:
 sys.exit(0)
 PY
 ec=$?
+set -e
 if ((ec != 0)); then
 	log "kiem 20 phut THAT BAI — dung unit"
 	systemctl stop hids-lab1-collector hids-lab1-gen hids-lab1-watch.timer 2>/dev/null || true

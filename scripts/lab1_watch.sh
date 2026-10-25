@@ -53,6 +53,28 @@ PY
 		<"$DATADIR/.watch-parse.tmp" || true
 fi
 
+# status.tsv cua collector KHONG co cot pmu_*; do tu .bin (tieu chi §2: ti le khong-FIRST co co PMU).
+REPO="$(cd "$(dirname "$0")/.." && pwd)"
+REC_STAT="${REPO}/bin/rec-stat"
+if [[ -x $REC_STAT ]]; then
+	newest=
+	# uu tien file .bin dang mo (gio hien tai); neu khong thi .bin lon nhat
+	for f in "$DATADIR"/hids-*.bin; do
+		[[ -f $f ]] || continue
+		if [[ -z $newest || $f -nt $newest ]]; then
+			newest=$f
+		fi
+	done
+	if [[ -n ${newest:-} ]]; then
+		# dong: "ti le ban ghi khong-FIRST co co PMU: A/B = X.XXXX%"
+		pmu_pct=$("$REC_STAT" "$newest" 2>/dev/null | python3 -c '
+import sys,re
+t=sys.stdin.read()
+m=re.search(r"khong-FIRST co co PMU:\s*\d+/\d+\s*=\s*([0-9.]+)\s*%", t)
+print(m.group(1) if m else "0")
+') || pmu_pct=0
+	fi
+fi
 # neu pmu_pct la ti le 0-1, doi ra %
 python3 -c "
 v=float('${pmu_pct}' or 0)

@@ -1,0 +1,11 @@
+start_wall=2026-10-25T15:47:35+00:00
+start_mono_ns=401189871480814
+datadir=/srv/hids-data/lab1-benign
+unit_collector=hids-lab1-collector
+unit_gen=hids-lab1-gen
+unit_watch=hids-lab1-watch.timer
+cmd_collector=/root/collector/bin/hids-collect -datadir /srv/hids-data/lab1-benign -cgroup /sys/fs/cgroup/system.slice/docker-026f7cbf1bc47de73f226721ea7ad4aa6415f8607ac9e83de2755a2f51108da2.scope -cgroup /sys/fs/cgroup/system.slice/docker-6e46e483810609715f4c42e35a5087fa36df28a4dd1c8f40bd715f9c35f31669.scope -min-free-gb 50 -pmu sample=20
+cmd_gen=bash /root/collector/scripts/lab1_benign_gen.sh /srv/hids-data/lab1-benign/gen-logs
+cgroup_nginx=/sys/fs/cgroup/system.slice/docker-026f7cbf1bc47de73f226721ea7ad4aa6415f8607ac9e83de2755a2f51108da2.scope
+cgroup_postgres=/sys/fs/cgroup/system.slice/docker-6e46e483810609715f4c42e35a5087fa36df28a4dd1c8f40bd715f9c35f31669.scope
+driver6=1

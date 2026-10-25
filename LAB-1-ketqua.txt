@@ -1,13 +1,11 @@
-LAB-1 — KET QUA (DUNG: oracle benign-lieu khong tang theo muc)
+LAB-1 — KET QUA (buoc 6 + hids-lab1-slow DA CHAY — phu luc 1.8)
 May: hids-collector (nan nhan, 55.201 / 192.168.77.10). Nhanh: lab-collector
 Nhiem vu: docs/tasks/LAB-1.md
 Ngay: 2026-10-24 / 2026-10-25
 
 ================================================================
-TRANG THAI: DUNG truoc buoc 6
-Buoc 4+4b xong (12 bn + 8 benign-lieu). Buoc 6 chua chay lai.
-Ly do DUNG: kiem nhanh — oracle D1 rq va D3 CPI cua dich vu KHONG tang theo muc.
-Da sua loi script buoc 6 (path tuong doi) + trap ERR; KHONG khoi dong hids-lab1-driver6.
+TRANG THAI: buoc 4+4b DAT (phu luc 1.8); buoc 6 DAT; nen 7 ngay + hids-lab1-slow dang chay
+Buoc 5+7: khi nguoi dung bao "driver xong" (nen 7 ngay + slow xong).
 ================================================================
 
 ----------------------------------------------------------------
@@ -394,3 +392,73 @@ TONG_KET kiem nhanh: KHONG_DAT → DUNG. Khong khoi dong hids-lab1-driver6.
 
 Can kien truc su: oracle benign-lieu (rq D1 / CPI D3 tren ban ghi dich vu) khong don dieu theo muc;
 co chap nhan metric khac (vd. rq_p90 cho D3, press), bo 4b, hay chay lai 4b?
+
+================================================================
+PHU LUC 1.8 — oracle/lieu dich vu §4b; chay lai D1; driver6 (2026-10-25)
+================================================================
+Commit phu luc 1.8: 6922282
+sha256 docs/giao-thuc-lab1.md:
+19a30b9ee6ec34d45e7693753fab031af181738a1e4efc5c3c33bf469340afbf
+
+(a) D1 dich vu: co-runner phu moi CPU — stress-ng --cpu N --taskset 0-7, N∈{8,16}.
+BEN-D1-2/4 cu: giu file, danh dau KHONG DUNG (liều khong tac dung — dich vu doi CPU).
+Chay lai 4 phien BEN-D1-8-r1/r2, BEN-D1-16-r1/r2 (15 phut/phien, generator, -pmu sample=20).
+Unit: hids-lab1-bend1-v18; xong 2026-10-25T14:16:40Z exit=0.
+Script: scripts/lab1_ben_d1_v18.sh
+
+(b) D3 dich vu: giu BEN-D3-4/7; oracle = press_delta + rq_p90 tang theo muc; CPI chi mo ta.
+
+--- Bang 4b v3 (oracle moi) — DAT ---
+File: validation/lab1-20261024/kiem-buoc4-4b-v3.txt
+kiem-buoc4-4b-v3.fail = 0
+
+BEN-D1-2/4 (cu, KHONG DUNG): 4/4 co danh dau
+
+dose	max_gap_s	min_rps	gap	rq_mean_ns	rq_p90_ns	n
+BEN-D1-8-r1	61.0	5095.4	DAT	4620.0	2135.0	5277009
+BEN-D1-8-r2	61.0	5101.9	DAT	5067.8	2179.0	5287180
+BEN-D1-16-r1	61.0	5116.6	DAT	5754.1	2555.0	4673892
+BEN-D1-16-r2	61.0	5251.4	DAT	6122.4	2335.0	5296168
+oracle D1 rq_mean: N8=4843.9 → N16=5938.2  DAT (nen ≈ 1500 ns)
+oracle D1 rq_p90:  N8=2157.0 → N16=2445.0  DAT
+
+dose	max_gap_s	min_rps	gap	rq_p90_ns	cpi_med	press_delta
+BEN-D3-4-r1	61.0	1931.4	DAT	1507.0	4.0616	894409
+BEN-D3-4-r2	61.0	1913.1	DAT	1561.0	4.0960	1038786
+BEN-D3-7-r1	61.0	1781.0	DAT	27559.0	4.0714	17385885
+BEN-D3-7-r2	61.0	1779.8	DAT	26881.0	3.8714	9856686
+oracle D3 press_delta: L4=966598 → L7=13621286  DAT
+oracle D3 rq_p90:      L4=1534.0 → L7=27220.0  DAT
+cpi_med (mo ta, khong oracle): L4=4.0788 L7=3.9714
+
+TONG_KET_4b_phuluc1.8	DAT
+
+--- Buoc 6 (lab1_driver6.sh) ---
+Unit hids-lab1-driver6 bat dau 2026-10-25T15:47:34Z
+sanitize_cpu0: cpuset.cpus.effective=1-7
+Collector: -pmu sample=20, datadir=/srv/hids-data/lab1-benign
+header bin: pmu: sample=20
+
+Kiem 20 phut lan 1 (16:07:39Z): FAIL PMU=0.0 (false-negative).
+Nguyen nhan: scripts/lab1_watch.sh doc pmu_pct tu status.tsv — collector KHONG ghi cot do → luon 0.
+rec-stat cung luc: ti le khong-FIRST co co PMU = 4.9989% (nam trong [4,6]); drops=0.
+Sua lab1_watch.sh: do pmu_pct bang rec-stat tren .bin moi nhat (dung tieu chi §2).
+Sua lab1_driver6.sh: set +e quanh kiem suc-khoe de trap ERR khong bo qua nhanh dung unit.
+Do lai (16:09:05Z): PMU=4.9991, drops=0 → DAT.
+File: validation/lab1-20261024/suc-khoe-20m.txt
+
+hids-lab1-slow: da khoi dong 2026-10-25T16:09:14Z (B1-60s → N1-60s → B1-300s → N1-300s)
+driver-xong: validation/lab1-20261024/driver-xong.txt
+
+Unit dang chay (luc viet bao cao):
+hids-lab1-collector=active
+hids-lab1-gen=active
+hids-lab1-watch.timer=active
+hids-lab1-slow=active
+
+--- Quyet dinh tu dua ra ---
+1. Sua lab1_watch do PMU tu .bin (rec-stat) — loi script, khong doi tieu chi [4,6].
+2. Giữ collector/gen dang chay sau false-negative; chi do lai + bat slow (khong doi 20 phut).
+
+--- Buoc 5+7 ---
+Cho nguoi dung bao "driver xong" (sau 7 ngay nen + slow).

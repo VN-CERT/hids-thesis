@@ -208,13 +208,16 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 - (không có)
 
-## Bước đang làm (LAB-1) — DỪNG trước bước 6 (2026-10-25)
+## Bước đang làm (LAB-1) — phụ lục 1.8 XONG bước 6 (2026-10-25)
 
-- Buớc 4+4b XONG (12 bn, 8 benign-lieu). Buớc 6 lần 1 lỗi: `StandardOutput` path tương đối.
-- Đã sửa `lab1_driver.sh` (path tuyệt đối + trap ERR) và thêm `lab1_driver6.sh` — **chưa chạy**.
-- Kiểm nhanh: B/N 12/12 DAT; gap 8/8 DAT; **oracle D1 rq / D3 CPI không tăng theo mức → DỪNG**.
-- Chờ kiến trúc sư quyết oracle 4b.
+- Phụ lục 1.8 commit `6922282`. kiem-buoc4-4b-v3.txt **DAT**.
+- Buoc 6 DAT: nen `/srv/hids-data/lab1-benign` + `hids-lab1-slow` dang chay tu 16:09:14Z.
+- Sua `lab1_watch.sh`: do `pmu_pct` tu `rec-stat` .bin (status.tsv khong co cot) — false-negative PMU=0 da xu ly; do lai 4.9991%.
+- Bao cao: `LAB-1-ketqua.txt`. Buoc 5+7 khi nguoi dung bao "driver xong".
 
 ## Việc đang chạy
 
-- (không có) — `bpftool prog show | grep -c hids_` = 0
+- **hids-lab1-collector** — `-pmu sample=20` → `/srv/hids-data/lab1-benign` — bat dau 2026-10-25T15:47:39Z — log `validation/lab1-20261024/benign-collector-systemd.log`
+- **hids-lab1-gen** — `lab1_benign_gen.sh` — bat dau 2026-10-25T15:47:39Z — log `validation/lab1-20261024/benign-gen-systemd.log`
+- **hids-lab1-watch.timer** — moi gio :05 — script `lab1_watch.sh`
+- **hids-lab1-slow** — B1/N1 60s+300s tren nen 7 ngay — bat dau 2026-10-25T16:09:14Z — log `validation/lab1-20261024/slow.log` — du kien ~5 gio

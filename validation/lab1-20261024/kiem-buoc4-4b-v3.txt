@@ -1,0 +1,34 @@
+LAB-1 kiem 4b phu luc 1.8 — kiem-buoc4-4b-v3.txt
+Ngay: 2026-10-25T15:45:33.321502Z
+
+=== BEN-D1-2/4 (cu, KHONG DUNG) ===
+BEN-D1-2-r1	co_danh_dau
+BEN-D1-2-r2	co_danh_dau
+BEN-D1-4-r1	co_danh_dau
+BEN-D1-4-r2	co_danh_dau
+
+=== Bang D1 moi (N=8,16 taskset 0-7) ===
+dose	max_gap_s	min_rps	gap	o rq_mean_ns	rq_p90_ns	n
+BEN-D1-16-r1	61.0	5116.6	DAT	5754.1	2555.0	4673892
+BEN-D1-16-r2	61.0	5251.4	DAT	6122.4	2335.0	5296168
+BEN-D1-8-r1	61.0	5095.4	DAT	4620.0	2135.0	5277009
+BEN-D1-8-r2	61.0	5101.9	DAT	5067.8	2179.0	5287180
+
+--- oracle D1: rq_p90 va rq_mean tang 8→16? ---
+rq_mean: N8=4843.9 N16=5938.2 tang=DAT
+rq_p90:  N8=2157.0 N16=2445.0 tang=DAT
+(nen tham chieu ≈ 1500 ns = 1.5 µs)
+
+=== Bang D3 (giu BEN-D3-4/7; oracle press_delta + rq_p90) ===
+dose	max_gap_s	min_rps	gap	rq_p90_ns	cpi_med	press_delta
+BEN-D3-4-r1	61.0	1931.4	DAT	1507.0	4.0616	894409
+BEN-D3-4-r2	61.0	1913.1	DAT	1561.0	4.0960	1038786
+BEN-D3-7-r1	61.0	1781.0	DAT	27559.0	4.0714	17385885
+BEN-D3-7-r2	61.0	1779.8	DAT	26881.0	3.8714	9856686
+
+--- oracle D3: press_delta va rq_p90 tang 4→7? (CPI chi mo ta) ---
+press_delta: L4=966598 L7=13621286 tang=DAT
+rq_p90:      L4=1534.0 L7=27220.0 tang=DAT
+cpi_med (mo ta, khong oracle): L4=4.0788 L7=3.9714
+
+TONG_KET_4b_phuluc1.8	DAT
