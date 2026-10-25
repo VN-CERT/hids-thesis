@@ -119,3 +119,8 @@ Với các trục có tác động theo cục (D4 throttle, E5, và steal nói c
 
 ## Phụ lục 1.7 — 25/10/2026 (chu kỳ beacon tách khỏi mức tranh chấp)
 Trong driver (§5): B1 và N1 dùng chu kỳ 10 s (jitter 0–50 %) ở cả 3 mức nền D1 N∈{0,2,4}; B4/N4 giữ nguyên. Chu kỳ chậm chạy TRÊN NỀN 7 ngày sau khi nền bật, không liều, tuần tự, có nhãn trong `lab/nhan-tan-cong.tsv`: B1-60s 30 phút, N1-60s 30 phút, B1-300s 120 phút, N1-300s 120 phút (đều ≥ 20 chu kỳ); driver tự lên lịch bằng unit phụ `hids-lab1-slow` sau bước 6, không chờ người. Tiêu chí ≥ 20 chu kỳ giữ nguyên.
+
+## Phụ lục 1.8 — 25/10/2026 (§4b: oracle/liều cho dịch vụ, khác wl)
+§4b oracle và liều cho DỊCH VỤ (không ghim CPU) khác với wl (ghim CPU 0).
+(a) D1 trên dịch vụ: co-runner phủ mọi CPU: `stress-ng --cpu N --taskset 0-7`, N ∈ {8, 16}; oracle: rq_p90 và rq_mean của bản ghi dịch vụ tăng theo mức (nền ≈ 1,5 µs). Phiên BEN-D1 với N∈{2,4} (taskset 0) ghi nhận liều không tác dụng (dịch vụ dời CPU), giữ file, không dùng.
+(b) D3 trên dịch vụ: oracle = press_delta và rq_p90 tăng theo mức; CPI không dùng làm oracle cho dịch vụ I/O-bound (chỉ ghi mô tả).
