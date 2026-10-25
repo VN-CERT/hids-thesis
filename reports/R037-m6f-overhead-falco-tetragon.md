@@ -228,5 +228,64 @@ Không đụng `analysis/`, `internal/`, `cmd/`, `tools/`, BPF trong diff này. 
 
 ### M6f-b
 
-*(điền sau khi unit `hids-m6fb` xong)*
+Unit `hids-m6fb`: 2026-10-25 09:39 → 11:02 (+07), **exit=0**.  
+Điều kiện xen kẽ ×10: **C0**, **FALCO-all** (`-o base_syscalls.all=true`), **HIDS-host**.  
+Falco 0.45.1 **nhận** `base_syscalls.all` (schema ok; không lỗi). Dữ liệu: `validation/m6f-b-20261025/`.
+
+Lệnh (bổ sung so M6f Falco):
+
+```text
+falco -o engine.kind=modern_ebpf -o base_syscalls.all=true \
+  -o stdout_output.enabled=false -o syslog_output.enabled=false \
+  -o file_output.enabled=true -o file_output.filename=/dev/null \
+  -o metrics.enabled=true -o metrics.interval=5s \
+  -o metrics.output_rule=false -o metrics.output_file=/metrics/falco_metrics.jsonl \
+  -o metrics.kernel_event_counters_enabled=true -o log_syslog=false
+```
+
+```bash
+systemd-run --unit=hids-m6fb --collect bash -c 'cd /root/hids && bash scripts/m6fb_driver.sh'
+```
+
+**freq_stamp CPU12 (trung vị GHz_wall):** T1 1.9402→1.9384; T4 1.9410→1.9391; T3 1.9394→1.9392 (mọi khối |Δ|≤2%).
+
+**Overhead — nguyên văn `m6c_stats.py`:**
+
+```
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T1	C0	10	183.8870	3.3434	181.4955	186.2785	0.0000	-	-	-
+T1	FALCO-all	10	216.9250	2.6921	214.9993	218.8507	17.9665	16.3618	19.4348	0.0001
+T1	HIDS-host	10	778.1620	25.5039	759.9189	796.4051	323.1740	313.7873	332.1207	0.0001
+```
+
+```
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T3	C0	10	3466.0272	242.3413	3292.6787	3639.3756	0.0000	-	-	-
+T3	FALCO-all	10	3344.4555	218.3204	3188.2893	3500.6217	-3.5075	-8.7734	1.9857	0.2511
+T3	HIDS-host	10	2749.1436	254.6779	2566.9707	2931.3166	-20.6831	-25.9470	-15.1797	0.0001
+```
+
+```
+load	cond	n	mean	sd	ci95_lo	ci95_hi	pct_vs_C0	pct_ci95_lo	pct_ci95_hi	p_perm
+T4	C0	10	113783.6120	3647.8680	111174.2657	116392.9583	0.0000	-	-	-
+T4	FALCO-all	10	97789.0950	6776.4440	92941.8557	102636.3343	-14.0570	-17.8863	-10.2794	0.0001
+T4	HIDS-host	10	98908.0720	5382.3105	95058.0665	102758.0775	-13.0735	-16.3152	-9.9652	0.0001
+```
+
+**CPU công cụ (median usage_usec) và drop:**
+
+| load | cond | median cpu_usec | scap.n_drops / mat (median) |
+|------|------|-----------------|------------------------------|
+| T1 | FALCO-all | 1.22e5 | 0 |
+| T1 | HIDS-host | 1.67e7 | mat=0 (~1.28e6 bản ghi/s) |
+| T3 | FALCO-all | 2.00e7 | 0 |
+| T3 | HIDS-host | 5.12e7 | mat=0 (~5.21e5 bản ghi/s) |
+| T4 | FALCO-all | 3.75e7 | 0 |
+| T4 | HIDS-host | 5.43e7 | mat=0 (~7.09e5 bản ghi/s) |
+
+Quan sát (không tự kết luận đạt): FALCO-all gần với FALCO mặc định ở M6f (T1 ~+18% vs ~+17%; T4 ~−14% vs ~−11%); HIDS-host cùng bậc với M6f (T1 ~+323%, T3 ~−21%, T4 ~−13%).
+
+sha256 5 file lúc viết M6f-b: khớp (cùng giá trị như mục trên).
+
+Tag: `m6f.1`.
 

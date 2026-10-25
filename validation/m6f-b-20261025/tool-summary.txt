@@ -1,0 +1,305 @@
+===== tool-cpu (usage_usec) =====
+load  cond       run  value
+T1    FALCO-all  1    120043
+T1    FALCO-all  10   120047
+T1    FALCO-all  2    188136
+T1    FALCO-all  3    156114
+T1    FALCO-all  4    126173
+T1    FALCO-all  5    122986
+T1    FALCO-all  6    114012
+T1    FALCO-all  7    107509
+T1    FALCO-all  8    154967
+T1    FALCO-all  9    118595
+T1    HIDS-host  1    16148935
+T1    HIDS-host  10   16365931
+T1    HIDS-host  2    17240427
+T1    HIDS-host  3    17222145
+T1    HIDS-host  4    16871924
+T1    HIDS-host  5    16467918
+T1    HIDS-host  6    17133135
+T1    HIDS-host  7    15779976
+T1    HIDS-host  8    17308432
+T1    HIDS-host  9    15852803
+T3    FALCO-all  1    20395468
+T3    FALCO-all  10   20958945
+T3    FALCO-all  2    19620502
+T3    FALCO-all  3    19872332
+T3    FALCO-all  4    19933851
+T3    FALCO-all  5    19572455
+T3    FALCO-all  6    19423525
+T3    FALCO-all  7    20055944
+T3    FALCO-all  8    19994730
+T3    FALCO-all  9    19992116
+T3    HIDS-host  1    51081113
+T3    HIDS-host  10   50831418
+T3    HIDS-host  2    52105985
+T3    HIDS-host  3    51353101
+T3    HIDS-host  4    49384136
+T3    HIDS-host  5    51328310
+T3    HIDS-host  6    53015774
+T3    HIDS-host  7    48429320
+T3    HIDS-host  8    50702363
+T3    HIDS-host  9    54486718
+T4    FALCO-all  1    35448298
+T4    FALCO-all  10   36628650
+T4    FALCO-all  2    35189793
+T4    FALCO-all  3    34199914
+T4    FALCO-all  4    39228785
+T4    FALCO-all  5    38352204
+T4    FALCO-all  6    41148971
+T4    FALCO-all  7    36378189
+T4    FALCO-all  8    39665339
+T4    FALCO-all  9    40212212
+T4    HIDS-host  1    50766928
+T4    HIDS-host  10   50500573
+T4    HIDS-host  2    53160325
+T4    HIDS-host  3    48238714
+T4    HIDS-host  4    56112119
+T4    HIDS-host  5    56322280
+T4    HIDS-host  6    56063057
+T4    HIDS-host  7    55767086
+T4    HIDS-host  8    53928617
+T4    HIDS-host  9    54598568
+===== tool-drop =====
+load  cond       run  value
+T1    FALCO-all  1    0
+T1    FALCO-all  10   0
+T1    FALCO-all  2    0
+T1    FALCO-all  3    0
+T1    FALCO-all  4    0
+T1    FALCO-all  5    0
+T1    FALCO-all  6    0
+T1    FALCO-all  7    0
+T1    FALCO-all  8    0
+T1    FALCO-all  9    0
+T1    HIDS-host  1    0
+T1    HIDS-host  10   0
+T1    HIDS-host  2    0
+T1    HIDS-host  3    0
+T1    HIDS-host  4    0
+T1    HIDS-host  5    0
+T1    HIDS-host  6    0
+T1    HIDS-host  7    0
+T1    HIDS-host  8    0
+T1    HIDS-host  9    0
+T3    FALCO-all  1    0
+T3    FALCO-all  10   0
+T3    FALCO-all  2    0
+T3    FALCO-all  3    0
+T3    FALCO-all  4    0
+T3    FALCO-all  5    0
+T3    FALCO-all  6    0
+T3    FALCO-all  7    0
+T3    FALCO-all  8    0
+T3    FALCO-all  9    0
+T3    HIDS-host  1    0
+T3    HIDS-host  10   0
+T3    HIDS-host  2    0
+T3    HIDS-host  3    0
+T3    HIDS-host  4    0
+T3    HIDS-host  5    0
+T3    HIDS-host  6    0
+T3    HIDS-host  7    0
+T3    HIDS-host  8    0
+T3    HIDS-host  9    0
+T4    FALCO-all  1    0
+T4    FALCO-all  10   0
+T4    FALCO-all  2    0
+T4    FALCO-all  3    0
+T4    FALCO-all  4    0
+T4    FALCO-all  5    0
+T4    FALCO-all  6    0
+T4    FALCO-all  7    0
+T4    FALCO-all  8    0
+T4    FALCO-all  9    0
+T4    HIDS-host  1    0
+T4    HIDS-host  10   0
+T4    HIDS-host  2    0
+T4    HIDS-host  3    0
+T4    HIDS-host  4    0
+T4    HIDS-host  5    0
+T4    HIDS-host  6    0
+T4    HIDS-host  7    0
+T4    HIDS-host  8    0
+T4    HIDS-host  9    0
+===== tool-stats mau =====
+-- /root/hids/validation/m6f-b-20261025/T1/C0/run10/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-b-20261025/T1/C0/run1/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-b-20261025/T1/C0/run2/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-b-20261025/T1/C0/run3/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-b-20261025/T1/C0/run4/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-b-20261025/T1/C0/run5/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-b-20261025/T1/C0/run6/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-b-20261025/T1/C0/run7/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-b-20261025/T1/C0/run8/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-b-20261025/T1/C0/run9/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-b-20261025/T1/FALCO-all/run10/tool-stats.txt
+tool=FALCO cpu_usec=120047 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-b-20261025/T1/FALCO-all/run1/tool-stats.txt
+tool=FALCO cpu_usec=120043 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-b-20261025/T1/FALCO-all/run2/tool-stats.txt
+tool=FALCO cpu_usec=188136 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-b-20261025/T1/FALCO-all/run3/tool-stats.txt
+tool=FALCO cpu_usec=156114 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-b-20261025/T1/FALCO-all/run4/tool-stats.txt
+tool=FALCO cpu_usec=126173 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-b-20261025/T1/FALCO-all/run5/tool-stats.txt
+tool=FALCO cpu_usec=122986 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-b-20261025/T1/FALCO-all/run6/tool-stats.txt
+tool=FALCO cpu_usec=114012 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-b-20261025/T1/FALCO-all/run7/tool-stats.txt
+tool=FALCO cpu_usec=107509 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-b-20261025/T1/FALCO-all/run8/tool-stats.txt
+tool=FALCO cpu_usec=154967 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-b-20261025/T1/FALCO-all/run9/tool-stats.txt
+tool=FALCO cpu_usec=118595 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-b-20261025/T1/HIDS-host/run10/tool-stats.txt
+tool=HIDS cpu_usec=16365931 ban_ghi=10000001 ban_ghi_giay=1307434.0 mat=0
+-- /root/hids/validation/m6f-b-20261025/T1/HIDS-host/run1/tool-stats.txt
+tool=HIDS cpu_usec=16148935 ban_ghi=10000001 ban_ghi_giay=1315948.1 mat=0
+-- /root/hids/validation/m6f-b-20261025/T1/HIDS-host/run2/tool-stats.txt
+tool=HIDS cpu_usec=17240427 ban_ghi=10000001 ban_ghi_giay=1244685.7 mat=0
+-- /root/hids/validation/m6f-b-20261025/T1/HIDS-host/run3/tool-stats.txt
+tool=HIDS cpu_usec=17222145 ban_ghi=10000001 ban_ghi_giay=1242332.5 mat=0
+-- /root/hids/validation/m6f-b-20261025/T1/HIDS-host/run4/tool-stats.txt
+tool=HIDS cpu_usec=16871924 ban_ghi=10000001 ban_ghi_giay=1262173.8 mat=0
+-- /root/hids/validation/m6f-b-20261025/T1/HIDS-host/run5/tool-stats.txt
+tool=HIDS cpu_usec=16467918 ban_ghi=10000001 ban_ghi_giay=1304399.7 mat=0
+-- /root/hids/validation/m6f-b-20261025/T1/HIDS-host/run6/tool-stats.txt
+tool=HIDS cpu_usec=17133135 ban_ghi=10000001 ban_ghi_giay=1255027.6 mat=0
+-- /root/hids/validation/m6f-b-20261025/T1/HIDS-host/run7/tool-stats.txt
+tool=HIDS cpu_usec=15779976 ban_ghi=10000001 ban_ghi_giay=1353465.1 mat=0
+-- /root/hids/validation/m6f-b-20261025/T1/HIDS-host/run8/tool-stats.txt
+tool=HIDS cpu_usec=17308432 ban_ghi=10000001 ban_ghi_giay=1243782.2 mat=0
+-- /root/hids/validation/m6f-b-20261025/T1/HIDS-host/run9/tool-stats.txt
+tool=HIDS cpu_usec=15852803 ban_ghi=10000001 ban_ghi_giay=1342286.5 mat=0
+-- /root/hids/validation/m6f-b-20261025/T3/C0/run10/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-b-20261025/T3/C0/run1/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-b-20261025/T3/C0/run2/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-b-20261025/T3/C0/run3/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-b-20261025/T3/C0/run4/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-b-20261025/T3/C0/run5/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-b-20261025/T3/C0/run6/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-b-20261025/T3/C0/run7/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-b-20261025/T3/C0/run8/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-b-20261025/T3/C0/run9/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-b-20261025/T3/FALCO-all/run10/tool-stats.txt
+tool=FALCO cpu_usec=20958945 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-b-20261025/T3/FALCO-all/run1/tool-stats.txt
+tool=FALCO cpu_usec=20395468 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-b-20261025/T3/FALCO-all/run2/tool-stats.txt
+tool=FALCO cpu_usec=19620502 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-b-20261025/T3/FALCO-all/run3/tool-stats.txt
+tool=FALCO cpu_usec=19872332 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-b-20261025/T3/FALCO-all/run4/tool-stats.txt
+tool=FALCO cpu_usec=19933851 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-b-20261025/T3/FALCO-all/run5/tool-stats.txt
+tool=FALCO cpu_usec=19572455 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-b-20261025/T3/FALCO-all/run6/tool-stats.txt
+tool=FALCO cpu_usec=19423525 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-b-20261025/T3/FALCO-all/run7/tool-stats.txt
+tool=FALCO cpu_usec=20055944 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-b-20261025/T3/FALCO-all/run8/tool-stats.txt
+tool=FALCO cpu_usec=19994730 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-b-20261025/T3/FALCO-all/run9/tool-stats.txt
+tool=FALCO cpu_usec=19992116 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-b-20261025/T3/HIDS-host/run10/tool-stats.txt
+tool=HIDS cpu_usec=50831418 ban_ghi=31667850 ban_ghi_giay=525668.2 mat=0
+-- /root/hids/validation/m6f-b-20261025/T3/HIDS-host/run1/tool-stats.txt
+tool=HIDS cpu_usec=51081113 ban_ghi=29506764 ban_ghi_giay=488495.0 mat=0
+-- /root/hids/validation/m6f-b-20261025/T3/HIDS-host/run2/tool-stats.txt
+tool=HIDS cpu_usec=52105985 ban_ghi=31523026 ban_ghi_giay=521903.1 mat=0
+-- /root/hids/validation/m6f-b-20261025/T3/HIDS-host/run3/tool-stats.txt
+tool=HIDS cpu_usec=51353101 ban_ghi=31414087 ban_ghi_giay=520727.9 mat=0
+-- /root/hids/validation/m6f-b-20261025/T3/HIDS-host/run4/tool-stats.txt
+tool=HIDS cpu_usec=49384136 ban_ghi=28648957 ban_ghi_giay=474266.9 mat=0
+-- /root/hids/validation/m6f-b-20261025/T3/HIDS-host/run5/tool-stats.txt
+tool=HIDS cpu_usec=51328310 ban_ghi=32886355 ban_ghi_giay=545063.9 mat=0
+-- /root/hids/validation/m6f-b-20261025/T3/HIDS-host/run6/tool-stats.txt
+tool=HIDS cpu_usec=53015774 ban_ghi=33997571 ban_ghi_giay=563364.4 mat=0
+-- /root/hids/validation/m6f-b-20261025/T3/HIDS-host/run7/tool-stats.txt
+tool=HIDS cpu_usec=48429320 ban_ghi=28381593 ban_ghi_giay=470820.6 mat=0
+-- /root/hids/validation/m6f-b-20261025/T3/HIDS-host/run8/tool-stats.txt
+tool=HIDS cpu_usec=50702363 ban_ghi=30839303 ban_ghi_giay=510694.7 mat=0
+-- /root/hids/validation/m6f-b-20261025/T3/HIDS-host/run9/tool-stats.txt
+tool=HIDS cpu_usec=54486718 ban_ghi=37125157 ban_ghi_giay=615072.2 mat=0
+-- /root/hids/validation/m6f-b-20261025/T4/C0/run10/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-b-20261025/T4/C0/run1/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-b-20261025/T4/C0/run2/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-b-20261025/T4/C0/run3/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-b-20261025/T4/C0/run4/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-b-20261025/T4/C0/run5/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-b-20261025/T4/C0/run6/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-b-20261025/T4/C0/run7/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-b-20261025/T4/C0/run8/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-b-20261025/T4/C0/run9/tool-stats.txt
+tool=C0
+-- /root/hids/validation/m6f-b-20261025/T4/FALCO-all/run10/tool-stats.txt
+tool=FALCO cpu_usec=36628650 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-b-20261025/T4/FALCO-all/run1/tool-stats.txt
+tool=FALCO cpu_usec=35448298 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-b-20261025/T4/FALCO-all/run2/tool-stats.txt
+tool=FALCO cpu_usec=35189793 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-b-20261025/T4/FALCO-all/run3/tool-stats.txt
+tool=FALCO cpu_usec=34199914 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-b-20261025/T4/FALCO-all/run4/tool-stats.txt
+tool=FALCO cpu_usec=39228785 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-b-20261025/T4/FALCO-all/run5/tool-stats.txt
+tool=FALCO cpu_usec=38352204 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-b-20261025/T4/FALCO-all/run6/tool-stats.txt
+tool=FALCO cpu_usec=41148971 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-b-20261025/T4/FALCO-all/run7/tool-stats.txt
+tool=FALCO cpu_usec=36378189 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-b-20261025/T4/FALCO-all/run8/tool-stats.txt
+tool=FALCO cpu_usec=39665339 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-b-20261025/T4/FALCO-all/run9/tool-stats.txt
+tool=FALCO cpu_usec=40212212 scap_n_drops=0 event_drop_occurrences=?
+-- /root/hids/validation/m6f-b-20261025/T4/HIDS-host/run10/tool-stats.txt
+tool=HIDS cpu_usec=50500573 ban_ghi=40054310 ban_ghi_giay=666430.1 mat=0
+-- /root/hids/validation/m6f-b-20261025/T4/HIDS-host/run1/tool-stats.txt
+tool=HIDS cpu_usec=50766928 ban_ghi=40961126 ban_ghi_giay=682626.6 mat=0
+-- /root/hids/validation/m6f-b-20261025/T4/HIDS-host/run2/tool-stats.txt
+tool=HIDS cpu_usec=53160325 ban_ghi=42448515 ban_ghi_giay=707419.5 mat=0
+-- /root/hids/validation/m6f-b-20261025/T4/HIDS-host/run3/tool-stats.txt
+tool=HIDS cpu_usec=48238714 ban_ghi=37631377 ban_ghi_giay=626116.2 mat=0
+-- /root/hids/validation/m6f-b-20261025/T4/HIDS-host/run4/tool-stats.txt
+tool=HIDS cpu_usec=56112119 ban_ghi=45208208 ban_ghi_giay=753420.4 mat=0
+-- /root/hids/validation/m6f-b-20261025/T4/HIDS-host/run5/tool-stats.txt
+tool=HIDS cpu_usec=56322280 ban_ghi=43620763 ban_ghi_giay=725770.7 mat=0
+-- /root/hids/validation/m6f-b-20261025/T4/HIDS-host/run6/tool-stats.txt
+tool=HIDS cpu_usec=56063057 ban_ghi=44887009 ban_ghi_giay=748057.7 mat=0
+-- /root/hids/validation/m6f-b-20261025/T4/HIDS-host/run7/tool-stats.txt
+tool=HIDS cpu_usec=55767086 ban_ghi=44050370 ban_ghi_giay=734104.5 mat=0
+-- /root/hids/validation/m6f-b-20261025/T4/HIDS-host/run8/tool-stats.txt
+tool=HIDS cpu_usec=53928617 ban_ghi=42140468 ban_ghi_giay=702303.1 mat=0
+-- /root/hids/validation/m6f-b-20261025/T4/HIDS-host/run9/tool-stats.txt
+tool=HIDS cpu_usec=54598568 ban_ghi=42753826 ban_ghi_giay=711350.6 mat=0

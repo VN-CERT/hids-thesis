@@ -1,0 +1,32 @@
+=== sha256 5 file kien truc su ===
+9994b03f359ee5205354515f80bd4dd67f4919daca6b585702f4dc54796648c0  bpf/sys_enter.bpf.c
+39d892e5524de1cb49ace593b152c5b303d99c056e110f0a072d344c8270c7ec  bpf/proc_events.bpf.c
+9f0b4cde1c2e1c6aa560c041eaefaef1a40e5c7d9fc292db1d77dfc971d046cd  analysis/m5f_parse.py
+8c390002870f3ea8ace38a241f803bb5e7ec6c2413fdd403f757de24a6a1be25  analysis/m6c_stats.py
+88ef821eb062855b0189af1568d25e310b53f1e0c1e29e35e360282515d97706  tools/coreclk.c
+=== git ===
+76931b7
+=== images ===
+falcosecurity/falco:latest sha256:69e957f91b3a6beb5c82e2afae33ec3e4479dab2d4421475d288d0cd113cedf6
+=== falco version ===
+2026-10-25T02:39:22+0000: Falco version: 0.45.1 (x86_64)
+2026-10-25T02:39:22+0000: Falco initialized with configuration files:
+2026-10-25T02:39:22+0000:    /etc/falco/config.d/falco.container_plugin.yaml | schema validation: ok
+2026-10-25T02:39:22+0000:    /etc/falco/config.d/falco.iso8601_timeformat.yaml | schema validation: ok
+2026-10-25T02:39:22+0000:    /etc/falco/falco.yaml | schema validation: ok
+2026-10-25T02:39:22+0000: System info: Linux version 6.8.0-142-generic (buildd@lcy02-amd64-049) (x86_64-linux-gnu-gcc-13 (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, GNU ld (GNU Binutils for Ubuntu) 2.42) #142-Ubuntu SMP PREEMPT_DYNAMIC Wed Sep  2 14:24:27 UTC 2026
+Falco version: 0.45.1
+Libs version:  0.26.1
+Plugin API:    3.12.0
+Engine:        0.65.0
+Driver:
+  API version:    11.0.0
+  Schema version: 4.3.0
+  Default driver: 11.0.1+driver
+=== probe base_syscalls.all=true ===
+2026-10-25T02:39:23+0000:    /etc/falco/config.d/falco.container_plugin.yaml | schema validation: ok
+2026-10-25T02:39:23+0000:    /etc/falco/config.d/falco.iso8601_timeformat.yaml | schema validation: ok
+2026-10-25T02:39:23+0000:    /etc/falco/falco.yaml | schema validation: ok
+2026-10-25T02:39:23+0000:    /etc/falco/falco_rules.yaml | schema validation: ok
+2026-10-25T02:39:23+0000:    /etc/falco/falco_rules.local.yaml | schema validation: none
+2026-10-25T02:39:23+0000: (72) syscalls selected in total (final set): accept, accept4, bind, capset, chdir, chroot, clone, clone3, close, close_range, connect, creat, dup, dup2, dup3, epoll_create, epoll_create1, eventfd, eventfd2, execve, execveat, fchdir, fcntl, finit_module, fork, getsockopt, init_module, inotify_init, inotify_init1, io_uring_setup, link, linkat, memfd_create, mount, open, open_by_handle_at, openat, openat2, pidfd_getfd, pidfd_open, pipe, pipe2, prctl, prlimit, procexit, ptrace, recvfrom, recvmmsg, recvmsg, sendmmsg, sendmsg, sendto, setgid, setregid, setresgid, setresuid, setreuid, setrlimit, setsid, setuid, shutdown, signalfd, signalfd4, socket, socketpair, symlink, symlinkat, timerfd_create, umount, umount2, userfaultfd, vfork

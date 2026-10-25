@@ -112,19 +112,14 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
   - (8.4) Chấp nhận giải thích; chạy M6f-b (FALCO-all = `base_syscalls.all=true`).
 - Cập nhật: 2026-10-25 09:35.
 
-## Bước đang làm (M6f-b)
+## M6f-b: ĐÓNG (nối R037, tag m6f.1)
 
-- Nhiệm vụ: `docs/tasks/M6f-b.md`. Script `scripts/m6fb_overhead.sh` / `m6fb_driver.sh`.
-- Falco 0.45.1 **nhận** `-o base_syscalls.all=true` (schema ok; dry-run không lỗi).
-- Tiếp: systemd-run `hids-m6fb` (~1,5 giờ) → nối R037 mục M6f-b → tag `m6f.1` → push → DỪNG.
+- Unit `hids-m6fb` 09:39→11:02 (+07), exit=0; 90/90 value; BPF sạch; 12 container bật lại.
+- FALCO-all (`base_syscalls.all=true`) T1 +18,0%; T3 −3,5% (p=0,25); T4 −14,1%. HIDS-host T1 +323%; T3 −20,7%; T4 −13,1%. Drop Falco/HIDS = 0.
+- Dữ liệu `validation/m6f-b-20261025/`; đã nối R037 mục M6f-b.
+- Cập nhật: 2026-10-25 11:05.
 
 ## Việc đang chạy
 
-- **hids-m6fb** (M6f-b: C0 / FALCO-all / HIDS-host × T1/T3/T4 × 10)
-  - lệnh: `systemd-run --unit=hids-m6fb --collect bash -c 'cd /root/hids && bash scripts/m6fb_driver.sh'`
-  - bắt đầu: 2026-10-25 09:40 (+07) (lần 2; lần 1 exit=1 do TP_YAML)
-  - dự kiến xong: ~1,5 giờ sau start
-  - log: `out/jobs/m6fb.log`
-  - trạng thái: `out/jobs/m6fb.status`
-  - dữ liệu: `validation/m6f-b-<ngày>/`
+- (không có) — M6f-b xong. 12 container chạy, `hids_` = 0.
 
