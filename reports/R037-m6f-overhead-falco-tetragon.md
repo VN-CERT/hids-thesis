@@ -304,11 +304,11 @@ TSV đầy đủ: `validation/m6f-c-20261025/falco_nevts_compare.tsv`.
 | suite | load | cond | median scap.n_evts | median scap.n_drops | median load_syscalls |
 |-------|------|------|--------------------:|--------------------:|---------------------:|
 | M6f | T1 | FALCO | 1 | 0 | 10000000 |
-| M6f | T3 | FALCO | 8165600 | 0 | 31348010 |
+| M6f | T3 | FALCO | 8165600 | 0 | 31498010 |
 | M6f | T4 | FALCO | 22735130 | 0 | 40297252 |
 | M6f-b | T1 | FALCO-all | 1 | 0 | 10000000 |
-| M6f-b | T3 | FALCO-all | 8271183 | 0 | 31545438 |
-| M6f-b | T4 | FALCO-all | 22524746 | 0 | 42599670 |
+| M6f-b | T3 | FALCO-all | 8271183 | 0 | 31468557 |
+| M6f-b | T4 | FALCO-all | 22524746 | 0 | 42601171 |
 
 **Từng lượt (nguyên văn TSV):** xem `validation/m6f-c-20261025/falco_nevts_compare.tsv` và `part1-table.txt`.
 
