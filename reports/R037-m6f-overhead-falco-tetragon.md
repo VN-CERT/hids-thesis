@@ -327,3 +327,17 @@ Không có m6c_stats / n_evts / CPU cho FALCO-A (không gắn được). Không 
 
 Tag: `m6f.2`.
 
+---
+
+## Phụ lục — Trả lời kiến trúc sư về M6f-c (nhận 2026-10-25)
+
+**ĐẠT**, đóng chuỗi M6f (tag `m6f.2`), không chạy thêm.
+
+(1) Phạm vi quan sát của Falco (modern_ebpf, rules mặc định, cả base_syscalls.all) theo scap.n_evts/so syscall của tải: T1 0 % (n_evts=1 trên 10 triệu getppid), T3 26 %, T4 56 %; Falco 0.45 không còn -A; vậy Falco không thể cấu hình để quan sát mọi syscall — khác lớp với HIDS và Tetragon-sysenter.
+
+(2) Chi phí trên mỗi sự kiện THỰC QUAN SÁT: T4 Falco 1,67 µs/sự kiện vs HIDS-host 1,27 µs/bản ghi (gồm phân rã + nén), T3 2,4 µs vs 1,63 µs.
+
+(3) Bảng chính bài thêm cột "độ phủ syscall": Falco 0/26/56 %, TETRA-def ~0 (exec/exit), TETRA-sysenter 100 % (mất 1,45×10⁷/6,1×10⁷/1,06×10⁸), HIDS-host 100 % (mất 0).
+
+(4) Câu kết luận so sánh: ở tải Falco phủ nhiều nhất (T4), overhead hai bên bằng nhau (−14 % vs −13 %) dù Falco chỉ thấy một nửa syscall; công cụ cùng phạm vi duy nhất đắt gấp 2 và mất sự kiện.
+

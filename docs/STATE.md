@@ -119,13 +119,19 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 - Dữ liệu `validation/m6f-b-20261025/`; đã nối R037 mục M6f-b.
 - Cập nhật: 2026-10-25 11:05.
 
-## M6f-c: ĐÓNG (nối R037, tag m6f.2)
+## M6f-c: ĐÓNG (nối R037, tag m6f.2) — KA ĐẠT, đóng chuỗi M6f
 
 - (1) Bảng `scap.n_evts` / `scap.n_drops` vs load_syscalls từ JSONL M6f + M6f-b: `validation/m6f-c-20261025/falco_nevts_compare.tsv`.
 - (2) `falco -A` trên 0.45.1: lỗi nguyên văn `Error: Option 'A' does not exist` — không chạy T1 FALCO-A.
-- Cập nhật: 2026-10-25 18:40.
+- Kiến trúc sư duyệt M6f-c **ĐẠT**, đóng chuỗi M6f (`m6f.2`), không chạy thêm (ghi nguyên văn phụ lục R037):
+  1. Phạm vi quan sát của Falco (modern_ebpf, rules mặc định, cả base_syscalls.all) theo scap.n_evts/so syscall của tải: T1 0 % (n_evts=1 trên 10 triệu getppid), T3 26 %, T4 56 %; Falco 0.45 không còn -A; vậy Falco không thể cấu hình để quan sát mọi syscall — khác lớp với HIDS và Tetragon-sysenter.
+  2. Chi phí trên mỗi sự kiện THỰC QUAN SÁT: T4 Falco 1,67 µs/sự kiện vs HIDS-host 1,27 µs/bản ghi (gồm phân rã + nén), T3 2,4 µs vs 1,63 µs.
+  3. Bảng chính bài thêm cột "độ phủ syscall": Falco 0/26/56 %, TETRA-def ~0 (exec/exit), TETRA-sysenter 100 % (mất 1,45×10⁷/6,1×10⁷/1,06×10⁸), HIDS-host 100 % (mất 0).
+  4. Câu kết luận so sánh: ở tải Falco phủ nhiều nhất (T4), overhead hai bên bằng nhau (−14 % vs −13 %) dù Falco chỉ thấy một nửa syscall; công cụ cùng phạm vi duy nhất đắt gấp 2 và mất sự kiện.
+- 195 rảnh; không giao việc mới.
+- Cập nhật: 2026-10-25 20:07.
 
 ## Việc đang chạy
 
-- (không có) — M6f-c xong. 12 container chạy, `hids_` = 0.
+- (không có) — chuỗi M6f đóng. 12 container chạy, `hids_` = 0.
 
