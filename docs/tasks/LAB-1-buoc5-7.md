@@ -1,0 +1,1 @@
+driver xong, slow xong: làm bước 5 (kiểm khói detector_c5 trên phiên B1-300s + nhãn, in bảng, không chọn ngưỡng) và bước 7 (LAB-1-ketqua.txt đầy đủ, in toàn văn ra chat, commit). Nền 7 ngày vẫn chạy; không đụng. lab1_tong_ket.sh chạy ngày 1/11 sau 22:47.

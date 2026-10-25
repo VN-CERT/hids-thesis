@@ -208,16 +208,17 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 - (không có)
 
-## Bước đang làm (LAB-1) — phụ lục 1.8 XONG bước 6 (2026-10-25)
+## Bước đang làm (LAB-1) — chờ slow rồi bước 5+7 (2026-10-25)
 
-- Phụ lục 1.8 commit `6922282`. kiem-buoc4-4b-v3.txt **DAT**.
-- Buoc 6 DAT: nen `/srv/hids-data/lab1-benign` + `hids-lab1-slow` dang chay tu 16:09:14Z.
-- Sua `lab1_watch.sh`: do `pmu_pct` tu `rec-stat` .bin (status.tsv khong co cot) — false-negative PMU=0 da xu ly; do lai 4.9991%.
-- Bao cao: `LAB-1-ketqua.txt`. Buoc 5+7 khi nguoi dung bao "driver xong".
+- Người dùng: "driver xong, slow xong → bước 5+7". Kiểm thật: **slow CHƯA XONG**.
+- CHƯA XONG: hids-lab1-slow — tiến độ 0/4 phiên (đang B1-60s) — dự kiến xong ~21:09 UTC — log `validation/lab1-20261024/slow.log`
+- Nền 7 ngày: **không đụng**. lab1_tong_ket.sh: người dùng chạy **1/11 sau 22:47**.
+- Sau khi B1-300s/slow xong: unit `hids-lab1-buoc57` chạy bước 5; rồi Cursor bước 7 (ketqua + commit + in chat).
 
 ## Việc đang chạy
 
-- **hids-lab1-collector** — `-pmu sample=20` → `/srv/hids-data/lab1-benign` — bat dau 2026-10-25T15:47:39Z — log `validation/lab1-20261024/benign-collector-systemd.log`
-- **hids-lab1-gen** — `lab1_benign_gen.sh` — bat dau 2026-10-25T15:47:39Z — log `validation/lab1-20261024/benign-gen-systemd.log`
-- **hids-lab1-watch.timer** — moi gio :05 — script `lab1_watch.sh`
-- **hids-lab1-slow** — B1/N1 60s+300s tren nen 7 ngay — bat dau 2026-10-25T16:09:14Z — log `validation/lab1-20261024/slow.log` — du kien ~5 gio
+- **hids-lab1-collector** — `-pmu sample=20` → `/srv/hids-data/lab1-benign` — bat dau 2026-10-25T15:47:39Z — KHONG DUNG
+- **hids-lab1-gen** — bat dau 2026-10-25T15:47:39Z — KHONG DUNG
+- **hids-lab1-watch.timer** — KHONG DUNG
+- **hids-lab1-slow** — B1-60s dang chay (16:09:24Z) — log `validation/lab1-20261024/slow.log` — status (khong file rieng)
+- **hids-lab1-buoc57** — cho B1-300s/slow roi buoc 5 — log `validation/lab1-20261024/buoc57.log` — status `out/jobs/lab1-buoc57.status`
