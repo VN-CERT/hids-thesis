@@ -100,14 +100,31 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 - Cập nhật: 2026-10-24 23:32.
 
 
-## M6f: ĐÓNG (R037, tag m6f)
+## M6f: ĐÓNG (R037, tag m6f) — KA ĐẠT (2026-10-25)
 
 - Unit `hids-m6f` 23:47→02:45 (+07), exit=0; 180/180 value; BPF sạch; 12 container bật lại; AllowedCPUs gỡ.
 - Falco 0.45.1 modern_ebpf; Tetragon v1.7.0 (latest không có); HIDS-host / HIDS-all `-pmu host`.
 - Dữ liệu `validation/m6f-20261024/`; báo cáo R037; sha256 5 file khớp.
-- Cập nhật: 2026-10-25 02:47.
+- Kiến trúc sư duyệt R037 **ĐẠT** (ghi phụ lục R037):
+  - (8.1) T3 chỉ dùng % so C0 trong xen kẽ, không so TPS tuyệt đối (freq lệch 6,9 %).
+  - (8.2) HIDS-all giữ; nhãn ngoài production / vượt ~0,95 M bản ghi/s / mất đếm chính xác.
+  - (8.3) Bảng chính: C0, Falco mặc định, TETRA-def, HIDS-host; phụ lục mọi sys_enter: TETRA-sysenter, HIDS-all.
+  - (8.4) Chấp nhận giải thích; chạy M6f-b (FALCO-all = `base_syscalls.all=true`).
+- Cập nhật: 2026-10-25 09:35.
+
+## Bước đang làm (M6f-b)
+
+- Nhiệm vụ: `docs/tasks/M6f-b.md`. Script `scripts/m6fb_overhead.sh` / `m6fb_driver.sh`.
+- Falco 0.45.1 **nhận** `-o base_syscalls.all=true` (schema ok; dry-run không lỗi).
+- Tiếp: systemd-run `hids-m6fb` (~1,5 giờ) → nối R037 mục M6f-b → tag `m6f.1` → push → DỪNG.
 
 ## Việc đang chạy
 
-- (không có) — M6f xong. 12 container chạy, `hids_` = 0.
+- **hids-m6fb** (M6f-b: C0 / FALCO-all / HIDS-host × T1/T3/T4 × 10)
+  - lệnh: `systemd-run --unit=hids-m6fb --collect bash -c 'cd /root/hids && bash scripts/m6fb_driver.sh'`
+  - bắt đầu: (ghi khi start)
+  - dự kiến xong: ~1,5 giờ sau start
+  - log: `out/jobs/m6fb.log`
+  - trạng thái: `out/jobs/m6fb.status`
+  - dữ liệu: `validation/m6f-b-<ngày>/`
 

@@ -204,3 +204,29 @@ Không đụng `analysis/`, `internal/`, `cmd/`, `tools/`, BPF trong diff này. 
    - Không lỗi chặn: unit exit=0, BPF sạch, container bật lại, AllowedCPUs gỡ.  
    - Đề xuất: kiến trúc sư trả lời mục 8; không chạy lại trừ khi yêu cầu (T3 freq).  
    - Tag `m6f`, push; **DỪNG**.
+
+
+---
+
+## Phụ lục — Trả lời kiến trúc sư về R037 mục 8 (nhận 2026-10-25)
+
+**ĐẠT.**
+
+**(8.1)** T3 lệch tần số 6,9 % giữa đầu/cuối khối: chỉ dùng **% so C0 trong cùng xen kẽ**, không so tuyệt đối TPS giữa khối; ghi chú trong bảng.
+
+**(8.2)** HIDS-all giữ nguyên, nhãn *"ngoài cấu hình production; vượt công suất ~0,95 M bản ghi/giây đã biết; mất được đếm chính xác"* — mục đích là công bằng phạm vi với TETRA-sysenter (6,4×10⁵ vs 6,1×10⁷ mất ở T3; 2,7×10⁷ vs 1,06×10⁸ ở T4).
+
+**(8.3)** Bảng chính của bài: **C0, Falco mặc định, TETRA-def, HIDS-host**; phụ lục *"cùng lớp quan sát mọi sys_enter"*: **TETRA-sysenter, HIDS-all**. Khác lớp: Falco mặc định lọc syscall theo rules ngay trong BPF và không phân rã thời gian; TETRA-def chỉ exec/exit.
+
+**(8.4)** Chấp nhận giải thích. Chạy thêm **M6f-b**: FALCO-all = Falco modern_ebpf với `-o base_syscalls.all=true` (T1/T3/T4 × 10, xen kẽ C0 và HIDS-host); nối kết quả ở mục **M6f-b** dưới đây; tag `m6f.1`.
+
+### Ghi chú bảng chính (theo 8.1 / 8.3)
+
+- T3: chỉ đọc cột `pct_vs_C0` (và CI); **không** so mean TPS tuyệt đối giữa đầu/cuối khối vì GHz lệch 6,9 %.
+- Bảng chính bài: C0 | FALCO (mặc định) | TETRA-def | HIDS-host.
+- Phụ lục cùng lớp mọi sys_enter: TETRA-sysenter | HIDS-all (HIDS-all: ngoài production; vượt ~0,95 M bản ghi/s; mất đếm chính xác).
+
+### M6f-b
+
+*(điền sau khi unit `hids-m6fb` xong)*
+
