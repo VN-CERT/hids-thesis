@@ -119,7 +119,13 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 - Dữ liệu `validation/m6f-b-20261025/`; đã nối R037 mục M6f-b.
 - Cập nhật: 2026-10-25 11:05.
 
+## M6f-c: ĐÓNG (nối R037, tag m6f.2)
+
+- (1) Bảng `scap.n_evts` / `scap.n_drops` vs load_syscalls từ JSONL M6f + M6f-b: `validation/m6f-c-20261025/falco_nevts_compare.tsv`.
+- (2) `falco -A` trên 0.45.1: lỗi nguyên văn `Error: Option 'A' does not exist` — không chạy T1 FALCO-A.
+- Cập nhật: 2026-10-25 18:40.
+
 ## Việc đang chạy
 
-- (không có) — M6f-b xong. 12 container chạy, `hids_` = 0.
+- (không có) — M6f-c xong. 12 container chạy, `hids_` = 0.
 

@@ -289,3 +289,41 @@ sha256 5 file lúc viết M6f-b: khớp (cùng giá trị như mục trên).
 
 Tag: `m6f.1`.
 
+### M6f-c
+
+Ngày: 2026-10-25. Nhiệm vụ: `docs/tasks/M6f-c.md`. Không sửa BPF / analysis / file kiến trúc sư.
+
+#### (1) scap.n_evts / scap.n_drops từ metrics JSONL đã ghi (M6f FALCO, M6f-b FALCO-all)
+
+Nguồn: dòng metrics cuối mỗi lượt (`falco_metrics.jsonl`).  
+`load_syscalls`: T1 = 10 000 000; T3/T4 = `ban_ghi` của **HIDS-host cùng lượt** (cùng suite).  
+TSV đầy đủ: `validation/m6f-c-20261025/falco_nevts_compare.tsv`.
+
+**Trung vị (10 lượt):**
+
+| suite | load | cond | median scap.n_evts | median scap.n_drops | median load_syscalls |
+|-------|------|------|--------------------:|--------------------:|---------------------:|
+| M6f | T1 | FALCO | 1 | 0 | 10000000 |
+| M6f | T3 | FALCO | 8165600 | 0 | 31348010 |
+| M6f | T4 | FALCO | 22735130 | 0 | 40297252 |
+| M6f-b | T1 | FALCO-all | 1 | 0 | 10000000 |
+| M6f-b | T3 | FALCO-all | 8271183 | 0 | 31545438 |
+| M6f-b | T4 | FALCO-all | 22524746 | 0 | 42599670 |
+
+**Từng lượt (nguyên văn TSV):** xem `validation/m6f-c-20261025/falco_nevts_compare.tsv` và `part1-table.txt`.
+
+#### (2) T1 × 10 — C0 / FALCO-A / HIDS-host — **không chạy được**
+
+Lệnh yêu cầu: `falco -A -o base_syscalls.all=true` (+ cấu hình còn lại như M6f-b).
+
+Falco **0.45.1** từ chối `-A`. Lỗi nguyên văn:
+
+```
+Error: Option ‘A’ does not exist
+```
+
+File: `validation/m6f-c-20261025/falco-A-error.txt`.  
+Không có m6c_stats / n_evts / CPU cho FALCO-A (không gắn được). Không thay bằng cấu hình khác.
+
+Tag: `m6f.2`.
+
