@@ -1,12 +1,13 @@
-LAB-1 — KET QUA (phu luc 1.7; driver resume dang chay)
+LAB-1 — KET QUA (DUNG: oracle benign-lieu khong tang theo muc)
 May: hids-collector (nan nhan, 55.201 / 192.168.77.10). Nhanh: lab-collector
 Nhiem vu: docs/tasks/LAB-1.md
 Ngay: 2026-10-24 / 2026-10-25
 
 ================================================================
-TRANG THAI: DRIVER RESUME (phu luc 1.7) — buoc 4 → 4b → 6 → hids-lab1-slow
-Buoc 0–3 DAT. Driver lan 1 hong o B1 D1-N=2 (period=60, cycles=8<20).
-Phu luc 1.7: B1/N1 luon 10s; chu ky cham tren nen 7 ngay. Buoc 5+7 khi driver+slow xong.
+TRANG THAI: DUNG truoc buoc 6
+Buoc 4+4b xong (12 bn + 8 benign-lieu). Buoc 6 chua chay lai.
+Ly do DUNG: kiem nhanh — oracle D1 rq va D3 CPI cua dich vu KHONG tang theo muc.
+Da sua loi script buoc 6 (path tuong doi) + trap ERR; KHONG khoi dong hids-lab1-driver6.
 ================================================================
 
 ----------------------------------------------------------------
@@ -334,3 +335,62 @@ hids-lab1-driver=active
 TAI DUNG B1-D1N0 + N1-D1N0 xong ngay luc bat dau
 phien dang chay: B1 D1-N=2 period=10 — collector READY
 khong driver-loi.txt
+
+================================================================
+BUOC 4+4b XONG; LOI BUOC 6; KIEM NHANH; DUNG (2026-10-25)
+================================================================
+
+--- (1) Loi buoc 6 (30 dong cuoi driver-systemd.log, rut gon) ---
+[2026-10-25T07:08:34+00:00] buoc 4b xong
+scripts/lab1_driver.sh: line 94: 406805 Killed  bash scripts/lab1_benign_gen.sh ...
+[2026-10-25T07:08:41+00:00] === BUOC 6: khoi dong nen benign 7 ngay ===
+[2026-10-25T07:08:41+00:00] sanitize_cpu0: cpuset.cpus.effective=1-7
+Failed to start transient service unit: Path validation/lab1-20261024/benign-collector-systemd.log is not absolute
+→ exit=1, khong ghi driver-loi.txt (thieu trap ERR).
+
+Sua scripts/lab1_driver.sh:
+- VAL=/root/collector/validation/lab1-$DAY (tuyet doi) cho StandardOutput/StandardError append
+- trap ERR ghi driver-loi.txt (exit, line, cmd)
+Them scripts/lab1_driver6.sh (chi buoc 6+slow) — CHUA CHAY vi DUNG o (2).
+
+--- (2) Kiem nhanh du lieu da co ---
+File day du: validation/lab1-20261024/kiem-buoc4-4b-v2.txt
+
+Bang 1 — 12 phien B/N (chu ky ≥20; nhan: moi chu ky trong [t0−1s, t1+1s]):
+phien	cycles	ok20	|first-t0|_s	|last-t1|_s	in_window_pm1s
+B1-D1N0	49	1	0.062	3.549	DAT
+B1-D1N2	48	1	0.062	3.653	DAT
+B1-D1N4	48	1	0.062	3.558	DAT
+B4-D1N0	28	1	2.065	2.254	DAT
+B4-D1N2	28	1	2.064	2.244	DAT
+B4-D1N4	28	1	2.071	2.237	DAT
+N1-D1N0	50	1	0.061	2.882	DAT
+N1-D1N2	48	1	0.063	10.742	DAT
+N1-D1N4	49	1	0.063	5.214	DAT
+N4-D1N0	30	1	0.201	14.520	DAT
+N4-D1N2	30	1	0.200	14.495	DAT
+N4-D1N4	30	1	0.202	14.524	DAT
+→ 12/12 DAT (cycles + cua so nhan). Ghi chu: |last−t1| 2–14 s vi t1 ghi SAU sleep 600s; moi chu ky van nam trong cua so ±1s.
+
+Bang 2 — 8 phien benign-lieu (gap + oracle):
+dose	max_status_gap_s	min_rps	gap	rq_mean	rq_p90	cpi_med	press_delta
+BEN-D1-2-r1	61.0	765	DAT	435	1573	2.943	162313
+BEN-D1-2-r2	61.0	753	DAT	470	1598	2.950	176045
+BEN-D1-4-r1	61.0	754	DAT	431	1555	2.923	157054
+BEN-D1-4-r2	61.0	743	DAT	415	1575	3.081	64608
+BEN-D3-4-r1	61.0	1931	DAT	938	1507	4.062	894409
+BEN-D3-4-r2	61.0	1913	DAT	1002	1561	4.096	1038786
+BEN-D3-7-r1	61.0	1781	DAT	9102	27559	4.071	17385885
+BEN-D3-7-r2	61.0	1780	DAT	8801	26881	3.871	9856686
+→ gap (rps>0 moi phut, status~61s): 8/8 DAT.
+
+Oracle theo muc (giao thuc: rq D1, CPI D3 tang theo muc):
+D1 rq_p90: N2=1585.5 → N4=1565.0  KHONG_DAT (khong tang)
+D1 rq_mean: N2=452 → N4=423      KHONG_DAT
+D3 cpi_med: L4=4.079 → L7=3.971  KHONG_DAT (khong tang)
+(Bo sung mo ta, khong dung de chot: D3 rq_p90 1534→27220 tang; D3 press tang.)
+
+TONG_KET kiem nhanh: KHONG_DAT → DUNG. Khong khoi dong hids-lab1-driver6.
+
+Can kien truc su: oracle benign-lieu (rq D1 / CPI D3 tren ban ghi dich vu) khong don dieu theo muc;
+co chap nhan metric khac (vd. rq_p90 cho D3, press), bo 4b, hay chay lai 4b?

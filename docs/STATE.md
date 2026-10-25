@@ -208,12 +208,13 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 - (không có)
 
-## Bước đang làm (LAB-1) — phụ lục 1.7 + driver resume (2026-10-25)
+## Bước đang làm (LAB-1) — DỪNG trước bước 6 (2026-10-25)
 
-- Phụ lục 1.7 commit `8a6fabc`: B1/N1 luôn 10 s; chu kỳ chậm trên nền 7 ngày (`hids-lab1-slow`).
-- Driver lần 1 hỏng ở B1 D1-N=2 (period=60, cycles=8). Đã xoá `driver-loi.txt`, tái dùng B1-D1N0 + N1-D1N0.
-- Resume `LAB1_DAY=20261024` từ B1 D1-N=2 → hết BN → 4b → 6 → slow. Bước 5+7 khi driver+slow xong.
+- Buớc 4+4b XONG (12 bn, 8 benign-lieu). Buớc 6 lần 1 lỗi: `StandardOutput` path tương đối.
+- Đã sửa `lab1_driver.sh` (path tuyệt đối + trap ERR) và thêm `lab1_driver6.sh` — **chưa chạy**.
+- Kiểm nhanh: B/N 12/12 DAT; gap 8/8 DAT; **oracle D1 rq / D3 CPI không tăng theo mức → DỪNG**.
+- Chờ kiến trúc sư quyết oracle 4b.
 
 ## Việc đang chạy
 
-- **hids-lab1-driver** (resume) — xem `out/jobs/lab1-driver.status` — log `validation/lab1-20261024/driver-systemd.log`
+- (không có) — `bpftool prog show | grep -c hids_` = 0

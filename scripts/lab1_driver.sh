@@ -7,18 +7,18 @@ cd "$(dirname "$0")/.." || exit 1
 [[ $EUID -eq 0 ]] || { echo "can root" >&2; exit 1; }
 
 DAY="${LAB1_DAY:-$(date +%Y%m%d)}"
-VAL="validation/lab1-${DAY}"
+REPO=/root/collector
+VAL="$REPO/validation/lab1-${DAY}"
 BN_DIR="$VAL/bn"
 BEN_DIR="$VAL/benign-lieu"
 DATADIR="${LAB1_BENIGN_DIR:-/srv/hids-data/lab1-benign}"
 GEN_LOG="$DATADIR/gen-logs"
-NHAN_TC="lab/nhan-tan-cong.tsv"
-NHAN_LIEU="lab/nhan-lieu.tsv"
-COLLECT=./bin/hids-collect
-REPO=/root/collector
+NHAN_TC="$REPO/lab/nhan-tan-cong.tsv"
+NHAN_LIEU="$REPO/lab/nhan-lieu.tsv"
+COLLECT="$REPO/bin/hids-collect"
 DRIVER_LOG="$VAL/driver.log"
 STATUS_DIR="$VAL"
-mkdir -p "$BN_DIR" "$BEN_DIR" "$DATADIR" "$GEN_LOG" lab out
+mkdir -p "$BN_DIR" "$BEN_DIR" "$DATADIR" "$GEN_LOG" "$REPO/lab" "$REPO/out"
 # Resume: khong xoa log cu — ghi moc
 {
 	echo ""
@@ -28,6 +28,13 @@ COLLECT_CPUS="${LAB1_COLLECT_CPUS:-1-7}"
 
 log() { echo "[$(date -Is)] $*" | tee -a "$DRIVER_LOG"; }
 
+die() {
+	log "LOI: $*"
+	echo "$*" >"$VAL/driver-loi.txt"
+	cleanup_partial || true
+	exit 1
+}
+
 # Phu luc 1.4: ve sinh CPU 0 (runtime)
 sanitize_cpu0() {
 	systemctl set-property --runtime user.slice AllowedCPUs=1-7
@@ -36,12 +43,6 @@ sanitize_cpu0() {
 	log "sanitize_cpu0: cpuset.cpus.effective=$eff"
 	echo "$eff" | tee "$VAL/cpuset-effective.txt"
 	[[ $eff == 1-7 ]] || die "cpuset.effective=$eff (can 1-7)"
-}
-die() {
-	log "LOI: $*"
-	echo "$*" >"$VAL/driver-loi.txt"
-	cleanup_partial || true
-	exit 1
 }
 
 mono_ns() { python3 -c 'import time; print(time.monotonic_ns())'; }
@@ -137,6 +138,19 @@ cleanup_partial() {
 	pkill -KILL -f 'wrk2 ' 2>/dev/null || true
 	pkill -KILL -x hids-collect 2>/dev/null || true
 }
+
+# Ghi driver-loi.txt khi lenh bat ky that bai (set -e)
+trap_err() {
+	local ec=$? line=${1:-?} cmd=${2:-?}
+	{
+		echo "ERR exit=$ec line=$line"
+		echo "cmd=$cmd"
+		echo "time=$(date -Is)"
+	} | tee "$VAL/driver-loi.txt" | tee -a "$DRIVER_LOG"
+	cleanup_partial || true
+	exit "$ec"
+}
+trap 'trap_err $LINENO "$BASH_COMMAND"' ERR
 
 # Phu luc 1.7 / resume: phien da dat (ok_cycles_ge20=1) → tai dung, khong chay lai.
 session_done() {
@@ -466,6 +480,8 @@ START_MONO=$(mono_ns)
 sanitize_cpu0
 
 # collector — Restart=always, KHONG -duration; taskset 1-7
+# systemd-run doi hoi duong dan TUYET DOI cho StandardOutput/StandardError append
+: >"$VAL/benign-collector-systemd.log"
 systemd-run --unit=hids-lab1-collector --collect \
 	--property=Restart=always --property=RestartSec=5 \
 	--property=WorkingDirectory="$REPO" \
@@ -491,6 +507,7 @@ grep -qx READY "$VAL/benign-collector-systemd.log" 2>/dev/null || \
 	log "canh bao: chua thay READY trong log (co the buffer); tiep tuc neu process song"
 
 # generator
+: >"$VAL/benign-gen-systemd.log"
 systemd-run --unit=hids-lab1-gen --collect \
 	--property=Restart=always --property=RestartSec=5 \
 	--property=WorkingDirectory="$REPO" \
@@ -568,6 +585,7 @@ fi
 log "=== khoi dong hids-lab1-slow (phu luc 1.7) ==="
 systemctl stop hids-lab1-slow 2>/dev/null || true
 systemctl reset-failed hids-lab1-slow 2>/dev/null || true
+: >"$VAL/slow-systemd.log"
 systemd-run --unit=hids-lab1-slow --collect \
 	--property=WorkingDirectory="$REPO" \
 	--property=StandardOutput=append:"$VAL/slow-systemd.log" \
