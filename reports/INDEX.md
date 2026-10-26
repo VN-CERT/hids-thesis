@@ -40,3 +40,4 @@
 | [R036](R036-m6d-eseries-a-e2-cho.md) | 2026-10-24 23:35 | M6d + E2b | E-series + E2b G12 ĐẠT (11/12 ±0,1 %, 1 lượt 0,965); KA: bảng dùng TỔNG steal/p90; E2 mixed giữ làm phát hiện. | Xong, tag `m6d`; E2b ĐẠT. |
 | [R037](R037-m6f-overhead-falco-tetragon.md) | 2026-10-25 20:07 | M6f…M6f-c | KA ĐẠT M6f-c: Falco phủ 0/26/56 %; đóng chuỗi `m6f.2`; không chạy thêm. | Đóng. |
 | [R038](R038-m6g-c5-pipeline.md) | 2026-10-26 09:34 | M6g | Đường ống C5: extract streaming khớp detector 1e-6; pipeline + SVG; thử 50M bản ghi (~48 phút, RSS đỉnh ~410 MB); ghi cách rsync LAB-1 từ 201. | Xong, tag `m6g`. DỪNG. |
+| [R038](R038-m6g-c5-pipeline.md) | 2026-10-26 10:42 | M6g-b | Phụ lục: nguon/muc/bảng kiểm; hồi quy rec-export N cột đầu YES (g3+t4); 10M ~13 phút RSS 1,2 GB. | Xong, tag `m6g.1`. DỪNG. |

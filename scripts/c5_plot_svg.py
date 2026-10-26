@@ -55,8 +55,10 @@ def main():
         rb = [w for w in rows if w["branch"] == b]
         dims = [d for d in dims_all if not d.startswith("ctx_") and d != "nguon"
                 and any(w["f"].get(d, float("nan")) == w["f"].get(d, float("nan")) for w in rb)]
-        train = [w for w in rb if w["stop"] <= cut and sc.overlaps(w, atk) is None]
-        test = [w for w in rb if w["start"] >= cut]
+        # khop c5_score v1.1: huan luyen = nen & stop<=cut; kiem = nguon!=nen hoac start>=cut
+        train = [w for w in rb if w.get("nguon", "nen") == "nen" and w["stop"] <= cut
+                 and sc.overlaps(w, atk) is None]
+        test = [w for w in rb if w.get("nguon", "nen") != "nen" or w["start"] >= cut]
         stat = sc.fit(train, dims)
         scored = []
         for w in (test if test else rb):

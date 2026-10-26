@@ -133,14 +133,10 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 ## Việc đang chạy
 
-- (không có) — M6g đóng (R038, tag m6g).
+- (không có) — M6g-b đóng (phụ lục R038, tag m6g.1).
 
-## M6g: ĐÓNG (R038, tag m6g) — 2026-10-26
+## M6g-b: ĐÓNG (phụ lục R038, tag m6g.1) — 2026-10-26
 
-- Detector+c5_score kiến trúc sư: commit `d0305de`, sha khớp nhiệm vụ.
-- `scripts/c5_extract.py`, `c5_equiv_test.py` (TAT_CA_KHOP), `c5_pipeline.sh`, `c5_plot_svg.py`, `c5_gen_synthetic.py`.
-- rec-export thêm cgroup_id/seq/vol_us.
-- Thử 50M: gen 134 s / 27 MB RSS; pipe 2753 s / đỉnh 410 MB; 197841 cửa sổ đặc trưng.
-- Ngoại suy ~900M ≈ 14 giờ (một đêm).
-- R038; không chạy LAB-1. DỪNG chờ ngày 1/11.
-- Cập nhật: 2026-10-26 09:35.
+- c5_score v1.1 `30be9f4`; rec-export nối cột cuối; hồi quy g3/t4 YES; m6b13/m6c1 KHOP.
+- Pipeline: nguon/muc/bảng kiểm; thử 10M exit 0 (~13 phút, RSS đỉnh 1,2 GB).
+- Cập nhật: 2026-10-26 10:42.

@@ -184,3 +184,69 @@ rsync -avP -e 'ssh -p 22022' \
 - Không chạy LAB-1 trong M6g (đúng nhiệm vụ).
 - Đường ống sẵn sàng; đề xuất bước sau: rsync từ 201 rồi `c5_pipeline.sh` trên `validation/lab1-20261024` khi kiến trúc sư giao ngày 1/11.
 - Tag `m6g`, push, **DỪNG**.
+
+## Phụ lục M6g-b (2026-10-26)
+
+Tag: `m6g.1`. Commit c5_score v1.1: `30be9f4` (sha256 `5697a36c2282952e7e463b65d0d22c3adc8461f63d3bc3f44d597eda12a19f33`).
+
+### Diff chính
+
+- `analysis/c5_score.py` v1.1: cột `nguon`, cắt huấn luyện/kiểm theo nguồn (kiến trúc sư).
+- `cmd/rec-export`: N cột đầu = m6f.2; nối thêm `cgroup_id,seq,vol_us` ở cuối.
+- `scripts/c5_pipeline.sh`: nguon ∈ {nen,bn,benign-lieu,slow}; muc.tsv; bảng kiểm trước khi chấm (exit 2 nếu id tấn công 0 cửa sổ).
+- `scripts/c5_gen_synthetic.py`, `c5_plot_svg.py`, `c5_m6gb_10m.sh`.
+
+### Bảng hồi quy rec-export (vs `/tmp/rec-export-cu` build từ tag `m6f.2`)
+
+```
+file	n_cu	n_moi	n_rows	prefix_ok	extra
+g3	14	17	3166508	YES	cgroup_id,seq,vol_us
+t4	14	17	37980623	YES	cgroup_id,seq,vol_us
+```
+
+Script theo tên cột (DictReader): `m6b13_pair.py` và `m6c1_pair_table.py` trên `out/m6b13-b6-a1-071246.bin` — output cu vs moi **KHOP**. `g3_window.py` đọc `.bin` trực tiếp — không đổi.
+
+### Bảng kiểm trước khi chấm (10M tổng hợp)
+
+```
+=== BANG KIEM TRUOC KHI CHAM ===
+cua_so_theo_nguon	benign-lieu=4968	bn=23906	nen=543838	slow=4691
+cua_so_theo_muc	0=534481	2=32314	4=30	D1-16=2538	D1-8=2751	D3-4=2751	D3-7=2538
+moc_cat_ngay5_ns	442000000000000
+cua_so_giao_tan_cong_theo_id
+  B1-10s@N0	699
+  B1-10s@N2	699
+  B1-10s@N4	699
+  B4@N0	699
+  B4@N2	699
+  B4@N4	699
+  B1-60s	575
+  B1-300s	750
+bang_kiem_OK
+```
+
+c5_score in (xác nhận phiên có nhãn vào kiểm tra):
+
+```
+=== BASELINE_dt_tho === huan_luyen=171548 kiem_tra=83965 (benign-lieu:2208 bn:10620 nen:69053 slow:2084) ...
+=== PHANRA_5tp === huan_luyen=171548 kiem_tra=83965 (benign-lieu:2208 bn:10620 nen:69053 slow:2084) ...
+=== AGG_cgroup_giay === huan_luyen=42908 kiem_tra=21009 (benign-lieu:552 bn:2666 nen:17268 slow:523) ...
+```
+
+### Thời gian / RAM (10M)
+
+```
+TIME_gen real=29.50 sec maxrss_kb=27072
+TIME_pipe real=770.63 sec maxrss_kb=1249788
+TIME_score real=157.81 sec maxrss_kb=1249788
+```
+
+Wall: 10:26:55 → 10:40:15 (+07) ≈ 13,3 phút. Đỉnh RSS ≈ 1,22 GB (score).
+
+### File
+
+- `/root/hids/out/c5-syn-10m/`, `/root/hids/out/c5-pipe-10m/`
+- `/root/hids/out/c5-recexport-reg/summary.tsv`
+- `/root/hids/out/jobs/c5-m6gb-10m.log`
+
+**DỪNG** (tag `m6g.1`).
