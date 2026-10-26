@@ -1,6 +1,6 @@
 # R038 — M6g đường ống phân tích C5
 
-1. Số báo cáo: **R038**. Ngày giờ: **2026-10-26 09:34 +07**. Mốc: **M6g**. Git commit: `f27a000` (tag `m6g`).
+1. Số báo cáo: **R038**. Ngày giờ: **2026-10-26 09:34 +07**. Mốc: **M6g**. Git commit: `074a16f` (tag `m6g`).
 
 2. Mục tiêu
 
