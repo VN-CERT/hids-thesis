@@ -133,5 +133,14 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 ## Việc đang chạy
 
-- (không có) — chuỗi M6f đóng. 12 container chạy, `hids_` = 0.
+- (không có) — M6g đóng (R038, tag m6g).
 
+## M6g: ĐÓNG (R038, tag m6g) — 2026-10-26
+
+- Detector+c5_score kiến trúc sư: commit `d0305de`, sha khớp nhiệm vụ.
+- `scripts/c5_extract.py`, `c5_equiv_test.py` (TAT_CA_KHOP), `c5_pipeline.sh`, `c5_plot_svg.py`, `c5_gen_synthetic.py`.
+- rec-export thêm cgroup_id/seq/vol_us.
+- Thử 50M: gen 134 s / 27 MB RSS; pipe 2753 s / đỉnh 410 MB; 197841 cửa sổ đặc trưng.
+- Ngoại suy ~900M ≈ 14 giờ (một đêm).
+- R038; không chạy LAB-1. DỪNG chờ ngày 1/11.
+- Cập nhật: 2026-10-26 09:35.
