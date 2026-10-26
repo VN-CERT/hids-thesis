@@ -1,0 +1,5 @@
+kind=B1 period=60 dur_s=1800 tag=B1-60s
+t0_mono=402498977730967 t1_mono=404299073687687
+wall 2026-10-25T16:09:24+00:00 -> 2026-10-25T16:39:24+00:00
+cycles=26 ok_cycles_ge20=1
+phuluc=1.7 nen=7ngay khong_lieu

@@ -7,3 +7,4 @@ pgbench.log
 pglog.*
 perf.data
 hey.csv
+validation/**/detector-b1-300s*.tsv

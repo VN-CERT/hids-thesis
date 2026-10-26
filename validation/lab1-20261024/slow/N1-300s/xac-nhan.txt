@@ -1,0 +1,5 @@
+kind=N1 period=300 dur_s=7200 tag=N1-300s
+t0_mono=413899431460420 t1_mono=421099527959970
+wall 2026-10-25T19:19:25+00:00 -> 2026-10-25T21:19:25+00:00
+cycles=20 ok_cycles_ge20=1
+phuluc=1.7 nen=7ngay khong_lieu

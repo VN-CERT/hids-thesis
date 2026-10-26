@@ -1,11 +1,11 @@
-LAB-1 — KET QUA (buoc 6 + hids-lab1-slow DA CHAY — phu luc 1.8)
+LAB-1 — KET QUA (DAY DU — buoc 5+7 XONG)
 May: hids-collector (nan nhan, 55.201 / 192.168.77.10). Nhanh: lab-collector
-Nhiem vu: docs/tasks/LAB-1.md
-Ngay: 2026-10-24 / 2026-10-25
+Nhiem vu: docs/tasks/LAB-1.md ; docs/tasks/LAB-1-buoc5-7.md
+Ngay: 2026-10-24 / 2026-10-25 / 2026-10-26
 
 ================================================================
-TRANG THAI: buoc 4+4b DAT (phu luc 1.8); buoc 6 DAT; nen 7 ngay + hids-lab1-slow dang chay
-Buoc 5+7: khi nguoi dung bao "driver xong" (nen 7 ngay + slow xong).
+TRANG THAI: LAB-1 phien Cursor XONG (buoc 0–7). Nen 7 ngay dang chay (khong dung).
+Nguoi dung: 1/11/2026 sau 22:47 chay scripts/lab1_tong_ket.sh → validation/lab1-FINAL.txt.
 ================================================================
 
 ----------------------------------------------------------------
@@ -461,4 +461,103 @@ hids-lab1-slow=active
 2. Giữ collector/gen dang chay sau false-negative; chi do lai + bat slow (khong doi 20 phut).
 
 --- Buoc 5+7 ---
-Cho nguoi dung bao "driver xong" (sau 7 ngay nen + slow).
+(xem muc BUOC 5 / BUOC 7 ben duoi — da xong 2026-10-26)
+
+================================================================
+BUOC 5 — KIEM KHOI detector_c5 (2026-10-26) — KHONG CHON NGUONG
+================================================================
+Phien: B1-300s (slow, nen 7 ngay, khong lieu)
+xac-nhan: cycles=21 ok_cycles_ge20=1
+wall: 2026-10-25T17:09:25+00:00 -> 2026-10-25T19:19:25+00:00
+mono: 406099228255978 -> 413899401993612
+nhan: lab/nhan-tan-cong.tsv run_id=B1-300s-20261024
+
+Lenh:
+  rec-export (3 bin gio 17–19) → TSV loc [T0,T1]
+  python3 analysis/detector_c5.py --tsv <smoke.tsv> --nhan lab/nhan-tan-cong.tsv --window-s 300 --step-s 30
+
+tsv_full: validation/lab1-20261024/detector-b1-300s.tsv — 48702234 ban ghi (2.7G) — KHONG commit
+tsv_smoke: validation/lab1-20261024/detector-b1-300s-smoke.tsv — 12447239 ban ghi / 9 tid lon nhat
+  (ly do: RAM 15G khong chua 48M ban ghi trong detector; quyet dinh tu dua ra — xem muc 7)
+
+File bang nguyen van: validation/lab1-20261024/detector-khoi.txt
+
+Xac nhan:
+- chay khong loi (exit=0)
+- co ca hai nhanh BASELINE_dt_tho va PHANRA_5tp
+- tai bao dong gia thap nhat (FA=0.0): PHANRA ty_le_phat_hien=1.0 >= BASELINE=1.0
+
+Trich bang (dau file detector-khoi-stdout; day du trong detector-khoi.txt):
+# detector_c5  cua_so=300s buoc=30s
+=== BASELINE_dt_tho ===  (co bang nguong / ty_le_bdg / ty_le_phat_hien)
+=== PHANRA_5tp ===       (co bang nguong / ty_le_bdg / ty_le_phat_hien)
+KHONG chon nguong. KHONG ket luan thong ke.
+
+Slow 4/4 DAT:
+B1-60s cycles=26; N1-60s cycles=25; B1-300s cycles=21; N1-300s cycles=20
+slow-xong: 2026-10-25T21:19:25+00:00
+
+================================================================
+BUOC 7 — BAO CAO TONG HOP + COMMIT
+================================================================
+
+--- SHA256 (luc buoc 7) ---
+9994b03f359ee5205354515f80bd4dd67f4919daca6b585702f4dc54796648c0  bpf/sys_enter.bpf.c
+39d892e5524de1cb49ace593b152c5b303d99c056e110f0a072d344c8270c7ec  bpf/proc_events.bpf.c
+9f0b4cde1c2e1c6aa560c041eaefaef1a40e5c7d9fc292db1d77dfc971d046cd  analysis/m5f_parse.py
+8c390002870f3ea8ace38a241f803bb5e7ec6c2413fdd403f757de24a6a1be25  analysis/m6c_stats.py
+88ef821eb062855b0189af1568d25e310b53f1e0c1e29e35e360282515d97706  tools/coreclk.c
+19a30b9ee6ec34d45e7693753fab031af181738a1e4efc5c3c33bf469340afbf  docs/giao-thuc-lab1.md
+f41f4979f390675b6617387bec9d2e2b5c2697d4789dfb769cd46a4e59eed7ec  analysis/detector_c5.py
+
+--- Commit giao thuc (buoc 1) ---
+6a914ee11021c0d3bdde6e9c6de0efd8357a2f48
+LAB-1: chot giao thuc va detector C5 truoc khi ghi du lieu (kien truc su)
+
+--- Tom tat generator ---
+scripts/lab1_benign_gen.sh; thu 10 phut DAT (wrk2 120.01 rps, pgbench ~99.6 tps). Chi tiet muc 2 o tren.
+
+--- Lieu D1/D3/D4 + E5 (sau phu luc) ---
+D1 (wl): DAT (Spearman rq ~1; other cpu <10%)
+D2: hoan (can vCenter)
+D3 (wl, phu luc 1.4 muc {0,2,4,7}): DAT
+D4 (ti le tong, phu luc 1.6): DAT
+E5 (tu D4v15, phu luc 1.6): DAT Pearson~1; steal/rq <2%
+
+--- B1/N1/B4/N4 (12 phien) ---
+12/12 DAT cycles>=20 + nhan ±1s (kiem-buoc4-4b-v2.txt Bang 1).
+
+--- Benign-duoi-lieu §4b (phu luc 1.8) ---
+BEN-D1-2/4: KHONG DUNG (giu file). BEN-D1-8/16: DAT oracle rq_mean/p90.
+BEN-D3-4/7: DAT oracle press_delta + rq_p90. File: kiem-buoc4-4b-v3.txt TONG_KET DAT.
+
+--- Detector khoi ---
+validation/lab1-20261024/detector-khoi.txt (xem buoc 5).
+
+--- Nen benign 7 ngay ---
+unit_collector=hids-lab1-collector
+unit_gen=hids-lab1-gen
+unit_watch=hids-lab1-watch.timer
+start_wall=2026-10-25T15:47:35+00:00
+datadir=/srv/hids-data/lab1-benign
+cmd: hids-collect -datadir ... -pmu sample=20 (2 cgroup lab0-nginx + lab0-postgres)
+Dong suc-khoe dau:
+2026-10-25T15:47:39+00:00	0	0	0	172896256	0.54	0.0	164
+(Dong sau sua watch, PMU dung: 2026-10-25T16:09:05+00:00 ... pmu_pct=4.9991)
+File: validation/lab1-20261024/benign-khoi-dong.txt ; driver-xong.txt
+Luc viet: 3 unit nen VAN ACTIVE (khong dung).
+
+--- Quyet dinh tu dua ra ---
+1. lab1_watch do PMU tu rec-stat .bin (status.tsv khong co cot) — loi script.
+2. Buoc 5: subsample 9 tid lon nhat (~12.4M ban ghi) de detector chay trong 15G RAM; giu TSV day du 48M tren dia, khong commit .tsv lon.
+3. Cho slow that su xong (B1-300s+N1-300s) truoc buoc 5 — khong dung nen 7 ngay.
+
+--- Viec nguoi dung can lam ---
+1. De nen 7 ngay chay den het (bat dau 2026-10-25T15:47:35Z ≈ 22:47 +07).
+2. Ngay 1/11/2026 SAU 22:47 (+07): chay
+     cd /root/collector && bash scripts/lab1_tong_ket.sh
+   Script dung unit collector/gen/watch, gop suc-khoe, kiem 5 tieu chi §2, in validation/lab1-FINAL.txt.
+3. Gui validation/lab1-FINAL.txt cho kien truc su.
+
+--- Loi con ton tai / viec tiep ---
+- Khong. Phien LAB-1 Cursor dung. Cho tong ket 7 ngay (nguoi dung).

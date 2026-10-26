@@ -71,3 +71,15 @@ D4v15-q50-r3	D4	50	315401010957173	315462241878166	throttled_usec_delta	30090467
 D4v15-q25-r1	D4	25	315466186152633	315587622679738	throttled_usec_delta	90345431	nr_throttled_delta=1205;rq_med=0.0;steal_med=0.0;phuluc1.5;wl=cpu	
 D4v15-q25-r2	D4	25	315591565387438	315713000120115	throttled_usec_delta	90357570	nr_throttled_delta=1205;rq_med=0.0;steal_med=0.0;phuluc1.5;wl=cpu	
 D4v15-q25-r3	D4	25	315716939391936	315838376618400	throttled_usec_delta	90292273	nr_throttled_delta=1205;rq_med=0.0;steal_med=0.0;phuluc1.5;wl=cpu	
+BEN-D1-2-r1	D1	2	362782498849926	363684523791665	stress_cpu_N	2	benign_duoi_lieu;rep=1	D1-N=2
+BEN-D1-2-r2	D1	2	363691179021700	364593203842463	stress_cpu_N	2	benign_duoi_lieu;rep=2	D1-N=2
+BEN-D1-4-r1	D1	4	364599856523041	365501880774010	stress_cpu_N	4	benign_duoi_lieu;rep=1	D1-N=4
+BEN-D1-4-r2	D1	4	365508545655870	366410572234125	stress_cpu_N	4	benign_duoi_lieu;rep=2	D1-N=4
+BEN-D3-4-r1	D3	4	366417234313827	367319259294549	stress_stream_workers	4	benign_duoi_lieu;rep=1	D3-N=4
+BEN-D3-4-r2	D3	4	367325928390228	368227952715008	stress_stream_workers	4	benign_duoi_lieu;rep=2	D3-N=4
+BEN-D3-7-r1	D3	7	368234607889096	369136633924952	stress_stream_workers	7	benign_duoi_lieu;rep=1	D3-N=7
+BEN-D3-7-r2	D3	7	369143291746094	370045316852310	stress_stream_workers	7	benign_duoi_lieu;rep=2	D3-N=7
+BEN-D1-8-r1	D1	8	392103748074257	393005774528632	stress_cpu_N_taskset0-7	8	phuluc1.8;benign_duoi_lieu;rep=1	D1-N=8
+BEN-D1-8-r2	D1	8	393012410750762	393914449505328	stress_cpu_N_taskset0-7	8	phuluc1.8;benign_duoi_lieu;rep=2	D1-N=8
+BEN-D1-16-r1	D1	16	393921078267084	394823108941071	stress_cpu_N_taskset0-7	16	phuluc1.8;benign_duoi_lieu;rep=1	D1-N=16
+BEN-D1-16-r2	D1	16	394829743922767	395731780888514	stress_cpu_N_taskset0-7	16	phuluc1.8;benign_duoi_lieu;rep=2	D1-N=16

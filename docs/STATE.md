@@ -208,17 +208,15 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 - (không có)
 
-## Bước đang làm (LAB-1) — chờ slow rồi bước 5+7 (2026-10-25)
+## Bước đang làm (LAB-1) — bước 5+7 XONG (2026-10-26)
 
-- Người dùng: "driver xong, slow xong → bước 5+7". Kiểm thật: **slow CHƯA XONG**.
-- CHƯA XONG: hids-lab1-slow — tiến độ 0/4 phiên (đang B1-60s) — dự kiến xong ~21:09 UTC — log `validation/lab1-20261024/slow.log`
-- Nền 7 ngày: **không đụng**. lab1_tong_ket.sh: người dùng chạy **1/11 sau 22:47**.
-- Sau khi B1-300s/slow xong: unit `hids-lab1-buoc57` chạy bước 5; rồi Cursor bước 7 (ketqua + commit + in chat).
+- Slow XONG 2026-10-25T21:19:25Z (B1-60/N1-60/B1-300/N1-300 DAT).
+- Buoc 5: detector_c5 khoi tren B1-300s — ca hai nhanh; PHANRA>=BASELINE o FA thap nhat. File `validation/lab1-20261024/detector-khoi.txt`.
+- Buoc 7: `LAB-1-ketqua.txt` day du; commit + push nhanh lab-collector.
+- Nen 7 ngay: **khong dung**. Nguoi dung: **1/11 sau 22:47** chay `scripts/lab1_tong_ket.sh`.
 
 ## Việc đang chạy
 
-- **hids-lab1-collector** — `-pmu sample=20` → `/srv/hids-data/lab1-benign` — bat dau 2026-10-25T15:47:39Z — KHONG DUNG
-- **hids-lab1-gen** — bat dau 2026-10-25T15:47:39Z — KHONG DUNG
+- **hids-lab1-collector** — `/srv/hids-data/lab1-benign` — bat dau 2026-10-25T15:47:39Z — KHONG DUNG
+- **hids-lab1-gen** — KHONG DUNG
 - **hids-lab1-watch.timer** — KHONG DUNG
-- **hids-lab1-slow** — B1-60s dang chay (16:09:24Z) — log `validation/lab1-20261024/slow.log` — status (khong file rieng)
-- **hids-lab1-buoc57** — cho B1-300s/slow roi buoc 5 — log `validation/lab1-20261024/buoc57.log` — status `out/jobs/lab1-buoc57.status`
