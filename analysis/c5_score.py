@@ -17,12 +17,17 @@ Dau vao (--features): TSV co tieu de, moi dong mot cua so:
     PHANRA_5tp (v1.1): own_med own_p90 own_iqr own_cv cpu_med cpu_p90 cpi_med
                      (own = Dt - rq - steal - irq). Cac cot bat dau bang ctx_
                      (ctx_rq_*, ctx_steal_*, ctx_irq_*) la boi canh, KHONG cham.
-  Nhanh AGG_cgroup_giay (chot o day, 26/10/2026, truoc khi co du lieu):
-    tren cua so 300 s cua MOI cgroup, tu cac mau 1 Hz cua luong host:
-    cpu_some_mean cpu_some_p90 cpu_full_mean mem_some_mean io_some_mean
-    thr_usec_sum nr_thr_sum usage_usec_mean
-    (PSI avg10 cua cgroup; cpu.stat throttled; usage). Cua so/buoc nhu hai
-    nhanh kia; don vi (cgroup, cua so) thay cho (tid, cua so).
+  Nhanh AGG_cgroup_giay (chot 26/10/2026 theo M6g, truoc khi cham du lieu):
+    gop theo cgroup moi GIAY (tong cpu, tong own, so syscall, so tid) roi tren
+    cua so 300 s: syscall_rate_mean syscall_rate_cv cpu_rate_mean cpu_rate_cv
+    own_rate_mean own_rate_cv tids_mean. Day la "lop quan sat tong hop theo
+    giay" (SchedBlame/PSI) de so voi hat theo tung syscall; don vi (cgroup,
+    cua so) thay cho (tid, cua so).
+  Cot tuy chon `nguon` (chuoi, KHONG phai chieu): nen | bn | benign-lieu | slow.
+  QUY TAC CAT (v1.1): huan luyen = cua so nguon=nen co stop <= --train-until va
+    khong giao nhan tan cong; kiem tra = moi cua so nguon != nen (cac phien co
+    nhan, bat ke thoi diem) + cua so nen co start >= --train-until. Khong co cot
+    nguon thi cat thuan theo thoi gian nhu v1.0.
 
 --nhan: nhan-tan-cong.tsv (cot t_bat_dau_mono_ns, t_ket_thuc_mono_ns, lop, id);
   cua so TAN CONG = giao voi mot nhan lop khac N. --train-until: ts cat huan
@@ -66,7 +71,8 @@ def read_features(path):
             if k not in header:
                 sys.exit("features thieu cot %s" % k)
         idx = {h: i for i, h in enumerate(header)}
-        dims = [h for h in header if h not in need]
+        has_nguon = "nguon" in header
+        dims = [h for h in header if h not in need and h != "nguon"]
         for line in fh:
             p = line.rstrip("\n").split("\t")
             if len(p) < len(header):
@@ -79,7 +85,8 @@ def read_features(path):
                     f[d] = float("nan")
             rows.append({"branch": p[idx["branch"]], "tid": p[idx["tid"]],
                          "start": int(p[idx["start_ns"]]),
-                         "stop": int(p[idx["stop_ns"]]), "f": f})
+                         "stop": int(p[idx["stop_ns"]]), "f": f,
+                         "nguon": (p[idx["nguon"]] if has_nguon else "nen")})
     return rows, dims
 
 
@@ -195,8 +202,9 @@ def main(argv):
         rb = [w for w in rows if w["branch"] == b]
         dims = [d for d in dims_all if not d.startswith("ctx_")
             and any(w["f"].get(d, float("nan")) == w["f"].get(d, float("nan")) for w in rb)]
-        train = [w for w in rb if w["stop"] <= cut and overlaps(w, atk) is None]
-        test = [w for w in rb if w["start"] >= cut]
+        train = [w for w in rb if w["nguon"] == "nen" and w["stop"] <= cut
+                 and overlaps(w, atk) is None]
+        test = [w for w in rb if w["nguon"] != "nen" or w["start"] >= cut]
         stat = fit(train, dims)
         active = [d for d in dims if stat.get(d) is not None]
         scored = []
@@ -206,7 +214,11 @@ def main(argv):
                 continue
             scored.append((s, overlaps(w, atk) is not None, overlaps(w, muc)))
         tb = tradeoff(scored)
-        print("\n=== %s === huan_luyen=%d kiem_tra=%d chieu=%s" % (b, len(train), len(test), ",".join(active)))
+        src = {}
+        for w in test:
+            src[w["nguon"]] = src.get(w["nguon"], 0) + 1
+        print("\n=== %s === huan_luyen=%d kiem_tra=%d (%s) chieu=%s" % (
+            b, len(train), len(test), " ".join("%s:%d" % kv for kv in sorted(src.items())), ",".join(active)))
         if not tb:
             print("khong cham duoc")
             continue
@@ -245,3 +257,4 @@ if __name__ == "__main__":
 
 # === NHAT KY ===
 # 1.0  26/10/2026  ban dau; toan hoc = detector_c5.py 1.1; cot ctx_* khong cham; them nhanh AGG_cgroup_giay (chot truoc du lieu).
+# 1.1  26/10/2026  cot `nguon` + quy tac cat theo nguon (phien co nhan luon la kiem tra); AGG theo dinh nghia M6g. Toan hoc cham diem khong doi.
