@@ -26,11 +26,16 @@ Moi thay doi phai ghi ro ly do + ngay o cuoi file, giu ban cu.
      cv(dt)=sd/mean] tren cac khoang Dt = ts_enter[i] - ts_enter[i-1] (ns) cua
      tien trinh trong cua so. (dt tho da GOM het cpu+steal+irq+rq+ngu; day la
      cach cac phuong phap thoi gian hien co nhin.)
-   - Nhanh PHANRA: lay median va p90 cua TUNG thanh phan trong cua so:
-     cpu_ns, rq_ns, steal_ns, irq_ns (4 thanh phan x 2 thong ke = 8 chieu), cong
-     them median(CPI) va ty le ban ghi co co PMU neu co mau. CPI = cyc/inst tren
-     cac ban ghi co co PMU (bit7); neu khong co ban ghi co co trong cua so thi
-     CPI = NaN va bo chieu do (danh dau thieu).
+   - Nhanh PHANRA (v1.1): chi cham diem cac dai luong do CHINH tien trinh
+     quyet dinh, tuc da tru phan can thiep cua may chu/lich bieu:
+       own = Dt - rq - steal - irq  (= cpu + ngu tu nguyen), theo tung khoang;
+       chieu: own_med own_p90 own_iqr own_cv cpu_med cpu_p90 cpi_med.
+     rq/steal/irq KHONG la chieu cham diem (chung la boi canh tranh chap, duoc
+     tinh va in kem de doi chieu, khong tao bao dong). CPI = cyc/inst tren ban
+     ghi co co PMU (bit7); khong co ban ghi co co thi cpi_med = NaN va bo chieu.
+     (v1.0 cham ca rq/steal/irq: thu nghiem tren du lieu TONG HOP 26/10 cho thay
+     thiet ke do bao dong theo chinh tranh chap - trai muc dich cua phan ra -
+     nen sua TRUOC khi cham bat ky du lieu thuc nao; xem nhat ky cuoi file.)
 
 3. Mo hinh nen: khoang cach Mahalanobis theo duong cheo (bo qua tuong quan de re
    va on dinh voi it mau) tren tung chieu, chuan hoa bang median va MAD (trung vi
@@ -184,14 +189,33 @@ def feat_baseline(chunk):
 
 
 def feat_decomp(chunk):
+    """v1.1: chieu cham diem = own_* , cpu_* , cpi_med. rq/steal/irq chi la boi canh
+    (van tinh, tra ve voi tien to ctx_, KHONG nam trong DIMS_DEC)."""
     f = {}
-    for comp in ("cpu", "steal", "irq", "rq"):
-        vals = [r[comp] for r in chunk]
-        f[comp + "_med"] = median(vals)
-        f[comp + "_p90"] = pct(vals, 0.90)
+    ts = [r["ts"] for r in chunk]
+    owns = []
+    for i in range(1, len(chunk)):
+        dt = ts[i] - ts[i - 1]
+        if dt < 0:
+            continue
+        r = chunk[i]
+        owns.append(max(0, dt - r["rq"] - r["steal"] - r["irq"]))
+    if len(owns) < 4:
+        return None
+    f["own_med"] = median(owns)
+    f["own_p90"] = pct(owns, 0.90)
+    f["own_iqr"] = pct(owns, 0.75) - pct(owns, 0.25)
+    f["own_cv"] = cv(owns)
+    cpus = [r["cpu"] for r in chunk]
+    f["cpu_med"] = median(cpus)
+    f["cpu_p90"] = pct(cpus, 0.90)
     cpis = [r["cyc"] / r["inst"] for r in chunk
             if (r["flags"] & FLAG_PMU) and r["inst"] > 0]
     f["cpi_med"] = median(cpis) if cpis else float("nan")
+    for comp in ("steal", "irq", "rq"):
+        vals = [r[comp] for r in chunk]
+        f["ctx_" + comp + "_med"] = median(vals)
+        f["ctx_" + comp + "_p90"] = pct(vals, 0.90)
     return f
 
 
@@ -328,8 +352,8 @@ def main(argv):
     atk = load_attack_windows(args.nhan) if args.nhan else []
 
     dims_base = ["dt_med", "dt_p90", "dt_iqr", "dt_cv"]
-    dims_dec = ["cpu_med", "cpu_p90", "steal_med", "steal_p90",
-                "irq_med", "irq_p90", "rq_med", "rq_p90", "cpi_med"]
+    dims_dec = ["own_med", "own_p90", "own_iqr", "own_cv",
+                "cpu_med", "cpu_p90", "cpi_med"]  # v1.1; ctx_* khong cham diem
 
     print("# detector_c5  cua_so=%ds buoc=%ds  cat_huan_luyen_ts=%d" %
           (args.window_s, args.step_s, cut))
@@ -372,3 +396,9 @@ if __name__ == "__main__":
 
 # === NHAT KY THAY DOI (ghi khi buoc phai sua, kem ly do + ngay) ===
 # 1.0  22/10/2026  ban dau, chot truoc khi thay du lieu LAB-1.
+# 1.1  26/10/2026  PHANRA: bo rq/steal/irq khoi chieu cham diem, them own =
+#      Dt - rq - steal - irq (med/p90/iqr/cv). Ly do: kiem tren du lieu TONG HOP
+#      (c5_score.py) cho thay v1.0 bao dong theo muc tranh chap vi rq la chieu
+#      cham diem - mau thuan voi muc dich "tru can thiep truoc khi phat hien".
+#      Sua truoc khi cham bat ky du lieu LAB-1/production nao (buoc 5 chua chay).
+#      Cua so, buoc, chuan hoa, diem max|z|, duong danh doi: KHONG doi.
