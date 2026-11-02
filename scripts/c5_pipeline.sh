@@ -62,21 +62,39 @@ nguon_of() {
   esac
 }
 
-# Tim file trong nen/bn/benign-lieu/slow (+ lab1-benign neu co duoi DATA)
+# Chi ban ghi: *.bin va *.bin.zst. Bo status.tsv, suc-khoe.tsv, *.periodic, *.stats, gen-logs/.
 mapfile -t INPUTS < <(
   {
     for d in nen bn benign-lieu slow lab1-benign; do
       if [[ -d "$DATA/$d" ]]; then
-        find "$DATA/$d" \( -name '*.bin' -o -name '*.csv' -o -name '*.tsv' \)
+        find -L "$DATA/$d" -type f \
+          \( -name '*.bin' -o -name '*.bin.zst' \) \
+          ! -name '*.bin.periodic' ! -name '*.bin.stats' \
+          ! -name 'status.tsv' ! -name 'suc-khoe.tsv' \
+          ! -path '*/gen-logs/*'
       fi
     done
   } 2>/dev/null | sort -u
 )
 echo "so_file_vao=${#INPUTS[@]}"
 if [[ ${#INPUTS[@]} -eq 0 ]]; then
-  echo "khong tim thay .bin/.csv/.tsv trong $DATA/{nen,bn,benign-lieu,slow}" >&2
+  echo "khong tim thay *.bin / *.bin.zst trong $DATA/{nen,bn,benign-lieu,slow}" >&2
   exit 1
 fi
+echo "=== danh sach file se xu ly ==="
+printf '%s\n' "${INPUTS[@]}"
+python3 - "${INPUTS[@]}" <<'PY'
+import os, sys
+n = 0
+s = 0
+for p in sys.argv[1:]:
+    try:
+        s += os.path.getsize(p)
+        n += 1
+    except OSError as e:
+        print("khong doc duoc", p, e, file=sys.stderr)
+print("tong_file=%d tong_byte=%d tong_GB=%.3f" % (n, s, s / 1e9))
+PY
 
 # Cua so 7 ngay (bo sung M6h): [start_mono_ns, start+7d). Doc som de loc luc trich.
 BK="$DATA/benign-khoi-dong.txt"
@@ -108,12 +126,18 @@ for f in "${INPUTS[@]}"; do
   feat="$FEAT_DIR/${src_tag}.tsv"
   echo "[extract] nguon=$nguon $f"
   df -B1 / | awk 'NR==2 {print "DF_TRUOC_FILE", $4}'
-  if [[ "$f" == *.bin ]]; then
+  if [[ "$f" == *.bin || "$f" == *.bin.zst ]]; then
     # Khong ghi TSV day du: pipe rec-export -> c5_extract
     set +e
-    /usr/bin/time -f "TIME_extract real=%e sec maxrss_kb=%M" \
-    bash -c 'set -o pipefail; "$0" "$1" | python3 "$2" --tsv - --out "$3" --source "$4" --t-min "$5" --t-max "$6"' \
-      "$ROOT/bin/rec-export" "$f" "$ROOT/scripts/c5_extract.py" "$feat" "$nguon" "$T_MIN" "$T_MAX"
+    if [[ "$f" == *.bin.zst ]]; then
+      /usr/bin/time -f "TIME_extract real=%e sec maxrss_kb=%M" \
+        bash -c 'set -o pipefail; zstd -dc "$7" | "$0" /dev/stdin | python3 "$2" --tsv - --out "$3" --source "$4" --t-min "$5" --t-max "$6"' \
+        "$ROOT/bin/rec-export" "$f" "$ROOT/scripts/c5_extract.py" "$feat" "$nguon" "$T_MIN" "$T_MAX" "$f"
+    else
+      /usr/bin/time -f "TIME_extract real=%e sec maxrss_kb=%M" \
+        bash -c 'set -o pipefail; "$0" "$1" | python3 "$2" --tsv - --out "$3" --source "$4" --t-min "$5" --t-max "$6"' \
+        "$ROOT/bin/rec-export" "$f" "$ROOT/scripts/c5_extract.py" "$feat" "$nguon" "$T_MIN" "$T_MAX"
+    fi
     ec=$?
     set -e
     if [[ $ec -ne 0 ]]; then
@@ -121,9 +145,8 @@ for f in "${INPUTS[@]}"; do
       exit "$ec"
     fi
   else
-    /usr/bin/time -f "TIME_extract real=%e sec maxrss_kb=%M" \
-      python3 "$ROOT/scripts/c5_extract.py" --tsv "$f" --out "$feat" --source "$nguon" \
-        --t-min "$T_MIN" --t-max "$T_MAX"
+    echo "LOI: khong phai ban ghi .bin: $f" >&2
+    exit 1
   fi
   df -B1 / | awk 'NR==2 {print "DF_SAU_FILE", $4}'
   # dam bao khong de lai csv nen
