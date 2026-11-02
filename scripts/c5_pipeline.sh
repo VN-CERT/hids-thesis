@@ -70,6 +70,7 @@ mapfile -t INPUTS < <(
         find -L "$DATA/$d" -type f \
           \( -name '*.bin' -o -name '*.bin.zst' \) \
           ! -name '*.bin.periodic' ! -name '*.bin.stats' \
+          ! -name 'payload.bin' \
           ! -name 'status.tsv' ! -name 'suc-khoe.tsv' \
           ! -path '*/gen-logs/*'
       fi
