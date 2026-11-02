@@ -21,8 +21,16 @@ PY
 
 ln -sfn /srv/hids-data/lab1-benign "$ROOT/validation/lab1-20261024/nen"
 ln -sfn "$ROOT/lab" "$ROOT/validation/lab1-20261024/lab"
-rm -rf "$ROOT/out/c5-lab1"
-echo "=== pipeline LAB $(date -Iseconds) ==="
+echo "=== trich lai phien (khong loc 7 ngay) $(date -Iseconds) ==="
+rm -f "$ROOT/out/c5-lab1/features"/bn_* \
+      "$ROOT/out/c5-lab1/features"/benign-lieu_* \
+      "$ROOT/out/c5-lab1/features"/slow_* \
+      "$ROOT/out/c5-lab1/features"/d2_* \
+      "$ROOT/out/c5-lab1/giu_bo.tsv"
+C5_NGUON_ONLY=bn,benign-lieu,slow,d2 C5_EXTRACT_ONLY=1 \
+  bash "$ROOT/scripts/c5_pipeline.sh" \
+  "$ROOT/validation/lab1-20261024" "$ROOT/out/c5-lab1"
+echo "=== pipeline LAB day du (bo file da trich) $(date -Iseconds) ==="
 /usr/bin/time -f "TIME_lab_pipe real=%e sec maxrss_kb=%M" \
   bash "$ROOT/scripts/c5_pipeline.sh" \
   "$ROOT/validation/lab1-20261024" "$ROOT/out/c5-lab1"

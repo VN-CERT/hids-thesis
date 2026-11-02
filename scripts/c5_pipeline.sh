@@ -48,6 +48,7 @@ nguon_of() {
     */bn/*) echo bn ;;
     */benign-lieu/*) echo benign-lieu ;;
     */slow/*) echo slow ;;
+    */d2/*) echo d2 ;;
     *)
       # thu muc goc ten nen/bn/...
       local rel="${f#"$DATA"/}"
@@ -56,6 +57,7 @@ nguon_of() {
         bn/*|bn) echo bn ;;
         benign-lieu/*|benign-lieu) echo benign-lieu ;;
         slow/*|slow) echo slow ;;
+        d2/*|d2) echo d2 ;;
         *) echo "" ;;
       esac
       ;;
@@ -65,7 +67,7 @@ nguon_of() {
 # Chi ban ghi: *.bin va *.bin.zst. Bo status.tsv, suc-khoe.tsv, *.periodic, *.stats, gen-logs/.
 mapfile -t INPUTS < <(
   {
-    for d in nen bn benign-lieu slow lab1-benign; do
+    for d in nen bn benign-lieu slow d2 lab1-benign; do
       if [[ -d "$DATA/$d" ]]; then
         find -L "$DATA/$d" -type f \
           \( -name '*.bin' -o -name '*.bin.zst' \) \
@@ -115,49 +117,85 @@ echo "cua_so_7ngay t_min=$T_MIN t_max=$T_MAX train_until=$TRAIN_UNTIL"
 df -B1 / | awk 'NR==1 || NR==2 {print "DF_TRUOC", $0}'
 
 declare -a FEAT_PARTS=()
-SKIP_SUM=0
+GIU_BO="$OUT/giu_bo.tsv"
+if [[ ! -f "$GIU_BO" ]]; then
+  echo -e "nguon\tgiu\tbo\tfile" > "$GIU_BO"
+fi
 for f in "${INPUTS[@]}"; do
   nguon="$(nguon_of "$f")"
   if [[ -z "$nguon" ]]; then
     echo "BO QUA (khong xac dinh nguon): $f" >&2
     continue
   fi
+  if [[ -n "${C5_NGUON_ONLY:-}" ]]; then
+    case ",${C5_NGUON_ONLY}," in
+      *",${nguon},"*) ;;
+      *) continue ;;
+    esac
+  fi
   rel="${f#"$DATA"/}"
   src_tag="$(echo "$rel" | tr '/' '_')"
   feat="$FEAT_DIR/${src_tag}.tsv"
+  if [[ -s "$feat" ]]; then
+    echo "[co-san] nguon=$nguon $feat"
+    FEAT_PARTS+=("$feat")
+    continue
+  fi
   echo "[extract] nguon=$nguon $f"
   df -B1 / | awk 'NR==2 {print "DF_TRUOC_FILE", $4}'
-  if [[ "$f" == *.bin || "$f" == *.bin.zst ]]; then
-    # Khong ghi TSV day du: pipe rec-export -> c5_extract
-    set +e
-    if [[ "$f" == *.bin.zst ]]; then
-      /usr/bin/time -f "TIME_extract real=%e sec maxrss_kb=%M" \
-        bash -c 'set -o pipefail; zstd -dc "$7" | "$0" /dev/stdin | python3 "$2" --tsv - --out "$3" --source "$4" --t-min "$5" --t-max "$6"' \
-        "$ROOT/bin/rec-export" "$f" "$ROOT/scripts/c5_extract.py" "$feat" "$nguon" "$T_MIN" "$T_MAX" "$f"
-    else
-      /usr/bin/time -f "TIME_extract real=%e sec maxrss_kb=%M" \
-        bash -c 'set -o pipefail; "$0" "$1" | python3 "$2" --tsv - --out "$3" --source "$4" --t-min "$5" --t-max "$6"' \
-        "$ROOT/bin/rec-export" "$f" "$ROOT/scripts/c5_extract.py" "$feat" "$nguon" "$T_MIN" "$T_MAX"
-    fi
-    ec=$?
-    set -e
-    if [[ $ec -ne 0 ]]; then
-      echo "LOI extract $f exit=$ec" >&2
-      exit "$ec"
-    fi
+  # Cua so 7 ngay chi ap cho nen. Phien co nhan giu toan bo ban ghi.
+  extra=()
+  if [[ "$nguon" == "nen" ]]; then
+    extra=(--t-min "$T_MIN" --t-max "$T_MAX")
+  fi
+  cap="$(mktemp)"
+  set +e
+  if [[ "$f" == *.bin.zst ]]; then
+    /usr/bin/time -f "TIME_extract real=%e sec maxrss_kb=%M" \
+      bash -c 'set -o pipefail; zstd -dc "$1" | "$0" /dev/stdin | python3 "$2" --tsv - --out "$3" --source "$4" "${@:5}"' \
+      "$ROOT/bin/rec-export" "$f" "$ROOT/scripts/c5_extract.py" "$feat" "$nguon" "${extra[@]}" \
+      >"$cap" 2>&1
+  elif [[ "$f" == *.bin ]]; then
+    /usr/bin/time -f "TIME_extract real=%e sec maxrss_kb=%M" \
+      bash -c 'set -o pipefail; "$0" "$1" | python3 "$2" --tsv - --out "$3" --source "$4" "${@:5}"' \
+      "$ROOT/bin/rec-export" "$f" "$ROOT/scripts/c5_extract.py" "$feat" "$nguon" "${extra[@]}" \
+      >"$cap" 2>&1
   else
     echo "LOI: khong phai ban ghi .bin: $f" >&2
     exit 1
   fi
+  ec=$?
+  set -e
+  cat "$cap"
+  giu="$(sed -n 's/.*giu=\([0-9]*\).*/\1/p' "$cap" | tail -1)"
+  bo="$(sed -n 's/.*bo_qua_ngoai_7ngay=\([0-9]*\).*/\1/p' "$cap" | tail -1)"
+  giu="${giu:-0}"
+  bo="${bo:-0}"
+  echo -e "${nguon}\t${giu}\t${bo}\t${f}" >> "$GIU_BO"
+  echo "GIU_BO nguon=$nguon giu=$giu bo=$bo"
+  rm -f "$cap"
+  if [[ $ec -ne 0 ]]; then
+    echo "LOI extract $f exit=$ec" >&2
+    exit "$ec"
+  fi
+  if [[ "$nguon" != "nen" && "$bo" != "0" ]]; then
+    echo "LOI: phien $nguon bi bo $bo ban ghi: $f" >&2
+    exit 2
+  fi
   df -B1 / | awk 'NR==2 {print "DF_SAU_FILE", $4}'
-  # dam bao khong de lai csv nen
   if [[ -d "$CSV_DIR" ]]; then
     find "$CSV_DIR" -type f -name '*.csv' -delete 2>/dev/null || true
   fi
   FEAT_PARTS+=("$feat")
 done
+echo "=== GIU_BO THEO NGUON ==="
+awk -F'\t' 'NR>1 {g[$1]+=$2; b[$1]+=$3; n[$1]++} END {for (k in g) printf "nguon=%s file=%d giu=%d bo=%d\n", k, n[k], g[k], b[k]}' "$GIU_BO"
 echo "DF_SAU_EXTRACT"
 df -h /
+if [[ "${C5_EXTRACT_ONLY:-}" == "1" ]]; then
+  echo "C5_EXTRACT_ONLY: dung truoc buoc gop"
+  exit 0
+fi
 
 FEAT_ALL="$OUT/features_all.tsv"
 echo "[merge] -> $FEAT_ALL"

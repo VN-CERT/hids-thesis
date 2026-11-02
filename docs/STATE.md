@@ -133,9 +133,11 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 ## Việc đang chạy
 
-- **hids-m6h** (M6h: trích LAB từ đầu, không rsync lại 201; sau đó chờ khóa 90)
-  - bắt đầu: 2026-11-02 09:50
+- **hids-m6h** (M6h: cửa sổ 7 ngày chỉ cho nguon=nen; phiên bn/benign-lieu đã trích lại, bo=0; nền đang trích tiếp, không chạy lại file đã xong)
+  - bắt đầu lại: 2026-11-02 10:24 (trích phiên) / 10:49 (nền tiếp)
+  - dự kiến: nền còn 178 file .bin (một file đang chạy: hids-collector-2026102516.bin)
   - log: `out/jobs/m6h-lab.log`
   - trạng thái: `out/jobs/m6h.status`
-  - dữ liệu 201 đã có: `/srv/hids-data/lab1-benign` 33G, `validation/lab1-20261024` 4.1G
+  - giữ/bỏ phiên: bn 16 file giu=16733509 bo=0; benign-lieu 15 file giu=34285851 bo=0; slow 0 file .bin (giu=0 bo=0); d2 không có
+  - file còn lại: 178 (toàn bộ là nen)
 
