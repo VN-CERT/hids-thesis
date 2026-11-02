@@ -208,11 +208,21 @@ def main(argv):
         stat = fit(train, dims)
         active = [d for d in dims if stat.get(d) is not None]
         scored = []
+        rows_out = []
         for w in (test if test else rb):
             s = score(w, stat, dims)
             if s != s:
                 continue
-            scored.append((s, overlaps(w, atk) is not None, overlaps(w, muc)))
+            is_a = overlaps(w, atk)
+            m = overlaps(w, muc)
+            scored.append((s, is_a is not None, m))
+            rows_out.append((w["start"], w["stop"], w["tid"], w["nguon"], s,
+                             (is_a if is_a is not None else ""), (m if m is not None else "0")))
+        if outdir:
+            with open(os.path.join(outdir, "scores_%s.tsv" % b), "w") as fh:
+                fh.write("start_ns\tstop_ns\ttid\tnguon\tdiem\tnhan_tan_cong\tmuc\n")
+                for r in rows_out:
+                    fh.write("%d\t%d\t%s\t%s\t%.6f\t%s\t%s\n" % r)
         tb = tradeoff(scored)
         src = {}
         for w in test:
@@ -258,3 +268,4 @@ if __name__ == "__main__":
 # === NHAT KY ===
 # 1.0  26/10/2026  ban dau; toan hoc = detector_c5.py 1.1; cot ctx_* khong cham; them nhanh AGG_cgroup_giay (chot truoc du lieu).
 # 1.1  26/10/2026  cot `nguon` + quy tac cat theo nguon (phien co nhan luon la kiem tra); AGG theo dinh nghia M6g. Toan hoc cham diem khong doi.
+# 1.2  26/10/2026  --out ghi them scores_<branch>.tsv (diem tung cua so) de ap nguong chon tren lab len du lieu khac. Toan hoc khong doi.
