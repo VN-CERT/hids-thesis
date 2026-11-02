@@ -133,15 +133,9 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 ## Việc đang chạy
 
-- **hids-m6h** (M6h: rsync 201 + pipeline LAB, rồi chờ khóa SSH 90 để production)
-  - lệnh: `systemd-run --unit=hids-m6h --collect bash -c 'cd /root/hids && bash scripts/c5_m6h.sh'`
-  - bắt đầu: 2026-11-02 09:40
-  - đĩa trống lúc bắt đầu: 3418 GB (≥ 90 GB)
-  - log: `out/jobs/m6h.log`
+- **hids-m6h** (M6h: trích LAB từ đầu, không rsync lại 201; sau đó chờ khóa 90)
+  - bắt đầu: 2026-11-02 09:50
+  - log: `out/jobs/m6h-lab.log`
   - trạng thái: `out/jobs/m6h.status`
-  - CHỜ người dùng: `ssh-copy-id -p 22022 qtht_@10.70.63.90` (mật khẩu nhập trên terminal)
+  - dữ liệu 201 đã có: `/srv/hids-data/lab1-benign` 33G, `validation/lab1-20261024` 4.1G
 
-## Bước đang làm (M6h)
-
-- c5_score v1.2 đã commit. Pipeline pipe rec-export, cửa sổ 7 ngày.
-- Đang rsync LAB-1 từ 201. Production chờ khóa SSH máy 90.
