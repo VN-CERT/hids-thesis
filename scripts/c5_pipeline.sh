@@ -78,7 +78,25 @@ if [[ ${#INPUTS[@]} -eq 0 ]]; then
   exit 1
 fi
 
-declare -a CSV_LIST=()
+# Cua so 7 ngay (bo sung M6h): [start_mono_ns, start+7d). Doc som de loc luc trich.
+BK="$DATA/benign-khoi-dong.txt"
+need "$BK"
+read -r T_MIN T_MAX TRAIN_UNTIL < <(python3 - "$BK" <<'PY'
+import sys, re
+text = open(sys.argv[1], encoding="utf-8").read()
+m = re.search(r"start_mono_ns\s*=\s*(\d+)", text)
+if not m:
+    raise SystemExit("benign-khoi-dong.txt thieu start_mono_ns")
+t0 = int(m.group(1))
+day = 86400 * 1_000_000_000
+print(t0, t0 + 7 * day, t0 + 5 * day)
+PY
+)
+echo "cua_so_7ngay t_min=$T_MIN t_max=$T_MAX train_until=$TRAIN_UNTIL"
+df -B1 / | awk 'NR==1 || NR==2 {print "DF_TRUOC", $0}'
+
+declare -a FEAT_PARTS=()
+SKIP_SUM=0
 for f in "${INPUTS[@]}"; do
   nguon="$(nguon_of "$f")"
   if [[ -z "$nguon" ]]; then
@@ -87,34 +105,35 @@ for f in "${INPUTS[@]}"; do
   fi
   rel="${f#"$DATA"/}"
   src_tag="$(echo "$rel" | tr '/' '_')"
-  case "$f" in
-    *.bin)
-      out_csv="$CSV_DIR/${src_tag}.csv"
-      echo "[export] nguon=$nguon $f -> $out_csv"
-      /usr/bin/time -f "TIME_export real=%e sec maxrss_kb=%M" \
-        "$ROOT/bin/rec-export" "$f" > "$out_csv"
-      ;;
-    *.csv|*.tsv)
-      out_csv="$CSV_DIR/${src_tag}"
-      echo "[csv] nguon=$nguon $f -> $out_csv"
-      ln -sfn "$f" "$out_csv"
-      ;;
-  esac
-  CSV_LIST+=("$out_csv|$nguon|$src_tag")
-done
-
-declare -a FEAT_PARTS=()
-for item in "${CSV_LIST[@]}"; do
-  csv="${item%%|*}"
-  rest="${item#*|}"
-  nguon="${rest%%|*}"
-  src="${rest##*|}"
-  feat="$FEAT_DIR/${src}.tsv"
-  echo "[extract] nguon=$nguon $csv"
-  /usr/bin/time -f "TIME_extract real=%e sec maxrss_kb=%M" \
-    python3 "$ROOT/scripts/c5_extract.py" --tsv "$csv" --out "$feat" --source "$nguon"
+  feat="$FEAT_DIR/${src_tag}.tsv"
+  echo "[extract] nguon=$nguon $f"
+  df -B1 / | awk 'NR==2 {print "DF_TRUOC_FILE", $4}'
+  if [[ "$f" == *.bin ]]; then
+    # Khong ghi TSV day du: pipe rec-export -> c5_extract
+    set +e
+    /usr/bin/time -f "TIME_extract real=%e sec maxrss_kb=%M" \
+    bash -c 'set -o pipefail; "$0" "$1" | python3 "$2" --tsv - --out "$3" --source "$4" --t-min "$5" --t-max "$6"' \
+      "$ROOT/bin/rec-export" "$f" "$ROOT/scripts/c5_extract.py" "$feat" "$nguon" "$T_MIN" "$T_MAX"
+    ec=$?
+    set -e
+    if [[ $ec -ne 0 ]]; then
+      echo "LOI extract $f exit=$ec" >&2
+      exit "$ec"
+    fi
+  else
+    /usr/bin/time -f "TIME_extract real=%e sec maxrss_kb=%M" \
+      python3 "$ROOT/scripts/c5_extract.py" --tsv "$f" --out "$feat" --source "$nguon" \
+        --t-min "$T_MIN" --t-max "$T_MAX"
+  fi
+  df -B1 / | awk 'NR==2 {print "DF_SAU_FILE", $4}'
+  # dam bao khong de lai csv nen
+  if [[ -d "$CSV_DIR" ]]; then
+    find "$CSV_DIR" -type f -name '*.csv' -delete 2>/dev/null || true
+  fi
   FEAT_PARTS+=("$feat")
 done
+echo "DF_SAU_EXTRACT"
+df -h /
 
 FEAT_ALL="$OUT/features_all.tsv"
 echo "[merge] -> $FEAT_ALL"
@@ -195,6 +214,32 @@ if os.path.isfile(lieu):
                 muc = "D3-" + muc
             if rid.startswith("BEN") or muc.startswith("D"):
                 add(lo, hi, muc, rid)
+
+# nhan tan cong: ca B va N cua bn/slow — muc D1 (0/2/4) hoac 0
+atk = os.path.join(data, "lab", "nhan-tan-cong.tsv")
+if os.path.isfile(atk):
+    with open(atk, encoding="utf-8") as fh:
+        header = fh.readline().rstrip("\n").split("\t")
+        idx = {h: i for i, h in enumerate(header)}
+        for line in fh:
+            p = line.rstrip("\n").split("\t")
+            try:
+                lo = int(p[idx["t_bat_dau_mono_ns"]])
+                hi = int(p[idx["t_ket_thuc_mono_ns"]])
+            except (ValueError, KeyError, IndexError):
+                continue
+            raw = ""
+            if "muc_tranh_chap" in idx and idx["muc_tranh_chap"] < len(p):
+                raw = p[idx["muc_tranh_chap"]]
+            m = re.search(r"D1-N=(\d+)", raw)
+            if m:
+                muc = m.group(1)
+            elif raw in ("0", "2", "4"):
+                muc = raw
+            else:
+                muc = "0"
+            rid = p[idx["id"]] if "id" in idx and idx["id"] < len(p) else "?"
+            add(lo, hi, muc, rid)
 
 # 2) nhan-phien / suy tu ten thu muc bn|slow
 phien = os.path.join(data, "lab", "nhan-phien.tsv")
@@ -290,34 +335,19 @@ c = Counter(m for _, _, m, _ in rows)
 print("muc_ranges_by_muc", " ".join("%s:%d" % kv for kv in sorted(c.items())))
 PY
 
-BK="$DATA/benign-khoi-dong.txt"
-need "$BK"
-TRAIN_UNTIL="$(python3 - "$BK" <<'PY'
-import sys, re
-text = open(sys.argv[1], encoding="utf-8").read()
-m = re.search(r"start_mono_ns\s*=\s*(\d+)", text)
-t0 = None
-if m:
-    t0 = int(m.group(1))
-else:
-    for line in text.splitlines():
-        if line.strip().isdigit():
-            t0 = int(line.strip())
-            break
-if t0 is None:
-    raise SystemExit("benign-khoi-dong.txt thieu start_mono_ns")
-print(t0 + 5 * 86400 * 1_000_000_000)
-PY
-)"
-echo "train_until=$TRAIN_UNTIL  (het ngay 5 tu $BK)"
+echo "train_until=$TRAIN_UNTIL  (het ngay 5; kiem tra ngay 6-7 trong c5_score)"
 
 NHAN="$DATA/lab/nhan-tan-cong.tsv"
-need "$NHAN"
+if [[ ! -f "$NHAN" ]]; then
+  echo "khong co nhan tan cong — chi nen (production)"
+  NHAN=""
+fi
 
 # --- Bang kiem truoc khi cham ---
 echo "=== BANG KIEM TRUOC KHI CHAM ==="
 python3 - "$FEAT_ALL" "$MUC" "$NHAN" "$TRAIN_UNTIL" <<'PY'
 import sys
+import os
 from collections import Counter, defaultdict
 
 feat, muc_path, nhan_path, cut_s = sys.argv[1:5]
@@ -375,7 +405,8 @@ print("moc_cat_ngay5_ns\t%d" % cut)
 
 # nhan tan cong
 atk = []
-with open(nhan_path, encoding="utf-8") as fh:
+if nhan_path and os.path.isfile(nhan_path):
+  with open(nhan_path, encoding="utf-8") as fh:
     nh = fh.readline().rstrip("\n").split("\t")
     ni = {x: i for i, x in enumerate(nh)}
     for line in fh:
@@ -408,24 +439,21 @@ PY
 
 SCORE_DIR="$OUT/score"
 mkdir -p "$SCORE_DIR"
+SVG="$OUT/bao_dong_gia_muc_det90.svg"
+SCORE_ARGS=(--features "$FEAT_ALL" --muc "$MUC" --train-until "$TRAIN_UNTIL" --out "$SCORE_DIR")
+PLOT_ARGS=(--features "$FEAT_ALL" --muc "$MUC" --train-until "$TRAIN_UNTIL" --out "$SVG" --det 0.90)
+if [[ -n "$NHAN" ]]; then
+  SCORE_ARGS+=(--nhan "$NHAN")
+  PLOT_ARGS+=(--nhan "$NHAN")
+fi
 echo "[score] features=$FEAT_ALL"
 /usr/bin/time -f "TIME_score real=%e sec maxrss_kb=%M" \
-  python3 "$ROOT/analysis/c5_score.py" \
-    --features "$FEAT_ALL" \
-    --nhan "$NHAN" \
-    --muc "$MUC" \
-    --train-until "$TRAIN_UNTIL" \
-    --out "$SCORE_DIR" | tee "$OUT/score.log"
+  python3 "$ROOT/analysis/c5_score.py" "${SCORE_ARGS[@]}" | tee "$OUT/score.log"
 
-SVG="$OUT/bao_dong_gia_muc_det90.svg"
 echo "[svg] -> $SVG"
-python3 "$ROOT/scripts/c5_plot_svg.py" \
-  --features "$FEAT_ALL" \
-  --nhan "$NHAN" \
-  --muc "$MUC" \
-  --train-until "$TRAIN_UNTIL" \
-  --out "$SVG" \
-  --det 0.90
+python3 "$ROOT/scripts/c5_plot_svg.py" "${PLOT_ARGS[@]}"
+
+echo "tong_bo_qua_ngoai_7ngay $(grep -h 'bo_qua_ngoai_7ngay=' "$LOG" 2>/dev/null | sed 's/.*bo_qua_ngoai_7ngay=//' | awk '{s+=$1} END {print s+0}')"
 
 echo "=== XONG ==="
 echo "ket_thuc=$(date -Iseconds)"

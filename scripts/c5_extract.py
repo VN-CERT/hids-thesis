@@ -247,6 +247,8 @@ class CgroupAgg:
 
 
 def open_table(path):
+    if path == "-":
+        return None, csv.DictReader(sys.stdin)
     fh = open(path, encoding="utf-8", errors="replace", newline="")
     sample = fh.read(4096)
     fh.seek(0)
@@ -278,7 +280,7 @@ def parse_row(row):
     }
 
 
-def extract(path, window_s, step_s, branches, source=None):
+def extract(path, window_s, step_s, branches, source=None, t_min=None, t_max=None):
     window_ns = window_s * 1_000_000_000
     step_ns = step_s * 1_000_000_000
     want_base = "BASELINE_dt_tho" in branches
@@ -297,6 +299,8 @@ def extract(path, window_s, step_s, branches, source=None):
     aggs = {}
     out_rows = []
     watermark = 0
+    n_kept = 0
+    n_skip_window = 0
 
     try:
         for row in reader:
@@ -306,6 +310,13 @@ def extract(path, window_s, step_s, branches, source=None):
                 continue
             if r["ts"] <= 0:
                 continue
+            if t_min is not None and r["ts"] < t_min:
+                n_skip_window += 1
+                continue
+            if t_max is not None and r["ts"] >= t_max:
+                n_skip_window += 1
+                continue
+            n_kept += 1
             watermark = max(watermark, r["ts"])
             tid = r["tid"]
             st = tids.get(tid)
@@ -328,7 +339,9 @@ def extract(path, window_s, step_s, branches, source=None):
                 ag.add(r, prev)
                 last_ts_tid[tid] = r["ts"]
     finally:
-        fh.close()
+        if fh is not None:
+            fh.close()
+    print("# c5_extract  giu=%d bo_qua_ngoai_7ngay=%d" % (n_kept, n_skip_window), file=sys.stderr)
 
     if want_base or want_dec:
         for st in tids.values():
@@ -378,9 +391,11 @@ def main(argv):
     ap.add_argument("--step-s", type=int, default=STEP_S_DEFAULT)
     ap.add_argument("--branches", default="BASELINE_dt_tho,PHANRA_5tp,AGG_cgroup_giay")
     ap.add_argument("--source", default=None, help="them cot nguon")
+    ap.add_argument("--t-min", type=int, default=None, help="bo ban ghi ts < t-min")
+    ap.add_argument("--t-max", type=int, default=None, help="bo ban ghi ts >= t-max")
     a = ap.parse_args(argv[1:])
     branches = [b.strip() for b in a.branches.split(",") if b.strip()]
-    rows = extract(a.tsv, a.window_s, a.step_s, branches, a.source)
+    rows = extract(a.tsv, a.window_s, a.step_s, branches, a.source, a.t_min, a.t_max)
     write_features(rows, a.out, a.source)
     print("# c5_extract  cua_so=%ds buoc=%ds  so_cua_so=%d  nhanh=%s" %
           (a.window_s, a.step_s, len(rows), ",".join(branches)), file=sys.stderr)
