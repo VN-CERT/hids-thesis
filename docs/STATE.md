@@ -133,10 +133,15 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 ## Việc đang chạy
 
-- (không có) — M6g-b đóng (phụ lục R038, tag m6g.1).
+- **hids-m6h** (M6h: rsync 201 + pipeline LAB, rồi chờ khóa SSH 90 để production)
+  - lệnh: `systemd-run --unit=hids-m6h --collect bash -c 'cd /root/hids && bash scripts/c5_m6h.sh'`
+  - bắt đầu: 2026-11-02 09:40
+  - đĩa trống lúc bắt đầu: 3418 GB (≥ 90 GB)
+  - log: `out/jobs/m6h.log`
+  - trạng thái: `out/jobs/m6h.status`
+  - CHỜ người dùng: `ssh-copy-id -p 22022 qtht_@10.70.63.90` (mật khẩu nhập trên terminal)
 
-## M6g-b: ĐÓNG (phụ lục R038, tag m6g.1) — 2026-10-26
+## Bước đang làm (M6h)
 
-- c5_score v1.1 `30be9f4`; rec-export nối cột cuối; hồi quy g3/t4 YES; m6b13/m6c1 KHOP.
-- Pipeline: nguon/muc/bảng kiểm; thử 10M exit 0 (~13 phút, RSS đỉnh 1,2 GB).
-- Cập nhật: 2026-10-26 10:42.
+- c5_score v1.2 đã commit. Pipeline pipe rec-export, cửa sổ 7 ngày.
+- Đang rsync LAB-1 từ 201. Production chờ khóa SSH máy 90.
