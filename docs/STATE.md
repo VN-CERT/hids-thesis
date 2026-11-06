@@ -133,11 +133,11 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 ## Việc đang chạy
 
-- **hids-m6h** (M6h: cửa sổ 7 ngày chỉ cho nguon=nen; phiên bn/benign-lieu đã trích lại, bo=0; nền đang trích tiếp, không chạy lại file đã xong)
-  - bắt đầu lại: 2026-11-02 10:24 (trích phiên) / 10:49 (nền tiếp)
-  - dự kiến: nền còn 178 file .bin (một file đang chạy: hids-collector-2026102516.bin)
-  - log: `out/jobs/m6h-lab.log`
-  - trạng thái: `out/jobs/m6h.status`
-  - giữ/bỏ phiên: bn 16 file giu=16733509 bo=0; benign-lieu 15 file giu=34285851 bo=0; slow 0 file .bin (giu=0 bo=0); d2 không có
-  - file còn lại: 178 (toàn bộ là nen)
+- Lab C5 đã xong 2026-11-03 11:27 (`bang_kiem_OK`, `out/c5-lab1/`). Job cũ dừng vì production thiếu `start_mono_ns`.
+- **hids-m6h-prod** (M6h: pipeline production, không rsync lại)
+  - lệnh: `systemd-run --unit=hids-m6h-prod --collect bash -c 'cd /root/hids && bash scripts/c5_m6h_prod.sh'`
+  - bắt đầu: 2026-11-06
+  - log: `out/jobs/m6h-prod.log`
+  - trạng thái: `out/jobs/m6h-prod.status`
+  - mốc: `khoi_dong_monotonic_s=2858.09` → `start_mono_ns=2858090000000`; train = start+5 ngày; cửa sổ 7 ngày chỉ cho nen
 

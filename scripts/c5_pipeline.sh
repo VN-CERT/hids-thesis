@@ -105,10 +105,24 @@ need "$BK"
 read -r T_MIN T_MAX TRAIN_UNTIL < <(python3 - "$BK" <<'PY'
 import sys, re
 text = open(sys.argv[1], encoding="utf-8").read()
-m = re.search(r"start_mono_ns\s*=\s*(\d+)", text)
-if not m:
-    raise SystemExit("benign-khoi-dong.txt thieu start_mono_ns")
-t0 = int(m.group(1))
+
+def start_mono_ns(text):
+    m = re.search(r"start_mono_ns\s*=\s*(\d+)", text)
+    if m:
+        print("nguon_moc=start_mono_ns", file=sys.stderr)
+        return int(m.group(1))
+    m = re.search(r"khoi_dong_monotonic_s\s*=\s*([0-9]+(?:\.[0-9]+)?)", text)
+    if not m:
+        raise SystemExit("benign-khoi-dong.txt thieu start_mono_ns va khoi_dong_monotonic_s")
+    s = m.group(1)
+    print("nguon_moc=khoi_dong_monotonic_s", file=sys.stderr)
+    if "." in s:
+        whole, frac = s.split(".", 1)
+        frac = (frac + "000000000")[:9]
+        return int(whole) * 1_000_000_000 + int(frac)
+    return int(s) * 1_000_000_000
+
+t0 = start_mono_ns(text)
 day = 86400 * 1_000_000_000
 print(t0, t0 + 7 * day, t0 + 5 * day)
 PY
@@ -385,7 +399,18 @@ if os.path.isfile(bk):
     m = _re.search(r"start_mono_ns\s*=\s*(\d+)", text)
     if m:
         t0 = int(m.group(1))
-        add(t0, t0 + 7 * 86400 * 1_000_000_000, "0", "nen")
+    else:
+        m = _re.search(r"khoi_dong_monotonic_s\s*=\s*([0-9]+(?:\.[0-9]+)?)", text)
+        if not m:
+            raise SystemExit("benign-khoi-dong.txt thieu start_mono_ns va khoi_dong_monotonic_s")
+        s = m.group(1)
+        if "." in s:
+            whole, frac = s.split(".", 1)
+            frac = (frac + "000000000")[:9]
+            t0 = int(whole) * 1_000_000_000 + int(frac)
+        else:
+            t0 = int(s) * 1_000_000_000
+    add(t0, t0 + 7 * 86400 * 1_000_000_000, "0", "nen")
 
 with open(out, "w", encoding="utf-8") as fh:
     fh.write("start_ns\tstop_ns\tmuc\n")
