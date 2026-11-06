@@ -269,7 +269,7 @@ if os.path.isfile(lieu):
         lo_k = next((k for k in ("t_bat_dau_mono_ns", "start_ns") if k in idx), None)
         hi_k = next((k for k in ("t_ket_thuc_mono_ns", "stop_ns") if k in idx), None)
         muc_k = next((k for k in ("muc", "muc_tranh_chap") if k in idx), None)
-        id_k = "id" if "id" in idx else None
+        id_k = next((k for k in ("id", "dose_id") if k in idx), None)
         for line in fh:
             p = line.rstrip("\n").split("\t")
             if not lo_k or not hi_k:
