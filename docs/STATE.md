@@ -208,15 +208,16 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 - (không có)
 
-## Bước đang làm (LAB-1) — bước 5+7 XONG (2026-10-26)
+## Bước đang làm (LAB-1c) — driver + nenphu đang chạy (2026-11-07)
 
-- Slow XONG 2026-10-25T21:19:25Z (B1-60/N1-60/B1-300/N1-300 DAT).
-- Buoc 5: detector_c5 khoi tren B1-300s — ca hai nhanh; PHANRA>=BASELINE o FA thap nhat. File `validation/lab1-20261024/detector-khoi.txt`.
-- Buoc 7: `LAB-1-ketqua.txt` day du; commit + push nhanh lab-collector.
-- Nen 7 ngay: **khong dung**. Nguoi dung: **1/11 sau 22:47** chay `scripts/lab1_tong_ket.sh`.
+- Phụ lục 1.9+1.9b+1.9c commit `55ec717` (sửa cgroup_bg `ed24236`, trial `a4321f8`).
+- Phiên thử THU-B1-10s L=0: **DAT** (kiem.txt ok=1; 1831 bản ghi tid trong cgroup nginx).
+- Phiên đầu B1-10s-0: **DAT** (cycles=50, recs_tid=2327, PMU=4.9989, drops=0).
+- B4 mode: stress-ng (utime=6.05s). N4: zlib payload đã hiệu chuẩn.
+- Cursor kết thúc lượt; bước 7 khi người dùng báo "driver xong".
 
 ## Việc đang chạy
 
-- **hids-lab1-collector** — `/srv/hids-data/lab1-benign` — bat dau 2026-10-25T15:47:39Z — KHONG DUNG
-- **hids-lab1-gen** — KHONG DUNG
-- **hids-lab1-watch.timer** — KHONG DUNG
+- **hids-lab1c-driver** — 16 BN + 4 slow — bắt đầu 2026-11-07T15:30:10Z — dự kiến xong ≈ 2026-11-08T01:00Z — log `validation/lab1c-20261107/driver.log`
+- **hids-lab1c-nenphu** — chờ driver rồi 150 phút nền lành — dự kiến bắt đầu ≈ 01:00Z / xong ≈ 03:30Z — log `validation/lab1c-20261107/nenphu.log`
+- **hids-lab1c-gen** — generator cho driver/nenphu
