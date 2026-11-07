@@ -56,6 +56,21 @@ R039 (M6h, du lieu that LAB-1 + production) cho thay:
  sinh; bao dong gia theo dai; phat hien theo tung id; phat hien theo tung dot
  trong D = 300 s va do tre (giao thuc danh gia muc 3).
 
+=== 1.3.1 (07/11/2026) - diem danh doi thu hai: NGAN SACH BAO DONG GIA ===
+R040 (ban dung): LAB-1 KHONG co ban ghi syscall cua tien trinh tan cong (chung
+chay tren host, ngoai hai cgroup duoc loc) -> chua co nhan theo tid de co dinh
+muc phat hien. Giao thuc danh gia muc 2 cho phep so sanh o "cung ngan sach bao
+dong gia"; muc 4: nguong chon tren tap huan luyen. Vi vay them, KHONG thay the:
+ - --ngan-sach b1,b2,...: nguong moi nhanh = phan vi (1-b) cua diem tren chinh
+   tap HUAN LUYEN (trong mau, "trien khai duoc"); in bdg thuc dat tren huan
+   luyen, nen kiem tra (ngay 6-7), theo muc, theo dai, song sinh, theo id/dot
+   neu co nhan -> tom_tat_ngan_sach.tsv, theo_muc_ns_/theo_dai_ns_<branch>.tsv.
+ - duong_tranh_chap_<branch>.tsv: voi luoi bdg nen-kiem-tra sach (0,05 %..20 %),
+   nguong = phan vi diem nen kiem tra, cot = bdg tai tung muc tranh chap. Day la
+   du lieu hinh trung tam C5 doc lap voi tan cong: truc hoanh bdg nen sach, truc
+   tung bdg duoi tranh chap, moi nhanh mot duong.
+ Toan hoc, dinh nghia cua so, chuan hoa, muc phat hien: KHONG doi.
+
 Dau vao (--features): TSV co tieu de, moi dong mot cua so:
   branch  tid  start_ns  stop_ns  [nguon]  <cac cot dac trung...>
   - branch: BASELINE_dt_tho | PHANRA_5tp | AGG_cgroup_giay
@@ -83,7 +98,7 @@ Dau vao (--features): TSV co tieu de, moi dong mot cua so:
 --toc-do-giay FILE: TSV "giay n" (giay = ts_enter // 1e9) dem MOI ban ghi; neu
   co thi uu tien hon AGG.  --dai-nhip FILE: nhip-benign.tsv (nhip_id dich_vu
   muc t_bat_dau_mono_ns t_ket_thuc_mono_ns).  --nhip-muc "nginx:20,50,120,200;
-  postgres:15,40,100" muc danh dinh de gan.  --D 300 (giay, do tre phat hien).
+  postgres:15,40,100" muc danh dinh de gan.  --D 300 (giay, do tre phat hien).  --ngan-sach 0.001,0.01,0.05 (1.3.1).
 --out DIR: scores_<branch>.tsv (7 cot dau nhu 1.2 + song_sinh dai dai_dung
   toc_do), tradeoff_<branch>.tsv, tom_tat.tsv (4 cot dau nhu 1.2 + cot them),
   theo_muc_/theo_dai_/phat_hien_id_/do_tre_/dai_<branch>.tsv, nhip_kiem.tsv.
@@ -101,9 +116,11 @@ import os
 import sys
 from array import array
 
-VERSION = "1.3"
+VERSION = "1.3.1"
 EPS = 1e-9
 DET_LEVELS = (0.5, 0.8, 0.9, 0.95, 1.0)
+NGAN_SACH_MAC_DINH = "0.001,0.01,0.05"
+LUOI_NEN = (0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2)
 META_COLS = ("branch", "tid", "start_ns", "stop_ns", "nguon", "n", "n_banghi",
              "cgroup_id", "dai", "toc_do")
 AGG_BRANCH = "AGG_cgroup_giay"
@@ -639,11 +656,73 @@ def ti_le(ws, thr):
     return h / n, n, h
 
 
+def nguong_ngan_sach(scores_desc, b):
+    """scores_desc: list diem giam dan. Nguong sao cho ti le diem >= nguong <= b
+    (xap xi: lay diem lon thu floor(b*n); b*n < 1 -> cao hon diem lon nhat)."""
+    n = len(scores_desc)
+    if n == 0:
+        return NAN
+    k = int(b * n)
+    if k <= 0:
+        return scores_desc[0] * (1 + 1e-9) + 1e-12
+    return scores_desc[k - 1]
+
+
+def xep_dai(items):
+    return sorted(items, key=lambda kv: (band_k(kv[0]) is None, band_k(kv[0]) or 0, kv[0]))
+
+
 def dem_theo(ws, key):
     by = {}
     for w in ws:
         by.setdefault(key(w), []).append(w)
     return by
+
+
+def bao_cao_nguong(nhan_dong, thr, ctx, sink):
+    """In va ghi cac bang tai mot nguong. ctx: dict cac tap; sink: dict ten -> list dong."""
+    benign_all, nen_kt, twins, trong = ctx["benign_all"], ctx["nen_kt"], ctx["twins"], ctx["trong"]
+    atk_by, twin_by, labels, che_do, D, D_ns, scored = (ctx["atk_by"], ctx["twin_by"], ctx["labels"],
+                                                       ctx["che_do"], ctx["D"], ctx["D_ns"], ctx["scored"])
+    by = dem_theo(benign_all, lambda w: w.muc if w.muc is not None else "0")
+    print("  theo muc: " + "  ".join("%s:%s(%d)" % (k, f4(ti_le(v, thr)[0]), len(v)) for k, v in sorted(by.items())))
+    for k, v in sorted(by.items()):
+        r, n, h = ti_le(v, thr)
+        sink["theo_muc"].append("%s\t%s\t%s\t%s\t%d\t%d" % (nhan_dong, f4(thr), k, f4(r), h, n))
+    if che_do != "khong":
+        byd = dem_theo(nen_kt, lambda w: w.band or "-")
+        print("  theo dai (nen kiem tra): " + "  ".join(
+            "%s:%s(%d)" % (k, f4(ti_le(v, thr)[0]), len(v)) for k, v in xep_dai(byd.items())))
+        for k, v in sorted(byd.items()):
+            r, n, h = ti_le(v, thr)
+            sink["theo_dai"].append("%s\t%s\t%s\t%s\t%d\t%d" % (nhan_dong, f4(thr), k, f4(r), h, n))
+    parts = []
+    for k, v in sorted(atk_by.items()):
+        r, n, h = ti_le(v, thr)
+        parts.append("%s:%s(%d)" % (k, f4(r), n))
+        sink["id"].append("%s\t%s\ttan_cong\t%s\t%s\t%d\t%d" % (nhan_dong, f4(thr), k, f4(r), h, n))
+    for k, v in sorted(twin_by.items()):
+        r, n, h = ti_le(v, thr)
+        parts.append("%s(song sinh):%s(%d)" % (k, f4(r), n))
+        sink["id"].append("%s\t%s\tsong_sinh\t%s\t%s\t%d\t%d" % (nhan_dong, f4(thr), k, f4(r), h, n))
+    if parts:
+        print("  theo id: " + "  ".join(parts))
+    parts = []
+    for lb in labels:
+        if lb["twin"]:
+            continue
+        ws_all = atk_by.get(lb["tag"], [])
+        ws = [w for w in ws_all if w.score >= thr]
+        if ws:
+            first = min(w.stop for w in ws)
+            tre = (first - lb["lo"]) / 1e9
+            ok = "co" if (first - lb["lo"]) <= D_ns else "tre"
+        else:
+            tre, ok = NAN, ("khong" if ws_all else "khong_cua_so")
+        parts.append("%s:%s%s" % (lb["tag"], ok, ("(%.0fs)" % tre) if tre == tre else ""))
+        sink["tre"].append("%s\t%s\t%s\t%s\t%s" % (nhan_dong, f4(thr), lb["tag"], ok, f4(tre)))
+    if parts:
+        print("  dot trong D=%.0fs: " % D + "  ".join(parts))
 
 
 def main(argv):
@@ -660,6 +739,8 @@ def main(argv):
     ap.add_argument("--dai-nhip", default=None, help="nhip-benign.tsv")
     ap.add_argument("--nhip-muc", default="nginx:20,50,120,200;postgres:15,40,100;pg:15,40,100;pgsql:15,40,100")
     ap.add_argument("--D", type=float, default=300.0, help="giay: do tre phat hien toi da (giao thuc)")
+    ap.add_argument("--ngan-sach", default=NGAN_SACH_MAC_DINH,
+                    help="cac ngan sach bao dong gia (ti le cua so huan luyen vuot nguong), vd 0.001,0.01,0.05")
     ap.add_argument("--out", default=None)
     a = ap.parse_args(argv[1:])
 
@@ -684,6 +765,10 @@ def main(argv):
     if outdir:
         os.makedirs(outdir, exist_ok=True)
     D_ns = int(a.D * 1e9)
+    try:
+        ngan_sach = [float(x) for x in a.ngan_sach.split(",") if x.strip()]
+    except ValueError:
+        sys.exit("--ngan-sach khong hop le")
 
     # --- nguon toc do va dai ---
     che_do = a.dai_che_do
@@ -753,6 +838,7 @@ def main(argv):
 
     branches = sorted({w.branch for w in rows})
     summary = []
+    summary_ns = []
     order_cache = {}
     for b in branches:
         rb = [w for w in rows if w.branch == b]
@@ -820,9 +906,14 @@ def main(argv):
                 len(scored) - len(benign_all), n_time, len(trong)))
         atk_by = dem_theo([w for w in scored if w.atk is not None], lambda w: w.atk)
         twin_by = dem_theo(twins, lambda w: w.twin)
+        ctx = {"benign_all": benign_all, "nen_kt": nen_kt, "twins": twins, "trong": trong,
+               "atk_by": atk_by, "twin_by": twin_by, "labels": labels, "che_do": che_do,
+               "D": a.D, "D_ns": D_ns, "scored": scored}
+        sink = {"theo_muc": [], "theo_dai": [], "id": [], "tre": []}
+        sink_ns = {"theo_muc": [], "theo_dai": [], "id": [], "tre": []}
+        # (A) diem danh doi theo MUC PHAT HIEN (nhu 1.2)
         print("muc_phat_hien\tnguong\tbao_dong_gia\tbdg_nen_kiem_tra(n=%d)\tbdg_song_sinh(n=%d)\tbdg_nen_trong_tan_cong(n=%d)" % (
             len(nen_kt), len(twins), len(trong)))
-        theo_muc_lines, theo_dai_lines, id_lines, tre_lines = [], [], [], []
         for lv in DET_LEVELS:
             thr, far = thr_at_detection(tb, lv)
             far_nen = ti_le(nen_kt, thr)[0]
@@ -830,52 +921,51 @@ def main(argv):
             far_tr = ti_le(trong, thr)[0]
             print("%.2f\t%s\t%s\t%s\t%s\t%s" % (lv, f4(thr), f4(far), f4(far_nen), f4(far_tw), f4(far_tr)))
             summary.append((b, lv, thr, far, far_nen, far_tw, far_tr, len(benign_all), len(nen_kt), len(twins), len(trong)))
+            if thr == thr:
+                bao_cao_nguong("%.2f" % lv, thr, ctx, sink)
+        # (B) diem danh doi theo NGAN SACH bao dong gia tren tap huan luyen (1.3.1)
+        train_scores = sorted((score(w, stats, dims_idx, order_cache) for w in train), reverse=True)
+        train_scores = [x for x in train_scores if x == x]
+        train_asc = train_scores[::-1]
+        print("ngan_sach\tnguong\tbdg_huan_luyen(n=%d)\tbdg_kiem_tra_benign\tbdg_nen_kiem_tra\tbdg_song_sinh\tbdg_nen_trong_tan_cong\tphat_hien" % len(train_scores))
+        for bb in ngan_sach:
+            thr = nguong_ngan_sach(train_scores, bb)
             if thr != thr:
                 continue
-            # theo muc tranh chap (cua so benign, ke ca song sinh)
-            by = dem_theo(benign_all, lambda w: w.muc if w.muc is not None else "0")
-            print("  theo muc: " + "  ".join("%s:%s(%d)" % (k, f4(ti_le(v, thr)[0]), len(v)) for k, v in sorted(by.items())))
-            for k, v in sorted(by.items()):
-                r, n, h = ti_le(v, thr)
-                theo_muc_lines.append("%.2f\t%s\t%s\t%s\t%d\t%d" % (lv, f4(thr), k, f4(r), h, n))
-            # theo dai (chi nen kiem tra)
-            if che_do != "khong":
-                byd = dem_theo(nen_kt, lambda w: w.band or "-")
-                print("  theo dai (nen kiem tra): " + "  ".join(
-                    "%s:%s(%d)" % (k, f4(ti_le(v, thr)[0]), len(v))
-                    for k, v in sorted(byd.items(), key=lambda kv: (band_k(kv[0]) is None, band_k(kv[0]) or 0, kv[0]))))
-                for k, v in sorted(byd.items()):
-                    r, n, h = ti_le(v, thr)
-                    theo_dai_lines.append("%.2f\t%s\t%s\t%s\t%d\t%d" % (lv, f4(thr), k, f4(r), h, n))
-            # phat hien theo id, song sinh theo id
-            parts = []
-            for k, v in sorted(atk_by.items()):
-                r, n, h = ti_le(v, thr)
-                parts.append("%s:%s(%d)" % (k, f4(r), n))
-                id_lines.append("%.2f\t%s\ttan_cong\t%s\t%s\t%d\t%d" % (lv, f4(thr), k, f4(r), h, n))
-            for k, v in sorted(twin_by.items()):
-                r, n, h = ti_le(v, thr)
-                parts.append("%s(song sinh):%s(%d)" % (k, f4(r), n))
-                id_lines.append("%.2f\t%s\tsong_sinh\t%s\t%s\t%d\t%d" % (lv, f4(thr), k, f4(r), h, n))
-            if parts:
-                print("  theo id: " + "  ".join(parts))
-            # phat hien theo dot trong D va do tre
-            parts = []
-            for lb in labels:
-                if lb["twin"]:
-                    continue
-                ws_all = atk_by.get(lb["tag"], [])
-                ws = [w for w in ws_all if w.score >= thr]
-                if ws:
-                    first = min(w.stop for w in ws)
-                    tre = (first - lb["lo"]) / 1e9
-                    ok = "co" if (first - lb["lo"]) <= D_ns else "tre"
-                else:
-                    tre, ok = NAN, ("khong" if ws_all else "khong_cua_so")
-                parts.append("%s:%s%s" % (lb["tag"], ok, ("(%.0fs)" % tre) if tre == tre else ""))
-                tre_lines.append("%.2f\t%s\t%s\t%s\t%s" % (lv, f4(thr), lb["tag"], ok, f4(tre)))
-            if parts:
-                print("  dot trong D=%.0fs: " % a.D + "  ".join(parts))
+            far_tr_in = (len(train_asc) - bisect.bisect_left(train_asc, thr)) / float(len(train_asc) or 1)
+            far = ti_le(benign_all, thr)[0]
+            far_nen = ti_le(nen_kt, thr)[0]
+            far_tw = ti_le(twins, thr)[0]
+            far_trg = ti_le(trong, thr)[0]
+            atk_all = [w for w in scored if w.atk is not None]
+            det = ti_le(atk_all, thr)[0]
+            print("%g\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % (bb, f4(thr), f4(far_tr_in), f4(far), f4(far_nen), f4(far_tw), f4(far_trg), f4(det)))
+            summary_ns.append((b, bb, thr, far, far_tr_in, far_nen, far_tw, far_trg, det, len(train_scores), len(benign_all), len(nen_kt), len(atk_all)))
+            bao_cao_nguong("%g" % bb, thr, ctx, sink_ns)
+        # (C) duong tranh chap: nguong theo phan vi nen kiem tra, bdg theo muc
+        mucs = sorted({w.muc if w.muc is not None else "0" for w in benign_all})
+        if nen_kt:
+            nen_desc = sorted((w.score for w in nen_kt), reverse=True)
+            by_muc = dem_theo(benign_all, lambda w: w.muc if w.muc is not None else "0")
+            print("duong tranh chap (bdg nen sach -> bdg theo muc): muc = %s" % ",".join(mucs))
+            dtc = ["bdg_nen_dat\tnguong\tbdg_nen_thuc\t" + "\t".join("bdg_muc_%s" % m for m in mucs)]
+            for q in LUOI_NEN:
+                thr = nguong_ngan_sach(nen_desc, q)
+                vals = [f4(ti_le(by_muc.get(m, []), thr)[0]) for m in mucs]
+                dtc.append("%g\t%s\t%s\t%s" % (q, f4(thr), f4(ti_le(nen_kt, thr)[0]), "\t".join(vals)))
+                print("  " + dtc[-1].replace("\t", "  "))
+            if outdir:
+                with open(os.path.join(outdir, "duong_tranh_chap_%s.tsv" % b), "w") as fh:
+                    fh.write("\n".join(dtc) + "\n")
+        theo_muc_lines, theo_dai_lines, id_lines, tre_lines = sink["theo_muc"], sink["theo_dai"], sink["id"], sink["tre"]
+        if outdir:
+            for name, head, lines in (("theo_muc_ns", "ngan_sach\tnguong\tmuc\tbao_dong_gia\tn_bao_dong\tn", sink_ns["theo_muc"]),
+                                      ("theo_dai_ns", "ngan_sach\tnguong\tdai\tbao_dong_gia\tn_bao_dong\tn", sink_ns["theo_dai"]),
+                                      ("phat_hien_id_ns", "ngan_sach\tnguong\tloai\tid\tty_le\tn_vuot\tn", sink_ns["id"]),
+                                      ("do_tre_ns", "ngan_sach\tnguong\tid\tphat_hien_trong_D\tdo_tre_s", sink_ns["tre"])):
+                if lines:
+                    with open(os.path.join(outdir, "%s_%s.tsv" % (name, b)), "w") as fh:
+                        fh.write(head + "\n" + "\n".join(lines) + "\n")
         if outdir:
             with open(os.path.join(outdir, "tradeoff_%s.tsv" % b), "w") as fh:
                 fh.write("nguong\tbao_dong_gia\tty_le_phat_hien\tn_bdg\tn_bat\n")
@@ -893,10 +983,17 @@ def main(argv):
             fh.write("branch\tmuc_phat_hien\tnguong\tbao_dong_gia\tbdg_nen_kiem_tra\tbdg_song_sinh\tbdg_nen_trong_tan_cong\tn_benign\tn_nen_kiem_tra\tn_song_sinh\tn_nen_trong_tan_cong\n")
             for b, lv, thr, far, fn, ft, ftr, nb_, nn, nt, ntr in summary:
                 fh.write("%s\t%.2f\t%s\t%s\t%s\t%s\t%s\t%d\t%d\t%d\t%d\n" % (b, lv, f4(thr), f4(far), f4(fn), f4(ft), f4(ftr), nb_, nn, nt, ntr))
+        if summary_ns:
+            with open(os.path.join(outdir, "tom_tat_ngan_sach.tsv"), "w") as fh:
+                fh.write("branch\tngan_sach\tnguong\tbao_dong_gia\tbdg_huan_luyen\tbdg_nen_kiem_tra\tbdg_song_sinh\tbdg_nen_trong_tan_cong\tphat_hien\tn_huan_luyen\tn_benign\tn_nen_kiem_tra\tn_tan_cong\n")
+                for r in summary_ns:
+                    fh.write("%s\t%g\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%d\t%d\t%d\t%d\n" % (
+                        r[0], r[1], f4(r[2]), f4(r[3]), f4(r[4]), f4(r[5]), f4(r[6]), f4(r[7]), f4(r[8]), r[9], r[10], r[11], r[12]))
         with open(os.path.join(outdir, "tham_so.txt"), "w") as fh:
             fh.write("c5_score %s\n%s\ncat_huan_luyen=%d\ndai_che_do=%s\n" % (VERSION, " ".join(argv), cut, che_do))
     print("\n(Doc: tai cung muc phat hien, so bao_dong_gia giua cac nhanh; bang 'theo muc' la truc hoanh hinh C5; "
-          "'bdg_nen_kiem_tra' la bao dong gia tren nen sach ngay 6-7; 'theo dai' phai can bang giua ngay/dem.)")
+          "'bdg_nen_kiem_tra' la bao dong gia tren nen sach ngay 6-7; 'theo dai' phai can bang giua ngay/dem; "
+          "bang 'ngan_sach' va 'duong tranh chap' la diem danh doi khong can nhan tan cong.)")
 
 
 if __name__ == "__main__":
@@ -919,3 +1016,10 @@ if __name__ == "__main__":
 #      do tre; cot moi chi NOI THEM cuoi scores_/tom_tat. Toan cham diem,
 #      dinh nghia cua so tan cong (giao bat ky), muc phat hien: KHONG doi.
 #      --dai-che-do khong = hanh vi 1.2 (de hoi quy).
+# 1.3.1 07/11/2026  R040 ban dung: LAB-1 khong ghi tien trinh tan cong (chay ngoai
+#      cgroup loc) -> them diem danh doi theo NGAN SACH bao dong gia (nguong =
+#      phan vi tap huan luyen; --ngan-sach) va duong tranh chap (bdg nen sach ->
+#      bdg theo muc) de doc nua "on dinh duoi tranh chap" cua C5 ma khong can
+#      nhan; khong thay the diem theo muc phat hien. Toan hoc khong doi; cac
+#      file cu giu nguyen dinh dang, file moi *_ns_*.tsv, tom_tat_ngan_sach.tsv,
+#      duong_tranh_chap_*.tsv.
