@@ -133,5 +133,7 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 ## Việc đang chạy
 
-M6i-c1 đang làm: c5_score v1.3.2 đã cài; chấm score-v132-*; viết c5_extract_v2; trích features_all_v2; bảng đáp ứng. Tag mục tiêu `m6i.1`.
+- **hids-m6ic1-labv2** — trích `features_all_v2.tsv` lab. Bắt đầu 2026-11-07 12:23. Log `out/jobs/m6ic1-labv2.log`, status `out/jobs/m6ic1-labv2.status`. Ước ~18 giờ.
+- **hids-m6ic1-prodv2** — trích production song song. Log/status `out/jobs/m6ic1-prodv2.*`. Ước ~12 giờ.
+Chấm v1.3.2 và equiv v2 đã xong. R041 viết khi chẩn đoán xong; phần đáp ứng → R041-b khi lab xong.
 

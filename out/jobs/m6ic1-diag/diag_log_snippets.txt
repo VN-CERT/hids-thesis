@@ -1,0 +1,76 @@
+======== lab-tocdo ========
+chieu co MAD=0 (dung EPS=1e-9) theo dai: 0
+=== AGG_cgroup_giay === huan_luyen=28921 kiem_tra=12960 (benign-lieu:746 bn:648 nen:11566) chieu=syscall_rate_mean,syscall_rate_cv,cpu_rate_mean,cpu_rate_cv,own_rate_mean,own_rate_cv,tids_mean
+chieu_max cua 1 % diem huan luyen cao nhat (>= 20.1050): own_rate_cv:255  cpu_rate_mean:26  cpu_rate_cv:4  syscall_rate_mean:3  syscall_rate_cv:1
+  [ngan_sach=0.001] chieu_max cua cua so benign vuot nguong: cpu_rate_cv:4  cpu_rate_mean:3
+  [ngan_sach=0.01] chieu_max cua cua so benign vuot nguong: own_rate_cv:139  cpu_rate_cv:4  cpu_rate_mean:4
+  [ngan_sach=0.05] chieu_max cua cua so benign vuot nguong: own_rate_cv:595  cpu_rate_mean:5  cpu_rate_cv:4  own_rate_mean:1
+chieu co MAD=0 (dung EPS=1e-9) theo dai: 0
+=== BASELINE_dt_tho === huan_luyen=377766 kiem_tra=168083 (benign-lieu:8985 bn:7579 nen:151519) chieu=dt_med,dt_p90,dt_iqr,dt_cv
+chieu_max cua 1 % diem huan luyen cao nhat (>= 39940472.7985): dt_p90:3779
+  [ngan_sach=0.001] chieu_max cua cua so benign vuot nguong: dt_p90:181
+  [ngan_sach=0.01] chieu_max cua cua so benign vuot nguong: dt_p90:1526
+  [ngan_sach=0.05] chieu_max cua cua so benign vuot nguong: dt_med:4499  dt_p90:3974  dt_iqr:44
+chieu co MAD=0 (dung EPS=1e-9) theo dai: 0
+=== PHANRA_5tp === huan_luyen=377766 kiem_tra=168083 (benign-lieu:8985 bn:7579 nen:151519) chieu=own_med,own_p90,own_iqr,own_cv,cpu_med,cpu_p90,cpi_med
+chieu_max cua 1 % diem huan luyen cao nhat (>= 40799402.9821): own_p90:3779
+  [ngan_sach=0.001] chieu_max cua cua so benign vuot nguong: own_p90:180
+  [ngan_sach=0.01] chieu_max cua cua so benign vuot nguong: own_p90:1530
+  [ngan_sach=0.05] chieu_max cua cua so benign vuot nguong: own_med:5258  own_p90:3971  own_iqr:44
+======== lab-nhip ========
+chieu co MAD=0 (dung EPS=1e-9) theo dai: 0
+=== AGG_cgroup_giay === huan_luyen=28921 kiem_tra=12960 (benign-lieu:746 bn:648 nen:11566) chieu=syscall_rate_mean,syscall_rate_cv,cpu_rate_mean,cpu_rate_cv,own_rate_mean,own_rate_cv,tids_mean
+chieu_max cua 1 % diem huan luyen cao nhat (>= 20.8675): own_rate_cv:202  cpu_rate_cv:87
+  [ngan_sach=0.001] chieu_max cua cua so benign vuot nguong: own_rate_cv:12
+  [ngan_sach=0.01] chieu_max cua cua so benign vuot nguong: own_rate_cv:98  cpu_rate_cv:23  cpu_rate_mean:1
+  [ngan_sach=0.05] chieu_max cua cua so benign vuot nguong: own_rate_cv:565  cpu_rate_cv:28  cpu_rate_mean:2
+chieu co MAD=0 (dung EPS=1e-9) theo dai: 0
+=== BASELINE_dt_tho === huan_luyen=377766 kiem_tra=168083 (benign-lieu:8985 bn:7579 nen:151519) chieu=dt_med,dt_p90,dt_iqr,dt_cv
+chieu_max cua 1 % diem huan luyen cao nhat (>= 37960736.4606): dt_p90:3780
+  [ngan_sach=0.001] chieu_max cua cua so benign vuot nguong: dt_p90:153
+  [ngan_sach=0.01] chieu_max cua cua so benign vuot nguong: dt_p90:1576
+  [ngan_sach=0.05] chieu_max cua cua so benign vuot nguong: dt_med:4609  dt_p90:3971  dt_iqr:44
+chieu co MAD=0 (dung EPS=1e-9) theo dai: 0
+=== PHANRA_5tp === huan_luyen=377766 kiem_tra=168083 (benign-lieu:8985 bn:7579 nen:151519) chieu=own_med,own_p90,own_iqr,own_cv,cpu_med,cpu_p90,cpi_med
+chieu_max cua 1 % diem huan luyen cao nhat (>= 38674010.0871): own_p90:3780
+  [ngan_sach=0.001] chieu_max cua cua so benign vuot nguong: own_p90:153
+  [ngan_sach=0.01] chieu_max cua cua so benign vuot nguong: own_p90:1576
+  [ngan_sach=0.05] chieu_max cua cua so benign vuot nguong: own_med:4668  own_p90:3971  own_iqr:44
+======== lab-khong ========
+chieu co MAD=0 (dung EPS=1e-9) theo dai: 0
+=== AGG_cgroup_giay === huan_luyen=28921 kiem_tra=12960 (benign-lieu:746 bn:648 nen:11566) chieu=syscall_rate_mean,syscall_rate_cv,cpu_rate_mean,cpu_rate_cv,own_rate_mean,own_rate_cv,tids_mean
+chieu_max cua 1 % diem huan luyen cao nhat (>= 19.1183): own_rate_cv:289
+  [ngan_sach=0.001] chieu_max cua cua so benign vuot nguong: own_rate_cv:40
+  [ngan_sach=0.01] chieu_max cua cua so benign vuot nguong: own_rate_cv:88
+  [ngan_sach=0.05] chieu_max cua cua so benign vuot nguong: own_rate_cv:586
+chieu co MAD=0 (dung EPS=1e-9) theo dai: 0
+=== BASELINE_dt_tho === huan_luyen=377766 kiem_tra=168083 (benign-lieu:8985 bn:7579 nen:151519) chieu=dt_med,dt_p90,dt_iqr,dt_cv
+chieu_max cua 1 % diem huan luyen cao nhat (>= 16783966.9016): dt_p90:3777
+  [ngan_sach=0.001] chieu_max cua cua so benign vuot nguong: dt_p90:251
+  [ngan_sach=0.01] chieu_max cua cua so benign vuot nguong: dt_p90:1574
+  [ngan_sach=0.05] chieu_max cua cua so benign vuot nguong: dt_med:4933  dt_p90:4419
+chieu co MAD=0 (dung EPS=1e-9) theo dai: 0
+=== PHANRA_5tp === huan_luyen=377766 kiem_tra=168083 (benign-lieu:8985 bn:7579 nen:151519) chieu=own_med,own_p90,own_iqr,own_cv,cpu_med,cpu_p90,cpi_med
+chieu_max cua 1 % diem huan luyen cao nhat (>= 16914853.5638): own_p90:3777
+  [ngan_sach=0.001] chieu_max cua cua so benign vuot nguong: own_p90:258
+  [ngan_sach=0.01] chieu_max cua cua so benign vuot nguong: own_p90:1574
+  [ngan_sach=0.05] chieu_max cua cua so benign vuot nguong: own_med:4906  own_p90:4419
+======== prod-tocdo ========
+chieu co MAD=0 (dung EPS=1e-9) theo dai: 0
+=== AGG_cgroup_giay === huan_luyen=14506 kiem_tra=5804 (nen:5804) chieu=syscall_rate_mean,syscall_rate_cv,cpu_rate_mean,cpu_rate_cv,own_rate_mean,own_rate_cv,tids_mean
+chieu_max cua 1 % diem huan luyen cao nhat (>= 5.2642): own_rate_cv:49  own_rate_mean:38  cpu_rate_mean:34  syscall_rate_mean:14  cpu_rate_cv:9  syscall_rate_cv:1
+  [ngan_sach=0.001] chieu_max cua cua so benign vuot nguong: cpu_rate_mean:2  own_rate_cv:1  syscall_rate_mean:1  syscall_rate_cv:1
+  [ngan_sach=0.01] chieu_max cua cua so benign vuot nguong: own_rate_cv:39  own_rate_mean:8  cpu_rate_mean:7  cpu_rate_cv:1  syscall_rate_mean:1  tids_mean:1  syscall_rate_cv:1
+  [ngan_sach=0.05] chieu_max cua cua so benign vuot nguong: own_rate_cv:261  own_rate_mean:22  cpu_rate_mean:21  cpu_rate_cv:19  tids_mean:10  syscall_rate_mean:9  syscall_rate_cv:2
+chieu co MAD=0 (dung EPS=1e-9) theo dai: 0
+=== BASELINE_dt_tho === huan_luyen=1475705 kiem_tra=614336 (nen:614336) chieu=dt_med,dt_p90,dt_iqr,dt_cv
+chieu_max cua 1 % diem huan luyen cao nhat (>= 116573.4457): dt_iqr:7531  dt_p90:7227
+  [ngan_sach=0.001] chieu_max cua cua so benign vuot nguong: dt_p90:565  dt_iqr:36  dt_med:1
+  [ngan_sach=0.01] chieu_max cua cua so benign vuot nguong: dt_iqr:4235  dt_p90:3899  dt_med:1
+  [ngan_sach=0.05] chieu_max cua cua so benign vuot nguong: dt_p90:29937  dt_iqr:4358  dt_med:1
+chieu co MAD=0 (dung EPS=1e-9) theo dai: 0
+=== PHANRA_5tp === huan_luyen=1475705 kiem_tra=614336 (nen:614336) chieu=own_med,own_p90,own_iqr,own_cv,cpu_med,cpu_p90
+chieu_max cua 1 % diem huan luyen cao nhat (>= 120420.3407): own_iqr:7559  own_p90:7198
+  [ngan_sach=0.001] chieu_max cua cua so benign vuot nguong: own_p90:565  own_iqr:36  own_med:1
+  [ngan_sach=0.01] chieu_max cua cua so benign vuot nguong: own_iqr:4243  own_p90:3906  own_med:1
+  [ngan_sach=0.05] chieu_max cua cua so benign vuot nguong: own_p90:29940  own_iqr:4363  own_med:1
