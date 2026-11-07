@@ -133,5 +133,5 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 ## Việc đang chạy
 
-Không có. M6h đã chạy xong lab và production. Báo cáo `reports/R039-m6h-c5-lab-prod.md`. Tag `m6h`.
+Không có. M6i dừng ở bước nhãn theo tid (R040): đợt lớp B có 0 tid trong `proc-*.tsv.zst`. Chưa tag `m6i`.
 
