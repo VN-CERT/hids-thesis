@@ -27,7 +27,34 @@ chay_trong_cgroup() {
 	[[ -d $cg ]] || { echo "chay_trong_cgroup: thieu cgroup $cg" >&2; return 1; }
 	[[ -w $cg/cgroup.procs ]] || { echo "chay_trong_cgroup: khong ghi duoc $cg/cgroup.procs" >&2; return 1; }
 	# shellcheck disable=SC2016
-	sh -c 'echo $$ > "$0/cgroup.procs" && exec "$@"' "$cg" "$@"
+	sh -c 'echo $$ > "$0/cgroup.procs" || exit 91; exec "$@"' "$cg" "$@"
+}
+
+# chay_trong_cgroup_bg <cgroup_path> <pidfile> <lệnh...>
+# Chạy nền; ghi PID THẬT (đã vào cgroup) vào pidfile. Trả về 0 khi pidfile có.
+chay_trong_cgroup_bg() {
+	local cg=$1
+	local pidfile=$2
+	shift 2
+	[[ -d $cg ]] || { echo "chay_trong_cgroup_bg: thieu cgroup $cg" >&2; return 1; }
+	rm -f "$pidfile"
+	# shellcheck disable=SC2016
+	sh -c 'echo $$ > "$0/cgroup.procs" || exit 91; echo $$ > "$1"; shift; exec "$@"' \
+		"$cg" "$pidfile" "$@" &
+	local wrap=$!
+	local i
+	for i in $(seq 1 50); do
+		if [[ -s $pidfile ]]; then
+			return 0
+		fi
+		if ! kill -0 "$wrap" 2>/dev/null; then
+			echo "chay_trong_cgroup_bg: wrapper chet som" >&2
+			return 1
+		fi
+		sleep 0.05
+	done
+	echo "chay_trong_cgroup_bg: timeout cho pidfile" >&2
+	return 1
 }
 
 # Dự phòng: systemd-run --scope; trả về đường dẫn scope qua stdout cuối dòng SCOPE=...

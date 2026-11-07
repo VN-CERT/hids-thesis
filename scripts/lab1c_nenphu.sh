@@ -69,25 +69,30 @@ T0=$(mono_ns)
 TW0=$(date -Is)
 PIDS=()
 
-# 3 poller + 1 zlib (1.9c)
-chay_trong_cgroup "$CG_NG" python3 "$REPO/scripts/lab1_http_client.py" \
+# 3 poller + 1 zlib (1.9c) — pid thật qua pidfile
+start_bg() {
+	local pf=$1
+	shift
+	chay_trong_cgroup_bg "$CG_NG" "$pf" "$@"
+	PIDS+=("$(cat "$pf")")
+}
+start_bg "$SESS/p10.pid" python3 "$REPO/scripts/lab1_http_client.py" \
 	--name nginx-healthcheck --period-s 10 --duration-s 8880 --jitter-pct 0 \
-	--log "$SESS/p10.log" >>"$SESS/p10.stderr" 2>&1 &
-PIDS+=($!)
-chay_trong_cgroup "$CG_NG" python3 "$REPO/scripts/lab1_http_client.py" \
+	--log "$SESS/p10.log" >>"$SESS/p10.stderr" 2>&1
+start_bg "$SESS/p60.pid" python3 "$REPO/scripts/lab1_http_client.py" \
 	--name nginx-healthcheck --period-s 60 --duration-s 8880 --jitter-pct 0 \
-	--log "$SESS/p60.log" >>"$SESS/p60.stderr" 2>&1 &
-PIDS+=($!)
-chay_trong_cgroup "$CG_NG" python3 "$REPO/scripts/lab1_http_client.py" \
+	--log "$SESS/p60.log" >>"$SESS/p60.stderr" 2>&1
+start_bg "$SESS/p300.pid" python3 "$REPO/scripts/lab1_http_client.py" \
 	--name nginx-healthcheck --period-s 300 --duration-s 8880 --jitter-pct 0 \
-	--log "$SESS/p300.log" >>"$SESS/p300.stderr" 2>&1 &
-PIDS+=($!)
-chay_trong_cgroup "$CG_NG" python3 "$REPO/scripts/lab1c_n4_zlib.py" \
+	--log "$SESS/p300.log" >>"$SESS/p300.stderr" 2>&1
+start_bg "$SESS/n4.pid" python3 "$REPO/scripts/lab1c_n4_zlib.py" \
 	--duration-s 8880 --payload "$N4_PAYLOAD" --log "$SESS/n4.log" \
-	--name lab1c-n4-zlib >>"$SESS/n4.stderr" 2>&1 &
-PIDS+=($!)
+	--name lab1c-n4-zlib >>"$SESS/n4.stderr" 2>&1
 printf '%s\n' "${PIDS[@]}" | tee "$SESS/attack.pids"
 log "pids=${PIDS[*]}"
+for p in "${PIDS[@]}"; do
+	echo "pid=$p $(cat /proc/$p/cgroup 2>/dev/null | head -1)" | tee -a "$SESS/cgroup-check.txt"
+done
 
 # 148 phút = 8880 s từ sau READY+60 → tổng ~150 phút từ READY
 sleep 8880

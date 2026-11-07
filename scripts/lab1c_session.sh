@@ -132,77 +132,80 @@ GHI_CHU="1.9;cgroup=nginx"
 B4_MODE="stress-ng"
 [[ -f $B4_MODE_FILE ]] && B4_MODE=$(cat "$B4_MODE_FILE")
 
+start_one_bg() {
+	local pf=$1
+	shift
+	chay_trong_cgroup_bg "$CG_NG" "$pf" "$@" >>"$SESS/client.stderr" 2>&1
+	local real
+	real=$(cat "$pf")
+	ATTACK_PIDS+=("$real")
+	# stress-ng: thêm worker con nếu có
+	sleep 0.4
+	local c
+	for c in $(pgrep -P "$real" 2>/dev/null || true); do
+		ATTACK_PIDS+=("$c")
+		echo "$c" >>"$SESS/children.pids"
+	done
+}
+
 start_attack() {
+	local pf="$SESS/main.pid"
 	case $KIND in
 	B1-10s)
-		chay_trong_cgroup "$CG_NG" python3 "$REPO/scripts/lab1_http_client.py" \
+		start_one_bg "$pf" python3 "$REPO/scripts/lab1_http_client.py" \
 			--name xcfgd-beacon --period-s 10 --duration-s "$WIN_DUR" --jitter-pct 50 \
-			--log "$SESS/client.log" >>"$SESS/client.stderr" 2>&1 &
-		ATTACK_PIDS+=($!)
+			--log "$SESS/client.log"
 		;;
 	N1-10s)
-		chay_trong_cgroup "$CG_NG" python3 "$REPO/scripts/lab1_http_client.py" \
+		start_one_bg "$pf" python3 "$REPO/scripts/lab1_http_client.py" \
 			--name nginx-healthcheck --period-s 10 --duration-s "$WIN_DUR" --jitter-pct 50 \
-			--log "$SESS/client.log" >>"$SESS/client.stderr" 2>&1 &
-		ATTACK_PIDS+=($!)
+			--log "$SESS/client.log"
 		;;
 	B1-60s)
-		chay_trong_cgroup "$CG_NG" python3 "$REPO/scripts/lab1_http_client.py" \
+		start_one_bg "$pf" python3 "$REPO/scripts/lab1_http_client.py" \
 			--name xcfgd-beacon --period-s 60 --duration-s "$WIN_DUR" --jitter-pct 50 \
-			--log "$SESS/client.log" >>"$SESS/client.stderr" 2>&1 &
-		ATTACK_PIDS+=($!)
+			--log "$SESS/client.log"
 		;;
 	N1-60s)
-		chay_trong_cgroup "$CG_NG" python3 "$REPO/scripts/lab1_http_client.py" \
+		start_one_bg "$pf" python3 "$REPO/scripts/lab1_http_client.py" \
 			--name nginx-healthcheck --period-s 60 --duration-s "$WIN_DUR" --jitter-pct 50 \
-			--log "$SESS/client.log" >>"$SESS/client.stderr" 2>&1 &
-		ATTACK_PIDS+=($!)
+			--log "$SESS/client.log"
 		;;
 	B1-300s)
-		chay_trong_cgroup "$CG_NG" python3 "$REPO/scripts/lab1_http_client.py" \
+		start_one_bg "$pf" python3 "$REPO/scripts/lab1_http_client.py" \
 			--name xcfgd-beacon --period-s 300 --duration-s "$WIN_DUR" --jitter-pct 50 \
-			--log "$SESS/client.log" >>"$SESS/client.stderr" 2>&1 &
-		ATTACK_PIDS+=($!)
+			--log "$SESS/client.log"
 		;;
 	N1-300s)
-		chay_trong_cgroup "$CG_NG" python3 "$REPO/scripts/lab1_http_client.py" \
+		start_one_bg "$pf" python3 "$REPO/scripts/lab1_http_client.py" \
 			--name nginx-healthcheck --period-s 300 --duration-s "$WIN_DUR" --jitter-pct 50 \
-			--log "$SESS/client.log" >>"$SESS/client.stderr" 2>&1 &
-		ATTACK_PIDS+=($!)
+			--log "$SESS/client.log"
 		;;
 	B4)
 		GHI_CHU="1.9c:${B4_MODE}"
 		if [[ $B4_MODE == stress-ng ]]; then
-			chay_trong_cgroup "$CG_NG" stress-ng --cpu 1 --cpu-load 10 --cpu-load-slice 2000 \
-				--timeout "${WIN_DUR}s" >>"$SESS/client.stderr" 2>&1 &
-			ATTACK_PIDS+=($!)
-			# chu kỳ xấp xỉ: mỗi 22s
+			start_one_bg "$pf" stress-ng --cpu 1 --cpu-load 10 --cpu-load-slice 2000 \
+				--timeout "${WIN_DUR}s"
 			CYCLES=$((WIN_DUR / 22))
 		else
-			chay_trong_cgroup "$CG_NG" python3 "$REPO/scripts/lab1c_b4_burner.py" \
-				--duration-s "$WIN_DUR" --log "$SESS/client.log" --name lab1c-b4-burner \
-				>>"$SESS/client.stderr" 2>&1 &
-			ATTACK_PIDS+=($!)
+			start_one_bg "$pf" python3 "$REPO/scripts/lab1c_b4_burner.py" \
+				--duration-s "$WIN_DUR" --log "$SESS/client.log" --name lab1c-b4-burner
 		fi
 		;;
 	N4)
 		GHI_CHU="1.9c:zlib"
 		[[ -f $N4_PAYLOAD ]] || { log "thieu n4 payload"; exit 1; }
-		chay_trong_cgroup "$CG_NG" python3 "$REPO/scripts/lab1c_n4_zlib.py" \
-			--duration-s "$WIN_DUR" --payload "$N4_PAYLOAD" --log "$SESS/client.log" \
-			>>"$SESS/client.stderr" 2>&1 &
-		ATTACK_PIDS+=($!)
+		start_one_bg "$pf" python3 "$REPO/scripts/lab1c_n4_zlib.py" \
+			--duration-s "$WIN_DUR" --payload "$N4_PAYLOAD" --log "$SESS/client.log"
 		;;
 	*) log "kind sai"; exit 1 ;;
 	esac
 	printf '%s\n' "${ATTACK_PIDS[@]}" | tee "$SESS/attack.pids"
-	# xác nhận cgroup
-	sleep 0.3
 	for p in "${ATTACK_PIDS[@]}"; do
 		if [[ -f /proc/$p/cgroup ]]; then
 			cg=$(cat /proc/$p/cgroup)
 			echo "pid=$p cgroup=$cg" | tee -a "$SESS/cgroup-check.txt"
-			echo "$cg" | grep -q "$CG_NG\|docker-" || log "CANH BAO: pid $p khong trong nginx cgroup"
+			echo "$cg" | grep -q "docker-" || { log "FAIL: pid $p khong trong docker cgroup"; exit 1; }
 		fi
 	done
 }
