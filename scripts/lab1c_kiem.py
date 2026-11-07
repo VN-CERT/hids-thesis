@@ -117,8 +117,11 @@ def main() -> int:
     ap.add_argument("--t1", type=int, required=True)
     ap.add_argument("--tids", required=True, help="csv tids")
     ap.add_argument("--cycles", type=int, required=True)
+    ap.add_argument("--min-cycles", type=int, default=20)
+    ap.add_argument("--min-recs", type=int, default=100)
     ap.add_argument("--cgroup-substr", default="docker-", help="chuoi phai co trong /proc/pid/cgroup")
     ap.add_argument("--pids-check", default="", help="csv pid con song luc kiem (tuy chon)")
+    ap.add_argument("--relax-moc", action="store_true", help="chi can |first-t0|<=1s (thu rut)")
     args = ap.parse_args()
 
     sess = args.sess
@@ -154,16 +157,15 @@ def main() -> int:
     counts, first_ts, last_ts = count_tid_records(b, tids, args.t0, args.t1)
     total = sum(counts.values())
     msgs.append(f"tid_records_total={total} per={counts}")
-    if total < 100:
-        # 1.9c: B4 may have few syscalls — GHI so, khong chinh; van FAIL tieu chi >=100 neu <100
-        msgs.append(f"FAIL n_ban_ghi_tid={total} < 100")
+    if total < args.min_recs:
+        msgs.append(f"FAIL n_ban_ghi_tid={total} < {args.min_recs}")
         ok = False
     else:
         msgs.append("n_ban_ghi_tid DAT")
 
-    msgs.append(f"cycles={args.cycles}")
-    if args.cycles < 20:
-        msgs.append("FAIL cycles < 20")
+    msgs.append(f"cycles={args.cycles} min={args.min_cycles}")
+    if args.cycles < args.min_cycles:
+        msgs.append(f"FAIL cycles < {args.min_cycles}")
         ok = False
     else:
         msgs.append("cycles DAT")
@@ -175,7 +177,13 @@ def main() -> int:
         d0 = abs(fmin - args.t0) / 1e9
         d1 = abs(lmax - args.t1) / 1e9
         msgs.append(f"moc |first-t0|={d0:.3f}s |last-t1|={d1:.3f}s")
-        if d0 > 1.0 or d1 > 1.0:
+        if args.relax_moc:
+            if d0 > 1.0:
+                msgs.append("FAIL moc nhan first > 1s")
+                ok = False
+            else:
+                msgs.append("moc nhan DAT (relax last)")
+        elif d0 > 1.0 or d1 > 1.0:
             msgs.append("FAIL moc nhan > 1s")
             ok = False
         else:

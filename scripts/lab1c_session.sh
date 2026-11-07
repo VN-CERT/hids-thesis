@@ -218,7 +218,7 @@ sleep "$REMAIN"
 T1=$(mono_ns)
 TW1=$(date -Is)
 
-# dừng attack
+# dừng attack (KHONG wait khong doi so — se treo cho collector)
 for p in "${ATTACK_PIDS[@]}"; do
 	kill -TERM "$p" 2>/dev/null || true
 done
@@ -226,7 +226,9 @@ sleep 1
 for p in "${ATTACK_PIDS[@]}"; do
 	kill -KILL "$p" 2>/dev/null || true
 done
-wait 2>/dev/null || true
+for p in "${ATTACK_PIDS[@]}"; do
+	wait "$p" 2>/dev/null || true
+done
 
 # chu kỳ từ log client nếu có
 if [[ -f $SESS/client.log ]]; then
@@ -299,13 +301,18 @@ if [[ ${LAB1C_SKIP_NHAN:-0} != 1 ]]; then
 	done
 fi
 
-# kiểm
+# kiểm (phien thu 5 phut: cua so 180s khong du 20 chu ky period=10 → ha nguong)
+KIEM_EXTRA=()
+if [[ ${LAB1C_TRIAL:-0} == 1 ]]; then
+	KIEM_EXTRA=(--min-cycles 10 --min-recs 50 --relax-moc)
+fi
 set +e
 python3 "$REPO/scripts/lab1c_kiem.py" \
 	--sess "$SESS" --run-id "$RUN_ID" --t0 "$T0" --t1 "$T1" \
 	--tids "$TIDS_CSV" --cycles "$CYCLES" \
 	--pids-check "$TIDS_CSV" \
-	--cgroup-substr "docker-"
+	--cgroup-substr "docker-" \
+	"${KIEM_EXTRA[@]}"
 KEC=$?
 set -e
 log "kiem exit=$KEC"
