@@ -43,6 +43,21 @@ Moi thay doi phai ghi ro ly do + ngay o cuoi file, giu ban cu.
    max |x_i - median_i| / (1.4826 * MAD_i) qua cac chieu (max thay vi tong de mot
    thanh phan bat thuong manh khong bi pha loang; day la lua chon CHOT).
    MAD = 0 thi thay bang epsilon = 1e-9 de khoi chia 0.
+   (v1.2) median/MAD hoc RIENG cho tung DAI TAI (xem muc 3b); cong thuc z va
+   max|z| khong doi.
+
+3b. (v1.2, 07/11/2026) Dai tai - chuan hoa phan tang. R039 tren du lieu that
+   cho thay mot nen tinh (median/MAD hoc tren ca 5 ngay) that bai tren nen co
+   nhip ngay/dem: bao dong gia nen 0,88-0,97 moi nhanh. Vi vay nen duoc hoc
+   theo "dai tai" la mot tin hieu NGOAI chieu cham diem cua tung tid:
+   - che do toc_do (mac dinh): toc do ban ghi TONG cua moi tid trong file
+     (ban ghi/giay trong [start, stop) cua cua so); dai r_k <=> toc do trong
+     [2^k, 2^(k+1)) (he so 2, chot truoc).
+   - che do nhip (lab): muc tai cua generator tu nhip-benign.tsv (dich_vu+muc,
+     muc so gan ve muc danh dinh gan nhat), theo diem giua cua so.
+   - che do khong: nhu 1.1.
+   Dai thieu mau (< 8 cua so huan luyen cho mot chieu): dai so dung dai ke can
+   (k+-1..3), con lai dung nen gop "*".
 
 4. Diem danh doi (de so hai nhanh CONG BANG, giao thuc danh gia muc 2):
    quet nguong tren diem bat thuong; voi moi nguong, tinh (bao dong gia / cua so
@@ -52,11 +67,22 @@ Moi thay doi phai ghi ro ly do + ngay o cuoi file, giu ban cu.
 
 5. Chuan hoa (median, MAD) va nguong chi tinh/chon tren tap HUAN LUYEN (giao
    thuc danh gia muc 4). Script nhan --train-until <ns> de cat.
+   (v1.2) Quy tac cat: cua so giao voi BAT KY nhan nao (tan cong A/B/C hay song
+   sinh N) luon thuoc tap KIEM TRA bat ke thoi diem; huan luyen = cua so khong
+   giao nhan, stop <= moc cat. (R039: B1-60s/B1-300s chay tren nen ngay 1-5
+   nen bi xep vao huan luyen va mat khoi kiem tra.)
+   (v1.2) Cua so TAN CONG = cua so cua CHINH tid tan cong (--nhan-tid: run_id
+   id lop tid t_bat_dau_mono_ns t_ket_thuc_mono_ns) giao voi khoang nhan; cua
+   so cua cac tid khac trong khoang do la benign. Khong co --nhan-tid thi nhu
+   1.1: moi (tid, cua so) giao khoang nhan la tan cong - cach nay ep muc phat
+   hien 0,90 phai bat ca cac tid dich vu benign nen nguong ve ~0 (R039).
 
 Cach dung:
   # Xuat TSV bang rec-export (cot theo thu tu duoi), roi:
   python3 detector_c5.py --tsv FILE.tsv [--nhan nhan-tan-cong.tsv]
           [--train-until MONO_NS] [--window-s 300] [--step-s 30]
+          [--dai-che-do toc_do|nhip|khong] [--dai-nhip nhip-benign.tsv]
+          [--nhan-tid nhan-tid.tsv]
 
 TSV dau vao: dong tieu de cua rec-export, cac cot (thu tu hien tai cua
 rec-export, doc theo TEN cot chu khong theo vi tri):
@@ -67,6 +93,7 @@ rec-export, doc theo TEN cot chu khong theo vi tri):
 Chi dung thu vien chuan cua Python.
 """
 import argparse
+import bisect
 import math
 import sys
 
@@ -74,6 +101,8 @@ WINDOW_S_DEFAULT = 300
 STEP_S_DEFAULT = 30
 EPS = 1e-9
 FLAG_PMU = 1 << 7
+NHIP_TOL_NS = 900 * 10**9
+NAN = float("nan")
 
 
 def median(xs):
@@ -231,16 +260,141 @@ def build(recs, window_ns, step_ns, branch_fn):
             f = branch_fn(chunk)
             if f is None:
                 continue
-            out.append({"start": start, "stop": stop, "tid": tid, "f": f})
+            out.append({"start": start, "stop": stop, "tid": tid, "f": f,
+                        "band": None, "rate": float("nan")})
     return out
 
 
-def fit_norm(train_rows, dims):
+# ---------------- dai tai (v1.2) ----------------
+
+class TocDo(object):
+    """Toc do ban ghi tong (moi tid trong file) trong [start, stop), tu mang dem theo giay."""
+
+    def __init__(self, recs):
+        if not recs:
+            self.n = 0
+            return
+        ss = [r["ts"] // 10**9 for r in recs]
+        self.s0 = min(ss)
+        self.n = max(ss) - self.s0 + 1
+        cnt = [0] * self.n
+        for s in ss:
+            cnt[s - self.s0] += 1
+        self.pre = [0] * (self.n + 1)
+        for i in range(self.n):
+            self.pre[i + 1] = self.pre[i] + cnt[i]
+
+    def rate(self, start, stop):
+        if self.n == 0:
+            return float("nan")
+        a = max(0, min(self.n, start // 10**9 - self.s0))
+        b = max(0, min(self.n, (stop + 10**9 - 1) // 10**9 - self.s0))
+        if b <= a:
+            return float("nan")
+        return (self.pre[b] - self.pre[a]) / float(b - a)
+
+
+def band_rate(rate, he_so):
+    if rate != rate or rate <= 0:
+        return None
+    return "r%d" % int(math.floor(math.log(rate) / math.log(he_so) + 1e-12))
+
+
+def band_k(label):
+    try:
+        return int(label[1:]) if label and label[0] == "r" else None
+    except ValueError:
+        return None
+
+
+class Nhip(object):
+    """nhip-benign.tsv -> dai = ghep dich_vu+muc tai diem giua cua so (nhu c5_score 1.3)."""
+
+    def __init__(self, path, muc_spec):
+        self.nominal = {}
+        for part in (muc_spec or "").split(";"):
+            if ":" in part:
+                svc, vals = part.split(":", 1)
+                try:
+                    self.nominal[svc.strip().lower()] = sorted(float(v) for v in vals.split(",") if v.strip())
+                except ValueError:
+                    pass
+        self.union = sorted({v for vs in self.nominal.values() for v in vs})
+        per = {}
+        with open(path, encoding="utf-8", errors="replace") as fh:
+            header = [h.strip() for h in fh.readline().rstrip("\n").split("\t")]
+            idx = {h: i for i, h in enumerate(header)}
+            a = idx.get("t_bat_dau_mono_ns", idx.get("start_ns"))
+            b = idx.get("t_ket_thuc_mono_ns", idx.get("stop_ns"))
+            isv = idx.get("dich_vu")
+            im = idx.get("muc")
+            if a is None or b is None or im is None:
+                sys.exit("nhip-benign.tsv thieu cot")
+            for line in fh:
+                p = line.rstrip("\n").split("\t")
+                if len(p) <= max(a, b, im) or line.startswith("#"):
+                    continue
+                try:
+                    lo, hi = int(p[a]), int(p[b])
+                except ValueError:
+                    continue
+                svc = p[isv].strip() if isv is not None and isv < len(p) else "svc"
+                svc, lvl = self.chuan_muc(svc, p[im].strip())
+                per.setdefault(svc, []).append((lo, hi, lvl))
+        self.svc = {}
+        for s, v in per.items():
+            v.sort()
+            self.svc[s] = (v, [x[0] for x in v])
+
+    def chuan_muc(self, svc, muc):
+        m = muc.replace(" ", "")
+        s = svc.lower()
+        if not any(ch.isdigit() for ch in m):
+            return s, m
+        head = m.rstrip("0123456789.")
+        num = m[len(head):]
+        if head and head.lower() not in ("", s) and s in ("svc", ""):
+            s = head.lower()
+        try:
+            v = float(num if num else m)
+        except ValueError:
+            return s, m
+        cand = self.nominal.get(s) or self.union
+        if not cand or v <= 0:
+            return s, ("%g" % v)
+        best = min(cand, key=lambda c: abs(math.log(v / c)) if c > 0 else 1e9)
+        return s, ("%g" % best)
+
+    def band(self, w):
+        mid = (w["start"] + w["stop"]) // 2
+        parts = []
+        for s in sorted(self.svc):
+            v, starts = self.svc[s]
+            i = bisect.bisect_right(starts, mid) - 1
+            lvl = None
+            if i >= 0 and v[i][0] <= mid < v[i][1]:
+                lvl = v[i][2]
+            else:
+                best = None
+                for j in (i, i + 1):
+                    if 0 <= j < len(v):
+                        d = min(abs(mid - v[j][0]), abs(mid - v[j][1]))
+                        if d <= NHIP_TOL_NS and (best is None or d < best[0]):
+                            best = (d, v[j][2])
+                if best:
+                    lvl = best[1]
+            parts.append("%s%s" % (s, lvl if lvl is not None else "?"))
+        if all(p.endswith("?") for p in parts):
+            return None
+        return "|".join(parts)
+
+
+def fit_norm(train_rows, dims, toi_thieu=8):
     stat = {}
     for d in dims:
         xs = [w["f"][d] for w in train_rows
               if d in w["f"] and w["f"][d] == w["f"][d]]
-        if len(xs) < 8:
+        if len(xs) < toi_thieu:
             stat[d] = None
             continue
         m = median(xs)
@@ -249,24 +403,45 @@ def fit_norm(train_rows, dims):
     return stat
 
 
-def score(w, stat, dims):
+def fit_bands(train_rows, dims, toi_thieu=8):
+    groups = {"*": train_rows}
+    for w in train_rows:
+        if w["band"] is not None:
+            groups.setdefault(w["band"], []).append(w)
+    return {b: fit_norm(ws, dims, toi_thieu) for b, ws in groups.items()}
+
+
+def thu_tu_du_phong(band):
+    if band is None:
+        return ["*"]
+    k = band_k(band)
+    if k is None:
+        return [band, "*"]
+    return [band, "r%d" % (k - 1), "r%d" % (k + 1), "r%d" % (k - 2), "r%d" % (k + 2),
+            "r%d" % (k - 3), "r%d" % (k + 3), "*"]
+
+
+def score(w, stats, dims):
     best = 0.0
     used = 0
     for d in dims:
-        if stat.get(d) is None:
-            continue
         v = w["f"].get(d, float("nan"))
         if v != v:
             continue
-        m, a = stat[d]
-        z = abs(v - m) / (1.4826 * a)
-        best = max(best, z)
-        used += 1
+        for b in thu_tu_du_phong(w["band"]):
+            st = stats.get(b)
+            if st is None or st.get(d) is None:
+                continue
+            m, a = st[d]
+            z = abs(v - m) / (1.4826 * a)
+            best = max(best, z)
+            used += 1
+            break
     return best if used else float("nan")
 
 
-def load_attack_windows(path):
-    """Doc nhan-tan-cong.tsv, tra ve list (t_bat_dau_mono_ns, t_ket_thuc_mono_ns, id)."""
+def load_labels(path):
+    """Doc nhan-tan-cong.tsv, tra ve list (t_bat_dau_mono_ns, t_ket_thuc_mono_ns, id, la_song_sinh)."""
     out = []
     with open(path, encoding="utf-8", errors="replace") as fh:
         header = fh.readline().rstrip("\n").split("\t")
@@ -287,39 +462,65 @@ def load_attack_windows(path):
                 continue
             tag = p[ident] if ident is not None and ident < len(p) else "?"
             cls = p[lop] if lop is not None and lop < len(p) else "?"
-            # Chi cua so tan cong THAT (lop B hoac A), khong phai benign song sinh (N).
-            if cls.upper().startswith("N"):
-                continue
-            out.append((lo, hi, tag))
+            out.append((lo, hi, tag, cls.upper().startswith("N")))
     return out
 
 
-def win_in_attack(w, atk):
-    for lo, hi, _ in atk:
-        if w["start"] < hi and w["stop"] > lo:
+def load_tid_labels(path):
+    """nhan-tid.tsv -> dict tid(int) -> list (lo, hi, id, la_song_sinh)."""
+    out = {}
+    if not path:
+        return out
+    with open(path, encoding="utf-8", errors="replace") as fh:
+        header = [h.strip() for h in fh.readline().rstrip("\n").split("\t")]
+        idx = {h: i for i, h in enumerate(header)}
+        a, b, it = idx.get("t_bat_dau_mono_ns"), idx.get("t_ket_thuc_mono_ns"), idx.get("tid")
+        lop, ident = idx.get("lop"), idx.get("id")
+        if a is None or b is None or it is None:
+            sys.exit("nhan-tid.tsv thieu cot (tid, t_bat_dau_mono_ns, t_ket_thuc_mono_ns)")
+        for line in fh:
+            p = line.rstrip("\n").split("\t")
+            if len(p) <= max(a, b, it):
+                continue
+            try:
+                lo, hi, tid = int(p[a]), int(p[b]), int(p[it])
+            except ValueError:
+                continue
+            tag = p[ident] if ident is not None and ident < len(p) else "?"
+            cls = p[lop] if lop is not None and lop < len(p) else "?"
+            out.setdefault(tid, []).append((lo, hi, tag, cls.upper().startswith("N")))
+    return out
+
+
+def win_in(w, labels, twin, tid_labels=None):
+    """tid_labels (dict) co -> chi cua so cua tid co nhan moi la tan cong/song sinh."""
+    cands = labels if tid_labels is None else tid_labels.get(w["tid"], ())
+    for lo, hi, _, tw in cands:
+        if tw == twin and w["start"] < hi and w["stop"] > lo:
             return True
     return False
 
 
-def tradeoff(rows, stat, dims, atk):
-    """Quet nguong; in bang (nguong, bao_dong_gia_tren_cua_so_benign, bat_tan_cong)."""
+def tradeoff(rows, stats, dims, labels, tid_labels=None):
+    """Quet nguong; in bang (nguong, bao_dong_gia_tren_cua_so_benign, bat_tan_cong).
+    (v1.2: tinh bang mang sap xep + bisect; ket qua nhu 1.1.)"""
     scored = []
     for w in rows:
-        s = score(w, stat, dims)
+        s = score(w, stats, dims)
         if s != s:
             continue
-        scored.append((s, win_in_attack(w, atk)))
+        scored.append((s, win_in(w, labels, False, tid_labels)))
     if not scored:
         return []
-    benign = [s for s, a in scored if not a]
-    attack = [s for s, a in scored if a]
+    benign = sorted(s for s, a in scored if not a)
+    attack = sorted(s for s, a in scored if a)
     n_benign = len(benign) or 1
     n_attack = len(attack)
     out = []
     cand = sorted({round(s, 3) for s, _ in scored}, reverse=True)
     for thr in cand:
-        fa = sum(1 for s in benign if s >= thr)
-        det = sum(1 for s in attack if s >= thr)
+        fa = len(benign) - bisect.bisect_left(benign, thr)
+        det = n_attack - bisect.bisect_left(attack, thr)
         out.append((thr, fa, fa / n_benign, det, n_attack,
                     (det / n_attack if n_attack else float("nan"))))
     return out
@@ -333,10 +534,15 @@ def main(argv):
     ap = argparse.ArgumentParser()
     ap.add_argument("--tsv", required=True)
     ap.add_argument("--nhan", default=None, help="nhan-tan-cong.tsv (tuy chon)")
+    ap.add_argument("--nhan-tid", default=None, help="nhan theo tid (tuy chon; xem muc 5)")
     ap.add_argument("--train-until", type=int, default=None,
                     help="ts_enter (ns) cat tap huan luyen; mac dinh 70%% dau")
     ap.add_argument("--window-s", type=int, default=WINDOW_S_DEFAULT)
     ap.add_argument("--step-s", type=int, default=STEP_S_DEFAULT)
+    ap.add_argument("--dai-che-do", default="toc_do", choices=("toc_do", "nhip", "khong"))
+    ap.add_argument("--dai-he-so", type=float, default=2.0)
+    ap.add_argument("--dai-nhip", default=None)
+    ap.add_argument("--nhip-muc", default="nginx:20,50,120,200;postgres:15,40,100;pg:15,40,100;pgsql:15,40,100")
     args = ap.parse_args(argv[1:])
 
     recs = read_tsv(args.tsv)
@@ -345,34 +551,61 @@ def main(argv):
     window_ns = args.window_s * 1_000_000_000
     step_ns = args.step_s * 1_000_000_000
 
-    tmin = recs[0]["ts"]
-    tmax = recs[-1]["ts"]
+    tmin = min(r["ts"] for r in recs)
+    tmax = max(r["ts"] for r in recs)
     cut = args.train_until if args.train_until else tmin + int(0.7 * (tmax - tmin))
 
-    atk = load_attack_windows(args.nhan) if args.nhan else []
+    labels = load_labels(args.nhan) if args.nhan else []
+    atk = [l for l in labels if not l[3]]
+    tid_labels = load_tid_labels(args.nhan_tid) if args.nhan_tid else None
+    if labels and tid_labels is None:
+        print("# CANH BAO: khong co --nhan-tid -> moi (tid, cua so) giao khoang nhan la tan cong (cach 1.1)")
+    toc_do = TocDo(recs)
+    nhip = Nhip(args.dai_nhip, args.nhip_muc) if args.dai_nhip else None
+    che_do = args.dai_che_do
+    if che_do == "nhip" and nhip is None:
+        sys.exit("--dai-che-do nhip can --dai-nhip")
 
     dims_base = ["dt_med", "dt_p90", "dt_iqr", "dt_cv"]
     dims_dec = ["own_med", "own_p90", "own_iqr", "own_cv",
                 "cpu_med", "cpu_p90", "cpi_med"]  # v1.1; ctx_* khong cham diem
 
-    print("# detector_c5  cua_so=%ds buoc=%ds  cat_huan_luyen_ts=%d" %
-          (args.window_s, args.step_s, cut))
-    print("# so ban ghi=%d  tmin=%d tmax=%d  so cua so tan cong(nhan)=%d" %
-          (len(recs), tmin, tmax, len(atk)))
+    print("# detector_c5 1.2  cua_so=%ds buoc=%ds  cat_huan_luyen_ts=%d  dai_che_do=%s he_so=%g" %
+          (args.window_s, args.step_s, cut, che_do, args.dai_he_so))
+    print("# so ban ghi=%d  tmin=%d tmax=%d  nhan tan cong=%d  song sinh=%d  tid co nhan=%d  toc do tong trung binh=%.1f/s" %
+          (len(recs), tmin, tmax, len(atk), len(labels) - len(atk),
+           len(tid_labels) if tid_labels else 0, len(recs) / max(1.0, (tmax - tmin) / 1e9)))
 
     for name, branch_fn, dims in (("BASELINE_dt_tho", feat_baseline, dims_base),
                                   ("PHANRA_5tp", feat_decomp, dims_dec)):
         rows = build(recs, window_ns, step_ns, branch_fn)
-        train = [w for w in rows if w["stop"] <= cut]
-        test = [w for w in rows if w["start"] >= cut]
-        stat = fit_norm(train, dims)
+        for w in rows:
+            w["rate"] = toc_do.rate(w["start"], w["stop"])
+            if che_do == "toc_do":
+                w["band"] = band_rate(w["rate"], args.dai_he_so)
+            elif che_do == "nhip":
+                w["band"] = nhip.band(w)
+        # quy tac cat 1.2: giao nhan (tan cong hoac song sinh) -> luon kiem tra
+        co_nhan = [w for w in rows if win_in(w, labels, False) or win_in(w, labels, True)]
+        khong_nhan = [w for w in rows if not (win_in(w, labels, False) or win_in(w, labels, True))]
+        train = [w for w in khong_nhan if w["stop"] <= cut]
+        test = [w for w in khong_nhan if w["start"] >= cut] + co_nhan
+        stats = fit_bands(train, dims)
         print("\n=== %s ===" % name)
-        print("so cua so: huan_luyen=%d kiem_tra=%d (tong=%d)" %
-              (len(train), len(test), len(rows)))
-        active = [d for d in dims if stat.get(d) is not None]
+        print("so cua so: huan_luyen=%d kiem_tra=%d (co nhan=%d) (tong=%d)" %
+              (len(train), len(test), len(co_nhan), len(rows)))
+        active = [d for d in dims if stats["*"].get(d) is not None]
         print("chieu dung duoc (MAD>0, >=8 mau huan luyen): %s" % ",".join(active))
+        bands = {}
+        for w in train:
+            bands[w["band"] or "-"] = bands.get(w["band"] or "-", 0) + 1
+        print("dai huan luyen: %s" % "  ".join("%s:%d" % kv for kv in sorted(bands.items())))
         pool = test if test else rows
-        tb = tradeoff(pool, stat, dims, atk)
+        if tid_labels is not None:
+            print("cua so tan cong theo tid=%d (theo thoi gian se la %d)" % (
+                sum(1 for w in pool if win_in(w, labels, False, tid_labels)),
+                sum(1 for w in pool if win_in(w, labels, False))))
+        tb = tradeoff(pool, stats, dims, labels, tid_labels)
         if not tb:
             print("khong cham diem duoc (thieu mau).")
             continue
@@ -402,3 +635,18 @@ if __name__ == "__main__":
 #      cham diem - mau thuan voi muc dich "tru can thiep truoc khi phat hien".
 #      Sua truoc khi cham bat ky du lieu LAB-1/production nao (buoc 5 chua chay).
 #      Cua so, buoc, chuan hoa, diem max|z|, duong danh doi: KHONG doi.
+# 1.2  07/11/2026  Sau R039 (du lieu that LAB-1 + production, M6h): (a) chuan hoa
+#      PHAN TANG theo dai tai (muc 3b): median/MAD hoc rieng cho moi dai, dai
+#      = toc do ban ghi tong theo he so 2 (hoac muc generator tu nhip-benign);
+#      ly do bang so: bao dong gia nen 0,8789/0,9661/0,9633 o muc phat hien
+#      0,90 vi nen da nhip ngay/dem (~5-8k vs ~800 ban ghi/giay) ma nen hoc
+#      tinh. (b) quy tac cat: cua so giao nhan luon la kiem tra (B1-60s/
+#      B1-300s = 0 cua so kiem tra trong R039 vi nam tren nen ngay 1-5).
+#      (c) --nhan-tid: cua so tan cong = cua so cua tid tan cong (1.1 tinh moi
+#      tid giao khoang nhan). (d) tradeoff tinh bang bisect (ket qua nhu cu).
+#      (e) moc cat mac dinh 70 % tinh tren min/max ts TOAN BO (1.1 lay ban ghi
+#      dau/cuoi sau khi sap theo tid -> sai khi nhieu tid); duong ong luon
+#      truyen --train-until nen khong anh huong so da bao cao. DAC TRUNG (muc 2), cua
+#      so/buoc, cong thuc z, max|z|, duong danh doi: KHONG doi -> c5_extract
+#      cua M6g van tuong duong (kiem lai bang c5_equiv_test.py).
+#      --dai-che-do khong = hanh vi 1.1.
