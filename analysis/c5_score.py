@@ -71,6 +71,17 @@ dong gia"; muc 4: nguong chon tren tap huan luyen. Vi vay them, KHONG thay the:
    tung bdg duoi tranh chap, moi nhanh mot duong.
  Toan hoc, dinh nghia cua so, chuan hoa, muc phat hien: KHONG doi.
 
+=== 1.3.2 (07/11/2026) - chan doan, khong doi diem ===
+R040 (M6i-b): nguong tai ngan sach <= 5 % la 1e5..4e7 o ca ba cach chuan hoa,
+tuc |x-m| ~ 0,06 chia cho MAD = EPS = 1e-9 -> co chieu MAD = 0 trong dai/nen,
+va diem cua cua so vuot nguong chi den tu chieu do. De nhin thay: (a) cot
+chieu_max (chieu cho max|z|) trong scores_*.tsv; (b) chuan_<branch>.tsv: moi
+(dai, chieu): n, median, MAD, mad0; (c) tom tat chieu_max cua 1 % diem huan
+luyen cao nhat va cua cua so vuot nguong moi ngan sach. (d) --dai-che-do khong
+van GAN nhan dai (chi de bao cao theo dai), thong ke van gop "*". (e) cot bat
+dau bang x_ (thong ke ung vien do c5_extract v2 sinh) la boi canh, KHONG cham.
+Diem so, tradeoff, tom_tat: giong het 1.3.1.
+
 Dau vao (--features): TSV co tieu de, moi dong mot cua so:
   branch  tid  start_ns  stop_ns  [nguon]  <cac cot dac trung...>
   - branch: BASELINE_dt_tho | PHANRA_5tp | AGG_cgroup_giay
@@ -116,7 +127,7 @@ import os
 import sys
 from array import array
 
-VERSION = "1.3.1"
+VERSION = "1.3.2"
 EPS = 1e-9
 DET_LEVELS = (0.5, 0.8, 0.9, 0.95, 1.0)
 NGAN_SACH_MAC_DINH = "0.001,0.01,0.05"
@@ -149,7 +160,7 @@ def f4(v):
 
 class Row(object):
     __slots__ = ("branch", "tid", "start", "stop", "nguon", "f", "band", "rate",
-                 "score", "used", "atk", "twin", "muc", "trong")
+                 "score", "used", "atk", "twin", "muc", "trong", "cmax")
 
     def __init__(self, branch, tid, start, stop, nguon, f):
         self.branch = branch
@@ -166,6 +177,7 @@ class Row(object):
         self.twin = None
         self.muc = None
         self.trong = False   # benign nhung nam trong khoang thoi gian cua mot dot tan cong
+        self.cmax = -1       # chi so chieu cho max|z| (1.3.2)
 
 
 def read_features(path):
@@ -569,12 +581,13 @@ class Nhip(object):
 
 # ---------------- chuan hoa va cham diem ----------------
 
-def fit_stats(train, dims_idx, toi_thieu):
-    """-> {band_label or '*': {di: (m, a) or None}}"""
+def fit_stats(train, dims_idx, toi_thieu, phan_tang=True):
+    """-> {band_label or '*': {di: (m, a, n, mad0) or None}}; phan_tang=False -> chi '*'."""
     groups = {"*": train}
-    for w in train:
-        if w.band is not None:
-            groups.setdefault(w.band, []).append(w)
+    if phan_tang:
+        for w in train:
+            if w.band is not None:
+                groups.setdefault(w.band, []).append(w)
     stats = {}
     for b, ws in groups.items():
         st = {}
@@ -585,13 +598,13 @@ def fit_stats(train, dims_idx, toi_thieu):
                 continue
             m = median(xs)
             a = mad(xs, m)
-            st[di] = (m, a if a > 0 else EPS)
+            st[di] = (m, a if a > 0 else EPS, len(xs), 1 if a <= 0 else 0)
         stats[b] = st
     return stats
 
 
-def thu_tu_du_phong(band):
-    if band is None:
+def thu_tu_du_phong(band, phan_tang=True):
+    if band is None or not phan_tang:
         return ["*"]
     k = band_k(band)
     if k is None:
@@ -600,12 +613,12 @@ def thu_tu_du_phong(band):
             "r%d" % (k - 3), "r%d" % (k + 3), "*"]
 
 
-def score(w, stats, dims_idx, order_cache):
+def score(w, stats, dims_idx, order_cache, phan_tang=True):
     order = order_cache.get(w.band)
     if order is None:
-        order = thu_tu_du_phong(w.band)
+        order = thu_tu_du_phong(w.band, phan_tang)
         order_cache[w.band] = order
-    best, used, bands = 0.0, 0, set()
+    best, used, bands, cmax = 0.0, 0, set(), -1
     for di in dims_idx:
         v = w.f[di]
         if v != v:
@@ -617,13 +630,16 @@ def score(w, stats, dims_idx, order_cache):
             ma = st.get(di)
             if ma is None:
                 continue
-            m, a = ma
-            best = max(best, abs(v - m) / (1.4826 * a))
+            m, a = ma[0], ma[1]
+            z = abs(v - m) / (1.4826 * a)
+            if z > best or used == 0:
+                best, cmax = max(best, z), di
             used += 1
             bands.add(b)
             break
     w.score = best if used else NAN
     w.used = "+".join(sorted(bands)) if bands else ""
+    w.cmax = cmax if used else -1
     return w.score
 
 
@@ -689,7 +705,7 @@ def bao_cao_nguong(nhan_dong, thr, ctx, sink):
     for k, v in sorted(by.items()):
         r, n, h = ti_le(v, thr)
         sink["theo_muc"].append("%s\t%s\t%s\t%s\t%d\t%d" % (nhan_dong, f4(thr), k, f4(r), h, n))
-    if che_do != "khong":
+    if any(w.band is not None for w in nen_kt):
         byd = dem_theo(nen_kt, lambda w: w.band or "-")
         print("  theo dai (nen kiem tra): " + "  ".join(
             "%s:%s(%d)" % (k, f4(ti_le(v, thr)[0]), len(v)) for k, v in xep_dai(byd.items())))
@@ -790,12 +806,13 @@ def main(argv):
     if toc_do is not None:
         for w in rows:
             w.rate = toc_do.rate(w.start, w.stop)
-    if che_do == "toc_do":
-        for w in rows:
-            w.band = band_rate(w.rate, a.dai_he_so)
-    elif che_do == "nhip":
+    phan_tang = che_do != "khong"
+    if che_do == "nhip":
         for w in rows:
             w.band = nhip.band(w)
+    elif toc_do is not None:   # toc_do, hoac khong (chi gan nhan de bao cao theo dai)
+        for w in rows:
+            w.band = band_rate(w.rate, a.dai_he_so)
 
     print("# c5_score %s  cat_huan_luyen=%d  cua_so=%d  nhan=%d (tan_cong=%d song_sinh=%d)  muc=%d" % (
         VERSION, cut, len(rows), len(labels), sum(1 for l in labels if not l["twin"]),
@@ -842,21 +859,35 @@ def main(argv):
     order_cache = {}
     for b in branches:
         rb = [w for w in rows if w.branch == b]
-        dims_idx = [i for i, d in enumerate(dims_all) if not d.startswith("ctx_")
+        dims_idx = [i for i, d in enumerate(dims_all) if not d.startswith("ctx_") and not d.startswith("x_")
                     and any(w.f[i] == w.f[i] for w in rb)]
         # QUY TAC CAT 1.3
         train = [w for w in rb if w.nguon == "nen" and w.stop <= cut and w.atk is None
                  and w.twin is None and (w.muc is None or w.muc == "0")]
         test = [w for w in rb if w.nguon != "nen" or w.start >= cut or w.atk is not None
                 or w.twin is not None or (w.muc is not None and w.muc != "0")]
-        stats = fit_stats(train, dims_idx, a.dai_toi_thieu)
+        stats = fit_stats(train, dims_idx, a.dai_toi_thieu, phan_tang)
         active = [dims_all[i] for i in dims_idx if stats["*"].get(i) is not None]
         pool = test if test else rb
         scored = []
         for w in pool:
-            s = score(w, stats, dims_idx, order_cache)
+            s = score(w, stats, dims_idx, order_cache, phan_tang)
             if s == s:
                 scored.append(w)
+        # 1.3.2: chan doan chuan hoa
+        mad0 = [(bnd, dims_all[di]) for bnd, st in stats.items() for di, ma in st.items() if ma is not None and ma[3]]
+        print("chieu co MAD=0 (dung EPS=1e-9) theo dai: %d%s" % (
+            len(mad0), (" -> " + "  ".join("%s:%s" % x for x in sorted(mad0)[:40]) + (" ..." if len(mad0) > 40 else "")) if mad0 else ""))
+        if outdir:
+            with open(os.path.join(outdir, "chuan_%s.tsv" % b), "w") as fh:
+                fh.write("dai\tchieu\tn\tmedian\tMAD\tmad0\n")
+                for bnd in sorted(stats, key=lambda x: (x != "*", band_k(x) is None, band_k(x) or 0, x)):
+                    for di in dims_idx:
+                        ma = stats[bnd].get(di)
+                        if ma is None:
+                            fh.write("%s\t%s\t0\tnan\tnan\t-\n" % (bnd, dims_all[di]))
+                        else:
+                            fh.write("%s\t%s\t%d\t%.9g\t%.9g\t%d\n" % (bnd, dims_all[di], ma[2], ma[0], ma[1], ma[3]))
         src = dem_theo(test, lambda w: w.nguon)
         print("\n=== %s === huan_luyen=%d kiem_tra=%d (%s) chieu=%s" % (
             b, len(train), len(test), " ".join("%s:%d" % (k, len(v)) for k, v in sorted(src.items())), ",".join(active)))
@@ -869,7 +900,7 @@ def main(argv):
             k = band_k(d)
             kho = ("[%g,%g)" % (a.dai_he_so ** k, a.dai_he_so ** (k + 1))) if k is not None else "-"
             ws = te_b.get(d, [])
-            dk = "*" if d == "-" else d
+            dk = "*" if (d == "-" or not phan_tang) else d
             du = "co" if dk in stats and all(stats[dk].get(i) is not None for i in dims_idx
                                               if stats["*"].get(i) is not None) else "khong"
             line = "%s\t%s\t%d\t%d\t%d\t%d\t%s" % (
@@ -885,12 +916,13 @@ def main(argv):
                 fh.write("dai\tkhoang_toc_do\thuan_luyen\tkiem_tra\tkt_nen\tkt_tan_cong\tdu_mau\n")
                 fh.write("\n".join(dai_lines) + "\n")
             with open(os.path.join(outdir, "scores_%s.tsv" % b), "w") as fh:
-                fh.write("start_ns\tstop_ns\ttid\tnguon\tdiem\tnhan_tan_cong\tmuc\tsong_sinh\tdai\tdai_dung\ttoc_do\ttrong_tan_cong\n")
+                fh.write("start_ns\tstop_ns\ttid\tnguon\tdiem\tnhan_tan_cong\tmuc\tsong_sinh\tdai\tdai_dung\ttoc_do\ttrong_tan_cong\tchieu_max\n")
                 for w in scored:
-                    fh.write("%d\t%d\t%s\t%s\t%.6f\t%s\t%s\t%s\t%s\t%s\t%s\t%d\n" % (
+                    fh.write("%d\t%d\t%s\t%s\t%.6f\t%s\t%s\t%s\t%s\t%s\t%s\t%d\t%s\n" % (
                         w.start, w.stop, w.tid, w.nguon, w.score, w.atk or "",
                         w.muc if w.muc is not None else "0", w.twin or "", w.band or "",
-                        w.used, ("%.1f" % w.rate) if w.rate == w.rate else "", 1 if w.trong else 0))
+                        w.used, ("%.1f" % w.rate) if w.rate == w.rate else "", 1 if w.trong else 0,
+                        dims_all[w.cmax] if w.cmax >= 0 else ""))
         tb = tradeoff(scored)
         if not tb:
             print("khong cham duoc")
@@ -924,9 +956,14 @@ def main(argv):
             if thr == thr:
                 bao_cao_nguong("%.2f" % lv, thr, ctx, sink)
         # (B) diem danh doi theo NGAN SACH bao dong gia tren tap huan luyen (1.3.1)
-        train_scores = sorted((score(w, stats, dims_idx, order_cache) for w in train), reverse=True)
-        train_scores = [x for x in train_scores if x == x]
+        train_scored = [w for w in train if score(w, stats, dims_idx, order_cache, phan_tang) == w.score and w.score == w.score]
+        train_scores = sorted((w.score for w in train_scored), reverse=True)
         train_asc = train_scores[::-1]
+        if train_scores:
+            q99 = train_scores[max(0, int(0.01 * len(train_scores)) - 1)]
+            top = dem_theo([w for w in train_scored if w.score >= q99], lambda w: dims_all[w.cmax] if w.cmax >= 0 else "-")
+            print("chieu_max cua 1 %% diem huan luyen cao nhat (>= %s): %s" % (
+                f4(q99), "  ".join("%s:%d" % (k, len(v)) for k, v in sorted(top.items(), key=lambda kv: -len(kv[1])))))
         print("ngan_sach\tnguong\tbdg_huan_luyen(n=%d)\tbdg_kiem_tra_benign\tbdg_nen_kiem_tra\tbdg_song_sinh\tbdg_nen_trong_tan_cong\tphat_hien" % len(train_scores))
         for bb in ngan_sach:
             thr = nguong_ngan_sach(train_scores, bb)
@@ -941,6 +978,9 @@ def main(argv):
             det = ti_le(atk_all, thr)[0]
             print("%g\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % (bb, f4(thr), f4(far_tr_in), f4(far), f4(far_nen), f4(far_tw), f4(far_trg), f4(det)))
             summary_ns.append((b, bb, thr, far, far_tr_in, far_nen, far_tw, far_trg, det, len(train_scores), len(benign_all), len(nen_kt), len(atk_all)))
+            vuot = dem_theo([w for w in benign_all if w.score >= thr], lambda w: dims_all[w.cmax] if w.cmax >= 0 else "-")
+            print("  chieu_max cua cua so benign vuot nguong: " + "  ".join(
+                "%s:%d" % (k, len(v)) for k, v in sorted(vuot.items(), key=lambda kv: -len(kv[1]))))
             bao_cao_nguong("%g" % bb, thr, ctx, sink_ns)
         # (C) duong tranh chap: nguong theo phan vi nen kiem tra, bdg theo muc
         mucs = sorted({w.muc if w.muc is not None else "0" for w in benign_all})
@@ -990,7 +1030,7 @@ def main(argv):
                     fh.write("%s\t%g\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%d\t%d\t%d\t%d\n" % (
                         r[0], r[1], f4(r[2]), f4(r[3]), f4(r[4]), f4(r[5]), f4(r[6]), f4(r[7]), f4(r[8]), r[9], r[10], r[11], r[12]))
         with open(os.path.join(outdir, "tham_so.txt"), "w") as fh:
-            fh.write("c5_score %s\n%s\ncat_huan_luyen=%d\ndai_che_do=%s\n" % (VERSION, " ".join(argv), cut, che_do))
+            fh.write("c5_score %s\n%s\ncat_huan_luyen=%d\ndai_che_do=%s\nphan_tang=%s\n" % (VERSION, " ".join(argv), cut, che_do, phan_tang))
     print("\n(Doc: tai cung muc phat hien, so bao_dong_gia giua cac nhanh; bang 'theo muc' la truc hoanh hinh C5; "
           "'bdg_nen_kiem_tra' la bao dong gia tren nen sach ngay 6-7; 'theo dai' phai can bang giua ngay/dem; "
           "bang 'ngan_sach' va 'duong tranh chap' la diem danh doi khong can nhan tan cong.)")
@@ -1023,3 +1063,7 @@ if __name__ == "__main__":
 #      nhan; khong thay the diem theo muc phat hien. Toan hoc khong doi; cac
 #      file cu giu nguyen dinh dang, file moi *_ns_*.tsv, tom_tat_ngan_sach.tsv,
 #      duong_tranh_chap_*.tsv.
+# 1.3.2 07/11/2026  Chan doan sau R040 (nguong 1e5..4e7 = chieu MAD 0): cot
+#      chieu_max trong scores_*, file chuan_<branch>.tsv (dai x chieu: n, median,
+#      MAD, mad0), phan bo chieu_max; khong-mode van gan dai de bao cao; cot x_*
+#      (ung vien cua c5_extract v2) khong cham. Diem, tradeoff, tom_tat khong doi.

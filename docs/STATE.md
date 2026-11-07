@@ -133,5 +133,5 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 ## Việc đang chạy
 
-Không có. M6i-b xong (R040 viết lại): hồi quy v1.3.1 khớp R039; lab ba cách và production `toc_do` ở ngân sách 0,001/0,01/0,05. Tag `m6i`. Không chạy LAB-1c.
+M6i-c1 đang làm: c5_score v1.3.2 đã cài; chấm score-v132-*; viết c5_extract_v2; trích features_all_v2; bảng đáp ứng. Tag mục tiêu `m6i.1`.
 
