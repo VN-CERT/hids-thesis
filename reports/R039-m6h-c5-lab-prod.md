@@ -1,6 +1,6 @@
 # R039 — M6h: C5 trên lab và production
 
-1. Số báo cáo: R039. Ngày giờ: 2026-11-07 08:17 (+07). Mốc: M6h. Git: tag `m6h` (hash ghi ở cuối sau khi commit).
+1. Số báo cáo: R039. Ngày giờ: 2026-11-07 08:17 (+07). Mốc: M6h. Git: tag `m6h` (commit chứa báo cáo này).
 
 2. Mục tiêu
 
@@ -276,4 +276,4 @@ Không có.
 
 10. Lỗi còn tồn tại, việc tiếp theo
 
-Không có job đang chạy. Chưa push trong bước viết báo cáo này; push kèm tag `m6h` ngay sau commit.
+Không có job đang chạy.
