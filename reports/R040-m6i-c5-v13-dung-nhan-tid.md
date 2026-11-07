@@ -1,6 +1,6 @@
 # R040 — M6i-b: ngân sách báo động giả (viết lại bản đầy đủ)
 
-1. Số báo cáo: R040. Ngày giờ: 2026-11-07 10:20 (+07). Mốc: M6i-b. Git: `c5_score.py` v1.3.1 ở commit `17250c4`. Tag `m6i` gắn trên commit của báo cáo này.
+1. Số báo cáo: R040. Ngày giờ: 2026-11-07 10:20 (+07). Mốc: M6i-b. Git: `c5_score.py` v1.3.1 ở commit `17250c4`. Tag `m6i` = `d806f16`. Commit báo cáo (kể cả sửa đóng khối mã): xem `git log -1`.
 
 2. Mục tiêu
 
@@ -250,7 +250,8 @@ nginx	120	529	5861.8	5606.8	5902.0
 nginx	200	498	6475.2	6284.9	6513.9
 postgres	15	545	1049.4	896.6	1068.0
 postgres	40	516	2538.6	2350.1	2566.8
-postgres	100	1027	5902.1	5673.8	6502.6```
+postgres	100	1027	5902.1	5673.8	6502.6
+```
 
 4176/4638 = 0,9004. Trung vị tăng theo muc trong từng dich_vu. «theo dai (nen kiem tra)» tại ngân sách 0,01 có 15 dải có mẫu trên mỗi nhánh (mục (d) toc_do).
 
@@ -1008,4 +1009,4 @@ Không có.
 
 10. Lỗi còn tồn tại, việc tiếp theo
 
-Tag `m6i` và push ở cuối nhiệm vụ này. Không chạy LAB-1c.
+Tag `m6i` = `d806f16` đã push lên `github` (`master`). Không chạy LAB-1c.
