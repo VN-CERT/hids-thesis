@@ -22,6 +22,12 @@ def main():
     ap.add_argument("--duration-s", type=float, required=True)
     ap.add_argument("--url", default="http://127.0.0.1:18080/file4k.bin")
     ap.add_argument("--log", required=True)
+    ap.add_argument(
+        "--jitter-pct",
+        type=float,
+        default=50.0,
+        help="jitter %% tren period (0 = co dinh; mac dinh 50 = LAB-1 B1/N1)",
+    )
     args = ap.parse_args()
 
     # doi ten tien trinh (B1 ten la, N1 ten hop le)
@@ -63,8 +69,9 @@ def main():
                 log.write(f"\t{err}")
             log.write("\n")
             log.flush()
-            # jitter 0-50%
-            delay = args.period_s * (1.0 + random.uniform(0.0, 0.50))
+            # jitter 0..jitter-pct % (0 = chu ky co dinh, LAB-1c-phu)
+            j = max(0.0, float(args.jitter_pct)) / 100.0
+            delay = args.period_s * (1.0 + random.uniform(0.0, j))
             # khong vuot duration
             remain = t_end - time.monotonic()
             if remain <= 0:
