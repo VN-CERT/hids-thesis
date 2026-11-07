@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="480">
+<rect width="100%" height="100%" fill="white"/>
+<text x="550" y="24" font-family="sans-serif" font-size="14" text-anchor="middle">Bao dong gia theo muc tranh chap, ngan sach 0.01</text>
+<line x1="60" y1="50" x2="60" y2="390" stroke="#333"/>
+<line x1="60" y1="390" x2="1080" y2="390" stroke="#333"/>
+<text x="94.0" y="472" font-family="sans-serif" font-size="10" text-anchor="end" transform="rotate(-40 94.0 472)">0</text>
+<rect x="68.5" y="385.8" width="16.0" height="4.2" fill="#1f77b4"/>
+<rect x="85.5" y="386.7" width="16.0" height="3.3" fill="#ff7f0e"/>
+<rect x="102.5" y="386.7" width="16.0" height="3.3" fill="#2ca02c"/>
+<text x="162.0" y="472" font-family="sans-serif" font-size="10" text-anchor="end" transform="rotate(-40 162.0 472)">2</text>
+<rect x="136.5" y="390.0" width="16.0" height="0.0" fill="#1f77b4"/>
+<rect x="153.5" y="390.0" width="16.0" height="0.0" fill="#ff7f0e"/>
+<rect x="170.5" y="390.0" width="16.0" height="0.0" fill="#2ca02c"/>
+<text x="230.0" y="472" font-family="sans-serif" font-size="10" text-anchor="end" transform="rotate(-40 230.0 472)">4</text>
+<rect x="204.5" y="390.0" width="16.0" height="0.0" fill="#1f77b4"/>
+<rect x="221.5" y="390.0" width="16.0" height="0.0" fill="#ff7f0e"/>
+<rect x="238.5" y="390.0" width="16.0" height="0.0" fill="#2ca02c"/>
+<text x="298.0" y="472" font-family="sans-serif" font-size="10" text-anchor="end" transform="rotate(-40 298.0 472)">D1-8</text>
+<rect x="272.5" y="390.0" width="16.0" height="0.0" fill="#1f77b4"/>
+<rect x="289.5" y="384.4" width="16.0" height="5.6" fill="#ff7f0e"/>
+<rect x="306.5" y="384.4" width="16.0" height="5.6" fill="#2ca02c"/>
+<text x="366.0" y="472" font-family="sans-serif" font-size="10" text-anchor="end" transform="rotate(-40 366.0 472)">D1-16</text>
+<rect x="340.5" y="387.2" width="16.0" height="2.8" fill="#1f77b4"/>
+<rect x="357.5" y="384.4" width="16.0" height="5.6" fill="#ff7f0e"/>
+<rect x="374.5" y="384.4" width="16.0" height="5.6" fill="#2ca02c"/>
+<text x="434.0" y="472" font-family="sans-serif" font-size="10" text-anchor="end" transform="rotate(-40 434.0 472)">D3-4</text>
+<rect x="408.5" y="390.0" width="16.0" height="0.0" fill="#1f77b4"/>
+<rect x="425.5" y="390.0" width="16.0" height="0.0" fill="#ff7f0e"/>
+<rect x="442.5" y="390.0" width="16.0" height="0.0" fill="#2ca02c"/>
+<text x="502.0" y="472" font-family="sans-serif" font-size="10" text-anchor="end" transform="rotate(-40 502.0 472)">D3-7</text>
+<rect x="476.5" y="390.0" width="16.0" height="0.0" fill="#1f77b4"/>
+<rect x="493.5" y="390.0" width="16.0" height="0.0" fill="#ff7f0e"/>
+<rect x="510.5" y="390.0" width="16.0" height="0.0" fill="#2ca02c"/>
+<text x="570.0" y="472" font-family="sans-serif" font-size="10" text-anchor="end" transform="rotate(-40 570.0 472)">B4cu-0</text>
+<rect x="544.5" y="390.0" width="16.0" height="0.0" fill="#1f77b4"/>
+<rect x="561.5" y="390.0" width="16.0" height="0.0" fill="#ff7f0e"/>
+<rect x="578.5" y="390.0" width="16.0" height="0.0" fill="#2ca02c"/>
+<text x="638.0" y="472" font-family="sans-serif" font-size="10" text-anchor="end" transform="rotate(-40 638.0 472)">B4cu-2</text>
+<rect x="612.5" y="390.0" width="16.0" height="0.0" fill="#1f77b4"/>
+<rect x="629.5" y="390.0" width="16.0" height="0.0" fill="#ff7f0e"/>
+<rect x="646.5" y="390.0" width="16.0" height="0.0" fill="#2ca02c"/>
+<text x="706.0" y="472" font-family="sans-serif" font-size="10" text-anchor="end" transform="rotate(-40 706.0 472)">B4cu-4</text>
+<rect x="680.5" y="390.0" width="16.0" height="0.0" fill="#1f77b4"/>
+<rect x="697.5" y="390.0" width="16.0" height="0.0" fill="#ff7f0e"/>
+<rect x="714.5" y="390.0" width="16.0" height="0.0" fill="#2ca02c"/>
+<text x="774.0" y="472" font-family="sans-serif" font-size="10" text-anchor="end" transform="rotate(-40 774.0 472)">N4cu-0</text>
+<rect x="748.5" y="390.0" width="16.0" height="0.0" fill="#1f77b4"/>
+<rect x="765.5" y="390.0" width="16.0" height="0.0" fill="#ff7f0e"/>
+<rect x="782.5" y="390.0" width="16.0" height="0.0" fill="#2ca02c"/>
+<text x="842.0" y="472" font-family="sans-serif" font-size="10" text-anchor="end" transform="rotate(-40 842.0 472)">N4cu-2</text>
+<rect x="816.5" y="390.0" width="16.0" height="0.0" fill="#1f77b4"/>
+<rect x="833.5" y="390.0" width="16.0" height="0.0" fill="#ff7f0e"/>
+<rect x="850.5" y="390.0" width="16.0" height="0.0" fill="#2ca02c"/>
+<text x="910.0" y="472" font-family="sans-serif" font-size="10" text-anchor="end" transform="rotate(-40 910.0 472)">N4cu-4</text>
+<rect x="884.5" y="390.0" width="16.0" height="0.0" fill="#1f77b4"/>
+<rect x="901.5" y="390.0" width="16.0" height="0.0" fill="#ff7f0e"/>
+<rect x="918.5" y="390.0" width="16.0" height="0.0" fill="#2ca02c"/>
+<text x="978.0" y="472" font-family="sans-serif" font-size="10" text-anchor="end" transform="rotate(-40 978.0 472)">D1-2</text>
+<rect x="952.5" y="390.0" width="16.0" height="0.0" fill="#1f77b4"/>
+<rect x="969.5" y="390.0" width="16.0" height="0.0" fill="#ff7f0e"/>
+<rect x="986.5" y="390.0" width="16.0" height="0.0" fill="#2ca02c"/>
+<text x="1046.0" y="472" font-family="sans-serif" font-size="10" text-anchor="end" transform="rotate(-40 1046.0 472)">D1-4</text>
+<rect x="1020.5" y="390.0" width="16.0" height="0.0" fill="#1f77b4"/>
+<rect x="1037.5" y="390.0" width="16.0" height="0.0" fill="#ff7f0e"/>
+<rect x="1054.5" y="390.0" width="16.0" height="0.0" fill="#2ca02c"/>
+<rect x="60" y="36" width="12" height="12" fill="#1f77b4"/>
+<text x="76" y="46" font-family="sans-serif" font-size="11">AGG</text>
+<rect x="150" y="36" width="12" height="12" fill="#ff7f0e"/>
+<text x="166" y="46" font-family="sans-serif" font-size="11">BASE</text>
+<rect x="240" y="36" width="12" height="12" fill="#2ca02c"/>
+<text x="256" y="46" font-family="sans-serif" font-size="11">PHANRA</text>
+</svg>

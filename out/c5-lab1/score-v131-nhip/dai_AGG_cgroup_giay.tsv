@@ -1,0 +1,6 @@
+dai	khoang_toc_do	huan_luyen	kiem_tra	kt_nen	kt_tan_cong	du_mau
+nginx120|postgres100	-	7260	3313	2957	0	co
+nginx120|postgres40	-	2	0	0	0	khong
+nginx200|postgres100	-	7226	2821	2821	0	co
+nginx20|postgres15	-	7212	3644	2894	0	co
+nginx50|postgres40	-	7221	3182	2894	0	co

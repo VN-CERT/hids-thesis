@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520">
+<rect width="100%" height="100%" fill="white"/>
+<text x="450" y="24" font-family="sans-serif" font-size="14" text-anchor="middle">Duong tranh chap: bdg nen sach (log) -> D1-16 va D3-7</text>
+<line x1="70" y1="50" x2="70" y2="460" stroke="#333"/>
+<line x1="70" y1="460" x2="880" y2="460" stroke="#333"/>
+<polyline fill="none" stroke="#1f77b4" stroke-width="2" points="70.0,460.0 189.4,460.0 279.8,460.0 396.6,460.0 488.2,456.7 579.9,456.7 699.3,456.7 789.5,456.7 880.0,417.0"/>
+<polyline fill="none" stroke="#1f77b4" stroke-width="2" stroke-dasharray="4 3" points="70.0,460.0 189.4,460.0 279.8,460.0 396.6,460.0 488.2,460.0 579.9,460.0 699.3,460.0 789.5,460.0 880.0,460.0"/>
+<polyline fill="none" stroke="#ff7f0e" stroke-width="2" points="99.1,459.7 189.4,459.7 279.8,454.3 399.2,453.2 489.5,453.2 579.9,452.9 699.3,438.2 789.7,427.6 880.0,365.6"/>
+<polyline fill="none" stroke="#ff7f0e" stroke-width="2" stroke-dasharray="4 3" points="99.1,460.0 189.4,460.0 279.8,460.0 399.2,460.0 489.5,460.0 579.9,454.8 699.3,451.8 789.7,420.1 880.0,378.3"/>
+<polyline fill="none" stroke="#2ca02c" stroke-width="2" points="99.1,460.0 189.4,460.0 279.8,454.3 399.2,453.2 489.5,453.2 579.9,452.9 699.3,438.2 789.7,428.2 880.0,373.0"/>
+<polyline fill="none" stroke="#2ca02c" stroke-width="2" stroke-dasharray="4 3" points="99.1,460.0 189.4,460.0 279.8,460.0 399.2,460.0 489.5,460.0 579.9,454.8 699.3,452.6 789.7,419.8 880.0,378.0"/>
+<text x="70" y="42" font-family="sans-serif" font-size="11" fill="#ff7f0e">BASE D1-16 net lien</text>
+<text x="230" y="42" font-family="sans-serif" font-size="11" fill="#ff7f0e">BASE D3-7 net dut</text>
+<text x="475" y="512" font-family="sans-serif" font-size="11" text-anchor="middle">bdg nen sach (log)</text>
+</svg>

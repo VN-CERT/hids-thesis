@@ -1,0 +1,16 @@
+branch	muc_phat_hien	nguong	bao_dong_gia	bdg_nen_kiem_tra	bdg_song_sinh	bdg_nen_trong_tan_cong	n_benign	n_nen_kiem_tra	n_song_sinh	n_nen_trong_tan_cong
+AGG_cgroup_giay	0.50	nan	nan	nan	nan	nan	12960	11566	0	0
+AGG_cgroup_giay	0.80	nan	nan	nan	nan	nan	12960	11566	0	0
+AGG_cgroup_giay	0.90	nan	nan	nan	nan	nan	12960	11566	0	0
+AGG_cgroup_giay	0.95	nan	nan	nan	nan	nan	12960	11566	0	0
+AGG_cgroup_giay	1.00	nan	nan	nan	nan	nan	12960	11566	0	0
+BASELINE_dt_tho	0.50	nan	nan	nan	nan	nan	168083	151519	0	0
+BASELINE_dt_tho	0.80	nan	nan	nan	nan	nan	168083	151519	0	0
+BASELINE_dt_tho	0.90	nan	nan	nan	nan	nan	168083	151519	0	0
+BASELINE_dt_tho	0.95	nan	nan	nan	nan	nan	168083	151519	0	0
+BASELINE_dt_tho	1.00	nan	nan	nan	nan	nan	168083	151519	0	0
+PHANRA_5tp	0.50	nan	nan	nan	nan	nan	168083	151519	0	0
+PHANRA_5tp	0.80	nan	nan	nan	nan	nan	168083	151519	0	0
+PHANRA_5tp	0.90	nan	nan	nan	nan	nan	168083	151519	0	0
+PHANRA_5tp	0.95	nan	nan	nan	nan	nan	168083	151519	0	0
+PHANRA_5tp	1.00	nan	nan	nan	nan	nan	168083	151519	0	0

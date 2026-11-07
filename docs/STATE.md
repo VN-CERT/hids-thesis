@@ -133,5 +133,5 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 ## Việc đang chạy
 
-Không có. M6i dừng ở bước nhãn theo tid (R040): đợt lớp B có 0 tid trong `proc-*.tsv.zst`. Chưa tag `m6i`.
+Không có. M6i-b xong (R040 viết lại): hồi quy v1.3.1 khớp R039; lab ba cách và production `toc_do` ở ngân sách 0,001/0,01/0,05. Tag `m6i`. Không chạy LAB-1c.
 

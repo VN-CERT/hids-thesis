@@ -42,4 +42,4 @@
 | [R038](R038-m6g-c5-pipeline.md) | 2026-10-26 09:34 | M6g | Đường ống C5: extract streaming khớp detector 1e-6; pipeline + SVG; thử 50M bản ghi (~48 phút, RSS đỉnh ~410 MB); ghi cách rsync LAB-1 từ 201. | Xong, tag `m6g`. DỪNG. |
 | [R038](R038-m6g-c5-pipeline.md) | 2026-10-26 10:42 | M6g-b | Phụ lục: nguon/muc/bảng kiểm; hồi quy rec-export N cột đầu YES (g3+t4); 10M ~13 phút RSS 1,2 GB. | Xong, tag `m6g.1`. DỪNG. |
 | [R039](R039-m6h-c5-lab-prod.md) | 2026-11-07 08:17 | M6h | C5 trên lab và production: tom_tat lab, báo động giả production, overhead FINAL. | Xong, tag `m6h`. |
-| [R040](R040-m6i-c5-v13-dung-nhan-tid.md) | 2026-11-07 09:43 | M6i | Hồi quy v1.3 khớp R039. Dừng ở nhãn theo tid: đợt B có 0 tid trong proc. | Dừng trước chấm. Không tag `m6i`. |
+| [R040](R040-m6i-c5-v13-dung-nhan-tid.md) | 2026-11-07 10:20 | M6i-b | Viết lại R040: giữ mục dừng nhãn tid; chấm ngân sách 0,001/0,01/0,05 lab ba cách và production toc_do. | Xong, tag `m6i`. |
