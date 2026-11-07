@@ -133,11 +133,5 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 ## Việc đang chạy
 
-- Lab C5 đã xong 2026-11-03 11:27 (`bang_kiem_OK`, `out/c5-lab1/`). Job cũ dừng vì production thiếu `start_mono_ns`.
-- **hids-m6h-prod** (M6h: pipeline production, không rsync lại)
-  - lệnh: `systemd-run --unit=hids-m6h-prod --collect bash -c 'cd /root/hids && bash scripts/c5_m6h_prod.sh'`
-  - bắt đầu: 2026-11-06
-  - log: `out/jobs/m6h-prod.log`
-  - trạng thái: `out/jobs/m6h-prod.status`
-  - mốc: `khoi_dong_monotonic_s=2858.09` → `start_mono_ns=2858090000000`; train = start+5 ngày; cửa sổ 7 ngày chỉ cho nen
+Không có. M6h đã chạy xong lab và production. Báo cáo `reports/R039-m6h-c5-lab-prod.md`. Tag `m6h`.
 
