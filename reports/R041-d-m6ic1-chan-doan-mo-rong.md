@@ -1,6 +1,6 @@
 # R041-d — chẩn đoán mở rộng C5 v2
 
-1. Số: R041-d. Ngày giờ: 2026-11-08 20:40 (+07). Mốc: M6i-c1. Commit: `13197af`.
+1. Số: R041-d. Ngày giờ: 2026-11-08 20:40 (+07). Mốc: M6i-c1. Commit: `862bb80`.
 
 2. Mục tiêu: bảng chẩn đoán mở rộng trên features_all_v2 lab + lab1c; không chấm, không kết luận.
 
@@ -398,7 +398,7 @@ N4-nen-c-20261107	958172	293	-1	1.10138e+07	1.09304e+07	2.20002e+10	7.76062e-07	
 
 6. File: `out/c5-lab1/dap-ung/R041-d/*.tsv`.
 
-7. Quyết định tự đưa: 13 tid = top 13 quan_the_nen; muc_keep = BEN-*/r1/r2, bn-D1-*, B4cu/N4cu, nen-d6-7; MAD trên nền cùng lớp.
+7. Quyết định tự đưa: 13 tid = top 13 quan_the_nen; muc_keep = BEN-*/r1/r2, bn-D1-*, B4cu/N4cu, nen-d6-7; MAD trên nền cùng lớp. Lớp postgres k=−6 không có hàng trong (d): với n≥30 thì k=floor(log2(n/300)) ≥ −4, không đạt −6.
 
 8. (không)
 
