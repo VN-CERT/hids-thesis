@@ -161,7 +161,7 @@ import os
 import sys
 from array import array
 
-VERSION = "1.4.3"
+VERSION = "1.4.4"
 EPS = 1e-9
 DET_LEVELS = (0.5, 0.8, 0.9, 0.95, 1.0)
 NGAN_SACH_MAC_DINH = "0.001,0.01,0.05"
@@ -216,7 +216,7 @@ def f4(v):
 
 class Row(object):
     __slots__ = ("branch", "tid", "start", "stop", "nguon", "f", "band", "rate",
-                 "score", "used", "atk", "twin", "muc", "trong", "cmax", "khoa", "k", "cg", "npmu", "nrec", "tid_rieng", "_st")
+                 "score", "used", "atk", "twin", "muc", "trong", "cmax", "khoa", "k", "cg", "npmu", "nrec", "tid_rieng", "_st", "muc_nhan")
 
     def __init__(self, branch, tid, start, stop, nguon, f):
         self.branch = branch
@@ -241,6 +241,7 @@ class Row(object):
         self.nrec = None     # n ban ghi cua cua so (cot n); None = khong co
         self.tid_rieng = False
         self._st = NAN
+        self.muc_nhan = None   # muc_tranh_chap tu NHAN (dung cho AUROC ghep cung muc)
 
 
 def read_features(path, mien_log=True):
@@ -350,7 +351,7 @@ def read_nhan(path):
         run = p[ir].strip() if ir is not None and ir < len(p) else ""
         tag = ident + ("@" + muc if muc else "")
         out.append({"lo": lo, "hi": hi, "tag": tag, "lop": lop, "run": run,
-                    "twin": lop.upper().startswith("N")})
+                    "muc_tc": muc, "twin": lop.upper().startswith("N")})
     seen = {}
     for lb in out:
         seen[lb["tag"]] = seen.get(lb["tag"], 0) + 1
@@ -447,6 +448,20 @@ def _gan(w, cands):
         elif ol > best_al:
             best_a, best_al = lb["tag"], ol
     return best_a, (best_t if best_a is None else None)
+
+
+def muc_tu_nhan(w, labels, tid_labels, theo_tid):
+    """Tra ve muc_tranh_chap tu NHAN giao voi cua so (uu tien nhan theo tid neu co)."""
+    cands = labels
+    if theo_tid:
+        tl = tid_labels.get(chuan_tid(w.tid), None)
+        # tid_labels khong giu muc_tc; dung labels de lay muc theo run/thoi gian
+    best = None; best_ol = 0
+    for lb in labels:
+        ol = overlap_len(w, lb["lo"], lb["hi"])
+        if ol > best_ol:
+            best, best_ol = lb, ol
+    return best.get("muc_tc") if best else None
 
 
 def gan_nhan(w, labels, tid_labels, theo_tid):
@@ -964,6 +979,31 @@ def bao_cao_nguong(nhan_dong, thr, ctx, sink):
         print("  dot trong D=%.0fs: " % D + "  ".join(parts))
 
 
+def auroc_rank(pos, neg):
+    """AUROC bang hang (Mann-Whitney U). pos/neg: list gia tri (da bo nan).
+    Tra ve (auroc, n_pos, n_neg). AUROC 0.5 = ngau nhien; doi xung quanh 0.5
+    nen bao |auroc-0.5| de do suc tach bat ke chieu."""
+    pos = [x for x in pos if x == x]; neg = [x for x in neg if x == x]
+    npos, nneg = len(pos), len(neg)
+    if npos == 0 or nneg == 0:
+        return (NAN, npos, nneg)
+    allv = sorted([(v, 1) for v in pos] + [(v, 0) for v in neg])
+    # gan hang trung binh (xu ly trung)
+    ranks = [0.0] * len(allv)
+    i = 0
+    while i < len(allv):
+        j = i
+        while j + 1 < len(allv) and allv[j + 1][0] == allv[i][0]:
+            j += 1
+        r = (i + j) / 2.0 + 1.0
+        for k in range(i, j + 1):
+            ranks[k] = r
+        i = j + 1
+    sum_pos = sum(ranks[k] for k in range(len(allv)) if allv[k][1] == 1)
+    auc = (sum_pos - npos * (npos + 1) / 2.0) / (npos * nneg)
+    return (auc, npos, nneg)
+
+
 def main(argv):
     ap = argparse.ArgumentParser()
     ap.add_argument("--features", required=True)
@@ -991,6 +1031,7 @@ def main(argv):
     ap.add_argument("--mien-tuyen-tinh", action="store_true", help="TAT mien log (de hoi quy 1.3.2)")
     ap.add_argument("--phan-tang-tai", action="store_true", help="BAT dai tai may (toc_do/nhip) lam ho so (mac dinh TAT o 1.4)")
     ap.add_argument("--giu-mad0", action="store_true", help="GIU chieu MAD=0 (thay EPS) thay vi bo; mac dinh BO khi mien log (1.4.1)")
+    ap.add_argument("--auroc", action="store_true", help="CHE DO DO LUONG (1.4.4): tinh AUROC don-chieu tan cong vs nen cung muc; khong cham detector, in bang roi thoat")
     ap.add_argument("--out", default=None)
     a = ap.parse_args(argv[1:])
 
@@ -1018,8 +1059,68 @@ def main(argv):
     for w in rows:
         if labels:
             gan_nhan(w, labels, tid_labels, theo_tid)
+            w.muc_nhan = muc_tu_nhan(w, labels, tid_labels, theo_tid)
         if muc:
             gan_muc(w, muc)
+    if a.auroc:
+        # CHE DO AUROC: voi moi nhanh, moi chieu, tinh AUROC phan biet
+        # cua so TAN CONG vs (A) nen muc 0, va (B) SONG SINH cung muc (benign-cung-dieu-kien).
+        # So (B) chat hon: loai hieu ung tai. Khong mo hinh hoc; chi thong ke hang.
+        import itertools
+        out_lines = ["branch\tchieu\tso_sanh\tmuc\tauroc\tabs_0.5\tn_tan_cong\tn_nen"]
+        print("# AUROC don-chieu (1.4.4): tan cong vs nen muc 0 (moi_truong), va vs song sinh cung muc (co_kiem_soat)")
+        print("# auroc~0.5 = khong tach; |auroc-0.5| lon = tach manh. KHONG mo hinh hoc, chi Mann-Whitney.")
+        for b in sorted({w.branch for w in rows}):
+            rb = [w for w in rows if w.branch == b]
+            dims_idx = [i for i, d in enumerate(dims_all) if not d.startswith("ctx_")
+                        and (d.startswith("dt_") or d.startswith("own_") or d.startswith("cpu_")
+                             or d.startswith("x_arr_") or d.startswith("x_inst") or d == "cpi_med")]
+            atk = [w for w in rb if w.atk is not None]
+            if not atk:
+                continue
+            # muc cua tung cua so tan cong
+            mucs = sorted({(w.muc_nhan if w.muc_nhan not in (None, "") else (w.muc if w.muc is not None else "0")) for w in atk})
+            nen0 = [w for w in rb if w.atk is None and w.twin is None and (w.muc is None or w.muc == "0")]
+            for di in dims_idx:
+                d = dims_all[di]
+                atk_v_all = [w.f[di] for w in atk]
+                # (A) vs nen muc 0
+                au, npos, nneg = auroc_rank(atk_v_all, [w.f[di] for w in nen0])
+                if au == au:
+                    out_lines.append("%s\t%s\tvs_nen_muc0\t*\t%.4f\t%.4f\t%d\t%d" % (b, d, au, abs(au-0.5), npos, nneg))
+                # (B) vs song sinh cung muc, tung muc
+                for m in mucs:
+                    def lvl(w):
+                        # uu tien muc tu NHAN (ghep dung tai cho ca tan cong lan song sinh);
+                        # fallback muc.tsv neu nhan khong co
+                        mm = w.muc_nhan if w.muc_nhan not in (None, "") else (w.muc if w.muc is not None else "0")
+                        return mm if mm not in (None, "") else "0"
+                    atk_m = [w.f[di] for w in atk if lvl(w) == m]
+                    twin_m = [w.f[di] for w in rb if w.twin is not None and lvl(w) == m]
+                    au2, np2, nn2 = auroc_rank(atk_m, twin_m)
+                    if au2 == au2:
+                        out_lines.append("%s\t%s\tvs_song_sinh\t%s\t%.4f\t%.4f\t%d\t%d" % (b, d, m, au2, abs(au2-0.5), np2, nn2))
+        for L in out_lines:
+            print(L)
+        if outdir:
+            os.makedirs(outdir, exist_ok=True)
+            with open(os.path.join(outdir, "auroc_don_chieu.tsv"), "w") as fh:
+                fh.write("\n".join(out_lines) + "\n")
+        # tom tat: chieu nao co |auroc-0.5| lon nhat
+        best = {}
+        for L in out_lines[1:]:
+            c = L.split("\t")
+            key = (c[0], c[2])
+            try:
+                v = float(c[5])
+            except ValueError:
+                continue
+            if key not in best or v > best[key][0]:
+                best[key] = (v, c[1], c[3], c[4])
+        print("\n# TOM TAT: chieu tach manh nhat moi (nhanh, so_sanh):")
+        for (br, ss), (v, ch, m, au) in sorted(best.items()):
+            print("  %s / %s: %s (muc %s) |auroc-0.5|=%.4f auroc=%s" % (br, ss, ch, m, v, au))
+        return
     tmin = min(w.start for w in rows)
     tmax = max(w.start for w in rows)
     cut = a.train_until if a.train_until else tmin + int(0.7 * (tmax - tmin))

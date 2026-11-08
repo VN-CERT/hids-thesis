@@ -222,3 +222,26 @@ Câu hỏi khoa học (ghi R045 mục đầu, nguyên văn): "R043/R044: bộ ch
 
 5. R045 (in nguyên văn): (a) hồi quy; (b) BẢNG ABLATION §2 đầy đủ; (c) §3 x_inst dưới tấn công; (d) H-ablation; (e) thời gian/RSS; (f) sha256 7 file (c5_score v1.4.3); "Thay đổi ngoài phạm vi" + git diff --stat; (g) mục 8 KẾT LUẬN THẲNG: tập chiều nào (nếu có) tách tấn công bộ nhớ ở báo động giả thấp; x_inst có đổi dưới tấn công không; kết luận rơi vào (1)/(2)/(3) của câu hỏi đầu — kèm số. Commit, tag m6i.5, push.
 6. Đóng gói lưu trữ (sau push): /root/chep_file/luu-tru/HIDS-R045-<ngày>.zip gồm git bundle --all, reports/R039..R045 + INDEX, docs/tasks/M6i.md + STATE.md, analysis/{detector_c5.py,c5_score.py} + SHA256SUMS, out/c5-lab1/hinh-v14?/*.svg, out/c5-lab1/r04?-tables; KHÔNG .bin/features_*/scores_* lớn, KHÔNG production thô. In cây + dung lượng + sha256. DỪNG.
+
+## M6i-c5
+
+NHIỆM VỤ M6i-c5 — AUROC ĐƠN-CHIỀU: chặn phản biện "ngưỡng dở" và định lượng R045 (c5_score v1.4.4; detector v1.3 GIỮ NGUYÊN) (195, repo /root/hids). Nối vào docs/tasks/M6i.md mục "M6i-c5". Báo cáo R046, tag m6i.6. KHÔNG đo lại, KHÔNG rsync, KHÔNG ghi đè thư mục cũ (ra -v144-). Không sửa file kiến trúc sư. Không kết luận đạt/không.
+Điều kiện: CAI in "XONG": analysis/c5_score.py v1.4.4 sha256 c8526ba14a46b3e8ce2a2040e61e0840e51eb6a22b7eee3303c739346f06d0e7. Kiểm sha, commit "C5: c5_score v1.4.4 (AUROC don-chieu, che do do luong) (kien truc su)".
+Mục đích (ghi R046 mục đầu, nguyên văn): "R045 (ablation) cho thấy detector ngưỡng max|z| trên đặc trưng phân rã không tách lớp tấn công đổi-nhịp ở báo động giả thấp; cột song sinh chứng minh cú nhảy x_inst dưới D3-7 là hiệu ứng TẢI, không phải tín hiệu tấn công. M6i-c5 định lượng điều này THEO CÁCH KHÔNG PHỤ THUỘC NGƯỠNG: AUROC đơn-chiều (Mann-Whitney) của từng đặc trưng phân biệt (a) tấn công vs nền mức 0 — phép so NGÂY THƠ dễ gây ảo giác; (b) tấn công vs SONG SINH benign cùng mức tải — phép so CÓ KIỂM SOÁT. Kỳ vọng: (a) AUROC cao (tấn công khác nền rảnh — nhưng đó là khác do TẢI, không do độc hại); (b) AUROC ≈ 0,5 (tấn công không khác benign-cùng-tải) → chứng minh đặc trưng đơn lẻ không mang tín hiệu tấn công, bất kể ngưỡng. Đây là bằng chứng chặt cho negative result Bài 1 và mở đất Bài 2 (cần mô hình đa chiều học được + tải mạnh hơn). KHÔNG mô hình học — chỉ thống kê hạng."
+
+0. Hồi quy (BẮT BUỘC): `python3 analysis/c5_score.py --features out/c5-prod/features_all.tsv --train-until 434858090000000 --chieu-phanra A --ho-so tat --mien-tuyen-tinh --n-toi-thieu 0 --dai-che-do khong --out out/c5-prod/score-v144-compat` → cmp với out/c5-prod/score (R039). Khác → DỪNG, dán diff.
+
+1. Chạy AUROC trên lab1c (features_ghep.tsv của R042, có nhãn tid + muc):
+   `python3 analysis/c5_score.py --features out/c5-lab1c/features_ghep.tsv --nhan lab/nhan-tan-cong-lab1c.tsv --nhan-tid lab/nhan-tid-lab1c.tsv --muc lab/muc-lab1c.tsv --n-toi-thieu 30 --auroc --out out/c5-lab1c/auroc-v144` (chế độ --auroc tự thoát sau khi in bảng, không chấm detector). Lưu log.txt.
+   File ra: out/c5-lab1c/auroc-v144/auroc_don_chieu.tsv (cột: branch, chieu, so_sanh, muc, auroc, abs_0.5, n_tan_cong, n_nen).
+
+2. BẢNG R046 (cốt lõi) — từ auroc_don_chieu.tsv, cho nhánh BASELINE_dt_tho và PHANRA_5tp, các chiều {dt_med, own_med, cpu_med, cpi_med, x_arr_med, x_inst_med}:
+   (a) cột "vs nền mức 0" (so_sanh=vs_nen_muc0): AUROC mỗi chiều — kỳ vọng CAO (ảo giác do tải).
+   (b) cột "vs song sinh cùng mức" (so_sanh=vs_song_sinh): AUROC mỗi chiều × mỗi mức {0, D1-8, D1-16, D3-7} — kỳ vọng ≈ 0,5.
+   In đối chiếu hai cột cạnh nhau cho thấy khoảng cách: cùng một đặc trưng, AUROC vs-nền cao nhưng vs-song-sinh ≈ 0,5.
+   Đọc thẳng: chiều nào (nếu có) có AUROC vs-song-sinh lệch rõ khỏi 0,5 (|AUROC−0,5| > 0,15) ở mức D3-7 hoặc D1 → chiều đó CÓ chút tín hiệu tấn công có kiểm soát; nếu MỌI chiều ≈ 0,5 vs song sinh → không đặc trưng đơn lẻ nào tách được, bất kể ngưỡng (củng cố R045, chặn "ngưỡng dở").
+
+3. Hình (ra hinh-v144/): H-auroc: với mỗi đặc trưng (trục hoành), hai cột — AUROC vs nền mức 0, và AUROC vs song sinh (lấy mức D3-7). Cho thấy trực quan: vs-nền cao (ảo), vs-song-sinh ≈ 0,5 (thật). Đây có thể là hình phụ mạnh cho Chương 7.
+
+4. R046 (in nguyên văn): (a) hồi quy; (b) BẢNG R046 §2 (vs nền vs vs song sinh, các chiều, các mức); (c) H-auroc; (d) thời gian/RSS; (e) sha256 7 file (c5_score v1.4.4); "Thay đổi ngoài phạm vi" + git diff --stat; (f) mục 8 KẾT LUẬN THẲNG: có đặc trưng đơn lẻ nào tách tấn công khỏi benign-cùng-tải không (|AUROC−0,5| lớn nhất là bao nhiêu, ở chiều/mức nào); nếu mọi chiều ≈ 0,5 → ghi "không đặc trưng đơn lẻ nào tách, bất kể ngưỡng; cần mô hình đa chiều học được (Bài 2)". Commit, tag m6i.6, push.
+5. Đóng gói lưu trữ (sau push): /root/chep_file/luu-tru/HIDS-R046-<ngày>.zip gồm git bundle --all, reports/R039..R046 + INDEX, docs/tasks/M6i.md + STATE.md, analysis/{detector_c5.py,c5_score.py} + SHA256SUMS, out/c5-lab1/hinh-v14?/*.svg + out/c5-lab1c/auroc-v144/*.tsv, out/c5-lab1/r04?-tables; KHÔNG .bin/features_*/scores_* lớn, KHÔNG production thô. In cây + dung lượng + sha256. DỪNG.
