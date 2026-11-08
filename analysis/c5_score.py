@@ -82,6 +82,40 @@ van GAN nhan dai (chi de bao cao theo dai), thong ke van gop "*". (e) cot bat
 dau bang x_ (thong ke ung vien do c5_extract v2 sinh) la boi canh, KHONG cham.
 Diem so, tradeoff, tom_tat: giong het 1.3.1.
 
+=== PHIEN BAN 1.4 (08/11/2026) - C5 v2, theo TIEN DANG KY v1.1 ===
+Sau R041-b/R041-d (du lieu BENIGN): (F1) D1 hog CPU lam dich vu NHANH hon 10-20 %
+(DVFS), rq chi +0,1-0,2 % -> tien de "Dt gian duoi tranh chap CPU" sai voi dich
+vu I/O-bound; (F2) D3 (tranh chap bo nho/cache) moi lam gian (dt x1,7-1,9, own
+x1,1-1,3); (F3) nen ngay 6-7 troi +10-15 % khong chu y (lang gieng ESXi, steal
+= 0); (F4) 13 tid song lau (5 daemon pg + 8 worker nginx) chiem 33 % cua so, con
+lai la backend pgbench 5 phut; (F5) x_inst (so lenh) gan nhu HANG SO qua 7 ngay
+va moi lop/tid trong khi cpu/cpi troi theo DVFS+cache -> dem lenh tach hanh vi
+tien trinh khoi trang thai may; cpu_time thi khong. Thay doi (ly do ghi o day va
+o dau detector_c5.py 1.3):
+ R1. Cua so hop le: n >= 30 ban ghi (>= 29 khoang). It hon -> KHONG cham, dem
+     rieng "thua" (--n-toi-thieu, mac dinh 30).
+ R2. Mien log cho dai luong ns: chieu TEN BAT DAU dt_/own_/cpu_/x_vol_/x_arr_
+     va KHONG phai _cv (med/p90/iqr) duoc chuan hoa tren f = ln(gia_tri + 1000).
+     _cv, x_blk, cpi_med, x_inst_* giu nguyen. Ly do: quan the chenh nhieu bac;
+     z do ti le. (c5_extract KHONG doi; bien doi nam trong c5_score.)
+ R3. Ho so nen theo LOP tien trinh: khoa = (cgroup_id, k=floor(log2(n/300))).
+     R3b: tid co >= --tid-toi-thieu (mac dinh 200) cua so huan luyen -> ho so
+     RIENG theo tid; con lai theo lop. Thieu mau (< --dai-toi-thieu): lop ke can
+     k+-1..3 cung cgroup -> gop cgroup -> gop toan bo "*". Dai tai may (toc_do/
+     nhip) TAT mac dinh (--phan-tang-tai de bat lai de hoi quy/doi chieu).
+ R4. Hai cach hoc nen, bao cao CA HAI moi nhanh: "tinh" (median/MAD tren ca tap
+     huan luyen) va "truot" (median/MAD cua cung ho so tren cua so khong giao
+     nhan trong 24 gio lien truoc moc cua so; --nen-truot-gio 24). Diem/tradeoff
+     chinh dung "tinh"; bang rieng cho "truot".
+ R5. Tap chieu PHANRA chon trong {A,B,C,D,E} boi tieu chi bat bien tren r1 (ben
+     ngoai script, ghi trong tien dang ky); --chieu-phanra chon bo. Mac dinh D =
+     {x_arr_med, x_arr_p90, x_arr_iqr, x_arr_cv, x_inst_med, own_cv}. BASELINE
+     giu {dt_med, dt_p90, dt_iqr, dt_cv}. AGG giu nguyen. Bo khac: A (own+cpu+cpi
+     1.1), B (arr+cpu+cpi), C (A+arr), E (own+inst).
+ Toan cham diem (max|z|, duong danh doi, ngan sach, muc phat hien, duong tranh
+ chap, nhan theo tid) GIU NGUYEN. --mien-tuyen-tinh + --chieu-phanra A + khong
+ phan tang + nen tinh = tuong duong 1.3.2 (de hoi quy).
+
 Dau vao (--features): TSV co tieu de, moi dong mot cua so:
   branch  tid  start_ns  stop_ns  [nguon]  <cac cot dac trung...>
   - branch: BASELINE_dt_tho | PHANRA_5tp | AGG_cgroup_giay
@@ -127,13 +161,31 @@ import os
 import sys
 from array import array
 
-VERSION = "1.3.2"
+VERSION = "1.4"
 EPS = 1e-9
 DET_LEVELS = (0.5, 0.8, 0.9, 0.95, 1.0)
 NGAN_SACH_MAC_DINH = "0.001,0.01,0.05"
 LUOI_NEN = (0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2)
 META_COLS = ("branch", "tid", "start_ns", "stop_ns", "nguon", "n", "n_banghi",
-             "cgroup_id", "dai", "toc_do")
+             "cgroup_id", "dai", "toc_do", "x_n_pmu")
+LOG_SHIFT = 1000.0  # ns: f = ln(x + 1000) cho dai luong ns
+N_TOI_THIEU_MD = 30
+TID_TOI_THIEU_MD = 200
+CHIEU_PHANRA = {
+    "A": ["own_med", "own_p90", "own_iqr", "own_cv", "cpu_med", "cpu_p90", "cpi_med"],
+    "B": ["x_arr_med", "x_arr_p90", "x_arr_iqr", "x_arr_cv", "cpu_med", "cpu_p90", "cpi_med"],
+    "C": ["own_med", "own_p90", "own_iqr", "own_cv", "cpu_med", "cpu_p90", "cpi_med",
+          "x_arr_med", "x_arr_p90", "x_arr_iqr", "x_arr_cv"],
+    "D": ["x_arr_med", "x_arr_p90", "x_arr_iqr", "x_arr_cv", "x_inst_med", "own_cv"],
+    "E": ["own_med", "own_p90", "own_iqr", "own_cv", "x_inst_med"],
+}
+
+
+def la_ns_dim(name):
+    """True neu chieu la dai luong ns can mien log (khong gom _cv, x_blk, cpi, x_inst, x_n_pmu)."""
+    if name.endswith("_cv") or name in ("x_blk",) or name.startswith("cpi") or name.startswith("x_inst") or name.startswith("x_n"):
+        return False
+    return name.startswith("dt_") or name.startswith("own_") or name.startswith("cpu_") or name.startswith("x_vol_") or name.startswith("x_arr_")
 AGG_BRANCH = "AGG_cgroup_giay"
 RATE_DIM = "syscall_rate_mean"
 AGG_TOL_GAN_NS = 16 * 10**9      # cua so AGG "gan": |delta start| <= 16 s (buoc 30 s)
@@ -160,7 +212,7 @@ def f4(v):
 
 class Row(object):
     __slots__ = ("branch", "tid", "start", "stop", "nguon", "f", "band", "rate",
-                 "score", "used", "atk", "twin", "muc", "trong", "cmax")
+                 "score", "used", "atk", "twin", "muc", "trong", "cmax", "khoa", "k", "cg", "npmu", "nrec", "tid_rieng")
 
     def __init__(self, branch, tid, start, stop, nguon, f):
         self.branch = branch
@@ -178,9 +230,15 @@ class Row(object):
         self.muc = None
         self.trong = False   # benign nhung nam trong khoang thoi gian cua mot dot tan cong
         self.cmax = -1       # chi so chieu cho max|z| (1.3.2)
+        self.khoa = None     # khoa ho so nen (1.4): tid rieng hoac (cgroup,k)
+        self.k = None        # lop hoat dong floor(log2(n/300))
+        self.cg = None       # cgroup_id
+        self.npmu = 0        # x_n_pmu cua cua so
+        self.nrec = None     # n ban ghi cua cua so (cot n); None = khong co
+        self.tid_rieng = False
 
 
-def read_features(path):
+def read_features(path, mien_log=True):
     rows = []
     intern = {}
 
@@ -196,22 +254,45 @@ def read_features(path):
         has_nguon = "nguon" in idx
         dims = [h for h in header if h not in META_COLS]
         dim_idx = [idx[d] for d in dims]
+        is_log = [la_ns_dim(d) and mien_log for d in dims]   # 1.4: mien log cho dai luong ns (tat khi mien_tuyen_tinh)
         ib, itid, ist, isp = idx["branch"], idx["tid"], idx["start_ns"], idx["stop_ns"]
         inn = idx["nguon"] if has_nguon else -1
+        icg = idx.get("cgroup_id", -1)
+        inr = idx.get("n", -1)
+        ipm = idx.get("x_n_pmu", -1)
         nh = len(header)
         for line in fh:
             p = line.rstrip("\n").split("\t")
             if len(p) < nh:
                 continue
             f = array("d")
-            for i in dim_idx:
+            for j, i in enumerate(dim_idx):
                 try:
-                    f.append(float(p[i]))
+                    v = float(p[i])
+                    if is_log[j] and v == v:
+                        v = math.log(v + LOG_SHIFT) if v > -LOG_SHIFT else NAN
                 except ValueError:
-                    f.append(NAN)
+                    v = NAN
+                f.append(v)
             try:
-                rows.append(Row(it(p[ib]), it(p[itid]), int(p[ist]), int(p[isp]),
-                                it(p[inn]) if has_nguon else "nen", f))
+                r = Row(it(p[ib]), it(p[itid]), int(p[ist]), int(p[isp]),
+                        it(p[inn]) if has_nguon else "nen", f)
+                if icg >= 0 and icg < len(p):
+                    r.cg = it(p[icg])
+                if inr >= 0 and inr < len(p):
+                    try:
+                        nv = float(p[inr])
+                        r.nrec = int(nv)
+                        r.k = int(math.floor(math.log(nv / 300.0) / math.log(2))) if nv > 0 else None
+                    except ValueError:
+                        r.nrec = None
+                        r.k = None
+                if ipm >= 0 and ipm < len(p):
+                    try:
+                        r.npmu = int(float(p[ipm]))
+                    except ValueError:
+                        r.npmu = 0
+                rows.append(r)
             except ValueError:
                 continue
     return rows, dims
@@ -581,10 +662,17 @@ class Nhip(object):
 
 # ---------------- chuan hoa va cham diem ----------------
 
-def fit_stats(train, dims_idx, toi_thieu, phan_tang=True):
-    """-> {band_label or '*': {di: (m, a, n, mad0) or None}}; phan_tang=False -> chi '*'."""
+def fit_stats(train, dims_idx, toi_thieu, phan_tang=True, dung_khoa=False):
+    """-> {label: {di: (m,a,n,mad0) or None}}. dung_khoa=True: nhom theo w.khoa (1.4)
+    va them nhom gop cgroup 'cg:<cg>|k:*'; nguoc lai nhom theo w.band (compat)."""
     groups = {"*": train}
-    if phan_tang:
+    if dung_khoa:
+        for w in train:
+            if w.khoa is not None:
+                groups.setdefault(w.khoa, []).append(w)
+                if w.khoa.startswith("cg:") and w.cg is not None:
+                    groups.setdefault("cg:%s|k:*" % w.cg, []).append(w)
+    elif phan_tang:
         for w in train:
             if w.band is not None:
                 groups.setdefault(w.band, []).append(w)
@@ -613,11 +701,47 @@ def thu_tu_du_phong(band, phan_tang=True):
             "r%d" % (k - 3), "r%d" % (k + 3), "*"]
 
 
-def score(w, stats, dims_idx, order_cache, phan_tang=True):
-    order = order_cache.get(w.band)
+def khoa_ho_so(w, ho_so):
+    """1.4: khoa ho so nen. ho_so='tid_lop' -> tid rieng neu du mau, khong thi (cg,k);
+    ho_so='lop' -> luon (cg,k); ho_so='tat' -> None (dung band cu / '*')."""
+    if ho_so == "tat":
+        return None
+    if ho_so == "tid_lop" and getattr(w, "tid_rieng", False):
+        return "tid:" + w.tid
+    cg = w.cg if w.cg is not None else "?"
+    kk = w.k
+    return "cg:%s|k:%s" % (cg, kk if kk is not None else "?")
+
+
+def thu_tu_khoa(khoa):
+    """Du phong cho khoa 1.4: tid rieng -> lop cua tid -> lop ke can -> gop cgroup -> '*'."""
+    if khoa is None:
+        return ["*"]
+    if khoa.startswith("tid:"):
+        # tid rieng khong co du phong theo tid khac; roi ve '*' (lop gan duoc dat qua khoa_lop)
+        return [khoa, "*"]
+    # khoa dang cg:<cg>|k:<k>
+    try:
+        cgpart, kpart = khoa.split("|")
+        cg = cgpart[3:]
+        k = int(kpart[2:]) if kpart[2:] not in ("None", "?") else None
+    except (ValueError, IndexError):
+        return [khoa, "*"]
+    out = [khoa]
+    if k is not None:
+        for d in (1, -1, 2, -2, 3, -3):
+            out.append("cg:%s|k:%s" % (cg, k + d))
+    out.append("cg:%s|k:*" % cg)   # gop moi k cua cgroup
+    out.append("*")
+    return out
+
+
+def score(w, stats, dims_idx, order_cache, phan_tang=True, dung_khoa=False):
+    key = w.khoa if dung_khoa else w.band
+    order = order_cache.get(("k" if dung_khoa else "b", key))
     if order is None:
-        order = thu_tu_du_phong(w.band, phan_tang)
-        order_cache[w.band] = order
+        order = thu_tu_khoa(key) if dung_khoa else thu_tu_du_phong(w.band, phan_tang)
+        order_cache[("k" if dung_khoa else "b", key)] = order
     best, used, bands, cmax = 0.0, 0, set(), -1
     for di in dims_idx:
         v = w.f[di]
@@ -757,12 +881,34 @@ def main(argv):
     ap.add_argument("--D", type=float, default=300.0, help="giay: do tre phat hien toi da (giao thuc)")
     ap.add_argument("--ngan-sach", default=NGAN_SACH_MAC_DINH,
                     help="cac ngan sach bao dong gia (ti le cua so huan luyen vuot nguong), vd 0.001,0.01,0.05")
+    # --- 1.4 ---
+    ap.add_argument("--chieu-phanra", default="D", choices=sorted(CHIEU_PHANRA),
+                    help="bo chieu PHANRA (1.4): A own+cpu+cpi(1.1) | B arr+cpu+cpi | C A+arr | D arr+inst+own_cv(mac dinh) | E own+inst")
+    ap.add_argument("--ho-so", default="tid_lop", choices=("tid_lop", "lop", "tat"),
+                    help="ho so nen (1.4): tid_lop (tid rieng neu du mau, khong thi lop cgroup-k) | lop | tat (nhu band cu)")
+    ap.add_argument("--n-toi-thieu", type=int, default=N_TOI_THIEU_MD, help="cua so hop le phai co n>=N (1.4)")
+    ap.add_argument("--tid-toi-thieu", type=int, default=TID_TOI_THIEU_MD, help="tid co >=N cua so huan luyen -> ho so rieng (1.4)")
+    ap.add_argument("--nen-truot-gio", type=float, default=0.0, help="neu >0: bao cao them nen truot trong cua so N gio truoc (1.4)")
+    ap.add_argument("--mien-tuyen-tinh", action="store_true", help="TAT mien log (de hoi quy 1.3.2)")
+    ap.add_argument("--phan-tang-tai", action="store_true", help="BAT dai tai may (toc_do/nhip) lam ho so (mac dinh TAT o 1.4)")
     ap.add_argument("--out", default=None)
     a = ap.parse_args(argv[1:])
 
-    rows, dims_all = read_features(a.features)
+    rows, dims_all = read_features(a.features, mien_log=(not a.mien_tuyen_tinh))
     if not rows:
         sys.exit("khong co cua so")
+    # 1.4: loc cua so hop le theo n ban ghi that (cot n); AGG giu nguyen (don vi cgroup).
+    n_thua = 0
+    if a.n_toi_thieu > 0:
+        keep = []
+        for w in rows:
+            if w.branch != AGG_BRANCH and w.nrec is not None and w.nrec < a.n_toi_thieu:
+                n_thua += 1
+            else:
+                keep.append(w)
+        rows = keep
+    if n_thua:
+        print("# 1.4: loai %d cua so 'thua' (n < %d); AGG giu nguyen" % (n_thua, a.n_toi_thieu))
     labels = read_nhan(a.nhan)
     tid_labels = read_nhan_tid(a.nhan_tid, labels)
     theo_tid = bool(tid_labels)
@@ -857,21 +1003,57 @@ def main(argv):
     summary = []
     summary_ns = []
     order_cache = {}
+    # 1.4: tap chieu cho tung nhanh
+    phanra_set = CHIEU_PHANRA[a.chieu_phanra]
+    base_set = ["dt_med", "dt_p90", "dt_iqr", "dt_cv"]
+    dung_khoa = (a.ho_so != "tat")
+    if a.phan_tang_tai and dung_khoa:
+        print("# CANH BAO: --phan-tang-tai bo qua khi --ho-so != tat (1.4 dung ho so tien trinh)")
+    print("# 1.4: chieu_phanra=%s (%s) | ho_so=%s | mien_log=%s | n_toi_thieu=%d tid_toi_thieu=%d" % (
+        a.chieu_phanra, "+".join(phanra_set), a.ho_so, "khong" if a.mien_tuyen_tinh else "co",
+        a.n_toi_thieu, a.tid_toi_thieu))
+    if a.nen_truot_gio > 0:
+        print("# CHU Y: --nen-truot-gio=%g duoc KHAI BAO nhung chua cai trong 1.4; nen 'tinh' van la nen chinh. "
+              "Nen truot se lam o M6i-c2 (bang bao cao rieng). Bo qua o lan chay nay." % a.nen_truot_gio)
     for b in branches:
         rb = [w for w in rows if w.branch == b]
-        dims_idx = [i for i, d in enumerate(dims_all) if not d.startswith("ctx_") and not d.startswith("x_")
-                    and any(w.f[i] == w.f[i] for w in rb)]
+        # 1.4: chon chieu theo nhanh; cho phep x_arr_*/x_inst_* khi bo chieu yeu cau
+        if b == "BASELINE_dt_tho":
+            want = base_set
+        elif b == "PHANRA_5tp":
+            want = phanra_set
+        else:
+            want = None   # AGG: dung moi chieu khong phai ctx_/x_ (nhu cu)
+        if want is not None:
+            dims_idx = [i for i, d in enumerate(dims_all) if d in want
+                        and any(w.f[i] == w.f[i] for w in rb)]
+        else:
+            dims_idx = [i for i, d in enumerate(dims_all) if not d.startswith("ctx_") and not d.startswith("x_")
+                        and any(w.f[i] == w.f[i] for w in rb)]
         # QUY TAC CAT 1.3
         train = [w for w in rb if w.nguon == "nen" and w.stop <= cut and w.atk is None
                  and w.twin is None and (w.muc is None or w.muc == "0")]
         test = [w for w in rb if w.nguon != "nen" or w.start >= cut or w.atk is not None
                 or w.twin is not None or (w.muc is not None and w.muc != "0")]
-        stats = fit_stats(train, dims_idx, a.dai_toi_thieu, phan_tang)
+        # 1.4: danh dau tid song lau (>= tid_toi_thieu cua so huan luyen) -> ho so rieng; gan khoa
+        if dung_khoa:
+            cnt = {}
+            for w in train:
+                cnt[w.tid] = cnt.get(w.tid, 0) + 1
+            big = {t for t, c in cnt.items() if c >= a.tid_toi_thieu} if b != AGG_BRANCH else set()
+            for w in rb:
+                w.tid_rieng = (w.tid in big)
+                w.khoa = khoa_ho_so(w, a.ho_so)
+        else:
+            for w in rb:
+                w.tid_rieng = False
+                w.khoa = None
+        stats = fit_stats(train, dims_idx, a.dai_toi_thieu, phan_tang, dung_khoa)
         active = [dims_all[i] for i in dims_idx if stats["*"].get(i) is not None]
         pool = test if test else rb
         scored = []
         for w in pool:
-            s = score(w, stats, dims_idx, order_cache, phan_tang)
+            s = score(w, stats, dims_idx, order_cache, phan_tang, dung_khoa)
             if s == s:
                 scored.append(w)
         # 1.3.2: chan doan chuan hoa
@@ -956,7 +1138,7 @@ def main(argv):
             if thr == thr:
                 bao_cao_nguong("%.2f" % lv, thr, ctx, sink)
         # (B) diem danh doi theo NGAN SACH bao dong gia tren tap huan luyen (1.3.1)
-        train_scored = [w for w in train if score(w, stats, dims_idx, order_cache, phan_tang) == w.score and w.score == w.score]
+        train_scored = [w for w in train if score(w, stats, dims_idx, order_cache, phan_tang, dung_khoa) == w.score and w.score == w.score]
         train_scores = sorted((w.score for w in train_scored), reverse=True)
         train_asc = train_scores[::-1]
         if train_scores:
@@ -1063,6 +1245,13 @@ if __name__ == "__main__":
 #      nhan; khong thay the diem theo muc phat hien. Toan hoc khong doi; cac
 #      file cu giu nguyen dinh dang, file moi *_ns_*.tsv, tom_tat_ngan_sach.tsv,
 #      duong_tranh_chap_*.tsv.
+# 1.4   08/11/2026  C5 v2 theo tien dang ky v1.1: R1 n>=30 (cot n that), R2 mien
+#      log ln(x+1us) cho dai luong ns, R3 ho so theo (cgroup,k) + tid rieng
+#      (>=200 cua so), R5 bo chieu PHANRA chon duoc {A,B,C,D,E} mac dinh D
+#      (arr+inst+own_cv). Toan cham diem khong doi. Che do tuong thich
+#      (--chieu-phanra A --ho-so tat --mien-tuyen-tinh --n-toi-thieu 0
+#      --dai-che-do khong) cho ket qua GIONG HET 1.3.2 (kiem hoi quy tung byte).
+#      R4 nen truot: khai bao --nen-truot-gio, chua cai, lam o M6i-c2.
 # 1.3.2 07/11/2026  Chan doan sau R040 (nguong 1e5..4e7 = chieu MAD 0): cot
 #      chieu_max trong scores_*, file chuan_<branch>.tsv (dai x chieu: n, median,
 #      MAD, mad0), phan bo chieu_max; khong-mode van gan dai de bao cao; cot x_*

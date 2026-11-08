@@ -570,7 +570,7 @@ def main(argv):
     dims_dec = ["own_med", "own_p90", "own_iqr", "own_cv",
                 "cpu_med", "cpu_p90", "cpi_med"]  # v1.1; ctx_* khong cham diem
 
-    print("# detector_c5 1.2  cua_so=%ds buoc=%ds  cat_huan_luyen_ts=%d  dai_che_do=%s he_so=%g" %
+    print("# detector_c5 1.3  cua_so=%ds buoc=%ds  cat_huan_luyen_ts=%d  dai_che_do=%s he_so=%g" %
           (args.window_s, args.step_s, cut, che_do, args.dai_he_so))
     print("# so ban ghi=%d  tmin=%d tmax=%d  nhan tan cong=%d  song sinh=%d  tid co nhan=%d  toc do tong trung binh=%.1f/s" %
           (len(recs), tmin, tmax, len(atk), len(labels) - len(atk),
@@ -650,3 +650,13 @@ if __name__ == "__main__":
 #      so/buoc, cong thuc z, max|z|, duong danh doi: KHONG doi -> c5_extract
 #      cua M6g van tuong duong (kiem lai bang c5_equiv_test.py).
 #      --dai-che-do khong = hanh vi 1.1.
+# 1.3   08/11/2026  C5 v2. DAC TRUNG (muc 2), cua so/buoc, cong thuc z max|z|,
+#      duong danh doi: KHONG doi -> c5_extract van tuong duong (kiem c5_equiv).
+#      Thay doi nam HOAN TOAN trong c5_score 1.4 (dau vao, khong phai detector):
+#      (R2) chuan hoa tren mien log ln(x+1us) cho dai luong ns; (R1) cua so hop
+#      le n>=30; (R3) ho so nen theo (cgroup,k=floor(log2(n/300))) + tid song lau
+#      ho so rieng; (R5) tap chieu PHANRA chon duoc, mac dinh D=arr+inst+own_cv.
+#      Ly do bang so: R041-b/d — x_inst hang so qua 7 ngay, cpu/cpi troi theo
+#      DVFS+cache; D1 hog CPU lam dich vu nhanh hon (khong gian Dt); D3 moi la
+#      tranh chap that. Detector tham chieu nay giu nguyen de chung minh chuoi
+#      quyet dinh; diem C5 that do c5_score 1.4 tinh.
