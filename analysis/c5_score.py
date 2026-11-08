@@ -161,7 +161,7 @@ import os
 import sys
 from array import array
 
-VERSION = "1.4"
+VERSION = "1.4.1"
 EPS = 1e-9
 DET_LEVELS = (0.5, 0.8, 0.9, 0.95, 1.0)
 NGAN_SACH_MAC_DINH = "0.001,0.01,0.05"
@@ -662,7 +662,7 @@ class Nhip(object):
 
 # ---------------- chuan hoa va cham diem ----------------
 
-def fit_stats(train, dims_idx, toi_thieu, phan_tang=True, dung_khoa=False):
+def fit_stats(train, dims_idx, toi_thieu, phan_tang=True, dung_khoa=False, bo_mad0=False):
     """-> {label: {di: (m,a,n,mad0) or None}}. dung_khoa=True: nhom theo w.khoa (1.4)
     va them nhom gop cgroup 'cg:<cg>|k:*'; nguoc lai nhom theo w.band (compat)."""
     groups = {"*": train}
@@ -686,7 +686,13 @@ def fit_stats(train, dims_idx, toi_thieu, phan_tang=True, dung_khoa=False):
                 continue
             m = median(xs)
             a = mad(xs, m)
-            st[di] = (m, a if a > 0 else EPS, len(xs), 1 if a <= 0 else 0)
+            if a <= 0:
+                # MAD=0: chieu khong mang thong tin trong ho so nay.
+                # bo_mad0 (mien log 1.4.1): BO chieu khoi cham (a=NAN -> score bo qua),
+                # tranh z khong lo do chia EPS. Che do tuong thich (khong bo_mad0): giu EPS nhu 1.3.2.
+                st[di] = (m, (NAN if bo_mad0 else EPS), len(xs), 1)
+            else:
+                st[di] = (m, a, len(xs), 0)
         stats[b] = st
     return stats
 
@@ -755,6 +761,8 @@ def score(w, stats, dims_idx, order_cache, phan_tang=True, dung_khoa=False):
             if ma is None:
                 continue
             m, a = ma[0], ma[1]
+            if a != a:          # a=NAN: chieu MAD=0 bi bo (1.4.1 mien log)
+                break
             z = abs(v - m) / (1.4826 * a)
             if z > best or used == 0:
                 best, cmax = max(best, z), di
@@ -891,6 +899,7 @@ def main(argv):
     ap.add_argument("--nen-truot-gio", type=float, default=0.0, help="neu >0: bao cao them nen truot trong cua so N gio truoc (1.4)")
     ap.add_argument("--mien-tuyen-tinh", action="store_true", help="TAT mien log (de hoi quy 1.3.2)")
     ap.add_argument("--phan-tang-tai", action="store_true", help="BAT dai tai may (toc_do/nhip) lam ho so (mac dinh TAT o 1.4)")
+    ap.add_argument("--giu-mad0", action="store_true", help="GIU chieu MAD=0 (thay EPS) thay vi bo; mac dinh BO khi mien log (1.4.1)")
     ap.add_argument("--out", default=None)
     a = ap.parse_args(argv[1:])
 
@@ -1007,11 +1016,13 @@ def main(argv):
     phanra_set = CHIEU_PHANRA[a.chieu_phanra]
     base_set = ["dt_med", "dt_p90", "dt_iqr", "dt_cv"]
     dung_khoa = (a.ho_so != "tat")
+    bo_mad0 = (not a.mien_tuyen_tinh) and (not a.giu_mad0)   # 1.4.1: bo chieu MAD=0 khi mien log
     if a.phan_tang_tai and dung_khoa:
         print("# CANH BAO: --phan-tang-tai bo qua khi --ho-so != tat (1.4 dung ho so tien trinh)")
     print("# 1.4: chieu_phanra=%s (%s) | ho_so=%s | mien_log=%s | n_toi_thieu=%d tid_toi_thieu=%d" % (
         a.chieu_phanra, "+".join(phanra_set), a.ho_so, "khong" if a.mien_tuyen_tinh else "co",
         a.n_toi_thieu, a.tid_toi_thieu))
+    print("# 1.4.1: bo_chieu_MAD0=%s (mien log); nguong ngan sach khong con bi z khong lo do EPS" % ("co" if bo_mad0 else "khong"))
     if a.nen_truot_gio > 0:
         print("# CHU Y: --nen-truot-gio=%g duoc KHAI BAO nhung chua cai trong 1.4; nen 'tinh' van la nen chinh. "
               "Nen truot se lam o M6i-c2 (bang bao cao rieng). Bo qua o lan chay nay." % a.nen_truot_gio)
@@ -1048,7 +1059,7 @@ def main(argv):
             for w in rb:
                 w.tid_rieng = False
                 w.khoa = None
-        stats = fit_stats(train, dims_idx, a.dai_toi_thieu, phan_tang, dung_khoa)
+        stats = fit_stats(train, dims_idx, a.dai_toi_thieu, phan_tang, dung_khoa, bo_mad0)
         active = [dims_all[i] for i in dims_idx if stats["*"].get(i) is not None]
         pool = test if test else rb
         scored = []
@@ -1245,6 +1256,11 @@ if __name__ == "__main__":
 #      nhan; khong thay the diem theo muc phat hien. Toan hoc khong doi; cac
 #      file cu giu nguyen dinh dang, file moi *_ns_*.tsv, tom_tat_ngan_sach.tsv,
 #      duong_tranh_chap_*.tsv.
+# 1.4.1 08/11/2026  Sua loi R042: trong mien log, chieu co MAD=0 bi chia EPS=1e-9
+#      -> z ~ 1e12-1e13 -> nguong ngan sach vo nghia, phat_hien=0. Sua: chieu
+#      MAD=0 bi BO khoi cham (bo_mad0, mac dinh BAT khi mien log; --giu-mad0 de
+#      giu nhu cu). Che do tuong thich (--mien-tuyen-tinh) GIU EPS -> hoi quy
+#      1.3.2 van giong het tung byte. Toan cham diem khac khong doi.
 # 1.4   08/11/2026  C5 v2 theo tien dang ky v1.1: R1 n>=30 (cot n that), R2 mien
 #      log ln(x+1us) cho dai luong ns, R3 ho so theo (cgroup,k) + tid rieng
 #      (>=200 cua so), R5 bo chieu PHANRA chon duoc {A,B,C,D,E} mac dinh D

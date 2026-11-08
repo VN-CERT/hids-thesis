@@ -156,3 +156,25 @@ Bối cảnh (ghi R042 mục đầu, nguyên văn từ tiền đăng ký v1.1 §
    H4: bdg nền kiểm tra theo bộ chiều D: --ho-so tid_lop vs lop vs tat (tách tác dụng hồ sơ).
 
 6. R042 (in nguyên văn): (a) hồi quy (0) + equiv; (b) §1 năm bộ chiều: tom_tat_ngan_sach + "theo muc" tại 1 % mỗi bộ, bảng hồ sơ (số tid riêng/lop); (c) §2 lab1c: tom_tat theo mức phát hiện + theo id + dot trong D + do tre, cho CH=D và A; (d) §3 production; (e) §4 áp ngưỡng; (f) H1–H4; (g) thời gian/RSS; (h) sha256 7 file (c5_score v1.4, detector v1.3); "Thay đổi ngoài phạm vi" + git diff --stat; mục 8 câu hỏi kỹ thuật, đặc biệt: bộ chiều nào tách D3 tốt nhất mà bdg nền thấp nhất; hồ sơ tid_lop có cần cho lab1c xuyên phiên không. Commit (không TSV lớn; features_ghep nếu lớn thì không; bảng/hình nhỏ thì commit), tag m6i.2, push. DỪNG.
+
+## M6i-c2b
+
+NHIỆM VỤ M6i-c2b — chấm lại C5 v2 sau khi sửa lỗi MAD=0 miền log (c5_score v1.4.1; detector v1.3 GIỮ NGUYÊN) (195, repo /root/hids). Nối vào docs/tasks/M6i.md mục "M6i-c2b". Báo cáo R043, tag m6i.3. KHÔNG đo lại, KHÔNG rsync, KHÔNG ghi đè score-v14-*/features_* cũ của R042 (chấm ra thư mục -v141-). Không sửa file kiến trúc sư. Không kết luận.
+Điều kiện: CAI in "XONG": analysis/c5_score.py v1.4.1 sha256 2bd7340a222f44ecbbc6b7428599153199899f92133dc0d541451b905e8ced64. Kiểm sha, commit "C5 v2: c5_score v1.4.1 (bo chieu MAD=0 trong mien log) (kien truc su)".
+Lý do (ghi R043 mục đầu, nguyên văn): "R042: ngưỡng ngân sách PHANRA = 1e12–1e13 vì trong miền log một chiều có MAD=0 bị chia EPS=1e-9 → z khổng lồ → phát hiện=0, áp ngưỡng lab→prod ra 0 báo động. Lỗi của kiến trúc sư (tiền đăng ký R2 không ghi xử lý MAD=0 sau khi đổi log). v1.4.1 sửa: chiều MAD=0 bị BỎ khỏi chấm (không thay EPS). Chế độ tương thích (--mien-tuyen-tinh) giữ EPS nên hồi quy 1.3.2 vẫn giống hệt từng byte. Toán chấm điểm khác không đổi."
+
+0. Hồi quy lại (BẮT BUỘC): `python3 analysis/c5_score.py --features out/c5-prod/features_all.tsv --train-until 434858090000000 --chieu-phanra A --ho-so tat --mien-tuyen-tinh --n-toi-thieu 0 --dai-che-do khong --out out/c5-prod/score-v141-compat` → cmp tom_tat(4)/scores_*(7)/tradeoff_* với out/c5-prod/score (R039). Khác → DỪNG, dán diff.
+
+1. Chấm lại NĂM bộ chiều trên lab1c CÓ nhãn (đây mới là phép đo chính, vì có nhãn tấn công). Dùng lại out/c5-lab1c/features_ghep.tsv của R042 (đã có; nếu đã xoá thì dựng lại như R042 quyết định 7: train-until=1006289550843307, lab1c/nen-phu→nguon=nen). Với CH∈{A,B,C,D,E}:
+   `--features out/c5-lab1c/features_ghep.tsv --train-until 1006289550843307 --nhan lab/nhan-tan-cong-lab1c.tsv --nhan-tid lab/nhan-tid-lab1c.tsv --chieu-phanra CH --ho-so lop --n-toi-thieu 30 --out out/c5-lab1c/score-v141-<CH>`. Lưu log.txt.
+   In BẢNG SO SÁNH BỘ CHIỀU (cốt lõi R043), mỗi CH: (i) tại mức phát hiện 0.90 — báo động giả nền (bdg_nen_kiem_tra) của PHANRA và BASELINE; (ii) "theo muc" PHANRA tại 0.90 cho muc 0, D1-8, D1-16, D3-4, D3-7; (iii) tom_tat_ngan_sach PHANRA (ngưỡng phải là số thường, KHÔNG 1e12 — nếu còn 1e12 thì v1.4.1 chưa ăn, DỪNG báo).
+
+2. Đường tranh chấp lab1c cho mỗi CH (PHANRA, --ho-so lop): bdg nền sạch (từ duong_tranh_chap) → bdg tại D3-7 và D1-16. Mục tiêu đọc: bộ nào cho đường D3-7 TÁCH khỏi đường nền (bdg D3-7 ≫ bdg nền) ở bdg nền THẤP (≤ 5 %), và D1 KHÔNG tách (hoặc tách ngược) — khớp F1/F2.
+
+3. Nền trượt (R4, giờ mới làm — bổ sung điều R042 hoãn): thêm cho c5_score một chế độ nền trượt là NHIỆM VỤ RIÊNG, KHÔNG sửa c5_score (kiến trúc sư sẽ làm nếu cần). Ở R043 chỉ cần: với bộ chiều CHỌN được ở §1–§2 (gọi CH*), tính TAY một xấp xỉ nền trượt để xem có đáng làm không — chia nền kiểm tra lab (ngày 6–7) thành 2 nửa, học median/MAD trên nửa đầu, chấm nửa sau cùng hồ sơ lop, so bdg với nền tĩnh. Một bảng nhỏ, không cần đổi mã. Nếu không làm gọn được thì GHI "để M6i-c3", bỏ qua.
+
+4. Production với CH* (--ho-so tid_lop), nền tĩnh, không nhãn → out/c5-prod/score-v141-CH*-tid; tom_tat_ngan_sach (ngưỡng số thường); áp ngưỡng lab1c-CH* → prod (c5_apply_threshold) ở 0.1/1/5 % → báo động/host-ngày, ba nhánh. So với R042 (báo động = 0 do bug): giờ phải ra số hợp lý.
+
+5. Hình (ghi đè KHÔNG, ra hinh-v141/): H1 phát hiện theo mức lab1c @ bdg nền 1 % cho CH* (ba nhánh); H3' bdg nền kiểm tra lab1c @ 1 % cho A..E (so bộ); H2' đường tranh chấp lab1c CH* (BASE vs PHANRA × D1-16/D3-7).
+
+6. R043 (in nguyên văn): (a) hồi quy; (b) §1 bảng so năm bộ (bdg nền @0.90 + theo muc + ngưỡng ngân sách số thường); (c) §2 đường tranh chấp mỗi bộ; (d) §3 nền trượt (hoặc "để M6i-c3"); (e) §4 production + áp ngưỡng; (f) H1/H2'/H3'; (g) thời gian/RSS; (h) sha256 7 file (c5_score v1.4.1); "Thay đổi ngoài phạm vi" + git diff --stat; mục 8: ĐỀ XUẤT bộ chiều + hồ sơ mặc định cho production, kèm số (bdg nền thấp nhất mà vẫn tách D3-7). Commit, tag m6i.3, push. DỪNG.
