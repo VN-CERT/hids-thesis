@@ -1,0 +1,134 @@
+LAB-2 pha 1 — KET QUA (buoc 6 / ketqua sau driver)
+May: hids-collector (nan nhan, 10.70.55.201 / ens35=192.168.77.10). Nhanh: lab-collector
+May dich: hids-acttack (202) 192.168.77.20:22022 — da co lap (lab2-isolation-OK.txt)
+Nhiem vu: docs/tasks/LAB-2.md
+Ngay: 2026-11-08
+Thu muc: validation/lab2-20261108/
+
+================================================================
+TRANG THAI: DRIVER XONG — 9/9 phien DAT (C2-0 attempt 2 DAT sau FAIL attempt 1).
+driver-xong.txt: 2026-11-08T22:12:54+00:00
+systemctl list-units 'hids-*' --state=active: trong; bpftool hids_ = 0.
+================================================================
+
+----------------------------------------------------------------
+0. DIEU KIEN (luc bat dau)
+----------------------------------------------------------------
+- hids-* active trong; bpf hids_ = 0; lab0-nginx/postgres Up
+- df >= 60 GB; perf_event_paranoid = 1; make build OK (m6c.3)
+- ping 192.168.77.20 THONG; 201 ra Internet qua card that (OK theo nhiem vu)
+- AllowedCPUs user.slice = 1-7
+- cgroup nginx=/sys/fs/cgroup/system.slice/docker-026f7cbf1bc47de73f226721ea7ad4aa6415f8607ac9e83de2755a2f51108da2.scope
+- cgroup postgres=/sys/fs/cgroup/system.slice/docker-6e46e483810609715f4c42e35a5087fa36df28a4dd1c8f40bd715f9c35f31669.scope
+
+----------------------------------------------------------------
+1. COMMIT PHU LUC 2.1 (truoc khi ghi du lieu)
+----------------------------------------------------------------
+git rev-parse:
+096f3f58dc84e474d77f9470d053ac0de2893b7d
+LAB-2: phu luc 2.1 va nhiem vu (truoc khi ghi du lieu)
+
+----------------------------------------------------------------
+SHA256 (5 file kien truc su)
+----------------------------------------------------------------
+9994b03f359ee5205354515f80bd4dd67f4919daca6b585702f4dc54796648c0  bpf/sys_enter.bpf.c
+39d892e5524de1cb49ace593b152c5b303d99c056e110f0a072d344c8270c7ec  bpf/proc_events.bpf.c
+9f0b4cde1c2e1c6aa560c041eaefaef1a40e5c7d9fc292db1d77dfc971d046cd  analysis/m5f_parse.py
+8c390002870f3ea8ace38a241f803bb5e7ec6c2413fdd403f757de24a6a1be25  analysis/m6c_stats.py
+88ef821eb062855b0189af1568d25e310b53f1e0c1e29e35e360282515d97706  tools/coreclk.c
+
+----------------------------------------------------------------
+IMPLANT (KHONG commit)
+----------------------------------------------------------------
+listener=http  proto=http  host=192.168.77.20  port=8080
+seconds=60  jitter=30
+sha256=5050550887080228186daf2da60dc3cdc314d8861e9620e52d5ebabcd483a4aa
+File local: validation/lab2-20261108/implant/implant-lab2
+
+----------------------------------------------------------------
+2. PHIEN THU
+----------------------------------------------------------------
+THU-A2-0-c-20261108 (5 phut, cua so 1→4, khong vao nhan chinh): ok=1
+tid_records=362; oracle=3; PMU=4.6733; drops=0; moc relax last
+File: validation/lab2-20261108/thu-kiem.txt
+
+----------------------------------------------------------------
+3. BANG 9 PHIEN (A2/B2/C2 × {0, D1-8, D3-7})
+----------------------------------------------------------------
+Cach vao cgroup: cgroup.procs (chay_trong_cgroup_bg) — khong dung scope rieng.
+
+run_id	ok	cg	n_tid	n_rec_tid	oracle	drops_k	drops_p	pmu%	|first-t0|s	|last-t1|s
+A2-0-c-20261108	1	cgroup.procs	3	48629	10 (beacon uoc)	0	0	4.9935	0.023	0.908
+A2-D1-8-c-20261108	1	cgroup.procs	3	48805	10	0	0	4.9924	0.022	0.361
+A2-D3-7-c-20261108	1	cgroup.procs	3	48921	10	0	0	4.9932	0.023	0.410
+B2-0-c-20261108	1	cgroup.procs	1	9705127	26214400 (byte)	0	0	4.9996	0.019	0.094
+B2-D1-8-c-20261108	1	cgroup.procs	1	6109364	26214400	0	0	4.9996	0.024	0.414
+B2-D3-7-c-20261108	1	cgroup.procs	1	6468818	26214400	0	0	4.9997	0.023	0.912
+C2-0-c-20261108	1	cgroup.procs	1	12982	79 (lan thu SSH)	0	0	4.9952	0.021	0.025
+C2-D1-8-c-20261108	1	cgroup.procs	1	12701	79	0	0	4.9975	0.033	0.048
+C2-D3-7-c-20261108	1	cgroup.procs	1	12533	79	0	0	4.9969	0.029	0.055
+
+Tong: 9/9 DAT.
+Ghi chu C2-0: attempt 1 FAIL (21:24:47Z); attempt 2 DAT (21:40:49Z). Khong con driver-loi.txt.
+
+----------------------------------------------------------------
+4. TAI NEN (bo sung)
+----------------------------------------------------------------
+Cach B — uoc tu rec/s (A2/B2; khong do loadavg luc chay):
+A2-0	0	6755.655 ban_ghi/s
+A2-D1-8	D1-8	6794.603
+A2-D3-7	D3-7	6405.169
+B2-0	0	25435.683
+B2-D1-8	D1-8	18449.036
+B2-D3-7	D3-7	18760.581
+File: validation/lab2-20261108/tai-nen-uoc-tomtat.tsv
+
+Cach A — do truc tiep (C2; mau 10s trong cua so nhan):
+C2-0	0	load_1m_tb≈0.51–0.91  cpu_tong_tb%≈6.4–9.8  n_worker=0
+C2-D1-8	D1-8	load_1m_tb=8.656  cpu_tong_tb%=99.966  n_worker_tb=8
+C2-D3-7	D3-7	load_1m_tb=8.328  cpu_tong_tb%=89.300  n_worker_tb=7
+File: validation/lab2-20261108/tai-nen-tomtat.tsv
+
+----------------------------------------------------------------
+5. NHIP-BENIGN
+----------------------------------------------------------------
+File: validation/lab2-20261108/gen-logs/nhip-benign.tsv
+Dau:
+1	nginx	200	1624814874925962	1625104903937857
+Cuoi:
+31	nginx	200	1633832497141403	1633908769303703
+31	postgres	100	1633832528173732	1633908790847571
+(62 dong du lieu + header)
+
+----------------------------------------------------------------
+6. DUNG LUONG
+----------------------------------------------------------------
+validation/lab2-20261108/ ≈ 1.1 G (chu yeu *.bin; khong commit .bin)
+implant/ ≈ 16 M (KHONG commit)
+lab/nhan-tan-cong-lab2.tsv + lab/nhan-tid-lab2.tsv: ~8 K
+
+----------------------------------------------------------------
+7. QUYET DINH TU DUA RA
+----------------------------------------------------------------
+1. B2 --tong 25MB (50KB/s × ~10 phut cua so; 50MB khong kip). Oracle = byte gui = 26214400.
+2. A2: wrapper lab2_a2_wrap.sh (tick 1s + implant con) de moc ±1s khi beacon thua ~60s.
+3. C2: lab2_sshbrute.py (paramiko) dich co dinh 192.168.77.20:22022; wordlist 200; mat khau dung o vi tri 195.
+4. Song sinh N (egress backup cong 18081): CHUA chay trong 9 phien pha 1 (nhiem vu chi liet ke A2/B2/C2 × 3 muc). Cong 18081 da mo tren 202.
+5. Oracle A2 = WIN_DUR/60 (uoc); khong doc so beacon tu Sliver server.
+6. Tai nen: A cho C2 (driver con chay khi them); B uoc rec/s cho A2/B2 da xong.
+
+----------------------------------------------------------------
+8. VIEC NGUOI DUNG CAN LAM
+----------------------------------------------------------------
+1. Bao kien truc su de may 195 keo bang rsync (M6j):
+     validation/lab2-20261108/
+     lab/nhan-tan-cong-lab2.tsv
+     lab/nhan-tid-lab2.tsv
+   (implant khong bat buoc keo neu chi can sha256 trong ketqua / implant-meta.txt)
+
+----------------------------------------------------------------
+9. LOI CON TON TAI / VIEC TIEP
+----------------------------------------------------------------
+- C2-0 attempt 1 FAIL (chi tiet kiem attempt 1 bi ghi de khi attempt 2); attempt 2 DAT.
+- Song sinh N egress chua thu thap trong pha 1.
+- Oracle A2 la uoc chu ky, khong phai dem beacon tu C2 Sliver.

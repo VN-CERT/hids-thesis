@@ -218,13 +218,12 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 - (không)
 
-## Bước đang làm (LAB-2 pha 1) — driver đang chạy (2026-11-08)
+## Bước đang làm (LAB-2 pha 1) — bước 6/ketqua XONG (2026-11-08)
 
-- Phụ lục 2.1 `096f3f5`. Phiên thử THU-A2-0: **DAT** (kiem ok=1; tid_recs=362; PMU=4.67).
-- Implant sha256 `5050550887080228186daf2da60dc3cdc314d8861e9620e52d5ebabcd483a4aa` (KHÔNG commit).
-- Unit `hids-lab2-driver` + `hids-lab2-gen`. Bước 7 khi người dùng báo "driver lab2 xong, làm bước 6".
+- Driver XONG 22:12:54Z; 9/9 phiên DAT. Báo cáo: `LAB-2-pha1-ketqua.txt`.
+- Phụ lục 2.1 `096f3f5`. Implant sha256 `50505508…a4aa` (KHÔNG commit).
+- hids-* active trống; bpf hids_ = 0.
 
 ## Việc đang chạy
 
-- **hids-lab2-driver** — 9 phiên A2/B2/C2 × {0,D1-8,D3-7} — log `validation/lab2-20261108/driver.log`
-- **hids-lab2-gen** — generator benign
+- (không)
