@@ -217,3 +217,15 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 ## Việc đang chạy
 
 - (không)
+
+## Bước đang làm (LAB-2 pha 1) — chờ chuẩn bị 202 (2026-11-08)
+
+- Phụ lục 2.1 commit `096f3f5`. Scripts commit (lab2_*).
+- Điều kiện 0 ĐẠT; cgroup nginx=`docker-026f7cbf…scope`; AllowedCPUs=1-7.
+- **DỪNG** chờ người dùng: implant Sliver + lab2victim + egress recv trên 202.
+- Hướng dẫn: `validation/lab2-20261108/HUONG-DAN-CHUAN-BI-202.txt`
+- Khi xong: báo "202 san sang lab2" → phiên thử A2 rồi bật driver.
+
+## Việc đang chạy
+
+- (không)
