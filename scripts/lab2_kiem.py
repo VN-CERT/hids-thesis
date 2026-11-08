@@ -26,7 +26,11 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--sess", required=True)
     ap.add_argument("--run-id", required=True)
-    ap.add_argument("--lop", required=True, choices=["A2", "B2", "C2", "N"])
+    ap.add_argument(
+        "--lop",
+        required=True,
+        choices=["A2", "B2", "C2", "N", "N-A2", "N-B2", "N-C2"],
+    )
     ap.add_argument("--t0", type=int, required=True)
     ap.add_argument("--t1", type=int, required=True)
     ap.add_argument("--tids", required=True)
@@ -112,36 +116,36 @@ def main() -> int:
         ok = False
 
     msgs.append(f"oracle lop={args.lop} value={args.oracle}")
-    if args.lop == "A2":
+    if args.lop in ("A2", "N-A2"):
         if args.oracle < 3:
-            msgs.append(f"FAIL A2 beacon/oracle={args.oracle} < 3")
+            msgs.append(f"FAIL {args.lop} cycles/oracle={args.oracle} < 3")
             ok = False
         else:
-            msgs.append("A2 oracle DAT (>=3 beacon)")
-    elif args.lop == "B2":
+            msgs.append(f"{args.lop} oracle DAT (>=3 chu ky)")
+    elif args.lop in ("B2", "N-B2"):
         if args.oracle_ref > 0:
             ref = args.oracle_ref
             diff = abs(args.oracle - ref) / ref * 100.0
-            msgs.append(f"B2 bytes_sent={args.oracle} ref={ref} diff_pct={diff:.3f}")
+            msgs.append(f"{args.lop} bytes_sent={args.oracle} ref={ref} diff_pct={diff:.3f}")
             if diff > 5.0:
-                msgs.append("FAIL B2 bytes khong khop ±5%")
+                msgs.append(f"FAIL {args.lop} bytes khong khop ±5%")
                 ok = False
             else:
-                msgs.append("B2 bytes DAT")
+                msgs.append(f"{args.lop} bytes DAT")
         else:
             if args.oracle < 1:
-                msgs.append("FAIL B2 bytes=0")
+                msgs.append(f"FAIL {args.lop} bytes=0")
                 ok = False
             else:
-                msgs.append("B2 bytes DAT (khong co ref)")
-    elif args.lop == "C2":
+                msgs.append(f"{args.lop} bytes DAT (khong co ref)")
+    elif args.lop in ("C2", "N-C2"):
         if args.oracle < 10:
-            msgs.append(f"FAIL C2 tries={args.oracle} < 10")
+            msgs.append(f"FAIL {args.lop} tries={args.oracle} < 10")
             ok = False
         else:
-            msgs.append("C2 tries DAT")
+            msgs.append(f"{args.lop} tries/login DAT")
     else:
-        msgs.append("N: khong kiem oracle tan cong")
+        msgs.append("N: khong kiem oracle dac thu")
 
     cg_ok = True
     for pid_s in (args.pids_check or "").split(","):
