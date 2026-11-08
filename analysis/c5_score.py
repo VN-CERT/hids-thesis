@@ -161,7 +161,7 @@ import os
 import sys
 from array import array
 
-VERSION = "1.4.4"
+VERSION = "1.4.5"
 EPS = 1e-9
 DET_LEVELS = (0.5, 0.8, 0.9, 0.95, 1.0)
 NGAN_SACH_MAC_DINH = "0.001,0.01,0.05"
@@ -979,6 +979,81 @@ def bao_cao_nguong(nhan_dong, thr, ctx, sink):
         print("  dot trong D=%.0fs: " % D + "  ".join(parts))
 
 
+
+def fit_cov(train, dims_idx):
+    """Trung vi + ma tran hiep phuong sai nghich (cho Hotelling T2) tren train.
+    Dung median va MAD-scaled; hiep phuong sai tren z-robust. Tra ve (med[], Sinv[][]) hoac None."""
+    xs = [[w.f[di] for di in dims_idx] for w in train
+          if all(w.f[di] == w.f[di] for di in dims_idx)]
+    if len(xs) < len(dims_idx) + 5:
+        return None
+    k = len(dims_idx)
+    med = [median([r[j] for r in xs]) for j in range(k)]
+    # covariance (mau)
+    n = len(xs)
+    cov = [[0.0] * k for _ in range(k)]
+    for r in xs:
+        for i in range(k):
+            for j in range(k):
+                cov[i][j] += (r[i] - med[i]) * (r[j] - med[j])
+    for i in range(k):
+        for j in range(k):
+            cov[i][j] /= (n - 1)
+    # regularize + invert (Gauss-Jordan)
+    for i in range(k):
+        cov[i][i] += 1e-9
+    Sinv = invert_mat(cov)
+    return (med, Sinv) if Sinv else None
+
+
+def invert_mat(A):
+    k = len(A)
+    M = [row[:] + [1.0 if i == j else 0.0 for j in range(k)] for i, row in enumerate(A)]
+    for col in range(k):
+        piv = max(range(col, k), key=lambda r: abs(M[r][col]))
+        if abs(M[piv][col]) < 1e-15:
+            return None
+        M[col], M[piv] = M[piv], M[col]
+        d = M[col][col]
+        M[col] = [x / d for x in M[col]]
+        for r in range(k):
+            if r != col:
+                f = M[r][col]
+                M[r] = [a - f * b for a, b in zip(M[r], M[col])]
+    return [row[k:] for row in M]
+
+
+def t2_score(w, dims_idx, med, Sinv):
+    """Hotelling T2 = (x-med)' Sinv (x-med); detector nguong da chieu."""
+    if any(w.f[di] != w.f[di] for di in dims_idx):
+        return NAN
+    d = [w.f[di] - med[j] for j, di in enumerate(dims_idx)]
+    k = len(d)
+    acc = 0.0
+    for i in range(k):
+        s = 0.0
+        for j in range(k):
+            s += Sinv[i][j] * d[j]
+        acc += d[i] * s
+    return acc
+
+
+def gop_co_lien_tiep(flags_by_time):
+    """flags_by_time: list (start_ns, flagged bool) da sap theo thoi gian cua MOT tid.
+    Gop cac co TRUE lien tiep (khoang cach <= 1 buoc 30s) thanh 1 canh bao. Tra ve so canh bao."""
+    STEP = 30 * 10**9 + 5 * 10**9
+    canh_bao = 0
+    truoc = None
+    for t, fl in sorted(flags_by_time):
+        if fl:
+            if truoc is None or (t - truoc) > STEP:
+                canh_bao += 1
+            truoc = t
+        else:
+            truoc = None
+    return canh_bao
+
+
 def auroc_rank(pos, neg):
     """AUROC bang hang (Mann-Whitney U). pos/neg: list gia tri (da bo nan).
     Tra ve (auroc, n_pos, n_neg). AUROC 0.5 = ngau nhien; doi xung quanh 0.5
@@ -1002,6 +1077,112 @@ def auroc_rank(pos, neg):
     sum_pos = sum(ranks[k] for k in range(len(allv)) if allv[k][1] == 1)
     auc = (sum_pos - npos * (npos + 1) / 2.0) / (npos * nneg)
     return (auc, npos, nneg)
+
+
+def auroc_p_only(pos, neg):
+    """AUROC + p (khong bootstrap CI) — nhanh, cho phep so n lon (vs_nen_muc0)."""
+    au, npos, nneg = auroc_rank(pos, neg)
+    if au != au or npos < 3 or nneg < 3:
+        return (au, NAN, NAN, NAN, npos, nneg)
+    U = au * npos * nneg; mu = npos * nneg / 2.0
+    sig = (npos * nneg * (npos + nneg + 1) / 12.0) ** 0.5
+    z = (U - mu) / sig if sig > 0 else 0.0
+    import math as _m
+    return (au, NAN, NAN, _m.erfc(abs(z) / (2 ** 0.5)), npos, nneg)
+
+
+def auroc_ci_p(pos, neg, nboot=400, seed=12345):
+    """AUROC + CI95 bootstrap + p xap xi (Mann-Whitney normal approx)."""
+    pos = [x for x in pos if x == x]; neg = [x for x in neg if x == x]
+    npos, nneg = len(pos), len(neg)
+    if npos < 3 or nneg < 3:
+        return (NAN, NAN, NAN, NAN, npos, nneg)
+    au, _, _ = auroc_rank(pos, neg)
+    # p: Mann-Whitney U normal approx (khong hieu chinh trung)
+    import math as _m
+    U = au * npos * nneg
+    mu = npos * nneg / 2.0
+    sig = _m.sqrt(npos * nneg * (npos + nneg + 1) / 12.0)
+    z = (U - mu) / sig if sig > 0 else 0.0
+    # p hai phia
+    pval = _m.erfc(abs(z) / _m.sqrt(2.0))
+    # bootstrap CI
+    import random as _r
+    rng = _r.Random(seed)
+    aucs = []
+    for _ in range(nboot):
+        bp = [pos[rng.randrange(npos)] for _ in range(npos)]
+        bn = [neg[rng.randrange(nneg)] for _ in range(nneg)]
+        a2, _, _ = auroc_rank(bp, bn)
+        if a2 == a2:
+            aucs.append(a2)
+    aucs.sort()
+    lo = aucs[int(0.025 * len(aucs))] if aucs else NAN
+    hi = aucs[int(0.975 * len(aucs))] if aucs else NAN
+    return (au, lo, hi, pval, npos, nneg)
+
+
+def hotelling_t2(train_rows, test_rows, dims_idx):
+    """Detector nguong DA CHIEU: khoang cach Mahalanobis^2 (Hotelling T2) cua moi
+    cua so toi tam nen, dung ma tran hiep phuong sai nghich cua tap huan luyen.
+    Tra ve dict {id(w): t2} cho test_rows. Chieu NaN bi bo theo tung cua so (dung
+    cac chieu chung). Khong hoc nhan — chi thong ke nen (van la detector nguong)."""
+    # ma tran dac trung tap huan luyen (chi cua so du moi chieu)
+    cols = dims_idx
+    X = []
+    for w in train_rows:
+        v = [w.f[i] for i in cols]
+        if all(x == x for x in v):
+            X.append(v)
+    if len(X) < len(cols) + 2:
+        return {}
+    d = len(cols)
+    mean = [sum(X[r][c] for r in range(len(X))) / len(X) for c in range(d)]
+    # hiep phuong sai
+    cov = [[0.0] * d for _ in range(d)]
+    for r in range(len(X)):
+        dv = [X[r][c] - mean[c] for c in range(d)]
+        for i in range(d):
+            for j in range(d):
+                cov[i][j] += dv[i] * dv[j]
+    n1 = len(X) - 1
+    for i in range(d):
+        for j in range(d):
+            cov[i][j] /= n1
+    # nghich dao cov (Gauss-Jordan, co regularization nhe neu suy bien)
+    def inv(m):
+        d = len(m)
+        a = [row[:] + [1.0 if i == j else 0.0 for j in range(d)] for i, row in enumerate(m)]
+        for col in range(d):
+            piv = max(range(col, d), key=lambda r: abs(a[r][col]))
+            if abs(a[piv][col]) < 1e-12:
+                a[col][col] += 1e-9  # reg
+                piv = col
+            a[col], a[piv] = a[piv], a[col]
+            pv = a[col][col]
+            a[col] = [x / pv for x in a[col]]
+            for r in range(d):
+                if r != col:
+                    f = a[r][col]
+                    a[r] = [a[r][k] - f * a[col][k] for k in range(2 * d)]
+        return [row[d:] for row in a]
+    try:
+        covinv = inv([row[:] for row in cov])
+    except Exception:
+        return {}
+    out = {}
+    for w in test_rows:
+        v = [w.f[i] for i in cols]
+        if not all(x == x for x in v):
+            continue
+        dv = [v[c] - mean[c] for c in range(d)]
+        # t2 = dv^T covinv dv
+        t2 = 0.0
+        for i in range(d):
+            s_i = sum(covinv[i][j] * dv[j] for j in range(d))
+            t2 += dv[i] * s_i
+        out[id(w)] = t2
+    return out
 
 
 def main(argv):
@@ -1031,7 +1212,9 @@ def main(argv):
     ap.add_argument("--mien-tuyen-tinh", action="store_true", help="TAT mien log (de hoi quy 1.3.2)")
     ap.add_argument("--phan-tang-tai", action="store_true", help="BAT dai tai may (toc_do/nhip) lam ho so (mac dinh TAT o 1.4)")
     ap.add_argument("--giu-mad0", action="store_true", help="GIU chieu MAD=0 (thay EPS) thay vi bo; mac dinh BO khi mien log (1.4.1)")
-    ap.add_argument("--auroc", action="store_true", help="CHE DO DO LUONG (1.4.4): tinh AUROC don-chieu tan cong vs nen cung muc; khong cham detector, in bang roi thoat")
+    ap.add_argument("--auroc", action="store_true", help="CHE DO DO LUONG (1.4.4): AUROC don-chieu + CI/p + null twin-vs-twin; in bang roi thoat")
+    ap.add_argument("--t2", action="store_true", help="CHE DO (1.5): detector nguong DA CHIEU Hotelling T2 tren bo --chieu-phanra; tradeoff + theo muc + FA/host-ngay")
+    ap.add_argument("--auroc-ci", action="store_true", help="(1.4.5) AUROC kem CI95 bootstrap + p, va null twin-vs-twin")
     ap.add_argument("--out", default=None)
     a = ap.parse_args(argv[1:])
 
@@ -1066,10 +1249,11 @@ def main(argv):
         # CHE DO AUROC: voi moi nhanh, moi chieu, tinh AUROC phan biet
         # cua so TAN CONG vs (A) nen muc 0, va (B) SONG SINH cung muc (benign-cung-dieu-kien).
         # So (B) chat hon: loai hieu ung tai. Khong mo hinh hoc; chi thong ke hang.
-        import itertools
-        out_lines = ["branch\tchieu\tso_sanh\tmuc\tauroc\tabs_0.5\tn_tan_cong\tn_nen"]
-        print("# AUROC don-chieu (1.4.4): tan cong vs nen muc 0 (moi_truong), va vs song sinh cung muc (co_kiem_soat)")
-        print("# auroc~0.5 = khong tach; |auroc-0.5| lon = tach manh. KHONG mo hinh hoc, chi Mann-Whitney.")
+        out_lines = ["branch\tchieu\tso_sanh\tmuc\tauroc\tabs_0.5\tci95_lo\tci95_hi\tp\tn_pos\tn_neg"]
+        print("# AUROC don-chieu (1.5): tan cong vs nen muc 0; vs song sinh cung muc; NULL twin-vs-twin. + CI95 bootstrap + p Mann-Whitney.")
+        def lvl(w):
+            mm = w.muc_nhan if w.muc_nhan not in (None, "") else (w.muc if w.muc is not None else "0")
+            return mm if mm not in (None, "") else "0"
         for b in sorted({w.branch for w in rows}):
             rb = [w for w in rows if w.branch == b]
             dims_idx = [i for i, d in enumerate(dims_all) if not d.startswith("ctx_")
@@ -1078,33 +1262,36 @@ def main(argv):
             atk = [w for w in rb if w.atk is not None]
             if not atk:
                 continue
-            # muc cua tung cua so tan cong
-            mucs = sorted({(w.muc_nhan if w.muc_nhan not in (None, "") else (w.muc if w.muc is not None else "0")) for w in atk})
+            mucs = sorted({lvl(w) for w in atk})
             nen0 = [w for w in rb if w.atk is None and w.twin is None and (w.muc is None or w.muc == "0")]
+            twins = [w for w in rb if w.twin is not None]
             for di in dims_idx:
                 d = dims_all[di]
-                atk_v_all = [w.f[di] for w in atk]
                 # (A) vs nen muc 0
-                au, npos, nneg = auroc_rank(atk_v_all, [w.f[di] for w in nen0])
+                au, lo, hi, pv, npos, nneg = auroc_p_only([w.f[di] for w in atk], [w.f[di] for w in nen0])
                 if au == au:
-                    out_lines.append("%s\t%s\tvs_nen_muc0\t*\t%.4f\t%.4f\t%d\t%d" % (b, d, au, abs(au-0.5), npos, nneg))
-                # (B) vs song sinh cung muc, tung muc
+                    out_lines.append("%s\t%s\tvs_nen_muc0\t*\t%.4f\t%.4f\t%.4f\t%.4f\t%.3g\t%d\t%d" % (b, d, au, abs(au-0.5), lo, hi, pv, npos, nneg))
                 for m in mucs:
-                    def lvl(w):
-                        # uu tien muc tu NHAN (ghep dung tai cho ca tan cong lan song sinh);
-                        # fallback muc.tsv neu nhan khong co
-                        mm = w.muc_nhan if w.muc_nhan not in (None, "") else (w.muc if w.muc is not None else "0")
-                        return mm if mm not in (None, "") else "0"
                     atk_m = [w.f[di] for w in atk if lvl(w) == m]
-                    twin_m = [w.f[di] for w in rb if w.twin is not None and lvl(w) == m]
-                    au2, np2, nn2 = auroc_rank(atk_m, twin_m)
+                    twin_m = [w.f[di] for w in twins if lvl(w) == m]
+                    # (B) tan cong vs song sinh cung muc
+                    au2, lo2, hi2, pv2, np2, nn2 = auroc_ci_p(atk_m, twin_m)
                     if au2 == au2:
-                        out_lines.append("%s\t%s\tvs_song_sinh\t%s\t%.4f\t%.4f\t%d\t%d" % (b, d, m, au2, abs(au2-0.5), np2, nn2))
+                        out_lines.append("%s\t%s\tvs_song_sinh\t%s\t%.4f\t%.4f\t%.4f\t%.4f\t%.3g\t%d\t%d" % (b, d, m, au2, abs(au2-0.5), lo2, hi2, pv2, np2, nn2))
+                    # (C) NULL: twin vs twin cung muc (chia doi ngau nhien)
+                    if len(twin_m) >= 10:
+                        import random as _r
+                        rng = _r.Random(777)
+                        tw = twin_m[:]; rng.shuffle(tw)
+                        half = len(tw) // 2
+                        au3, lo3, hi3, pv3, np3, nn3 = auroc_ci_p(tw[:half], tw[half:])
+                        if au3 == au3:
+                            out_lines.append("%s\t%s\tnull_twin_twin\t%s\t%.4f\t%.4f\t%.4f\t%.4f\t%.3g\t%d\t%d" % (b, d, m, au3, abs(au3-0.5), lo3, hi3, pv3, np3, nn3))
         for L in out_lines:
             print(L)
-        if outdir:
-            os.makedirs(outdir, exist_ok=True)
-            with open(os.path.join(outdir, "auroc_don_chieu.tsv"), "w") as fh:
+        if a.out:
+            os.makedirs(a.out, exist_ok=True)
+            with open(os.path.join(a.out, "auroc_don_chieu.tsv"), "w") as fh:
                 fh.write("\n".join(out_lines) + "\n")
         # tom tat: chieu nao co |auroc-0.5| lon nhat
         best = {}
@@ -1121,6 +1308,63 @@ def main(argv):
         for (br, ss), (v, ch, m, au) in sorted(best.items()):
             print("  %s / %s: %s (muc %s) |auroc-0.5|=%.4f auroc=%s" % (br, ss, ch, m, v, au))
         return
+
+    if a.t2:
+        # DETECTOR NGUONG DA CHIEU Hotelling T2 tren bo --chieu-phanra (mac dinh D).
+        # Cong bang voi max|z|: cung train (nen muc 0 truoc cut), cung ngan sach, cung muc.
+        phanra_set = CHIEU_PHANRA[a.chieu_phanra]
+        tmin = min(w.start for w in rows); tmax = max(w.start for w in rows)
+        cut = a.train_until if a.train_until else tmin + int(0.7 * (tmax - tmin))
+        print("# T2 (1.5) bo chieu %s = %s | ho_so lop(cgroup,k) gop; nguong ngan sach tren train" % (a.chieu_phanra, "+".join(phanra_set)))
+        out = ["branch\tngan_sach\tnguong\tbdg_nen\tphat_hien\tmuc_0\tmuc_D1-8\tmuc_D1-16\tmuc_D3-7\tn_train\tn_atk"]
+        for b in ("BASELINE_dt_tho", "PHANRA_5tp"):
+            rb = [w for w in rows if w.branch == b]
+            if not rb:
+                continue
+            want = ["dt_med", "dt_p90", "dt_iqr", "dt_cv"] if b == "BASELINE_dt_tho" else phanra_set
+            dims_idx = [i for i, d in enumerate(dims_all) if d in want and any(w.f[i] == w.f[i] for w in rb)]
+            if not dims_idx:
+                continue
+            train = [w for w in rb if w.nguon == "nen" and w.stop <= cut and w.atk is None
+                     and w.twin is None and (w.muc_nhan in (None, "", "0"))]
+            fit = fit_cov(train, dims_idx)
+            if not fit:
+                print("# T2 %s: khong du mau fit hiep phuong sai (%d train, %d chieu)" % (b, len(train), len(dims_idx)))
+                continue
+            med, Sinv = fit
+            def lvl2(w):
+                mm = w.muc_nhan if w.muc_nhan not in (None, "") else "0"
+                return mm if mm not in (None, "") else "0"
+            test = [w for w in rb if w.start >= cut or w.atk is not None or w.twin is not None or lvl2(w) != "0"]
+            for w in test + train:
+                w._st = t2_score(w, dims_idx, med, Sinv)
+            train_sc = sorted((w._st for w in train if w._st == w._st), reverse=True)
+            ben_kt = [w for w in test if w.atk is None and w.twin is None and lvl2(w) == "0" and w.start >= cut]
+            atk = [w for w in test if w.atk is not None]
+            by_muc = {}
+            for w in atk:
+                by_muc.setdefault(lvl2(w), []).append(w)
+            for bb in (0.001, 0.01, 0.05):
+                if not train_sc:
+                    continue
+                k = max(0, min(len(train_sc) - 1, int(bb * len(train_sc))))
+                thr = train_sc[k]
+                def rate(ws):
+                    ws = [w for w in ws if w._st == w._st]
+                    return (sum(1 for w in ws if w._st >= thr) / len(ws)) if ws else NAN
+                def mrate(m):
+                    return rate(by_muc.get(m, []))
+                out.append("%s\t%g\t%.4g\t%.4f\t%.4f\t%s\t%s\t%s\t%s\t%d\t%d" % (
+                    b, bb, thr, rate(ben_kt), rate(atk), f4(mrate("0")), f4(mrate("D1-8")),
+                    f4(mrate("D1-16")), f4(mrate("D3-7")), len(train), len(atk)))
+        for L in out:
+            print(L)
+        if a.out:
+            os.makedirs(a.out, exist_ok=True)
+            with open(os.path.join(a.out, "t2_tradeoff.tsv"), "w") as fh:
+                fh.write("\n".join(out) + "\n")
+        return
+
     tmin = min(w.start for w in rows)
     tmax = max(w.start for w in rows)
     cut = a.train_until if a.train_until else tmin + int(0.7 * (tmax - tmin))
