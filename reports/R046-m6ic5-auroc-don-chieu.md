@@ -1,6 +1,6 @@
 # R046 — M6i-c5 AUROC đơn-chiều: chặn phản biện "ngưỡng dở" và định lượng R045 (c5_score 1.4.4)
 
-1. Số báo cáo: **R046**. Ngày giờ: **2026-11-09 02:22** (giờ máy). Mốc: **M6i-c5**. Commit kiến trúc sư: `b865878`. Commit báo cáo: `PENDING`. Tag: `m6i.6`.
+1. Số báo cáo: **R046**. Ngày giờ: **2026-11-09 02:22** (giờ máy). Mốc: **M6i-c5**. Commit kiến trúc sư: `b865878`. Commit báo cáo: `9cec270`. Tag: `m6i.6`.
 
 ## Mục đích (nguyên văn nhiệm vụ)
 
@@ -96,7 +96,7 @@ c8526ba14a46b3e8ce2a2040e61e0840e51eb6a22b7eee3303c739346f06d0e7  analysis/c5_sc
 5bd8e40c64ae327e238b24f114add9c274e780e0bc391eb3f54f6fb81b545154  out/c5-lab1/r046-tables/BUG_outdir.txt
 029cad982927fc255b9eacb0705a6410343deb7822cef2259d229f9fed18e1ef  docs/tasks/M6i.md
 6d1028bc7b1fdd1744fbd65a91a6863a379f4e6786327407d109fcccae46c5d2  docs/STATE.md
-a62cd0d4269d51eaafeb65f5df88ab668b0aeef1f95a4da2cd90c6c1b17b3e2f  reports/R046-m6ic5-auroc-don-chieu.md
+709d5f1e2cad13cc868bc5c58cccbe0eb2ebb70bc00903062d32672c3d2854f4  reports/R046-m6ic5-auroc-don-chieu.md
 947fcb91cba3a36b01e1d4d5a631cc68b6547f6709a5da4e1aa1ae1264e40f78  lab/muc-lab1c.tsv
 ```
 
