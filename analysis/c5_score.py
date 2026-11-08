@@ -161,7 +161,7 @@ import os
 import sys
 from array import array
 
-VERSION = "1.4.1"
+VERSION = "1.4.2"
 EPS = 1e-9
 DET_LEVELS = (0.5, 0.8, 0.9, 0.95, 1.0)
 NGAN_SACH_MAC_DINH = "0.001,0.01,0.05"
@@ -212,7 +212,7 @@ def f4(v):
 
 class Row(object):
     __slots__ = ("branch", "tid", "start", "stop", "nguon", "f", "band", "rate",
-                 "score", "used", "atk", "twin", "muc", "trong", "cmax", "khoa", "k", "cg", "npmu", "nrec", "tid_rieng")
+                 "score", "used", "atk", "twin", "muc", "trong", "cmax", "khoa", "k", "cg", "npmu", "nrec", "tid_rieng", "_st")
 
     def __init__(self, branch, tid, start, stop, nguon, f):
         self.branch = branch
@@ -236,6 +236,7 @@ class Row(object):
         self.npmu = 0        # x_n_pmu cua cua so
         self.nrec = None     # n ban ghi cua cua so (cot n); None = khong co
         self.tid_rieng = False
+        self._st = NAN
 
 
 def read_features(path, mien_log=True):
@@ -697,6 +698,92 @@ def fit_stats(train, dims_idx, toi_thieu, phan_tang=True, dung_khoa=False, bo_ma
     return stats
 
 
+class NenTruot(object):
+    """Nen truot (1.4.2): median/MAD cua moi ho so tren cua so huan luyen trong W gio
+    truoc moc cua so. Dung buckets theo gio de nhanh. Khoa = w.khoa (hoac w.band)."""
+
+    def __init__(self, train, dims_idx, W_gio, bo_mad0, dung_khoa, toi_thieu):
+        self.W = int(W_gio * 3600 * 1e9)
+        self.dims_idx = dims_idx
+        self.bo_mad0 = bo_mad0
+        self.toi_thieu = toi_thieu
+        self.gio = 3600 * 10**9
+        # buckets[key][gio_index] = list of (stop, {di: val})
+        self.buckets = {}
+        for w in train:
+            key = (w.khoa if dung_khoa else w.band) or "*"
+            gi = w.stop // self.gio
+            self.buckets.setdefault(key, {}).setdefault(gi, []).append(w)
+        # them nhom '*' gop toan bo
+        allb = self.buckets.setdefault("*", {})
+        if not allb:
+            for w in train:
+                allb.setdefault(w.stop // self.gio, []).append(w)
+        self.cache = {}   # (key, gio_cua_so) -> stats dict (tai su dung trong cung gio)
+
+    def _fit(self, ws):
+        st = {}
+        for di in self.dims_idx:
+            xs = [w.f[di] for w in ws if w.f[di] == w.f[di]]
+            if len(xs) < self.toi_thieu:
+                st[di] = None
+                continue
+            m = median(xs); a = mad(xs, m)
+            if a <= 0:
+                st[di] = (m, (NAN if self.bo_mad0 else EPS), len(xs), 1)
+            else:
+                st[di] = (m, a, len(xs), 0)
+        return st
+
+    def stats_cho(self, key, start):
+        gi0 = (start - self.W) // self.gio
+        gi1 = start // self.gio
+        ck = (key, gi1)
+        st = self.cache.get(ck)
+        if st is not None:
+            return st
+        b = self.buckets.get(key)
+        ws = []
+        if b:
+            for gi in range(gi0, gi1 + 1):
+                for w in b.get(gi, ()):
+                    if start - self.W <= w.stop < start:
+                        ws.append(w)
+        st = self._fit(ws) if ws else {}
+        self.cache[ck] = st
+        return st
+
+
+def score_truot(w, nen, order_cache, dung_khoa, static_stats):
+    """Diem voi nen truot; thieu mau -> roi ve nen tinh (static_stats)."""
+    key = w.khoa if dung_khoa else w.band
+    order = order_cache.get(("kt" if dung_khoa else "bt", key))
+    if order is None:
+        order = thu_tu_khoa(key) if dung_khoa else thu_tu_du_phong(key, True)
+        order_cache[("kt" if dung_khoa else "bt", key)] = order
+    best, used = 0.0, 0
+    for di in nen.dims_idx:
+        v = w.f[di]
+        if v != v:
+            continue
+        for b in order:
+            st = nen.stats_cho(b, w.start)
+            ma = st.get(di) if st else None
+            if ma is None:
+                # roi ve nen tinh cho dai nay
+                st2 = static_stats.get(b)
+                ma = st2.get(di) if st2 else None
+                if ma is None:
+                    continue
+            m, a = ma[0], ma[1]
+            if a != a:
+                break
+            best = max(best, abs(v - m) / (1.4826 * a))
+            used += 1
+            break
+    return best if used else NAN
+
+
 def thu_tu_du_phong(band, phan_tang=True):
     if band is None or not phan_tang:
         return ["*"]
@@ -1024,8 +1111,7 @@ def main(argv):
         a.n_toi_thieu, a.tid_toi_thieu))
     print("# 1.4.1: bo_chieu_MAD0=%s (mien log); nguong ngan sach khong con bi z khong lo do EPS" % ("co" if bo_mad0 else "khong"))
     if a.nen_truot_gio > 0:
-        print("# CHU Y: --nen-truot-gio=%g duoc KHAI BAO nhung chua cai trong 1.4; nen 'tinh' van la nen chinh. "
-              "Nen truot se lam o M6i-c2 (bang bao cao rieng). Bo qua o lan chay nay." % a.nen_truot_gio)
+        print("# 1.4.2: nen truot BAT, W=%g gio; bang rieng 'truot' ben canh nen tinh" % a.nen_truot_gio)
     for b in branches:
         rb = [w for w in rows if w.branch == b]
         # 1.4: chon chieu theo nhanh; cho phep x_arr_*/x_inst_* khi bo chieu yeu cau
@@ -1120,6 +1206,41 @@ def main(argv):
         if not tb:
             print("khong cham duoc")
             continue
+        # 1.4.2: nen truot - bang rieng so sanh voi nen tinh
+        if a.nen_truot_gio > 0:
+            nen = NenTruot(train, dims_idx, a.nen_truot_gio, bo_mad0, dung_khoa, a.dai_toi_thieu)
+            for w in scored:
+                w._st = w.score   # luu diem tinh
+            tr_scores = {}
+            for w in scored:
+                w.score = score_truot(w, nen, order_cache, dung_khoa, stats)
+            sc_tr = [w for w in scored if w.score == w.score]
+            # ngan sach tren nen truot: nguong = phan vi diem huan luyen (cham lai bang truot)
+            tr_train = sorted((score_truot(w, nen, order_cache, dung_khoa, stats) for w in train), reverse=True)
+            tr_train = [x for x in tr_train if x == x]
+            ben_tr = [w for w in sc_tr if w.atk is None and w.nguon == "nen" and w.twin is None
+                      and (w.muc is None or w.muc == "0") and w.start >= cut and not w.trong]
+            by_muc_tr = dem_theo([w for w in sc_tr if w.atk is None], lambda w: w.muc if w.muc is not None else "0")
+            atk_tr = [w for w in sc_tr if w.atk is not None]
+            print("# NEN TRUOT (W=%gh) %s: so cua so cham duoc=%d, nen_kt=%d" % (a.nen_truot_gio, b, len(sc_tr), len(ben_tr)))
+            print("truot_ngan_sach\tnguong\tbdg_nen_kiem_tra\tphat_hien\t" + "\t".join("muc_%s" % m for m in sorted(by_muc_tr)))
+            tr_lines = ["truot_ngan_sach\tnguong\tbdg_nen_kiem_tra\tphat_hien\t" + "\t".join("muc_%s" % m for m in sorted(by_muc_tr))]
+            for bb in ngan_sach:
+                thr = nguong_ngan_sach(tr_train, bb)
+                if thr != thr:
+                    continue
+                fn = ti_le(ben_tr, thr)[0]
+                det = ti_le(atk_tr, thr)[0] if atk_tr else NAN
+                mucs = [f4(ti_le(by_muc_tr.get(m, []), thr)[0]) for m in sorted(by_muc_tr)]
+                line = "%g\t%s\t%s\t%s\t%s" % (bb, f4(thr), f4(fn), f4(det), "\t".join(mucs))
+                print("  " + line.replace("\t", "  "))
+                tr_lines.append(line)
+            if outdir:
+                with open(os.path.join(outdir, "nen_truot_%s.tsv" % b), "w") as fh:
+                    fh.write("\n".join(tr_lines) + "\n")
+            # phuc hoi diem tinh de phan con lai dung nhu cu
+            for w in scored:
+                w.score = w._st
         benign_all = [w for w in scored if w.atk is None]
         nen_kt = [w for w in benign_all if w.nguon == "nen" and w.twin is None
                   and (w.muc is None or w.muc == "0") and w.start >= cut and not w.trong]

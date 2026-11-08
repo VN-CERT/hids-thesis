@@ -178,3 +178,23 @@ Lý do (ghi R043 mục đầu, nguyên văn): "R042: ngưỡng ngân sách PHANR
 5. Hình (ghi đè KHÔNG, ra hinh-v141/): H1 phát hiện theo mức lab1c @ bdg nền 1 % cho CH* (ba nhánh); H3' bdg nền kiểm tra lab1c @ 1 % cho A..E (so bộ); H2' đường tranh chấp lab1c CH* (BASE vs PHANRA × D1-16/D3-7).
 
 6. R043 (in nguyên văn): (a) hồi quy; (b) §1 bảng so năm bộ (bdg nền @0.90 + theo muc + ngưỡng ngân sách số thường); (c) §2 đường tranh chấp mỗi bộ; (d) §3 nền trượt (hoặc "để M6i-c3"); (e) §4 production + áp ngưỡng; (f) H1/H2'/H3'; (g) thời gian/RSS; (h) sha256 7 file (c5_score v1.4.1); "Thay đổi ngoài phạm vi" + git diff --stat; mục 8: ĐỀ XUẤT bộ chiều + hồ sơ mặc định cho production, kèm số (bdg nền thấp nhất mà vẫn tách D3-7). Commit, tag m6i.3, push. DỪNG.
+
+## M6i-c3
+
+NHIỆM VỤ M6i-c3 — PHÉP THỬ QUYẾT ĐỊNH cho C5: nền trượt 24 giờ (c5_score v1.4.2; detector v1.3 GIỮ NGUYÊN) (195, repo /root/hids). Nối vào docs/tasks/M6i.md mục "M6i-c3". Báo cáo R044, tag m6i.4. KHÔNG đo lại, KHÔNG rsync, KHÔNG ghi đè thư mục cũ (ra -v142-). Không sửa file kiến trúc sư. Không kết luận đạt/không.
+Điều kiện: CAI in "XONG": analysis/c5_score.py v1.4.2 sha256 75279c3e979c1837c6622d025cc43db71067ec6ae2a6715b52bedb511cb0b16c. Kiểm sha, commit "C5 v2: c5_score v1.4.2 (nen truot 24h) (kien truc su)".
+Bối cảnh (ghi R044 mục đầu, nguyên văn): "R043 (nền tĩnh): ở điểm vận hành báo động giả thấp (ngân sách 1 %), tải D3-7 KHÔNG tách khỏi nền (bdg D3-7 ≈ 0,0007 khi nền 1 %); tín hiệu D3 chỉ rõ ở mức phát hiện 0,90 (nơi ngưỡng bị kéo xuống rất thấp nên cả nền cũng báo động). Kết luận tạm: C5 ÂM TÍNH như detector vận hành với nền tĩnh. Giả thuyết: nền trôi 10–15 %/ngày (R041-b F3) nhấn chìm tín hiệu D3 nhỏ; nền TRƯỢT 24 giờ (median/MAD học trên 24 h liền trước mỗi cửa sổ, cùng hồ sơ) có thể khử trôi và làm D3 nhô lên ở ngân sách thấp. M6i-c3 là phép thử quyết định: nếu nền trượt tách được D3-7 ở báo động giả nền ≤ 5 % → C5 DƯƠNG TÍNH CÓ ĐIỀU KIỆN (cho tranh chấp bộ nhớ); nếu không → ÂM TÍNH CHỐT, bài đứng trên hệ đo + phát hiện vật lý + kết quả âm tính trung thực."
+
+0. Hồi quy lại (BẮT BUỘC): `python3 analysis/c5_score.py --features out/c5-prod/features_all.tsv --train-until 434858090000000 --chieu-phanra A --ho-so tat --mien-tuyen-tinh --n-toi-thieu 0 --dai-che-do khong --out out/c5-prod/score-v142-compat` → cmp với out/c5-prod/score (R039). Khác → DỪNG, dán diff.
+
+1. Lab1c, nền tĩnh VÀ nền trượt song song, cho ba bộ chiều (D, E, và A làm mốc). Dùng lại out/c5-lab1c/features_ghep.tsv (R042). Với CH∈{A,D,E}:
+   `--features out/c5-lab1c/features_ghep.tsv --train-until 1006289550843307 --nhan lab/nhan-tan-cong-lab1c.tsv --nhan-tid lab/nhan-tid-lab1c.tsv --muc lab/muc-lab1c.tsv --chieu-phanra CH --ho-so lop --n-toi-thieu 30 --nen-truot-gio 24 --out out/c5-lab1c/score-v142-<CH>`. Lưu log.txt (có cả bảng nền tĩnh lẫn khối "# NEN TRUOT").
+   BẢNG QUYẾT ĐỊNH (cốt lõi R044), cho PHANRA mỗi CH, tại ngân sách 0,01 VÀ 0,05, SO nền tĩnh (tom_tat_ngan_sach) vs nền trượt (nen_truot_PHANRA_5tp.tsv): cột bdg_nen_kiem_tra (tĩnh) | bdg_nen_kiem_tra (trượt) | muc_D3-7 (tĩnh) | muc_D3-7 (trượt) | muc_D1-16 (tĩnh) | muc_D1-16 (trượt). Câu hỏi đọc thẳng: với nền trượt, ở ngân sách có bdg_nen_kiem_tra ≤ 0,05, muc_D3-7 có > 3× bdg nền không? Nếu có với bộ nào → ghi bộ đó, mức phát hiện D3-7, báo động giả nền.
+   Cũng in nen_truot cho BASELINE_dt_tho (so: nền trượt cứu được Δt thô không, hay chỉ cứu phân rã).
+
+2. Nếu §1 cho nền trượt tách D3-7 (bộ CH+ nào đó): chạy production bộ CH+ nền trượt `--chieu-phanra CH+ --ho-so tid_lop --nen-truot-gio 24 --out out/c5-prod/score-v142-CH+-tid-truot`; in bdg nền ngày 6–7 ở ngân sách 1 % so nền tĩnh (báo động giả vận hành thực). Nếu §1 KHÔNG tách → bỏ bước này, ghi "nền trượt không cứu, âm tính chốt".
+
+3. Hình (ra hinh-v142/): H-truot: bộ tách tốt nhất (hoặc E nếu không bộ nào tách), hai đường tranh chấp D3-7 — nền tĩnh vs nền trượt — cùng trục (hoành bdg nền sạch log, tung bdg D3-7). H-troi: bdg nền kiểm tra theo ngày 6 và 7 riêng, tĩnh vs trượt.
+
+4. R044 (in nguyên văn): (a) hồi quy; (b) BẢNG QUYẾT ĐỊNH §1; (c) §2 nếu có; (d) H-truot, H-troi; (e) thời gian/RSS (nền trượt chậm hơn — ghi); (f) sha256 7 file (c5_score v1.4.2); "Thay đổi ngoài phạm vi" + git diff --stat; (g) mục 8 KẾT LUẬN THẲNG: nền trượt có cứu C5 không (dương tính có điều kiện / âm tính chốt), kèm số. Commit, tag m6i.4, push.
+5. Đóng gói lưu trữ (sau khi push): /root/chep_file/luu-tru/HIDS-R044-<ngày>.zip gồm git bundle --all, reports/R039..R044 + INDEX, docs/tasks/M6i.md + STATE.md, analysis/{detector_c5.py,c5_score.py} + SHA256SUMS, out/c5-lab1/hinh-v14?/*.svg, out/c5-lab1/r04?-tables; KHÔNG .bin, KHÔNG features_*.tsv/scores_* lớn, KHÔNG dữ liệu production thô. In cây + dung lượng + sha256 zip. DỪNG.
