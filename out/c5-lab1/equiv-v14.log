@@ -1,0 +1,24 @@
+# c5_extract  giu=1600 bo_qua_ngoai_7ngay=0
+# c5_extract  giu=2100 bo_qua_ngoai_7ngay=0
+# c5_extract  giu=3166508 bo_qua_ngoai_7ngay=0
+# rec-export /root/hids/out/g3-S1-002949.bin
+=== syn1 ===
+file: /tmp/c5equiv-1d8_v8ig/syn1.tsv
+so_cua_so ref=56 got=56  so_chieu~=13
+thieu_tren_ref=0 thieu_tren_got=0
+sai_lech_tuong_doi_max=0.000000e+00
+ket_qua: KHOP
+=== syn2 ===
+file: /tmp/c5equiv-1d8_v8ig/syn2.tsv
+so_cua_so ref=60 got=60  so_chieu~=13
+thieu_tren_ref=0 thieu_tren_got=0
+sai_lech_tuong_doi_max=0.000000e+00
+ket_qua: KHOP
+=== g3 ===
+file: /tmp/c5equiv-1d8_v8ig/g3.csv
+so_cua_so ref=2 got=2  so_chieu~=13
+thieu_tren_ref=0 thieu_tren_got=0
+sai_lech_tuong_doi_max=0.000000e+00
+ket_qua: KHOP
+
+TAT_CA_KHOP tol=1e-06

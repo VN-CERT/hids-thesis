@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="480">
+<rect width="100%" height="100%" fill="white"/>
+<text x="600" y="24" font-family="sans-serif" font-size="14" text-anchor="middle">H1 phat hien lab1c @ ngan sach 0.01 (score-v14-D)</text>
+<line x1="60" y1="50" x2="60" y2="380" stroke="#333"/>
+<line x1="60" y1="380" x2="1180" y2="380" stroke="#333"/>
+<text x="95.0" y="472" font-family="sans-serif" font-size="9" text-anchor="end" transform="rotate(-40 95.0 472)">B1-0</text>
+<rect x="68.8" y="380.0" width="16.5" height="0.0" fill="#1f77b4"/>
+<rect x="86.2" y="380.0" width="16.5" height="0.0" fill="#ff7f0e"/>
+<rect x="103.8" y="380.0" width="16.5" height="0.0" fill="#2ca02c"/>
+<text x="165.0" y="472" font-family="sans-serif" font-size="9" text-anchor="end" transform="rotate(-40 165.0 472)">B1-D1-8</text>
+<rect x="138.8" y="358.7" width="16.5" height="21.3" fill="#1f77b4"/>
+<rect x="156.2" y="380.0" width="16.5" height="0.0" fill="#ff7f0e"/>
+<rect x="173.8" y="380.0" width="16.5" height="0.0" fill="#2ca02c"/>
+<text x="235.0" y="472" font-family="sans-serif" font-size="9" text-anchor="end" transform="rotate(-40 235.0 472)">B1-D1-16</text>
+<rect x="208.8" y="353.4" width="16.5" height="26.6" fill="#1f77b4"/>
+<rect x="226.2" y="380.0" width="16.5" height="0.0" fill="#ff7f0e"/>
+<rect x="243.8" y="380.0" width="16.5" height="0.0" fill="#2ca02c"/>
+<text x="305.0" y="472" font-family="sans-serif" font-size="9" text-anchor="end" transform="rotate(-40 305.0 472)">B1-D3-7</text>
+<rect x="278.8" y="353.4" width="16.5" height="26.6" fill="#1f77b4"/>
+<rect x="296.2" y="380.0" width="16.5" height="0.0" fill="#ff7f0e"/>
+<rect x="313.8" y="380.0" width="16.5" height="0.0" fill="#2ca02c"/>
+<text x="375.0" y="472" font-family="sans-serif" font-size="9" text-anchor="end" transform="rotate(-40 375.0 472)">N1-0</text>
+<text x="445.0" y="472" font-family="sans-serif" font-size="9" text-anchor="end" transform="rotate(-40 445.0 472)">N1-D1-8</text>
+<text x="515.0" y="472" font-family="sans-serif" font-size="9" text-anchor="end" transform="rotate(-40 515.0 472)">N1-D1-16</text>
+<text x="585.0" y="472" font-family="sans-serif" font-size="9" text-anchor="end" transform="rotate(-40 585.0 472)">N1-D3-7</text>
+<text x="655.0" y="472" font-family="sans-serif" font-size="9" text-anchor="end" transform="rotate(-40 655.0 472)">B4-0</text>
+<rect x="628.8" y="226.0" width="16.5" height="154.0" fill="#1f77b4"/>
+<rect x="646.2" y="380.0" width="16.5" height="0.0" fill="#ff7f0e"/>
+<rect x="663.8" y="380.0" width="16.5" height="0.0" fill="#2ca02c"/>
+<text x="725.0" y="472" font-family="sans-serif" font-size="9" text-anchor="end" transform="rotate(-40 725.0 472)">B4-D1-8</text>
+<rect x="698.8" y="220.3" width="16.5" height="159.7" fill="#1f77b4"/>
+<rect x="716.2" y="380.0" width="16.5" height="0.0" fill="#ff7f0e"/>
+<rect x="733.8" y="380.0" width="16.5" height="0.0" fill="#2ca02c"/>
+<text x="795.0" y="472" font-family="sans-serif" font-size="9" text-anchor="end" transform="rotate(-40 795.0 472)">B4-D1-16</text>
+<rect x="768.8" y="215.0" width="16.5" height="165.0" fill="#1f77b4"/>
+<rect x="786.2" y="380.0" width="16.5" height="0.0" fill="#ff7f0e"/>
+<rect x="803.8" y="380.0" width="16.5" height="0.0" fill="#2ca02c"/>
+<text x="865.0" y="472" font-family="sans-serif" font-size="9" text-anchor="end" transform="rotate(-40 865.0 472)">B4-D3-7</text>
+<rect x="838.8" y="223.1" width="16.5" height="156.9" fill="#1f77b4"/>
+<rect x="856.2" y="380.0" width="16.5" height="0.0" fill="#ff7f0e"/>
+<rect x="873.8" y="380.0" width="16.5" height="0.0" fill="#2ca02c"/>
+<text x="935.0" y="472" font-family="sans-serif" font-size="9" text-anchor="end" transform="rotate(-40 935.0 472)">N4-0</text>
+<text x="1005.0" y="472" font-family="sans-serif" font-size="9" text-anchor="end" transform="rotate(-40 1005.0 472)">N4-D1-8</text>
+<text x="1075.0" y="472" font-family="sans-serif" font-size="9" text-anchor="end" transform="rotate(-40 1075.0 472)">N4-D1-16</text>
+<text x="1145.0" y="472" font-family="sans-serif" font-size="9" text-anchor="end" transform="rotate(-40 1145.0 472)">N4-D3-7</text>
+<rect x="60" y="36" width="12" height="12" fill="#1f77b4"/>
+<text x="76" y="46" font-family="sans-serif" font-size="11">AGG</text>
+<rect x="170" y="36" width="12" height="12" fill="#ff7f0e"/>
+<text x="186" y="46" font-family="sans-serif" font-size="11">BASE</text>
+<rect x="280" y="36" width="12" height="12" fill="#2ca02c"/>
+<text x="296" y="46" font-family="sans-serif" font-size="11">PHANRA</text>
+</svg>

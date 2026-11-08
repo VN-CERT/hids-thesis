@@ -1,0 +1,4 @@
+branch	ngan_sach	nguong	bao_dong_gia	bdg_huan_luyen	bdg_nen_kiem_tra	bdg_song_sinh	bdg_nen_trong_tan_cong	phat_hien	n_huan_luyen	n_benign	n_nen_kiem_tra	n_tan_cong
+AGG_cgroup_giay	0.01	260.7706	0.0142	0.0100	0.0099	nan	nan	nan	28921	12960	11566	0
+BASELINE_dt_tho	0.01	106.7068	0.0117	0.0100	0.0120	nan	nan	nan	358298	159483	143776	0
+PHANRA_5tp	0.01	1887225145015.5132	0.0248	0.0179	0.0183	nan	nan	nan	358298	159483	143776	0

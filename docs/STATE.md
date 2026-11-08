@@ -137,3 +137,27 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 - M6i-c0 / R041-b / lab v2 merge: đã xong trước đó.
 - Cập nhật: 2026-11-08 20:41.
 
+## Cập nhật 2026-11-08 23:10 (M6i-c2)
+
+## Mốc hiện tại và mục tiêu (M6i-c2)
+
+- **Mốc:** M6i-c2 — chấm C5 v2 (c5_score 1.4 + detector 1.3) trên dữ liệu đã có; báo cáo R042; tag m6i.2.
+- **Bước đã xong:** CAI XONG; commit kiến trúc sư `3cefc7f`; hồi quy score-v14-compat vs R039 KHOP; equiv detector v1.3 KHOP; ghép `out/c5-lab1c/features_ghep.tsv`.
+- **Bước đang làm:** chấm lab A–E + D-lop/D-tat, lab1c D/A, prod D/A (unit `hids-m6ic2-score`).
+- **Bước tiếp theo:** áp ngưỡng, vẽ H1–H4, R042, tag m6i.2, push, DỪNG.
+
+## Việc đang chạy
+
+- **hids-m6ic2-score** (M6i-c2 chấm 11 bộ)
+  - lệnh: `systemd-run --unit=hids-m6ic2-score --collect bash -c 'cd /root/hids && bash scripts/c5_m6ic2_score.sh'`
+  - bắt đầu: 2026-11-08 23:10
+  - dự kiến xong: ~2026-11-08 23:50 (11 lần × ~2–4 phút)
+  - log: `out/jobs/m6ic2-score.log`
+  - trạng thái: `out/jobs/m6ic2-score.status`
+
+## Cập nhật 2026-11-08 23:28 (M6i-c2 XONG)
+
+- Chấm 11/11 xong (unit hids-m6ic2-score exit=0).
+- R042 viết xong; H1–H4 tại out/c5-lab1/hinh-v14/.
+- Việc đang chạy: không.
+- Tiếp theo: commit + tag m6i.2 + push; DỪNG.

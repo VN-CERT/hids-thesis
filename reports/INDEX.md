@@ -46,3 +46,4 @@
 | [R041](R041-m6ic1-chan-doan-sieu-tap.md) | 2026-11-07 12:26 | M6i-c1 | Chẩn đoán v1.3.2; extract_v2; trích lab/prod đang chạy; phần đáp ứng → R041-b. | Tag `m6i.1`. |
 | [R041-c](R041-c-m6ic2-lab1c-trich.md) | 2026-11-08 19:33 | M6i-c0 | Kéo LAB-1c + trích features_all_v2. | Xong. |
 | [R041-d](R041-d-m6ic1-chan-doan-mo-rong.md) | 2026-11-08 20:40 | M6i-c1 | Chẩn đoán mở rộng C5 v2 (ti_so/trôi/13 tid/lab1c). | Xong. |
+| [R042](R042-m6ic2-cham-c5-v2.md) | 2026-11-08 23:27 | M6i-c2 | Chấm C5 v2 (1.4): hồi quy KHOP; lab A–E; lab1c; prod; H1–H4; tag m6i.2. | Xong, tag `m6i.2`. |
