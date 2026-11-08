@@ -1,6 +1,6 @@
 # R045 — M6i-c4 ablation "chỉ-inst": quy trách nhiệm vì sao bộ chiều có x_inst vẫn sụp dưới D3 (c5_score 1.4.3)
 
-1. Số báo cáo: **R045**. Ngày giờ: **2026-11-09 02:00** (giờ máy). Mốc: **M6i-c4**. Commit kiến trúc sư: `33fd542`. Commit báo cáo: *(điền sau commit)*. Tag: `m6i.5`.
+1. Số báo cáo: **R045**. Ngày giờ: **2026-11-09 02:00** (giờ máy). Mốc: **M6i-c4**. Commit kiến trúc sư: `33fd542`. Commit báo cáo: . Tag: `m6i.5`.
 
 ## Câu hỏi khoa học (nguyên văn nhiệm vụ)
 
@@ -107,8 +107,8 @@ Nguồn: `out/c5-lab1/r045-tables/x_inst_duoi_tan_cong.tsv` (PHANRA, x_n_pmu≥3
 5b106f59840b0361f163f896b08bb24ca4781caea8cd374fa6eb379d885d8fd9  analysis/detector_c5.py
 a264ead0fb8b9642a66d55c2ffd286778af5701bd09770e457a19146e26391df  scripts/c5_m6ic4_score.sh
 258a464ed9783edff58a9509749ee367095c13b75e7492cce67a4a199c59d819  docs/tasks/M6i.md
-PLACEHOLDER_STATE  docs/STATE.md
-PLACEHOLDER_R045  reports/R045-m6ic4-ablation-inst-only.md
+a26b6e4d656020430ecf9f6fd43b3ddcf6dd372da5476e452a5e2330377fbefd  docs/STATE.md
+463ad7259631093413c12f408671f7a10ad21668287087ef3395d296faf1432b  reports/R045-m6ic4-ablation-inst-only.md
 947fcb91cba3a36b01e1d4d5a631cc68b6547f6709a5da4e1aa1ae1264e40f78  lab/muc-lab1c.tsv
 ```
 
