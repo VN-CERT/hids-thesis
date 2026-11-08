@@ -228,3 +228,18 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 - R047: T² tách D3 @0.01 (D: 0.46 vs bdg 0.007); max|z| không; null≈0.5; cpi CI∌0.5.
 - Kết: C5 dương tính có điều kiện với T². Tag m6i.7.
 - Việc đang chạy: không.
+
+## Cập nhật 2026-11-09 03:53 (M6i-c7)
+
+- Mốc: M6i-c7 rút gọn — T² công bằng cùng train-until 1006289550843307; R048; tag m6i.8.
+- sha c5_score `b82f4e23…` khớp; VERSION string vẫn 1.4.5.
+- Bước đang làm: chạy t2fair-v15-{D,E,A}; bảng so R047-B; commit + tag.
+- Không ghi đè t2-v15-* / score-* / features_*.
+- Việc đang chạy: hids-m6ic7-t2fair.
+
+## Cập nhật 2026-11-09 04:03 (M6i-c7 XONG)
+
+- t2fair-v15-{D,E,A} xong; mọi số PHANRA @0.01/0.05 **trùng** T²-R047 (`fair_eq_R047=1`, n_train=502334).
+- @0.01 fair D3-7: D 0.4595 / E 0.3922 / A 0.4118 (bdg_nen 0.0068–0.0087); maxz D3-7 R047-B ≈0–0.0007.
+- Mục 2 (top-20 đóng góp): để sau.
+- R048; việc đang chạy: không. Tag m6i.8.
