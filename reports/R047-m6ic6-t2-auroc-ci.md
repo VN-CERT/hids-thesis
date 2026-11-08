@@ -113,7 +113,7 @@ b82f4e23f3a617bdf914671e89b27d08deeaf0c6061fd34e3dda9b47ce0a0d6e  analysis/c5_sc
 11d68f6f14a2761f58fa23bfae36e43628124da97c0d54f58abbf890daca5e21  scripts/c5_m6ic6_run.sh
 3403ab760c3afbf8b62b7e0314cb65d2403eb21fb9b8d94c09ece2b5a4859553  docs/tasks/M6i.md
 c779b2c739076281d12983fcc40b670220986cbf01d5db9ef8e9b1ab1b7a821b  docs/STATE.md
-b87a43b8576e2481bc70a31d3f7c4786aaf98738c3fb8b0f309a5a9bbd7a33a4  reports/R047-m6ic6-t2-auroc-ci.md
+ac1d10dd919ab608d7877de0bbefa0c59339519613ab745a5550475ba2e55cc2  reports/R047-m6ic6-t2-auroc-ci.md
 947fcb91cba3a36b01e1d4d5a631cc68b6547f6709a5da4e1aa1ae1264e40f78  lab/muc-lab1c.tsv
 ```
 
@@ -148,6 +148,25 @@ Kiến trúc sư có thể: (i) chạy lại T² với cùng `train-until` + h�
 ## Thay đổi ngoài phạm vi
 
 ```
-(điền sau commit)
+ docs/STATE.md                               |  14 ++
+ out/c5-lab1/hinh-v15/H-auroc-ci.svg         |  46 ++++++
+ out/c5-lab1/hinh-v15/H-t2.svg               |  33 ++++
+ out/c5-lab1/r047-tables/auroc_don_chieu.tsv | 226 ++++++++++++++++++++++++++++
+ out/c5-lab1/r047-tables/bang_auroc_ci.tsv   |  73 +++++++++
+ out/c5-lab1/r047-tables/bang_t2_vs_maxz.tsv |   7 +
+ out/c5-lab1/r047-tables/hoi_quy.txt         |   5 +
+ out/c5-lab1/r047-tables/sha256.txt          |   8 +
+ out/c5-lab1/r047-tables/t2-A-tradeoff.tsv   |   7 +
+ out/c5-lab1/r047-tables/t2-D-tradeoff.tsv   |   7 +
+ out/c5-lab1/r047-tables/t2-E-tradeoff.tsv   |   7 +
+ out/c5-lab1/r047-tables/thoi_gian.tsv       |   6 +
+ out/c5-lab1c/auroc-v15/auroc_don_chieu.tsv  | 226 ++++++++++++++++++++++++++++
+ out/c5-lab1c/t2-v15-A/t2_tradeoff.tsv       |   7 +
+ out/c5-lab1c/t2-v15-D/t2_tradeoff.tsv       |   7 +
+ out/c5-lab1c/t2-v15-E/t2_tradeoff.tsv       |   7 +
+ reports/INDEX.md                            |   1 +
+ reports/R047-m6ic6-t2-auroc-ci.md           | 153 +++++++++++++++++++
+ scripts/c5_m6ic6_run.sh                     |  38 +++++
+ 19 files changed, 878 insertions(+)
 Không sửa detector_c5.py. Không ghi đè thư mục -v144/-v143/-v141.
 ```
