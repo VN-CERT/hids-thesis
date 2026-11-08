@@ -214,3 +214,17 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 - R046: vs-nền cao (ảo); x_inst_med vs-ss@D3-7≈0.47; max |AUROC−0.5| trong 6 chiều = 0.2529 (cpi_med@D3-7).
 - Việc đang chạy: không.
 - Tiếp theo: commit + tag m6i.6 + push + zip HIDS-R046; DỪNG.
+
+## Cập nhật 2026-11-09 03:31 (M6i-c6)
+
+- Mốc: M6i-c6 — T² đa chiều + AUROC CI/p/null (c5_score v1.5 / VERSION string 1.4.5); R047; tag m6i.7.
+- CAI XONG; sha `b82f4e23f3a617bdf914671e89b27d08deeaf0c6061fd34e3dda9b47ce0a0d6e`.
+- Bước đang làm: commit → hồi quy score-v15-compat → auroc-v15 → t2-v15-{D,E,A} → bảng/hình/R047.
+- Không ghi đè score-v144-* / auroc-v144 / score-v143-* / features_*.
+
+## Cập nhật 2026-11-09 03:40 (M6i-c6 XONG)
+
+- Hồi quy score-v15-compat KHOP; auroc-v15 + t2-v15-{A,D,E} xong.
+- R047: T² tách D3 @0.01 (D: 0.46 vs bdg 0.007); max|z| không; null≈0.5; cpi CI∌0.5.
+- Kết: C5 dương tính có điều kiện với T². Tag m6i.7.
+- Việc đang chạy: không.

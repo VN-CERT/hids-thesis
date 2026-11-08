@@ -51,3 +51,4 @@
 | [R044](R044-m6ic3-nen-truot-quyet-dinh.md) | 2026-11-09 00:35 | M6i-c3 | Nền trượt 24h: không tách D3 @ BDG≤5%; C5 âm tính chốt; tag m6i.4. | Xong, tag `m6i.4`. |
 | [R045](R045-m6ic4-ablation-inst-only.md) | 2026-11-09 02:00 | M6i-c4 | Ablation chỉ-inst: I không phát hiện B1@D3-7; nginx x_inst≈1; kết luận (1); tag m6i.5. | Xong, tag `m6i.5`. |
 | [R046](R046-m6ic5-auroc-don-chieu.md) | 2026-11-09 02:22 | M6i-c5 | AUROC đơn-chiều vs nền vs song sinh; x_inst≈0.5 có kiểm soát; tag m6i.6. | Xong, tag `m6i.6`. |
+| [R047](R047-m6ic6-t2-auroc-ci.md) | 2026-11-09 03:40 | M6i-c6 | T² tách D3 @BDG thấp; AUROC CI/null; C5 dương tính có điều kiện T²; tag m6i.7. | Xong, tag `m6i.7`. |
