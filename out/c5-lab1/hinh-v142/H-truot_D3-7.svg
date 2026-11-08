@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520">
+<rect width="100%" height="100%" fill="white"/>
+<text x="450" y="24" font-family="sans-serif" font-size="14" text-anchor="middle">H-truot CH=E: D3-7 tinh vs truot</text>
+<line x1="70" y1="50" x2="70" y2="460" stroke="#333"/>
+<line x1="70" y1="460" x2="880" y2="460" stroke="#333"/>
+<polyline fill="none" stroke="#1f77b4" stroke-width="2" points="70.0,459.7 175.7,459.7 273.1,459.7 396.5,459.7 488.2,459.7 579.2,459.7 699.2,459.7 790.4,439.7 880.0,265.8"/>
+<polyline fill="none" stroke="#d62728" stroke-width="2" stroke-dasharray="5 3" points="738.5,459.7 808.0,438.0"/>
+<text x="70" y="42" font-family="sans-serif" font-size="11" fill="#1f77b4">tinh (duong_tranh_chap)</text>
+<text x="290" y="42" font-family="sans-serif" font-size="11" fill="#d62728">truot (nen_truot)</text>
+<text x="475.0" y="512" font-family="sans-serif" font-size="11" text-anchor="middle">bdg nen sach (log)</text>
+</svg>

@@ -48,3 +48,4 @@
 | [R041-d](R041-d-m6ic1-chan-doan-mo-rong.md) | 2026-11-08 20:40 | M6i-c1 | Chẩn đoán mở rộng C5 v2 (ti_so/trôi/13 tid/lab1c). | Xong. |
 | [R042](R042-m6ic2-cham-c5-v2.md) | 2026-11-08 23:27 | M6i-c2 | Chấm C5 v2 (1.4): hồi quy KHOP; lab A–E; lab1c; prod; H1–H4; tag m6i.2. | Xong, tag `m6i.2`. |
 | [R043](R043-m6ic2b-c5-v141-mad0.md) | 2026-11-09 00:12 | M6i-c2b | c5_score 1.4.1 bỏ MAD=0; lab1c A–E; CH*=E; prod; tag m6i.3. | Xong, tag `m6i.3`. |
+| [R044](R044-m6ic3-nen-truot-quyet-dinh.md) | 2026-11-09 00:35 | M6i-c3 | Nền trượt 24h: không tách D3 @ BDG≤5%; C5 âm tính chốt; tag m6i.4. | Xong, tag `m6i.4`. |

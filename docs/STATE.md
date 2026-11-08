@@ -172,3 +172,13 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 - R043 viết; CH*=E; tag m6i.3.
 - Việc đang chạy: không.
+
+## Cập nhật 2026-11-09 00:22 (M6i-c3)
+
+- c5_score v1.4.2 commit `faea352`; hồi quy score-v142-compat vs R039 đang/đã chạy.
+- Unit hids-m6ic3-score: lab1c A/D/E --nen-truot-gio 24.
+
+## Cập nhật 2026-11-09 00:35 (M6i-c3 XONG)
+
+- R044: nền trượt không cứu → ÂM TÍNH CHỐT. Tag m6i.4.
+- Việc đang chạy: không.
