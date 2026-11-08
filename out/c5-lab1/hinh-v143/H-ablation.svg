@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="520">
+<rect width="100%" height="100%" fill="white"/>
+<text x="550" y="28" font-family="sans-serif" font-size="14" text-anchor="middle">H-ablation PHANRA @ ngan sach 0.01 — bdg_nen / phat_hien / theo_muc D3-7</text>
+<line x1="70" y1="60" x2="70" y2="430" stroke="#333"/>
+<line x1="70" y1="430" x2="1070" y2="430" stroke="#333"/>
+<line x1="66" y1="430.0" x2="70" y2="430.0" stroke="#333"/>
+<text x="62" y="434.0" font-family="sans-serif" font-size="10" text-anchor="end">0.00</text>
+<line x1="66" y1="380.2" x2="70" y2="380.2" stroke="#333"/>
+<text x="62" y="384.2" font-family="sans-serif" font-size="10" text-anchor="end">0.05</text>
+<line x1="66" y1="330.3" x2="70" y2="330.3" stroke="#333"/>
+<text x="62" y="334.3" font-family="sans-serif" font-size="10" text-anchor="end">0.10</text>
+<line x1="66" y1="230.7" x2="70" y2="230.7" stroke="#333"/>
+<text x="62" y="234.7" font-family="sans-serif" font-size="10" text-anchor="end">0.20</text>
+<line x1="66" y1="131.0" x2="70" y2="131.0" stroke="#333"/>
+<text x="62" y="135.0" font-family="sans-serif" font-size="10" text-anchor="end">0.30</text>
+<text x="153.3" y="500" font-family="sans-serif" font-size="12" text-anchor="middle">I</text>
+<rect x="90.8" y="421.9" width="39.7" height="8.1" fill="#1f77b4"/>
+<text x="110.7" y="417.9" font-family="sans-serif" font-size="9" text-anchor="middle">0.008</text>
+<rect x="132.5" y="108.3" width="39.7" height="321.7" fill="#d62728"/>
+<text x="152.3" y="104.3" font-family="sans-serif" font-size="9" text-anchor="middle">0.323</text>
+<rect x="174.2" y="403.8" width="39.7" height="26.2" fill="#2ca02c"/>
+<text x="194.0" y="399.8" font-family="sans-serif" font-size="9" text-anchor="middle">0.026</text>
+<text x="320.0" y="500" font-family="sans-serif" font-size="12" text-anchor="middle">Iarr</text>
+<rect x="257.5" y="430.0" width="39.7" height="0.0" fill="#1f77b4"/>
+<text x="277.3" y="426.0" font-family="sans-serif" font-size="9" text-anchor="middle">0.000</text>
+<rect x="299.2" y="430.0" width="39.7" height="0.0" fill="#d62728"/>
+<text x="319.0" y="426.0" font-family="sans-serif" font-size="9" text-anchor="middle">0.000</text>
+<rect x="340.8" y="429.3" width="39.7" height="0.7" fill="#2ca02c"/>
+<text x="360.7" y="425.3" font-family="sans-serif" font-size="9" text-anchor="middle">0.001</text>
+<text x="486.7" y="500" font-family="sans-serif" font-size="12" text-anchor="middle">own_only</text>
+<rect x="424.2" y="430.0" width="39.7" height="0.0" fill="#1f77b4"/>
+<text x="444.0" y="426.0" font-family="sans-serif" font-size="9" text-anchor="middle">0.000</text>
+<rect x="465.8" y="430.0" width="39.7" height="0.0" fill="#d62728"/>
+<text x="485.7" y="426.0" font-family="sans-serif" font-size="9" text-anchor="middle">0.000</text>
+<rect x="507.5" y="430.0" width="39.7" height="0.0" fill="#2ca02c"/>
+<text x="527.3" y="426.0" font-family="sans-serif" font-size="9" text-anchor="middle">0.000</text>
+<text x="653.3" y="500" font-family="sans-serif" font-size="12" text-anchor="middle">arr_only</text>
+<rect x="590.8" y="430.0" width="39.7" height="0.0" fill="#1f77b4"/>
+<text x="610.7" y="426.0" font-family="sans-serif" font-size="9" text-anchor="middle">0.000</text>
+<rect x="632.5" y="430.0" width="39.7" height="0.0" fill="#d62728"/>
+<text x="652.3" y="426.0" font-family="sans-serif" font-size="9" text-anchor="middle">0.000</text>
+<rect x="674.2" y="430.0" width="39.7" height="0.0" fill="#2ca02c"/>
+<text x="694.0" y="426.0" font-family="sans-serif" font-size="9" text-anchor="middle">0.000</text>
+<text x="820.0" y="500" font-family="sans-serif" font-size="12" text-anchor="middle">E</text>
+<rect x="757.5" y="430.0" width="39.7" height="0.0" fill="#1f77b4"/>
+<text x="777.3" y="426.0" font-family="sans-serif" font-size="9" text-anchor="middle">0.000</text>
+<rect x="799.2" y="430.0" width="39.7" height="0.0" fill="#d62728"/>
+<text x="819.0" y="426.0" font-family="sans-serif" font-size="9" text-anchor="middle">0.000</text>
+<rect x="840.8" y="429.3" width="39.7" height="0.7" fill="#2ca02c"/>
+<text x="860.7" y="425.3" font-family="sans-serif" font-size="9" text-anchor="middle">0.001</text>
+<text x="986.7" y="500" font-family="sans-serif" font-size="12" text-anchor="middle">D</text>
+<rect x="924.2" y="430.0" width="39.7" height="0.0" fill="#1f77b4"/>
+<text x="944.0" y="426.0" font-family="sans-serif" font-size="9" text-anchor="middle">0.000</text>
+<rect x="965.8" y="430.0" width="39.7" height="0.0" fill="#d62728"/>
+<text x="985.7" y="426.0" font-family="sans-serif" font-size="9" text-anchor="middle">0.000</text>
+<rect x="1007.5" y="429.3" width="39.7" height="0.7" fill="#2ca02c"/>
+<text x="1027.3" y="425.3" font-family="sans-serif" font-size="9" text-anchor="middle">0.001</text>
+<rect x="70" y="40" width="12" height="12" fill="#1f77b4"/>
+<text x="86" y="50" font-family="sans-serif" font-size="11">bdg_nen_kiem_tra</text>
+<rect x="250" y="40" width="12" height="12" fill="#d62728"/>
+<text x="266" y="50" font-family="sans-serif" font-size="11">phat_hien</text>
+<rect x="430" y="40" width="12" height="12" fill="#2ca02c"/>
+<text x="446" y="50" font-family="sans-serif" font-size="11">theo_muc_D3-7</text>
+</svg>

@@ -1,0 +1,4 @@
+CH=I: nguong@0.01=71.5542 (KHONG 1e12). x_inst_med khong MAD=0.
+Dong log MAD=0 la cac chieu AGG rate_cv (khong phai I).
+n_huan_luyen PHANRA I=167762 (thap hon ~502k cua E/D) vi nhieu cua so thieu x_inst_med (PMU sample).
+phat_hien@0.01=0.3228 chu yeu tu B4 (stress-ng ~0.645); B1@D3-7=0.0000.

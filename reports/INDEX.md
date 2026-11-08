@@ -49,3 +49,4 @@
 | [R042](R042-m6ic2-cham-c5-v2.md) | 2026-11-08 23:27 | M6i-c2 | Chấm C5 v2 (1.4): hồi quy KHOP; lab A–E; lab1c; prod; H1–H4; tag m6i.2. | Xong, tag `m6i.2`. |
 | [R043](R043-m6ic2b-c5-v141-mad0.md) | 2026-11-09 00:12 | M6i-c2b | c5_score 1.4.1 bỏ MAD=0; lab1c A–E; CH*=E; prod; tag m6i.3. | Xong, tag `m6i.3`. |
 | [R044](R044-m6ic3-nen-truot-quyet-dinh.md) | 2026-11-09 00:35 | M6i-c3 | Nền trượt 24h: không tách D3 @ BDG≤5%; C5 âm tính chốt; tag m6i.4. | Xong, tag `m6i.4`. |
+| [R045](R045-m6ic4-ablation-inst-only.md) | 2026-11-09 02:00 | M6i-c4 | Ablation chỉ-inst: I không phát hiện B1@D3-7; nginx x_inst≈1; kết luận (1); tag m6i.5. | Xong, tag `m6i.5`. |

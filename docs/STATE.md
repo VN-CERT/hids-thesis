@@ -182,3 +182,20 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 - R044: nền trượt không cứu → ÂM TÍNH CHỐT. Tag m6i.4.
 - Việc đang chạy: không.
+
+## Cập nhật 2026-11-09 01:48 (M6i-c4)
+
+- Mốc: M6i-c4 — ablation chỉ-inst (c5_score 1.4.3); báo cáo R045; tag m6i.5.
+- CAI XONG; sha c5_score `59a537a24ffef0365ee4d49a38e472aaa513d08edd0c7c18093ca8dda76ae197`; commit kiến trúc sư `33fd542`.
+- Hồi quy score-v143-compat vs R039: KHOP (tom_tat 4 cột / scores_* 7 cột / tradeoff_*).
+- Bước đang làm: chấm lab1c I/Iarr/own_only/arr_only/E/D → score-v143-* (unit hids-m6ic4-score).
+- Bước tiếp theo: bảng ablation, x_inst dưới tấn công, H-ablation, R045, tag m6i.5, push, zip HIDS-R045, DỪNG.
+- Không ghi đè score / score-v13* / score-v14* / score-v141* / score-v142* / features_*.
+
+## Cập nhật 2026-11-09 02:00 (M6i-c4 XONG)
+
+- Chấm 6/6 xong (unit hids-m6ic4-score exit=0).
+- Hồi quy score-v143-compat KHOP; bảng ablation + x_inst + H-ablation xong.
+- R045 viết; kết luận (1) chỉ-inst không phát hiện tấn công bộ nhớ D3 (B1@D3-7=0); nginx x_inst tỉ số≈1.
+- Việc đang chạy: không.
+- Tiếp theo: commit + tag m6i.5 + push + zip HIDS-R045; DỪNG.

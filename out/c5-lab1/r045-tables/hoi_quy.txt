@@ -1,0 +1,6 @@
+score-v143-compat vs out/c5-prod/score (R039)
+tom_tat first4: KHOP
+scores_* first7: KHOP
+tradeoff_*: KHOP (byte)
+OK_ALL
+time: User 116.67s Elapsed 1:59.94 RSS 3077264 kB
