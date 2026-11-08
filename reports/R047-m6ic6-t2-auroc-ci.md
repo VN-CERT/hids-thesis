@@ -1,6 +1,6 @@
 # R047 — M6i-c6 gói thí nghiệm gộp: T² đa chiều + AUROC CI/p/null (c5_score v1.5)
 
-1. Số báo cáo: **R047**. Ngày giờ: **2026-11-09 03:40** (giờ máy). Mốc: **M6i-c6**. Commit kiến trúc sư: `929c593`. Commit báo cáo: `PENDING`. Tag: `m6i.7`.
+1. Số báo cáo: **R047**. Ngày giờ: **2026-11-09 03:40** (giờ máy). Mốc: **M6i-c6**. Commit kiến trúc sư: `929c593`. Commit báo cáo: `704c86a`. Tag: `m6i.7`.
 
 Ghi chú phiên bản: chuỗi `VERSION` trong file = `1.4.5`; nhiệm vụ/CAI gọi **v1.5**; sha khớp điều kiện.
 
@@ -113,7 +113,7 @@ b82f4e23f3a617bdf914671e89b27d08deeaf0c6061fd34e3dda9b47ce0a0d6e  analysis/c5_sc
 11d68f6f14a2761f58fa23bfae36e43628124da97c0d54f58abbf890daca5e21  scripts/c5_m6ic6_run.sh
 3403ab760c3afbf8b62b7e0314cb65d2403eb21fb9b8d94c09ece2b5a4859553  docs/tasks/M6i.md
 c779b2c739076281d12983fcc40b670220986cbf01d5db9ef8e9b1ab1b7a821b  docs/STATE.md
-6452df240e27737989260edcc76c61e5269c5497b22ac92e843679dffa54ce8f  reports/R047-m6ic6-t2-auroc-ci.md
+b87a43b8576e2481bc70a31d3f7c4786aaf98738c3fb8b0f309a5a9bbd7a33a4  reports/R047-m6ic6-t2-auroc-ci.md
 947fcb91cba3a36b01e1d4d5a631cc68b6547f6709a5da4e1aa1ae1264e40f78  lab/muc-lab1c.tsv
 ```
 
