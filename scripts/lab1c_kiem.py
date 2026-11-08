@@ -137,6 +137,7 @@ def main() -> int:
         ok = False
         open(out, "w").write("\n".join(msgs) + f"\nok=0\n")
         return 1
+    # PMU/recs: file lon nhat (tham chieu); tid/moc: GOP moi .bin (phien xoay theo gio)
     b = max(bins, key=os.path.getsize)
 
     kd, pd = status_drops(datadir)
@@ -146,7 +147,10 @@ def main() -> int:
         ok = False
 
     info = rec_stat_info(b)
-    msgs.append(f"rec-stat recs={info.get('recs')} pmu_pct={info.get('pmu_pct')} bin={b}")
+    msgs.append(
+        f"rec-stat recs={info.get('recs')} pmu_pct={info.get('pmu_pct')} "
+        f"bin={b} n_bins={len(bins)}"
+    )
     pmu = info.get("pmu_pct")
     if pmu != pmu or not (4.0 <= float(pmu) <= 6.0):
         msgs.append(f"FAIL PMU={pmu} ngoai [4,6]")
@@ -154,7 +158,19 @@ def main() -> int:
     else:
         msgs.append("PMU DAT")
 
-    counts, first_ts, last_ts = count_tid_records(b, tids, args.t0, args.t1)
+    counts = {t: 0 for t in tids}
+    first_ts = {t: None for t in tids}
+    last_ts = {t: None for t in tids}
+    for bip in bins:
+        c_i, f_i, l_i = count_tid_records(bip, tids, args.t0, args.t1)
+        for t in tids:
+            counts[t] += c_i.get(t, 0)
+            if f_i.get(t) is not None:
+                if first_ts[t] is None or f_i[t] < first_ts[t]:
+                    first_ts[t] = f_i[t]
+            if l_i.get(t) is not None:
+                if last_ts[t] is None or l_i[t] > last_ts[t]:
+                    last_ts[t] = l_i[t]
     total = sum(counts.values())
     msgs.append(f"tid_records_total={total} per={counts}")
     if total < args.min_recs:

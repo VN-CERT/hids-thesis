@@ -5,9 +5,10 @@ Ngay: 2026-11-07 / 2026-11-08
 Thu muc: validation/lab1c-20261107/
 
 ================================================================
-TRANG THAI: DRIVER DUNG — B1-300s-0 KHONG DAT sau 2 lan (driver-loi.txt).
-16/16 phien bn DAT; slow: B1-60s + N1-60s DAT; B1-300s FAIL; N1-300s CHUA CHAY.
-hids-lab1c-nenphu DANG CHAY (bat dau sau khi driver chet, 2026-11-08T02:43:17Z).
+TRANG THAI: BUOC 7 HOAN TAT.
+Driver: B1-300s-0 KHONG_DAT sau 2 lan; N1-300s CHUA CHAY (giu nguyen, khong chay lai).
+16/16 bn DAT; slow B1-60s+N1-60s DAT; nen-phu 4/4 id DAT (kiem sau khi gop moi .bin).
+systemctl list-units 'hids-*' --state=active: trong; bpftool hids_ = 0.
 ================================================================
 
 ----------------------------------------------------------------
@@ -108,24 +109,36 @@ File: validation/lab1c-20261107/gen-logs/nhip-benign.tsv
 Dau:
 nhip_id	dich_vu	muc	t_bat_dau_mono_ns	t_ket_thuc_mono_ns
 1	nginx	120	1522253477745981	1522543507752217
-Cuoi (luc viet bao cao; gen van chay cho nenphu):
-147	nginx	20	1566153254934064	1566443338202858
-147	postgres	15	1566153276938859	1566444798158332
+Cuoi (sau khi dung generator; nhip cuoi):
+238	nginx	50	1593510743683114	1593670473533553
+238	postgres	40	1593510765693984	1593670495963354
+(tong 476 dong du lieu + header)
 
 ----------------------------------------------------------------
 6. DUNG LUONG
 ----------------------------------------------------------------
-validation/lab1c-20261107/ ≈ 1.7 G (chu yeu *.bin; khong commit .bin)
+validation/lab1c-20261107/ ≈ 1.8 G (chu yeu *.bin; khong commit .bin)
+nen-phu/ ≈ 116 M
 lab/nhan-tan-cong-lab1c.tsv + lab/nhan-tid-lab1c.tsv: ~12 K
 
 ----------------------------------------------------------------
-7. NEN-PHU (1.9b + N4 zlib 1.9c) — CHUA XONG
+7. NEN-PHU (1.9b + N4 zlib 1.9c) — XONG
 ----------------------------------------------------------------
-Unit hids-lab1c-nenphu: active (bat dau 2026-11-08T02:43:17Z sau khi driver dung)
-pids: 958157 958162 958167 958172 (trong cgroup nginx)
-Tien do log (luc 03:32Z, ~48 phut / 148 phut cua so):
-  p10.log dong≈290; p60≈50; p300≈11; n4≈133
-Chua co nenphu-xong.txt / kiem tong. Muc nay se bo sung khi unit xong (hoac bao cao rieng).
+Unit hids-lab1c-nenphu: inactive (bat dau 2026-11-08T02:43:17Z; ket thuc cua so ~05:13Z).
+File: validation/lab1c-20261107/nenphu-xong.txt
+  nenphu xong 2026-11-08T11:01:59+00:00
+  (kiem lai sau khi sua lab1c_kiem gop moi .bin; lan chay unit truoc do ghi nenphu-loi vi chi doc 1 file lon nhat)
+pids (cgroup nginx, da ket thuc): 958157 958162 958167 958172
+Cua so nhan: T0=2026-11-08T02:44:21Z → T1=2026-11-08T05:12:22Z (mono 1563795958944142 → 1572676220095020)
+
+run_id	ok	cg	n_tid	n_rec_tid	cycles	drops_k	drops_p	pmu%	|first-t0|s	|last-t1|s
+N1-10s-nen-c-20261107	1	cgroup.procs	1	13722	888	0	0	4.9954	0.014	0.175
+N1-60s-nen-c-20261107	1	cgroup.procs	1	3648	148	0	0	4.9954	0.074	0.113
+N1-300s-nen-c-20261107	1	cgroup.procs	1	2051	30	0	0	4.9954	0.127	0.065
+N4-nen-c-20261107	1	cgroup.procs	1	6992	404	0	0	4.9954	0.184	0.002
+
+Tong nen-phu: 4/4 DAT. n_bins=4 (xoay theo gio). ghi_chu nhan: "nen-phu, dung de huan luyen".
+File kiem: validation/lab1c-20261107/nen-phu/kiem-N1-10s-nen.txt … kiem-N4-nen.txt
 
 ----------------------------------------------------------------
 8. QUYET DINH TU DUA RA
@@ -135,6 +148,7 @@ Chua co nenphu-xong.txt / kiem tong. Muc nay se bo sung khi unit xong (hoac bao 
 3. Phien thu 5 phut: ha min-cycles=10, min-recs=50, relax moc last (cua so 180s khong du 20 chu ky period=10) — chi cho THU; phien that giu >=20 / >=100.
 4. B4 dung stress-ng sau hieu chuan utime=6.05s; N4 payload 64 MiB.
 5. Khi driver FAIL B1-300s: khong tu sua tieu chi / khong chay lai them; viet buoc 7 theo so lieu co. nenphu da tu bat vi driver inactive.
+6. lab1c_kiem.py: gop moi *.bin khi dem tid/moc (PMU van tu file lon nhat). Ly do: nen-phu 2,5 h xoay theo gio; chi doc 1 file → moc gia FAIL du du lieu dat ±1 s. Khong doi tieu chi.
 
 ----------------------------------------------------------------
 9. VIEC NGUOI DUNG CAN LAM
@@ -143,11 +157,12 @@ Chua co nenphu-xong.txt / kiem tong. Muc nay se bo sung khi unit xong (hoac bao 
      validation/lab1c-20261107/
      lab/nhan-tan-cong-lab1c.tsv
      lab/nhan-tid-lab1c.tsv
-2. Cho hids-lab1c-nenphu xong (~02:43Z+150 phut ≈ 05:13Z) roi bo sung muc nen-phu / hoac giao nhiem vu tiep neu can xu ly B1-300s/N1-300s.
 
 ----------------------------------------------------------------
-10. LOI CON TON TAI / VIEC TIEP
+10. LOI CON TON TAI / VIEC TIEP / QUYET DINH B1-300s
 ----------------------------------------------------------------
-- B1-300s-0: cycles=19 < 20; moc nhan lech lon — driver dung theo quy tac.
-- N1-300s-0: chua chay.
-- nen-phu: dang chay, chua co bang kiem cuoi.
+- B1-300s-0: giu du lieu va dong nhan; ghi_chu =
+  "KHONG_DAT 19 chu ky (jitter TB 375 s trong 6960 s, loi tinh do dai phien cua kien truc su); chi minh hoa gioi han cua so 300 s; khong cham"
+  Khong chay lai.
+- N1-300s-0: khong chay.
+- nen-phu: 4/4 DAT; unit da dung; generator da dung.
