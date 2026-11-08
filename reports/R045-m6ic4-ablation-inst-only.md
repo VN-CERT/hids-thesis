@@ -1,6 +1,6 @@
 # R045 — M6i-c4 ablation "chỉ-inst": quy trách nhiệm vì sao bộ chiều có x_inst vẫn sụp dưới D3 (c5_score 1.4.3)
 
-1. Số báo cáo: **R045**. Ngày giờ: **2026-11-09 02:00** (giờ máy). Mốc: **M6i-c4**. Commit kiến trúc sư: `33fd542`. Commit báo cáo: . Tag: `m6i.5`.
+1. Số báo cáo: **R045**. Ngày giờ: **2026-11-09 02:00** (giờ máy). Mốc: **M6i-c4**. Commit kiến trúc sư: `33fd542`. Commit báo cáo: `6bf13cc` (bổ sung hash `9b488d0`). Tag: `m6i.5`.
 
 ## Câu hỏi khoa học (nguyên văn nhiệm vụ)
 
@@ -108,11 +108,10 @@ Nguồn: `out/c5-lab1/r045-tables/x_inst_duoi_tan_cong.tsv` (PHANRA, x_n_pmu≥3
 a264ead0fb8b9642a66d55c2ffd286778af5701bd09770e457a19146e26391df  scripts/c5_m6ic4_score.sh
 258a464ed9783edff58a9509749ee367095c13b75e7492cce67a4a199c59d819  docs/tasks/M6i.md
 a26b6e4d656020430ecf9f6fd43b3ddcf6dd372da5476e452a5e2330377fbefd  docs/STATE.md
-5828fc7d46757154319bd1644db18953cd23b4ac4d723cc7d71355adf26d1754  reports/R045-m6ic4-ablation-inst-only.md
+e5ea66b4e4857245f336006cf7cb96b22e399142ee88b387d2388adbb0ec0148  reports/R045-m6ic4-ablation-inst-only.md
 947fcb91cba3a36b01e1d4d5a631cc68b6547f6709a5da4e1aa1ae1264e40f78  lab/muc-lab1c.tsv
 ```
 
-*(STATE + R045 hash điền lại sau commit cuối.)*
 
 ## 6. File dữ liệu
 
@@ -151,6 +150,29 @@ Không đề xuất thêm ablation chiều cho detector max|z| trên D3 với x_
 ## Thay đổi ngoài phạm vi
 
 ```
-(điền git diff --stat sau commit)
+ docs/STATE.md                                      |  17 +++
+ out/c5-lab1/hinh-v143/H-ablation.svg               |  65 +++++++++
+ out/c5-lab1/r045-tables/bang_ablation.tsv          |  13 ++
+ out/c5-lab1/r045-tables/cong_I.txt                 |   4 +
+ out/c5-lab1/r045-tables/hoi_quy.txt                |   6 +
+ out/c5-lab1/r045-tables/lab1c-D-theo_muc_ns.tsv    |  13 ++
+ out/c5-lab1/r045-tables/lab1c-D-tom_tat_ns.tsv     |  10 ++
+ out/c5-lab1/r045-tables/lab1c-E-theo_muc_ns.tsv    |  13 ++
+ out/c5-lab1/r045-tables/lab1c-E-tom_tat_ns.tsv     |  10 ++
+ out/c5-lab1/r045-tables/lab1c-I-theo_muc_ns.tsv    |  13 ++
+ out/c5-lab1/r045-tables/lab1c-I-tom_tat_ns.tsv     |  10 ++
+ out/c5-lab1/r045-tables/lab1c-Iarr-theo_muc_ns.tsv |  13 ++
+ out/c5-lab1/r045-tables/lab1c-Iarr-tom_tat_ns.tsv  |  10 ++
+ .../r045-tables/lab1c-arr_only-theo_muc_ns.tsv     |  13 ++
+ .../r045-tables/lab1c-arr_only-tom_tat_ns.tsv      |  10 ++
+ .../r045-tables/lab1c-own_only-theo_muc_ns.tsv     |  13 ++
+ .../r045-tables/lab1c-own_only-tom_tat_ns.tsv      |  10 ++
+ out/c5-lab1/r045-tables/sha256.txt                 |  17 +++
+ out/c5-lab1/r045-tables/thoi_gian.tsv              |   8 ++
+ out/c5-lab1/r045-tables/x_inst_duoi_tan_cong.tsv   |   3 +
+ reports/INDEX.md                                   |   1 +
+ reports/R045-m6ic4-ablation-inst-only.md           | 156 +++++++++++++++++++++
+ scripts/c5_m6ic4_score.sh                          |  32 +++++
+ 23 files changed, 460 insertions(+)
 Không sửa detector_c5.py. Không ghi đè score-v14-/v141-/v142-.
 ```
