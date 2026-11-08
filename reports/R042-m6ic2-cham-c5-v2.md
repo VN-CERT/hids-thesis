@@ -1,6 +1,6 @@
 # R042 — M6i-c2 chấm C5 v2 (detector 1.3 + c5_score 1.4)
 
-1. Số báo cáo: **R042**. Ngày giờ: **2026-11-08 23:27** (giờ máy). Mốc: **M6i-c2**. Git commit kiến trúc sư: `3cefc7f`. Commit báo cáo/tag: gắn sau khi viết (tag `m6i.2`).
+1. Số báo cáo: **R042**. Ngày giờ: **2026-11-08 23:27** (giờ máy). Mốc: **M6i-c2**. Git commit kiến trúc sư: `3cefc7f`. Commit báo cáo: `19fd458`. Tag: `m6i.2` (đã push `github`).
 
 ## Bối cảnh (tiền đăng ký v1.1 §1, F1–F5 — nguyên văn nhiệm vụ)
 
