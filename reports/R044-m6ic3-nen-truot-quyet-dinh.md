@@ -1,6 +1,6 @@
 # R044 — M6i-c3 phép thử quyết định: nền trượt 24 giờ (c5_score 1.4.2)
 
-1. Số báo cáo: **R044**. Ngày giờ: **2026-11-09 00:35** (giờ máy). Mốc: **M6i-c3**. Commit kiến trúc sư: `faea352`. Tag: `m6i.4` (gắn khi commit báo cáo).
+1. Số báo cáo: **R044**. Ngày giờ: **2026-11-09 00:35** (giờ máy). Mốc: **M6i-c3**. Commit kiến trúc sư: `faea352`. Commit báo cáo: `56250d8`. Tag: `m6i.4` (đã push `github`).
 
 ## Bối cảnh (nguyên văn nhiệm vụ)
 
