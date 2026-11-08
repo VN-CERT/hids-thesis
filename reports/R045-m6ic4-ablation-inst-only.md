@@ -108,7 +108,7 @@ Nguồn: `out/c5-lab1/r045-tables/x_inst_duoi_tan_cong.tsv` (PHANRA, x_n_pmu≥3
 a264ead0fb8b9642a66d55c2ffd286778af5701bd09770e457a19146e26391df  scripts/c5_m6ic4_score.sh
 258a464ed9783edff58a9509749ee367095c13b75e7492cce67a4a199c59d819  docs/tasks/M6i.md
 a26b6e4d656020430ecf9f6fd43b3ddcf6dd372da5476e452a5e2330377fbefd  docs/STATE.md
-463ad7259631093413c12f408671f7a10ad21668287087ef3395d296faf1432b  reports/R045-m6ic4-ablation-inst-only.md
+5828fc7d46757154319bd1644db18953cd23b4ac4d723cc7d71355adf26d1754  reports/R045-m6ic4-ablation-inst-only.md
 947fcb91cba3a36b01e1d4d5a631cc68b6547f6709a5da4e1aa1ae1264e40f78  lab/muc-lab1c.tsv
 ```
 
