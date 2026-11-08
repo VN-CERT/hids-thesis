@@ -117,17 +117,23 @@ case $LOP in
 A2)
 	[[ -x $IMPLANT || -f $IMPLANT ]] || { log "thieu implant $IMPLANT"; exit 1; }
 	chmod +x "$IMPLANT" || true
-	start_bg "$SESS/main.pid" "$IMPLANT"
+	# wrapper tick 1s + implant con — moc ±1s (beacon thua ~60s khong du)
+	start_bg "$SESS/main.pid" bash "$REPO/scripts/lab2_a2_wrap.sh" \
+		"$IMPLANT" "$SESS/a2-tick.log"
 	NHIP="sliver-beacon;seconds=60;jitter=30s"
 	CONG_CU="sliver-implant"
-	GHI_CHU="2.1;A2;cgroup=nginx;chi_beacon;khong_hau_khai_thac"
-	# cho den het cua so
+	GHI_CHU="2.1;A2;cgroup=nginx;chi_beacon;wrap_tick_1s;khong_hau_khai_thac"
 	sleep "$WIN_DUR"
-	# uoc beacon: wall / ~60s (jitter trung binh)
 	ORACLE=$(python3 -c "print(max(1, int($WIN_DUR/60)))")
-	# neu co file beacons tu 202 copy ve thi dung
 	if [[ -f $SESS/beacon-count.txt ]]; then
 		ORACLE=$(cat "$SESS/beacon-count.txt")
+	fi
+	# implant pid that (neu co)
+	if [[ -f $SESS/a2-tick.log.implant_pid ]]; then
+		IP=$(cat "$SESS/a2-tick.log.implant_pid")
+		ATTACK_PIDS+=("$IP")
+		# unique
+		mapfile -t ATTACK_PIDS < <(printf '%s\n' "${ATTACK_PIDS[@]}" | awk 'NF && !s[$0]++')
 	fi
 	;;
 B2|N)
@@ -177,8 +183,9 @@ C2)
 *) log "lop sai $LOP"; exit 1 ;;
 esac
 
-T1=$(mono_ns)
 TW1=$(date -Is)
+# T1 khi van con chay (wrap tick / egress) roi moi kill — moc last ±1s
+T1=$(mono_ns)
 
 # dung tan cong
 for p in "${ATTACK_PIDS[@]}"; do kill -TERM "$p" 2>/dev/null || true; done

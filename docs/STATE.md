@@ -218,14 +218,13 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 - (không)
 
-## Bước đang làm (LAB-2 pha 1) — chờ chuẩn bị 202 (2026-11-08)
+## Bước đang làm (LAB-2 pha 1) — driver đang chạy (2026-11-08)
 
-- Phụ lục 2.1 commit `096f3f5`. Scripts commit (lab2_*).
-- Điều kiện 0 ĐẠT; cgroup nginx=`docker-026f7cbf…scope`; AllowedCPUs=1-7.
-- **DỪNG** chờ người dùng: implant Sliver + lab2victim + egress recv trên 202.
-- Hướng dẫn: `validation/lab2-20261108/HUONG-DAN-CHUAN-BI-202.txt`
-- Khi xong: báo "202 san sang lab2" → phiên thử A2 rồi bật driver.
+- Phụ lục 2.1 `096f3f5`. Phiên thử THU-A2-0: **DAT** (kiem ok=1; tid_recs=362; PMU=4.67).
+- Implant sha256 `5050550887080228186daf2da60dc3cdc314d8861e9620e52d5ebabcd483a4aa` (KHÔNG commit).
+- Unit `hids-lab2-driver` + `hids-lab2-gen`. Bước 7 khi người dùng báo "driver lab2 xong, làm bước 6".
 
 ## Việc đang chạy
 
-- (không)
+- **hids-lab2-driver** — 9 phiên A2/B2/C2 × {0,D1-8,D3-7} — log `validation/lab2-20261108/driver.log`
+- **hids-lab2-gen** — generator benign

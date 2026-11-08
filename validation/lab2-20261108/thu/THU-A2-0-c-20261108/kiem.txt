@@ -1,0 +1,12 @@
+drops kernel=0 proc=0
+rec-stat recs=2111 pmu_pct=4.6733 bin=/root/collector/validation/lab2-20261108/thu/THU-A2-0-c-20261108/data/hids-collector-2026110819.bin n_bins=1
+PMU DAT
+tid_records_total=362 per={1102221: 362}
+n_ban_ghi_tid DAT
+moc |first-t0|=0.025s |last-t1|=43.056s
+moc nhan DAT (relax last)
+oracle lop=A2 value=3.0
+A2 oracle DAT (>=3 beacon)
+cgroup pid=1102221: process gone (ok neu da ket thuc)
+cgroup DAT (hoac pid da ket thuc)
+ok=1

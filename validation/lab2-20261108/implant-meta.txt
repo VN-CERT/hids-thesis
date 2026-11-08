@@ -1,0 +1,8 @@
+listener=http
+proto=http
+host=192.168.77.20
+port=8080
+seconds=60
+jitter=30
+sha256=5050550887080228186daf2da60dc3cdc314d8861e9620e52d5ebabcd483a4aa
+note=implant KHONG commit; chi sha256

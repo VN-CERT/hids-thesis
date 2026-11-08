@@ -1,0 +1,2 @@
+run_id	lop	id	att_ck	cong_cu	nhip_tham_so	muc_tranh_chap	song_sinh_cua	t_bat_dau_mono_ns	t_ket_thuc_mono_ns	t_bat_dau_wall	t_ket_thuc_wall	oracle_ket_qua	ghi_chu
+A2-0-c-20261108	A2	A2	LAB2	sliver-implant	sliver-beacon;seconds=60;jitter=30s	0		1624998837169407	1625599298426843	2026-11-08T19:44:24+00:00	2026-11-08T19:54:25+00:00	oracle=10;tids=1106403,1106407,1106411	2.1;A2;cgroup=nginx;chi_beacon;wrap_tick_1s;khong_hau_khai_thac

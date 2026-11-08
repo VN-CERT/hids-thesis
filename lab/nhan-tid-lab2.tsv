@@ -1,0 +1,4 @@
+run_id	id	lop	tid	t_bat_dau_mono_ns	t_ket_thuc_mono_ns	comm	pid	ghi_chu
+A2-0-c-20261108	A2	A2	1106403	1624998837169407	1625599298426843		1106403	2.1;A2;cgroup=nginx;chi_beacon;wrap_tick_1s;khong_hau_khai_thac
+A2-0-c-20261108	A2	A2	1106407	1624998837169407	1625599298426843		1106407	2.1;A2;cgroup=nginx;chi_beacon;wrap_tick_1s;khong_hau_khai_thac
+A2-0-c-20261108	A2	A2	1106411	1624998837169407	1625599298426843		1106411	2.1;A2;cgroup=nginx;chi_beacon;wrap_tick_1s;khong_hau_khai_thac
