@@ -89,10 +89,12 @@ Lab1c là **một phiên** (không phải ngày 6–7 lab 7 ngày): H-troi dùng
 ```
 75279c3e979c1837c6622d025cc43db71067ec6ae2a6715b52bedb511cb0b16c  analysis/c5_score.py
 5b106f59840b0361f163f896b08bb24ca4781caea8cd374fa6eb379d885d8fd9  analysis/detector_c5.py
-(docs/tasks/M6i.md, docs/STATE.md, scripts/c5_m6ic3_score.sh — ghi trong r044-tables/sha256.txt lúc commit)
+6837d7ecdd7be7948cd9f7622cbb60ee7bcbcc25be8c6407a80f56a9d3639f44  scripts/c5_m6ic3_score.sh
+ac9af2273b34ff8d24bc71063bbb4ee759400a6bc98c80cefc68fd0677e71b75  docs/tasks/M6i.md
+69be7242acf64a6be756be65f7bd5e95790d47a7aa4b519b71c88dde245eba80  docs/STATE.md
+6a495fb8ed34d022e6bc4ed61c786f072c14adda4b7d67f3954c08cc3991eabf  reports/R044-m6ic3-nen-truot-quyet-dinh.md
+947fcb91cba3a36b01e1d4d5a631cc68b6547f6709a5da4e1aa1ae1264e40f78  lab/muc-lab1c.tsv
 ```
-
-(File đủ 7 dòng trong `out/c5-lab1/r044-tables/sha256.txt`.)
 
 ## 6. File dữ liệu
 
