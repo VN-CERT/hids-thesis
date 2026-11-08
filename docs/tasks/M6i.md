@@ -198,3 +198,27 @@ Bối cảnh (ghi R044 mục đầu, nguyên văn): "R043 (nền tĩnh): ở đi
 
 4. R044 (in nguyên văn): (a) hồi quy; (b) BẢNG QUYẾT ĐỊNH §1; (c) §2 nếu có; (d) H-truot, H-troi; (e) thời gian/RSS (nền trượt chậm hơn — ghi); (f) sha256 7 file (c5_score v1.4.2); "Thay đổi ngoài phạm vi" + git diff --stat; (g) mục 8 KẾT LUẬN THẲNG: nền trượt có cứu C5 không (dương tính có điều kiện / âm tính chốt), kèm số. Commit, tag m6i.4, push.
 5. Đóng gói lưu trữ (sau khi push): /root/chep_file/luu-tru/HIDS-R044-<ngày>.zip gồm git bundle --all, reports/R039..R044 + INDEX, docs/tasks/M6i.md + STATE.md, analysis/{detector_c5.py,c5_score.py} + SHA256SUMS, out/c5-lab1/hinh-v14?/*.svg, out/c5-lab1/r04?-tables; KHÔNG .bin, KHÔNG features_*.tsv/scores_* lớn, KHÔNG dữ liệu production thô. In cây + dung lượng + sha256 zip. DỪNG.
+
+## M6i-c4
+
+NHIỆM VỤ M6i-c4 — ABLATION "chỉ-inst": quy trách nhiệm vì sao bộ chiều có x_inst vẫn sụp dưới D3 (c5_score v1.4.3; detector v1.3 GIỮ NGUYÊN) (195, repo /root/hids). Nối vào docs/tasks/M6i.md mục "M6i-c4". Báo cáo R045, tag m6i.5. KHÔNG đo lại, KHÔNG rsync, KHÔNG ghi đè thư mục cũ (ra -v143-). Không sửa file kiến trúc sư. Không kết luận đạt/không.
+Điều kiện: CAI in "XONG": analysis/c5_score.py v1.4.3 sha256 59a537a24ffef0365ee4d49a38e472aaa513d08edd0c7c18093ca8dda76ae197. Kiểm sha, commit "C5: c5_score v1.4.3 (bo chieu ablation inst-only) (kien truc su)".
+Câu hỏi khoa học (ghi R045 mục đầu, nguyên văn): "R043/R044: bộ chiều D (arr+inst+own_cv) và E (own+inst) CHỨA x_inst — đại lượng R041-d chứng minh gần hằng số qua 7 ngày (nginx worker +1,8 % trong khi cpu +19 %, cpi +16 %) — nhưng detector max|z| vẫn sụp dưới D3 (không tách ở báo động giả thấp). Giả thuyết: max|z| lấy CỰC ĐẠI qua chiều, nên một chiều NHIỄU (own hoặc arr biến thiên theo lưu lượng request) làm nổ điểm, nhấn chìm tính bất biến của inst. M6i-c4 quy trách nhiệm bằng ablation: chấm detector với từng tập con chiều và SO cả hai trục — báo động giả (trên nền trôi) VÀ phát hiện (trên cửa sổ tấn công). Kết luận có thể: (1) chỉ-inst KHÔNG sụp false-alarm dưới D3 nhưng cũng KHÔNG phát hiện tấn công (inst bất biến cả hai chiều → vô dụng kiểu khác); (2) chỉ-inst tách được tấn công ở báo động giả thấp (→ chiều own/arr là thủ phạm, bằng chứng lõi + hình mạnh nhất bài); (3) không rõ. Báo cáo trung thực cái nào."
+
+0. Hồi quy (BẮT BUỘC): `python3 analysis/c5_score.py --features out/c5-prod/features_all.tsv --train-until 434858090000000 --chieu-phanra A --ho-so tat --mien-tuyen-tinh --n-toi-thieu 0 --dai-che-do khong --out out/c5-prod/score-v143-compat` → cmp với out/c5-prod/score (R039). Khác → DỪNG, dán diff.
+
+1. Chấm lab1c CÓ nhãn, các tập chiều ablation + đối chứng, --ho-so lop, nền tĩnh. Dùng lại out/c5-lab1c/features_ghep.tsv (R042). Với CH ∈ {I, Iarr, own_only, arr_only, E, D} (I=chỉ x_inst_med; Iarr=inst+arr; own_only; arr_only; E,D làm mốc):
+   `--features out/c5-lab1c/features_ghep.tsv --train-until 1006289550843307 --nhan lab/nhan-tan-cong-lab1c.tsv --nhan-tid lab/nhan-tid-lab1c.tsv --muc lab/muc-lab1c.tsv --chieu-phanra CH --ho-so lop --n-toi-thieu 30 --out out/c5-lab1c/score-v143-<CH>`. Lưu log.txt.
+   Cổng: nếu CH=I (một chiều x_inst_med) mà ngưỡng ngân sách ra 1e12 (MAD=0) → báo, có thể x_inst_med của một lớp bất biến tới mức MAD=0; ghi rõ, không lỗi (v1.4.1 đã bỏ chiều MAD=0, nên nếu I bị bỏ hết chiều thì phát_hien=nan — ghi lại).
+
+2. BẢNG ABLATION (cốt lõi R045) — cho MỖI tập chiều CH, tại ngân sách báo động giả nền 0,01 VÀ 0,05, PHANRA branch, ba cột:
+   | CH | bdg_nen_kiem_tra | phát_hien (tỉ lệ cửa sổ TẤN CÔNG vượt ngưỡng) | theo_muc D3-7 | theo_muc D1-8 |
+   Đọc thẳng: (a) tập nào có **phát_hien cao ở D3-7 mà bdg_nen thấp** → tập đó TÁCH được tấn công bộ nhớ; (b) so I (chỉ inst) với own_only/arr_only: nếu I phát hiện tốt mà own_only/arr_only kém VÀ bdg_nen của own/arr cao → own/arr là chiều phá; (c) nếu I có bdg_nen thấp NHƯNG phát_hien cũng thấp (≈ bằng nhau nền và tấn công) → inst bất biến cả hai chiều, không phân biệt được tấn công (kết luận (1) ở trên).
+   Lập bảng đầy đủ cả 6 CH × 2 ngân sách. In nguyên văn.
+
+3. Phân tích x_inst dưới tấn công (bổ trợ, trả lời trực tiếp): từ features_ghep, với các cửa sổ TẤN CÔNG (giao nhãn) ở mức D3-7 so với cửa sổ NỀN cùng lớp cùng mức: trung vị x_inst_med của hai nhóm, và tỉ số. Nếu tỉ số ≈ 1 → x_inst KHÔNG đổi dưới tấn công (giải thích vì sao inst-only không phát hiện); nếu ≠ 1 → inst có tín hiệu tấn công. Bảng theo lớp dịch vụ.
+
+4. Hình (ra hinh-v143/): H-ablation: trục hoành 6 tập chiều, hai cột mỗi tập (bdg_nen_kiem_tra và phát_hien ở D3-7) tại ngân sách 0,01 — cho thấy tập nào tách (phát hiện cao, báo động giả thấp). Đây có thể là hình trung tâm C5 nếu một tập tách được.
+
+5. R045 (in nguyên văn): (a) hồi quy; (b) BẢNG ABLATION §2 đầy đủ; (c) §3 x_inst dưới tấn công; (d) H-ablation; (e) thời gian/RSS; (f) sha256 7 file (c5_score v1.4.3); "Thay đổi ngoài phạm vi" + git diff --stat; (g) mục 8 KẾT LUẬN THẲNG: tập chiều nào (nếu có) tách tấn công bộ nhớ ở báo động giả thấp; x_inst có đổi dưới tấn công không; kết luận rơi vào (1)/(2)/(3) của câu hỏi đầu — kèm số. Commit, tag m6i.5, push.
+6. Đóng gói lưu trữ (sau push): /root/chep_file/luu-tru/HIDS-R045-<ngày>.zip gồm git bundle --all, reports/R039..R045 + INDEX, docs/tasks/M6i.md + STATE.md, analysis/{detector_c5.py,c5_score.py} + SHA256SUMS, out/c5-lab1/hinh-v14?/*.svg, out/c5-lab1/r04?-tables; KHÔNG .bin/features_*/scores_* lớn, KHÔNG production thô. In cây + dung lượng + sha256. DỪNG.

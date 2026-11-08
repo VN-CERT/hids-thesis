@@ -161,7 +161,7 @@ import os
 import sys
 from array import array
 
-VERSION = "1.4.2"
+VERSION = "1.4.3"
 EPS = 1e-9
 DET_LEVELS = (0.5, 0.8, 0.9, 0.95, 1.0)
 NGAN_SACH_MAC_DINH = "0.001,0.01,0.05"
@@ -178,6 +178,10 @@ CHIEU_PHANRA = {
           "x_arr_med", "x_arr_p90", "x_arr_iqr", "x_arr_cv"],
     "D": ["x_arr_med", "x_arr_p90", "x_arr_iqr", "x_arr_cv", "x_inst_med", "own_cv"],
     "E": ["own_med", "own_p90", "own_iqr", "own_cv", "x_inst_med"],
+    "I": ["x_inst_med"],
+    "Iarr": ["x_inst_med", "x_arr_med"],
+    "own_only": ["own_med", "own_p90", "own_iqr", "own_cv"],
+    "arr_only": ["x_arr_med", "x_arr_p90", "x_arr_iqr", "x_arr_cv"],
 }
 
 
