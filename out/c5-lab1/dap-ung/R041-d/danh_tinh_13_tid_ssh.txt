@@ -1,0 +1,13 @@
+360859	postgres: background writer                                                
+360861	postgres: walwriter                                                        
+360744	postgres -c checkpoint_timeout=30min -c max_wal_size=8GB -c autovacuum=off 
+360858	postgres: checkpointer                                                     
+360862	postgres: logical replication launcher                                     
+360918	nginx: worker process 
+360919	nginx: worker process 
+360920	nginx: worker process 
+360917	nginx: worker process 
+360915	nginx: worker process 
+360921	nginx: worker process 
+360916	nginx: worker process 
+360922	nginx: worker process 

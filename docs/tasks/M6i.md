@@ -89,3 +89,43 @@ Bối cảnh (ghi vào R041 mục đầu, nguyên văn): "R040/M6i-b: ngưỡng 
    Không vẽ hình. Không chạy c5_score trên v2.
 
 5. R041: (1) chẩn đoán bước 1; (2) kiểm tương đương v2 + hiệu năng; (3) trạng thái hai unit trích (lab xong hay chưa — nếu lab chưa xong khi viết, R041 ghi "phần 4 chờ", và Cursor ghi thêm phụ lục R041-b khi xong, không chờ người); (4) bốn bảng đáp ứng; (5) thời gian/RSS; sha256 7 file; "Thay đổi ngoài phạm vi" + git diff --stat; mục 8 câu hỏi. Commit (không TSV lớn; bảng dap-ung nhỏ thì commit), tag m6i.1, push. DỪNG.
+
+## M6i-c1-speedup — tăng tốc trích lab v2 (195)
+
+TĂNG TỐC TRÍCH LAB v2 (195). Không dừng, không sửa gì ở unit hids-m6ic1-prodv2. Chỉ làm khi điều kiện (1) đúng; nếu không, in lý do và DỪNG, để hids-m6ic1-labv2 chạy tiếp như cũ.
+(1) Đọc scripts/c5_pipeline_v2_extract.sh: xác nhận mỗi file .bin được rec-export và c5_extract_v2 xử lý trong MỘT lần gọi riêng (cửa sổ không nối qua ranh giới file). Nếu c5_extract_v2 nhận nhiều file trong một tiến trình → in "KHONG DOC LAP THEO FILE", DỪNG.
+(2) `free -g`; số worker W = min(3, floor(RAM trống GB / 8)); W < 1 → DỪNG, báo.
+(3) Lấy danh sách file nền còn lại theo đúng thứ tự đường ống; KHÔNG đụng unit đang chạy: nó tiếp tục từ đầu danh sách; W worker lấy từ CUỐI danh sách, chia đều, mỗi worker một unit systemd-run riêng (hids-m6ic1-labv2-wN, nice 10), ghi ra file phần riêng out/c5-lab1/parts/<tên file .bin>.tsv (một file phần cho mỗi .bin, không ghi vào features_all_v2.tsv).
+(4) Kiểm tương đương trước khi tin: lấy MỘT file .bin nền mà unit tuần tự ĐÃ xong, chạy lại bằng đúng lệnh của worker ra file phần, so với đoạn tương ứng trong kết quả tuần tự (cùng số dòng, cmp từng cột) → phải GIỐNG HỆT; khác → dừng các worker, xoá parts, báo, không làm gì thêm.
+(5) Khi unit tuần tự sắp chạm file đầu tiên của các worker: dừng nó đúng ranh giới file (chờ log báo xong file hiện tại rồi stop) và ghi lại file cuối nó đã hoàn thành; mọi file giữa hai bên còn thiếu thì một worker làm nốt.
+(6) Ghép: features_all_v2.tsv = phần tuần tự (chỉ các file hoàn chỉnh) + các file phần, theo đúng thứ tự danh sách gốc, một tiêu đề; kiểm số dòng = tổng các phần, và kiểm 1000 dòng ngẫu nhiên khớp cột cũ với features_all.tsv như M6i-c1 bước 3 đã quy định.
+(7) Sửa watcher scripts/c5_m6ic1_r041b.sh để chờ file ghép xong (cờ out/jobs/m6ic1-labv2-merged.ok) rồi chạy c5_dap_ung.py → R041-b như cũ.
+Báo: W, danh sách file mỗi worker, kết quả kiểm (4), giờ dự kiến xong. Kết thúc lượt. Không kết luận.
+
+## M6i-c1-rerun — chạy nốt trích lab v2 sau OOM (195)
+
+CHẠY NỐT TRÍCH LAB v2 SAU OOM (195). Không đụng prodv2 (đã xong), không đụng watcher hids-m6ic1-r041b.
+1. systemctl stop hids-m6ic1-labv2-orch (đang chờ phần w1 không tồn tại). Xác nhận các unit labv2, -w1, -w2 đều inactive.
+2. Kiểm kê theo danh sách 210 file gốc (out/jobs/m6ic1-labv2-speedup-lists.txt + danh sách đường ống): mỗi file một trạng thái: XONG_SEQ (log unit tuần tự có dòng xong file), XONG_W1/XONG_W2 (log worker có dòng xong + file phần out/c5-lab1/parts/<tên>.tsv tồn tại), DO_DANG (file phần tồn tại nhưng không có dòng xong → xoá file phần), THIEU. In bảng đếm 5 trạng thái, file cuối cùng tuần tự đã xong, và danh sách THIEU+DO_DANG theo thứ tự gốc. Nếu phần kết quả tuần tự nằm trong một file gộp dở dang: cắt đúng tới ranh giới file cuối cùng đã xong (theo số dòng ghi trong log hoặc theo khoảng start_ns của file kế tiếp) và ghi lại cách cắt.
+3. `free -g`: W = max(1, min(2, floor((available_GB − 4) / 12))). Chạy lại các file THIEU+DO_DANG bằng W unit systemd-run riêng (hids-m6ic1-labv2-r1, -r2), mỗi unit `-p MemoryMax=14G -p MemorySwapMax=0`, nice 10, chia đều theo thứ tự; file phần ghi ra <tên>.tsv.tmp rồi mv sang <tên>.tsv khi xong (không bao giờ để lại phần dở dang). Ghi log "xong <tên> <số dòng>" mỗi file.
+4. Orchestrator mới (hids-m6ic1-labv2-orch2): đợi mọi file trong danh sách gốc có phần hoặc nằm trong phần tuần tự; ghép theo đúng thứ tự gốc, một tiêu đề, ra out/c5-lab1/features_all_v2.tsv; kiểm: (a) số dòng = tổng các phần; (b) số dòng = 1134148 (bằng features_all.tsv — cửa sổ phải y hệt như prod đã bằng); (c) 1000 dòng ngẫu nhiên khớp từng cột cũ với features_all.tsv. Cả ba đạt → touch out/jobs/m6ic1-labv2-merged.ok (watcher sẽ chạy đáp ứng → R041-b). Không đạt → ghi out/jobs/m6ic1-labv2-merge-loi.txt với chi tiết, KHÔNG touch merged.ok.
+5. Báo: bảng kiểm kê, W, available RAM, số file chạy lại, giờ dự kiến ghép xong. Kết thúc lượt. Không kết luận.
+
+## M6i-c0 — kéo LAB-1c về 195 và trích v2
+
+M6i-c0 — kéo LAB-1c về 195 và trích v2. Không đụng hids-m6ic1-labv2-r1, -orch2, watcher.
+1. rsync từ 201 (chỉ đọc bên 201): validation/lab1c-20261107/ → /root/hids/validation/lab1c-20261107/; lab/nhan-tan-cong-lab1c.tsv và lab/nhan-tid-lab1c.tsv → /root/hids/lab/. In dung lượng, số file .bin theo thư mục, số dòng và 3 dòng đầu mỗi file nhãn.
+2. Kiểm nhãn: mỗi run_id trong nhan-tan-cong-lab1c có ≥ 1 tid trong nhan-tid-lab1c; in bảng run_id, lop, muc_tranh_chap, n_tid, ghi_chu. B1-300s có ghi_chu KHONG_DAT → giữ, sẽ không chấm.
+3. Đợi out/jobs/m6ic1-labv2-merged.ok (hoặc orch2 inactive) rồi mới trích: unit hids-m6ic2-lab1cv2 (-p MemoryMax=14G -p MemorySwapMax=0, nice 10), c5_extract_v2 từng file .bin của lab1c theo đúng cách của c5_pipeline_v2_extract.sh, cột nguon = "lab1c/" + tên phiên (bn/<run_id>, slow/<run_id>, nen-phu) → out/c5-lab1c/features_all_v2.tsv. Equiv: một file phiên bn nhỏ so với detector_c5.py v1.2 (cột cũ sai lệch = 0) trước khi chạy hết.
+4. Khi xong: bảng số cửa sổ theo nguon × branch; với mỗi run_id trong nhan-tid: số cửa sổ của các tid đó có n ≥ 30 và n < 30. Ghi out/jobs/m6ic2-lab1cv2.status; báo cáo ngắn reports/R041-c-m6ic2-lab1c-trich.md. Không chấm, không kết luận. Nếu merged.ok chưa có sau 16:00 thì không chờ nữa, báo và DỪNG.
+
+## M6i-c1 R041-d — bảng chẩn đoán mở rộng C5 v2
+
+R041-d — bảng chẩn đoán mở rộng cho C5 v2 (195). Chỉ đọc out/c5-lab1/features_all_v2.tsv, out/c5-lab1c/features_all_v2.tsv, out/c5-lab1/dap-ung/quan_the_nen.tsv; không chấm, không kết luận. Chỉ dùng cửa sổ n ≥ 30; ghép BASELINE+PHANRA theo (tid, start_ns) như c5_dap_ung.py.
+(a) Bảng tỉ số so với nền ngày 1–5 cùng lớp (như ti_so_vs_nen.tsv) cho mọi phiên liều r1/r2, bn-D1-*, B4cu/N4cu và nền ngày 6–7, thêm cột: x_inst_med (chỉ cửa sổ x_n_pmu ≥ 3), x_n_pmu trung vị, own_p90, cpu_p90, own_cv, dt_cv, arr_cv, x_blk (cv/blk: hiệu so với nền chia MAD nền, không tỉ số). Lớp ≥ 20 cửa sổ.
+(b) Trôi theo ngày: với lớp nginx k=6, postgres k=4,5,6,7 và riêng từng tid trong 13 tid sống lâu: trung vị theo ngày 1…7 (mốc ngày từ benign-khoi-dong.txt) của dt_med, own_med, cpu_med, cpi_med, x_inst_med, x_arr_med, n; in bảng rộng ngày theo cột.
+(c) Danh tính 13 tid sống lâu: ssh cmdline trên 201 — chỉ đọc; ghép với cgroup, k_trung_vi, n_cua_so.
+(d) Thành phần lớp: postgres k=2, k=0, k=−6 và nginx k=0, k=1, k=2 trong nền ngày 1–5: 10 tid nhiều cửa sổ nhất mỗi lớp với số cửa sổ và trung vị dt_med, x_arr_med của tid đó.
+(e) LAB-1c: với 13 tid trên, số cửa sổ (n ≥ 30) trong out/c5-lab1c/features_all_v2.tsv theo nguon; và với mỗi run_id trong nhan-tid-lab1c: lớp k trung vị của tid tấn công/song sinh, trung vị dt_med, own_med, x_arr_med, x_arr_cv, x_inst_med, x_blk của các cửa sổ n ≥ 30 của tid đó.
+Ghi out/c5-lab1/dap-ung/R041-d/*.tsv, báo cáo reports/R041-d-m6ic1-chan-doan-mo-rong.md in toàn văn ra chat. Commit (file nhỏ). DỪNG.
+

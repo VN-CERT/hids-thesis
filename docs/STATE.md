@@ -133,7 +133,7 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 ## Việc đang chạy
 
-- **hids-m6ic1-labv2** — trích `features_all_v2.tsv` lab. Bắt đầu 2026-11-07 12:23. Log `out/jobs/m6ic1-labv2.log`, status `out/jobs/m6ic1-labv2.status`. Ước ~18 giờ.
-- **hids-m6ic1-prodv2** — trích production song song. Log/status `out/jobs/m6ic1-prodv2.*`. Ước ~12 giờ.
-Chấm v1.3.2 và equiv v2 đã xong. R041 viết khi chẩn đoán xong; phần đáp ứng → R041-b khi lab xong.
+- (không) R041-d xong: chẩn đoán mở rộng → `out/c5-lab1/dap-ung/R041-d/`, `reports/R041-d-m6ic1-chan-doan-mo-rong.md`.
+- M6i-c0 / R041-b / lab v2 merge: đã xong trước đó.
+- Cập nhật: 2026-11-08 20:41.
 

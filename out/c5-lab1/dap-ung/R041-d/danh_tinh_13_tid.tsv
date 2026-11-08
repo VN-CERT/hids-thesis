@@ -1,0 +1,14 @@
+tid	cgroup	k_trung_vi	n_cua_so	cmdline
+360859	postgres	6	14392	postgres: background writer
+360861	postgres	2	14391	postgres: walwriter
+360744	postgres	0	14250	postgres -c checkpoint_timeout=30min -c max_wal_size=8GB -c autovacuum=off
+360858	postgres	6	13717	postgres: checkpointer
+360862	postgres	-6	8749	postgres: logical replication launcher
+360918	nginx	6	7589	nginx: worker process
+360919	nginx	6	7530	nginx: worker process
+360920	nginx	6	7523	nginx: worker process
+360917	nginx	6	7488	nginx: worker process
+360915	nginx	6	7421	nginx: worker process
+360921	nginx	6	7383	nginx: worker process
+360916	nginx	6	7344	nginx: worker process
+360922	nginx	6	7332	nginx: worker process

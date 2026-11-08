@@ -44,3 +44,5 @@
 | [R039](R039-m6h-c5-lab-prod.md) | 2026-11-07 08:17 | M6h | C5 trên lab và production: tom_tat lab, báo động giả production, overhead FINAL. | Xong, tag `m6h`. |
 | [R040](R040-m6i-c5-v13-dung-nhan-tid.md) | 2026-11-07 10:20 | M6i-b | Viết lại R040: giữ mục dừng nhãn tid; chấm ngân sách 0,001/0,01/0,05 lab ba cách và production toc_do. | Xong, tag `m6i`. |
 | [R041](R041-m6ic1-chan-doan-sieu-tap.md) | 2026-11-07 12:26 | M6i-c1 | Chẩn đoán v1.3.2; extract_v2; trích lab/prod đang chạy; phần đáp ứng → R041-b. | Tag `m6i.1`. |
+| [R041-c](R041-c-m6ic2-lab1c-trich.md) | 2026-11-08 19:33 | M6i-c0 | Kéo LAB-1c + trích features_all_v2. | Xong. |
+| [R041-d](R041-d-m6ic1-chan-doan-mo-rong.md) | 2026-11-08 20:40 | M6i-c1 | Chẩn đoán mở rộng C5 v2 (ti_so/trôi/13 tid/lab1c). | Xong. |
