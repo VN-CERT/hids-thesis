@@ -1,0 +1,13 @@
+branch	chieu	auroc_vs_nen_muc0	abs05_vs_nen	n_atk_nen	n_nen	auroc_vs_ss_0	abs05_vs_ss_0	n_atk_ss_0	n_ss_0	auroc_vs_ss_D1-8	abs05_vs_ss_D1-8	n_atk_ss_D1-8	n_ss_D1-8	auroc_vs_ss_D1-16	abs05_vs_ss_D1-16	n_atk_ss_D1-16	n_ss_D1-16	auroc_vs_ss_D3-7	abs05_vs_ss_D3-7	n_atk_ss_D3-7	n_ss_D3-7
+BASELINE_dt_tho	dt_med	0.7224	0.2224	254	522169	0.1922	0.3078	101	957	0.2676	0.2324	51	40	0.2892	0.2108	51	40	0.3882	0.1118	51	40
+BASELINE_dt_tho	own_med	nan	nan			nan	nan			nan	nan			nan	nan			nan	nan		
+BASELINE_dt_tho	cpu_med	nan	nan			nan	nan			nan	nan			nan	nan			nan	nan		
+BASELINE_dt_tho	cpi_med	nan	nan			nan	nan			nan	nan			nan	nan			nan	nan		
+BASELINE_dt_tho	x_arr_med	0.9612	0.4612	194	521700	0.6136	0.1136	84	935	0.4865	0.0135	37	36	0.3873	0.1127	36	36	0.2776	0.2224	37	37
+BASELINE_dt_tho	x_inst_med	0.9457	0.4457	254	522169	0.5636	0.0636	101	957	0.4772	0.0228	51	40	0.5328	0.0328	51	40	0.4740	0.0260	51	40
+PHANRA_5tp	dt_med	nan	nan			nan	nan			nan	nan			nan	nan			nan	nan		
+PHANRA_5tp	own_med	0.7722	0.2722	254	522169	0.1791	0.3209	101	957	0.2750	0.2250	51	40	0.2819	0.2181	51	40	0.3245	0.1755	51	40
+PHANRA_5tp	cpu_med	0.8412	0.3412	254	522169	0.2119	0.2881	101	957	0.3206	0.1794	51	40	0.3314	0.1686	51	40	0.3299	0.1701	51	40
+PHANRA_5tp	cpi_med	0.2608	0.2392	254	522169	0.3514	0.1486	101	957	0.2887	0.2113	51	40	0.3578	0.1422	51	40	0.2471	0.2529	51	40
+PHANRA_5tp	x_arr_med	0.9612	0.4612	194	521700	0.6136	0.1136	84	935	0.4865	0.0135	37	36	0.3873	0.1127	36	36	0.2776	0.2224	37	37
+PHANRA_5tp	x_inst_med	0.9457	0.4457	254	522169	0.5636	0.0636	101	957	0.4772	0.0228	51	40	0.5328	0.0328	51	40	0.4740	0.0260	51	40

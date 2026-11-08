@@ -1,0 +1,3 @@
+UnboundLocalError: cannot access local variable outdir where it is not associated with a value
+Nguyen nhan: trong che do --auroc, bien outdir duoc dung truoc khi gan (outdir=a.out nam sau khoi auroc).
+Bang da in ra stdout truoc khi crash; auroc_don_chieu.tsv khoi phuc tu log.txt. Khong sua file kien truc su.

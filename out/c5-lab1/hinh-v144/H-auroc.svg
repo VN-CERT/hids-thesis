@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="480">
+<rect width="100%" height="100%" fill="white"/>
+<text x="500" y="28" font-family="sans-serif" font-size="14" text-anchor="middle">H-auroc PHANRA: AUROC vs nen muc0 vs vs song sinh @D3-7</text>
+<line x1="70" y1="60" x2="70" y2="390" stroke="#333"/>
+<line x1="70" y1="390" x2="980" y2="390" stroke="#333"/>
+<line x1="70" y1="225.0" x2="980" y2="225.0" stroke="#999" stroke-dasharray="4 3"/>
+<text x="62" y="229.0" font-family="sans-serif" font-size="10" text-anchor="end">0.5</text>
+<text x="62" y="394.0" font-family="sans-serif" font-size="10" text-anchor="end">0.00</text>
+<text x="62" y="311.5" font-family="sans-serif" font-size="10" text-anchor="end">0.25</text>
+<text x="62" y="146.5" font-family="sans-serif" font-size="10" text-anchor="end">0.75</text>
+<text x="62" y="64.0" font-family="sans-serif" font-size="10" text-anchor="end">1.00</text>
+<text x="145.8" y="455" font-family="sans-serif" font-size="11" text-anchor="middle">dt_med</text>
+<rect x="92.8" y="nan" width="51.1" height="nan" fill="#1f77b4"/>
+<text x="118.3" y="nan" font-family="sans-serif" font-size="9" text-anchor="middle">nan</text>
+<rect x="145.8" y="nan" width="51.1" height="nan" fill="#d62728"/>
+<text x="171.4" y="nan" font-family="sans-serif" font-size="9" text-anchor="middle">nan</text>
+<text x="297.5" y="455" font-family="sans-serif" font-size="11" text-anchor="middle">own_med</text>
+<rect x="244.4" y="135.2" width="51.1" height="254.8" fill="#1f77b4"/>
+<text x="270.0" y="131.2" font-family="sans-serif" font-size="9" text-anchor="middle">0.772</text>
+<rect x="297.5" y="282.9" width="51.1" height="107.1" fill="#d62728"/>
+<text x="323.0" y="278.9" font-family="sans-serif" font-size="9" text-anchor="middle">0.325</text>
+<text x="449.2" y="455" font-family="sans-serif" font-size="11" text-anchor="middle">cpu_med</text>
+<rect x="396.1" y="112.4" width="51.1" height="277.6" fill="#1f77b4"/>
+<text x="421.6" y="108.4" font-family="sans-serif" font-size="9" text-anchor="middle">0.841</text>
+<rect x="449.2" y="281.1" width="51.1" height="108.9" fill="#d62728"/>
+<text x="474.7" y="277.1" font-family="sans-serif" font-size="9" text-anchor="middle">0.330</text>
+<text x="600.8" y="455" font-family="sans-serif" font-size="11" text-anchor="middle">cpi_med</text>
+<rect x="547.8" y="303.9" width="51.1" height="86.1" fill="#1f77b4"/>
+<text x="573.3" y="299.9" font-family="sans-serif" font-size="9" text-anchor="middle">0.261</text>
+<rect x="600.8" y="308.5" width="51.1" height="81.5" fill="#d62728"/>
+<text x="626.4" y="304.5" font-family="sans-serif" font-size="9" text-anchor="middle">0.247</text>
+<text x="752.5" y="455" font-family="sans-serif" font-size="11" text-anchor="middle">x_arr_med</text>
+<rect x="699.4" y="72.8" width="51.1" height="317.2" fill="#1f77b4"/>
+<text x="725.0" y="68.8" font-family="sans-serif" font-size="9" text-anchor="middle">0.961</text>
+<rect x="752.5" y="298.4" width="51.1" height="91.6" fill="#d62728"/>
+<text x="778.0" y="294.4" font-family="sans-serif" font-size="9" text-anchor="middle">0.278</text>
+<text x="904.2" y="455" font-family="sans-serif" font-size="11" text-anchor="middle">x_inst_med</text>
+<rect x="851.1" y="77.9" width="51.1" height="312.1" fill="#1f77b4"/>
+<text x="876.6" y="73.9" font-family="sans-serif" font-size="9" text-anchor="middle">0.946</text>
+<rect x="904.2" y="233.6" width="51.1" height="156.4" fill="#d62728"/>
+<text x="929.7" y="229.6" font-family="sans-serif" font-size="9" text-anchor="middle">0.474</text>
+<rect x="70" y="40" width="12" height="12" fill="#1f77b4"/>
+<text x="86" y="50" font-family="sans-serif" font-size="11">vs_nen_muc0</text>
+<rect x="290" y="40" width="12" height="12" fill="#d62728"/>
+<text x="306" y="50" font-family="sans-serif" font-size="11">vs_song_sinh_D3-7</text>
+</svg>

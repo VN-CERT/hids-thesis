@@ -199,3 +199,18 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 - R045 viết; kết luận (1) chỉ-inst không phát hiện tấn công bộ nhớ D3 (B1@D3-7=0); nginx x_inst tỉ số≈1.
 - Việc đang chạy: không.
 - Tiếp theo: commit + tag m6i.5 + push + zip HIDS-R045; DỪNG.
+
+## Cập nhật 2026-11-09 02:18 (M6i-c5)
+
+- Mốc: M6i-c5 — AUROC đơn-chiều (c5_score 1.4.4); báo cáo R046; tag m6i.6.
+- CAI XONG; sha c5_score `c8526ba14a46b3e8ce2a2040e61e0840e51eb6a22b7eee3303c739346f06d0e7`.
+- Bước đang làm: commit kiến trúc sư → hồi quy score-v144-compat → --auroc lab1c → bảng/hình/R046.
+- Không ghi đè score-v143-* / score-v142-* / features_*.
+
+## Cập nhật 2026-11-09 02:22 (M6i-c5 XONG)
+
+- Hồi quy score-v144-compat KHOP.
+- --auroc lab1c: bảng in stdout; UnboundLocalError outdir (không sửa file KT sư); khôi phục auroc_don_chieu.tsv từ log.
+- R046: vs-nền cao (ảo); x_inst_med vs-ss@D3-7≈0.47; max |AUROC−0.5| trong 6 chiều = 0.2529 (cpi_med@D3-7).
+- Việc đang chạy: không.
+- Tiếp theo: commit + tag m6i.6 + push + zip HIDS-R046; DỪNG.

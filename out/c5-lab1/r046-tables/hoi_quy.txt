@@ -1,0 +1,5 @@
+tom_tat first4: KHOP
+scores_* first7: KHOP
+tradeoff_*: KHOP
+OK_ALL
+User 105.92s Elapsed 1:48.72 RSS 3149652 kB
