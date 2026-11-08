@@ -47,3 +47,4 @@
 | [R041-c](R041-c-m6ic2-lab1c-trich.md) | 2026-11-08 19:33 | M6i-c0 | Kéo LAB-1c + trích features_all_v2. | Xong. |
 | [R041-d](R041-d-m6ic1-chan-doan-mo-rong.md) | 2026-11-08 20:40 | M6i-c1 | Chẩn đoán mở rộng C5 v2 (ti_so/trôi/13 tid/lab1c). | Xong. |
 | [R042](R042-m6ic2-cham-c5-v2.md) | 2026-11-08 23:27 | M6i-c2 | Chấm C5 v2 (1.4): hồi quy KHOP; lab A–E; lab1c; prod; H1–H4; tag m6i.2. | Xong, tag `m6i.2`. |
+| [R043](R043-m6ic2b-c5-v141-mad0.md) | 2026-11-09 00:12 | M6i-c2b | c5_score 1.4.1 bỏ MAD=0; lab1c A–E; CH*=E; prod; tag m6i.3. | Xong, tag `m6i.3`. |

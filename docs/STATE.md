@@ -161,3 +161,14 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 - R042 viết xong; H1–H4 tại out/c5-lab1/hinh-v14/.
 - Việc đang chạy: không.
 - Tiếp theo: commit + tag m6i.2 + push; DỪNG.
+
+## Cập nhật 2026-11-08 23:50 (M6i-c2b)
+
+- c5_score v1.4.1 commit `b77d7e2`; hồi quy score-v141-compat vs R039 KHOP.
+- Đang chấm lab1c A–E → score-v141-* (unit hids-m6ic2b-score).
+- Không ghi đè score-v14-* của R042.
+
+## Cập nhật 2026-11-09 00:11 (M6i-c2b XONG)
+
+- R043 viết; CH*=E; tag m6i.3.
+- Việc đang chạy: không.
