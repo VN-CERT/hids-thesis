@@ -1,6 +1,6 @@
 # R048 — M6i-c7: T² công bằng cùng train-until max|z|
 
-1. Số báo cáo: **R048**. Ngày giờ: **2026-11-09 04:03** (giờ máy). Mốc: **M6i-c7**. Commit trước khi báo cáo: `08fdb21`. Tag dự kiến: `m6i.8`.
+1. Số báo cáo: **R048**. Ngày giờ: **2026-11-09 04:03** (giờ máy). Mốc: **M6i-c7**. Commit báo cáo: `67fc3d9`. Tag dự kiến: `m6i.8`.
 
 Ghi chú: `sha256(analysis/c5_score.py)=b82f4e23…` khớp điều kiện nhiệm vụ; chuỗi `VERSION` trong file vẫn `1.4.5` (như R047).
 
