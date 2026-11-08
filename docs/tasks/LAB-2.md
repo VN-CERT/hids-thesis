@@ -28,3 +28,36 @@ File kiến trúc sư không đổi (kiểm sha256 5 file như LAB-1c: sys_enter
 7. (Hôm sau) LAB-2-pha1-ketqua.txt: bảng 9 phiên (run_id, lớp, mức, cách vào cgroup, n_tid, n bản ghi tid tấn công, chỉ số oracle, drops, PMU, khớp mốc), đầu/cuối nhip-benign, dung lượng, sha256 5 file kiến trúc sư + implant, rev-parse commit Phụ lục 2.1, mục "quyết định tự đưa ra", mục "việc người dùng cần làm" (chỉ: báo kiến trúc sư để 195 rsync validation/lab2-<ngày>/ + lab/nhan-*-lab2.tsv về cho M6j chấm). Commit mọi thứ trừ .bin và implant (implant KHÔNG commit — chỉ sha256); push lab-collector. In toàn văn ra chat. DỪNG.
 
 Lưu ý an toàn khi viết script: lab2_egress.py / lab2_sshbrute.py là công cụ của NGHIÊN CỨU, chạy trong lab cô lập, đích cố định 192.168.77.20, có token-bucket giới hạn tốc độ và danh sách mật khẩu nhỏ cố định — KHÔNG phải công cụ tấn công tổng quát; không thêm tính năng quét mạng, không nhận đích từ dòng lệnh ngoài 192.168.77.20. Nếu Cursor từ chối viết lab2_sshbrute.py (dò mật khẩu), thì GHI LẠI và báo người dùng tự viết script dò SSH đơn giản (paramiko, đích cố định) đặt vào scripts/, driver gọi như trên — không chặn pha 1 (A2+B2 vẫn chạy được).
+
+
+## pha 2
+
+NHIỆM VỤ LAB-2 PHA 2 — song sinh benign N (cùng tải, cùng cgroup) để phân tích CÓ KIỂM SOÁT (máy 201 hids-collector, repo /root/collector nhánh lab-collector; đích 202 192.168.77.20 đã cô lập). Nối vào docs/tasks/LAB-2.md mục "pha 2". Kết quả validation/lab2-song-sinh-<ngày>/ + LAB-2-pha2-ketqua.txt (in toàn văn). Phần dài một unit systemd, Cursor kiểm phiên đầu rồi kết thúc lượt; người dùng quay lại "driver lab2 song sinh xong, làm bước 6".
+
+NGUYÊN TẮC: giống pha 1 — mọi tiến trình song sinh chạy TRONG cgroup lab0-nginx (cgroup.procs), đích 192.168.77.20, chỉ mạng cô lập. Lý do pha 2 (R045/R050): phân tích C5 chỉ có nghĩa khi so tấn công với benign CÙNG TẢI (song sinh). Pha 1 chỉ có tấn công; pha 2 bổ sung song sinh N cho mỗi lớp × mức, nhãn N, để M6j chấm AUROC/T² tấn-công-vs-song-sinh như lab1c. File kiến trúc sư không đổi (kiểm sha 5 file như pha 1). Sha sai/build lỗi/cổng không đạt → DỪNG, dán nguyên văn.
+
+0. Điều kiện: hids-* active trống; bpf hids_=0; lab0-nginx/postgres Up; đĩa ≥60GB; ping 192.168.77.20 THÔNG; cổng 18081 (backup egress) còn mở trên 202 (ss trên 202 qua ssh cô lập, hoặc thử nc); user lab2victim còn trên 202 (cho C2 song sinh login hợp lệ). AllowedCPUs user.slice=1-7. In cgroup nginx scope.
+
+1. Phụ lục 2.2 — nối docs/giao-thuc-lab1.md, commit TRƯỚC khi ghi: "Phụ lục 2.2 — <ngày> (LAB-2 pha 2, song sinh benign N cùng tải). Mỗi lớp tấn công pha 1 có song sinh benign chạy cùng cgroup nginx, cùng mức tranh chấp {0,D1-8,D3-7}, nhãn lop=N: (N-A2) health-check HTTP tới 202 cùng CHU KỲ như beacon A2 (60s ±jitter) nhưng là GET hợp lệ (không phải C2) — benign 'ngủ dài dậy ngắn theo chu kỳ' giống beacon về nhịp, khác về bản chất; (N-B2) backup hợp lệ: gửi cùng ~25MB tới 202 cổng 18081 (backup server) cùng tốc độ 50KB/s — truyền dữ liệu lớn LÀNH (sao lưu), khác exfil ở đích/ý định; (N-C2) login SSH hợp lệ LẶP LẠI tới 202 (user lab2victim, mật khẩu ĐÚNG ngay) cách quãng như bruteforce nhưng mỗi lần ĐĂNG NHẬP THÀNH CÔNG — truy cập hợp lệ lặp, khác bruteforce ở kết quả. Mục đích: cặp tấn công↔song sinh cùng tải để đo AUROC có kiểm soát."
+
+2. Dùng lại hạ tầng pha 1 (KHÔNG cài mới trên 202): health-check/backup/login hợp lệ dùng chính script pha 1 ở CHẾ ĐỘ LÀNH:
+   - N-A2: lab2_healthcheck.py — vòng lặp: mỗi 60s ±jitter(0-30s) gửi GET http://192.168.77.20:8080/ (hoặc một cổng http hợp lệ trên 202; nếu Sliver listener 8080 không trả GET thường, dùng một python http.server lành trên 202 cổng khác — mở nếu cần, ghi cổng). KHÔNG chạy implant Sliver. Một tiến trình sống suốt cửa sổ, chu kỳ giống beacon.
+   - N-B2: lab2_egress.py (đã có) --dich 192.168.77.20:18081 --tong 25MB --toc-do 50KBps — gửi tới BACKUP server (cổng 18081, nhãn benign), không phải 18080.
+   - N-C2: lab2_sshlogin.py — vòng lặp: mỗi ~5s ssh tới 192.168.77.20 user lab2victim mật khẩu ĐÚNG, chạy `true`, thoát; lặp. Mỗi lần thành công (khác sshbrute thử sai). Nếu không script được login tự động thì dùng sshpass; ghi cách dùng.
+
+3. scripts/lab2_songsinh_lib.sh — ba hàm N-A2/N-B2/N-C2 qua chay_trong_cgroup <nginx>. Driver hids-lab2ss-driver (Restart=no, trap ERR→driver-loi.txt): với mỗi mức L ∈ {0, D1-8, D3-7} và mỗi lớp N ∈ {N-A2, N-B2, N-C2}:
+   - phút 0: generator benign + collector phiên (taskset 1-7, -pmu sample=20, cgroup nginx+postgres), chờ READY ≤20s; liều L bật sau READY.
+   - phút 3→13 (cửa sổ nhãn, mono_ns): chạy lớp song sinh N tương ứng.
+   - phút 13→15: tắt; dừng collector sạch; rec-stat (drops=0).
+   - ghi tải nền như pha 2 trước (sampler 10s: loadavg, cpu_tong, cpu_nginx/pg, n_worker) → tai-nen.tsv mỗi phiên.
+   - Nhãn: một dòng lab/nhan-tan-cong-lab2.tsv (nối tiếp, lop=N-A2/N-B2/N-C2; run_id=<lop>-<L>-c-<ngày>; muc=L; ghi_chu "song sinh pha 2") + dòng lab/nhan-tid-lab2.tsv (pid chính + con cháu). QUAN TRỌNG: song sinh là lop=N (twin), KHÔNG phải tấn công — để c5_score coi là twin.
+   - Kiểm mỗi phiên (kiem.txt): drops=0; tid trong cgroup nginx; rec-export ≥50 bản ghi tid; mốc ±1s; PMU 4-6%; N-A2 ≥3 chu kỳ; N-B2 byte gửi ±5% của 25MB; N-C2 ≥10 lần login. Không đạt → chạy lại ≤2 lần; vẫn không → driver-loi.txt, DỪNG.
+   9 phiên × 15 phút ≈ 2,5 giờ.
+
+4. Trước driver: chạy thử N-A2 L=0 rút 5 phút kiểm cơ chế (health-check tới 202 được, nhãn N ghi, rec-export thấy tid); đạt mới bật driver. Phiên thử không vào nhãn chính.
+
+5. Cursor kết thúc lượt sau khi driver bật + phiên đầu đạt; in tên unit, giờ dự kiến xong, dòng kiểm.
+
+6. (Hôm sau) LAB-2-pha2-ketqua.txt: bảng 9 phiên song sinh (run_id, lớp N, mức, n_tid, n bản ghi, oracle, drops, PMU, khớp mốc, tải nền), đối chiếu với phiên tấn công pha 1 CÙNG mức (cùng tải nền chưa?), dung lượng, sha 5 file, commit Phụ lục 2.2, mục quyết định, mục việc người dùng (báo 195 rsync validation/lab2-song-sinh-<ngày>/ + nhãn cập nhật cho M6j). Commit (trừ .bin), push. In toàn văn. DỪNG.
+
+Lưu ý: nếu Sliver listener 8080 không trả GET thường cho health-check, mở một http.server lành trên 202 (ghi cổng, đây là server BENIGN không phải C2). lab2_sshlogin.py/sshpass đích cố định 192.168.77.20 — không nhận đích ngoài. Nếu Cursor từ chối script login tự động (dù là login HỢP LỆ), ghi lại, người dùng tự viết sshpass loop đích cố định, driver gọi; không chặn N-A2/N-B2.
