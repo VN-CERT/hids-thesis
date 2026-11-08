@@ -243,3 +243,16 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 - @0.01 fair D3-7: D 0.4595 / E 0.3922 / A 0.4118 (bdg_nen 0.0068–0.0087); maxz D3-7 R047-B ≈0–0.0007.
 - Mục 2 (top-20 đóng góp): để sau.
 - R048; việc đang chạy: không. Tag m6i.8.
+
+## Cập nhật 2026-11-09 04:10 (M6i-c8)
+
+- Mốc: M6i-c8 — phân tích đóng góp T² muc_0 (mục 2 R048); tag m6i.9.
+- CAI goi-195-m6ic8 XONG; `scripts/t2_muc0_analyze.py` sha `f4919a41…`.
+- Bước đang làm: chạy analyze → phụ lục R048/R049 → commit + tag.
+- Không sửa c5_score/detector.
+
+## Cập nhật 2026-11-09 04:12 (M6i-c8 XONG)
+
+- Analyze xong: 84 cửa sổ muc_0; top-20 đóng góp TB `x_inst_med` 96,4% (x_arr nhỏ; own_cv≈0).
+- Đọc thẳng khung nhiệm vụ: chiều tải (x_inst), không phải nhịp.
+- R049; tag m6i.9. Việc đang chạy: không.

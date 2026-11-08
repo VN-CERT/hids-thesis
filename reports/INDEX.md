@@ -53,3 +53,4 @@
 | [R046](R046-m6ic5-auroc-don-chieu.md) | 2026-11-09 02:22 | M6i-c5 | AUROC đơn-chiều vs nền vs song sinh; x_inst≈0.5 có kiểm soát; tag m6i.6. | Xong, tag `m6i.6`. |
 | [R047](R047-m6ic6-t2-auroc-ci.md) | 2026-11-09 03:40 | M6i-c6 | T² tách D3 @BDG thấp; AUROC CI/null; C5 dương tính có điều kiện T²; tag m6i.7. | Xong, tag `m6i.7`. |
 | [R048](R048-m6ic7-t2-cong-bang.md) | 2026-11-09 04:03 | M6i-c7 | T² fair train-until=max\|z\|; số trùng T²-R047; mục 2 để sau; tag m6i.8. | Xong, tag `m6i.8`. |
+| [R049](R049-m6ic8-t2-muc0-dong-gop.md) | 2026-11-09 04:12 | M6i-c8 | T² muc_0: đóng góp x_inst_med 96,4%; mục 2 R048; tag m6i.9. | Xong, tag `m6i.9`. |
