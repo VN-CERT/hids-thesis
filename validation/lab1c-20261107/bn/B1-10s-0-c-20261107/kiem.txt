@@ -1,0 +1,12 @@
+drops kernel=0 proc=0
+rec-stat recs=5277276 pmu_pct=4.9989 bin=/root/collector/validation/lab1c-20261107/bn/B1-10s-0-c-20261107/data/hids-collector-2026110715.bin
+PMU DAT
+tid_records_total=2327 per={877245: 2327}
+n_ban_ghi_tid DAT
+cycles=50 min=20
+cycles DAT
+moc |first-t0|=0.019s |last-t1|=0.411s
+moc nhan DAT
+cgroup pid=877245: process gone (ok neu da ket thuc)
+cgroup DAT (hoac pid da ket thuc)
+ok=1

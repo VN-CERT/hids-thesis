@@ -1,0 +1,12 @@
+mb=4 compress_s=0.139
+mb=8 compress_s=0.270
+mb=12 compress_s=0.409
+mb=16 compress_s=0.535
+mb=20 compress_s=0.668
+mb=24 compress_s=0.803
+mb=28 compress_s=0.929
+mb=32 compress_s=1.050
+mb=40 compress_s=1.335
+mb=48 compress_s=1.590
+mb=64 compress_s=2.104
+payload_path=/root/collector/validation/lab1c-20261107/n4-payload.bin bytes=67108864 compress_s=2.104

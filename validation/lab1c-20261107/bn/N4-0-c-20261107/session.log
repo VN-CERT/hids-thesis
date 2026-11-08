@@ -1,0 +1,5 @@
+[2026-11-07T16:17:36+00:00] === SESSION N4-0-c-20261107 kind=N4 level=0 total=900s win=180-780 cg_ng=/sys/fs/cgroup/system.slice/docker-026f7cbf1bc47de73f226721ea7ad4aa6415f8607ac9e83de2755a2f51108da2.scope ===
+[2026-11-07T16:17:40+00:00] collector READY pid=913456
+[2026-11-07T16:20:41+00:00] attack pids=915270 win_dur=600
+[2026-11-07T16:32:42+00:00] t0=1526375005439922 t1=1526975514861404 cycles=28 tids=915270
+[2026-11-07T16:32:59+00:00] kiem exit=0

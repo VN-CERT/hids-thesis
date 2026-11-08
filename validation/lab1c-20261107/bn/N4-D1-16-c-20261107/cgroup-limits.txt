@@ -1,0 +1,1 @@
+memory.max=max cpu.max=max 100000

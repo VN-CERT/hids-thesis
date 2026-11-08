@@ -208,16 +208,13 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 - (không có)
 
-## Bước đang làm (LAB-1c) — driver + nenphu đang chạy (2026-11-07)
+## Bước đang làm (LAB-1c) — bước 7 XONG; nenphu còn chạy (2026-11-08)
 
-- Phụ lục 1.9+1.9b+1.9c commit `55ec717` (sửa cgroup_bg `ed24236`, trial `a4321f8`).
-- Phiên thử THU-B1-10s L=0: **DAT** (kiem.txt ok=1; 1831 bản ghi tid trong cgroup nginx).
-- Phiên đầu B1-10s-0: **DAT** (cycles=50, recs_tid=2327, PMU=4.9989, drops=0).
-- B4 mode: stress-ng (utime=6.05s). N4: zlib payload đã hiệu chuẩn.
-- Cursor kết thúc lượt; bước 7 khi người dùng báo "driver xong".
+- Driver DỪNG: `driver-loi.txt` = FAIL B1-300s-0 sau 2 lần (cycles=19; mốc lệch). N1-300s chưa chạy.
+- 16/16 bn DAT; B1-60s + N1-60s DAT. Báo cáo: `LAB-1c-ketqua.txt`.
+- **hids-lab1c-nenphu** còn chạy (bắt đầu 02:43:17Z) — dự kiến xong ≈ 05:13Z.
 
 ## Việc đang chạy
 
-- **hids-lab1c-driver** — 16 BN + 4 slow — bắt đầu 2026-11-07T15:30:10Z — dự kiến xong ≈ 2026-11-08T01:00Z — log `validation/lab1c-20261107/driver.log`
-- **hids-lab1c-nenphu** — chờ driver rồi 150 phút nền lành — dự kiến bắt đầu ≈ 01:00Z / xong ≈ 03:30Z — log `validation/lab1c-20261107/nenphu.log`
-- **hids-lab1c-gen** — generator cho driver/nenphu
+- **hids-lab1c-nenphu** — nền chu kỳ lành 150 phút — bắt đầu 2026-11-08T02:43:17Z — log `validation/lab1c-20261107/nenphu.log`
+- **hids-lab1c-gen** — generator cho nenphu

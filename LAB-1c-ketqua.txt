@@ -1,0 +1,153 @@
+LAB-1c — KET QUA (buoc 7)
+May: hids-collector (nan nhan, 55.201 / 10.70.55.201). Nhanh: lab-collector
+Nhiem vu: docs/tasks/LAB-1c.md (gop A+B+C; B4/N4 theo 1.9c)
+Ngay: 2026-11-07 / 2026-11-08
+Thu muc: validation/lab1c-20261107/
+
+================================================================
+TRANG THAI: DRIVER DUNG — B1-300s-0 KHONG DAT sau 2 lan (driver-loi.txt).
+16/16 phien bn DAT; slow: B1-60s + N1-60s DAT; B1-300s FAIL; N1-300s CHUA CHAY.
+hids-lab1c-nenphu DANG CHAY (bat dau sau khi driver chet, 2026-11-08T02:43:17Z).
+================================================================
+
+----------------------------------------------------------------
+0. DIEU KIEN (luc bat dau)
+----------------------------------------------------------------
+- systemctl list-units 'hids-*' --state=active: trong
+- bpftool prog show | grep -c hids_ = 0
+- lab0-postgres, lab0-nginx: Up
+- df: >= 60 GB trong; perf_event_paranoid = 1
+- AllowedCPUs user.slice = 1-7 (cpuset.effective=1-7)
+- cgroup nginx=/sys/fs/cgroup/system.slice/docker-026f7cbf1bc47de73f226721ea7ad4aa6415f8607ac9e83de2755a2f51108da2.scope
+- cgroup postgres=/sys/fs/cgroup/system.slice/docker-6e46e483810609715f4c42e35a5087fa36df28a4dd1c8f40bd715f9c35f31669.scope
+- memory.max=max cpu.max=max 100000 (nginx)
+
+----------------------------------------------------------------
+1. COMMIT PHU LUC (truoc khi ghi du lieu)
+----------------------------------------------------------------
+git rev-parse (phu luc 1.9+1.9b+1.9c):
+55ec7178373469896374d462d24537d3da48daa0
+LAB-1c: phu luc 1.9+1.9b+1.9c va cong cu (truoc khi ghi du lieu)
+
+Sua sau (van truoc / trong chay, khong doi tieu chi):
+ed24236 chay_trong_cgroup_bg ghi pid that trong cgroup
+a4321f8 sua wait treo; phien thu B1-10s L=0 dat
+
+----------------------------------------------------------------
+SHA256 (5 file kien truc su)
+----------------------------------------------------------------
+9994b03f359ee5205354515f80bd4dd67f4919daca6b585702f4dc54796648c0  bpf/sys_enter.bpf.c
+39d892e5524de1cb49ace593b152c5b303d99c056e110f0a072d344c8270c7ec  bpf/proc_events.bpf.c
+9f0b4cde1c2e1c6aa560c041eaefaef1a40e5c7d9fc292db1d77dfc971d046cd  analysis/m5f_parse.py
+8c390002870f3ea8ace38a241f803bb5e7ec6c2413fdd403f757de24a6a1be25  analysis/m6c_stats.py
+88ef821eb062855b0189af1568d25e310b53f1e0c1e29e35e360282515d97706  tools/coreclk.c
+
+----------------------------------------------------------------
+2. PHIEN THU (truoc driver)
+----------------------------------------------------------------
+THU-B1-10s-0-c-20261107 (5 phut, cua so 1→4, khong vao nhan): ok=1
+tid_records=1831; cycles=15; PMU=4.9985; drops=0; cgroup docker OK
+File: validation/lab1c-20261107/thu-kiem.txt
+
+----------------------------------------------------------------
+3. BANG 20 PHIEN (bn 16 + slow 4)
+----------------------------------------------------------------
+Cach vao cgroup: cgroup.procs (chay_trong_cgroup_bg) — khong dung scope rieng.
+
+run_id	ok	cg	n_tid	n_rec_tid	cycles	drops_k	drops_p	pmu%	|first-t0|s	|last-t1|s
+B1-10s-0-c-20261107	1	cgroup.procs	1	2327	50	0	0	4.9989	0.019	0.411
+B1-10s-D1-8-c-20261107	1	cgroup.procs	1	2293	48	0	0	4.9989	0.025	0.468
+B1-10s-D1-16-c-20261107	1	cgroup.procs	1	2283	48	0	0	4.9989	0.032	0.524
+B1-10s-D3-7-c-20261107	1	cgroup.procs	1	2289	48	0	0	4.9989	0.022	0.413
+N1-10s-0-c-20261107	1	cgroup.procs	1	2310	50	0	0	4.9989	0.016	0.417
+N1-10s-D1-8-c-20261107	1	cgroup.procs	1	2302	49	0	0	4.999	0.029	0.490
+N1-10s-D1-16-c-20261107	1	cgroup.procs	1	2261	46	0	0	4.999	0.032	0.490
+N1-10s-D3-7-c-20261107	1	cgroup.procs	1	2281	48	0	0	4.999	0.022	0.412
+B4-0-c-20261107	1	cgroup.procs	2	86626	27	0	0	4.9988	0.014	0.455
+B4-D1-8-c-20261107	1	cgroup.procs	2	87421	27	0	0	4.9989	0.029	0.512
+B4-D1-16-c-20261107	1	cgroup.procs	2	87364	27	0	0	4.999	0.028	0.553
+B4-D3-7-c-20261107	1	cgroup.procs	2	85910	27	0	0	4.9989	0.026	0.491
+N4-0-c-20261107	1	cgroup.procs	1	1356	28	0	0	4.9989	0.017	0.403
+N4-D1-8-c-20261107	1	cgroup.procs	1	1356	28	0	0	4.9989	0.029	0.439
+N4-D1-16-c-20261107	1	cgroup.procs	1	1356	28	0	0	4.9989	0.031	0.500
+N4-D3-7-c-20261107	1	cgroup.procs	1	1356	28	0	0	4.9989	0.020	0.422
+B1-60s-0-c-20261107	1	cgroup.procs	1	1926	21	0	0	4.9991	0.020	0.417
+N1-60s-0-c-20261107	1	cgroup.procs	1	1936	22	0	0	4.9991	0.023	0.411
+B1-300s-0-c-20261107	0	cgroup.procs	1	117	19	0	0	4.9954	1191.069	2720.930
+N1-300s-0-c-20261107	CHUA_CHAY	-	-	-	-	-	-	-	-	-
+
+Tong: 18 DAT / 1 KHONG_DAT / 1 CHUA_CHAY (trong 20 du kien).
+
+driver-loi.txt:
+FAIL B1-300s-0-c-20261107 sau 2 lan
+
+Ly do B1-300s (kiem.txt lan 2): cycles=19 < 20; |first-t0|=1191s |last-t1|=2721s (moc nhan lech — client chi ~19 chu ky trong cua so 6960s, period=300 jitter 0–50%).
+
+----------------------------------------------------------------
+4. 1.9c — B4 / N4
+----------------------------------------------------------------
+Phuong an B4: stress-ng (--cpu 1 --cpu-load 10 --cpu-load-slice 2000)
+  Hieu chuan: utime=6.05 s / 66 s (≈ 9.2 %; nam trong 6–7 s ky vong) → dung stress-ng
+  File: validation/lab1c-20261107/b4-mode.txt = stress-ng
+
+N4: lab1c_n4_zlib.py
+  Payload: 67108864 bytes (64 MiB); zlib level 6 compress_s=2.104 s
+  File: validation/lab1c-20261107/n4-payload.bin ; n4-cal.txt
+
+Bang B4/N4 theo muc (tu kiem + nhan):
+muc	B4_cycles	B4_n_rec	B4_n_tid	N4_cycles	N4_n_rec	ghi_chu
+0	27	86626	2	28	1356	1.9c:stress-ng / 1.9c:zlib
+D1-8	27	87421	2	28	1356	1.9c:stress-ng / 1.9c:zlib
+D1-16	27	87364	2	28	1356	1.9c:stress-ng / 1.9c:zlib (N4 attempt 2 DAT)
+D3-7	27	85910	2	28	1356	1.9c:stress-ng (B4 attempt 2 DAT) / zlib
+
+----------------------------------------------------------------
+5. NHIP-BENIGN (generator dem)
+----------------------------------------------------------------
+File: validation/lab1c-20261107/gen-logs/nhip-benign.tsv
+Dau:
+nhip_id	dich_vu	muc	t_bat_dau_mono_ns	t_ket_thuc_mono_ns
+1	nginx	120	1522253477745981	1522543507752217
+Cuoi (luc viet bao cao; gen van chay cho nenphu):
+147	nginx	20	1566153254934064	1566443338202858
+147	postgres	15	1566153276938859	1566444798158332
+
+----------------------------------------------------------------
+6. DUNG LUONG
+----------------------------------------------------------------
+validation/lab1c-20261107/ ≈ 1.7 G (chu yeu *.bin; khong commit .bin)
+lab/nhan-tan-cong-lab1c.tsv + lab/nhan-tid-lab1c.tsv: ~12 K
+
+----------------------------------------------------------------
+7. NEN-PHU (1.9b + N4 zlib 1.9c) — CHUA XONG
+----------------------------------------------------------------
+Unit hids-lab1c-nenphu: active (bat dau 2026-11-08T02:43:17Z sau khi driver dung)
+pids: 958157 958162 958167 958172 (trong cgroup nginx)
+Tien do log (luc 03:32Z, ~48 phut / 148 phut cua so):
+  p10.log dong≈290; p60≈50; p300≈11; n4≈133
+Chua co nenphu-xong.txt / kiem tong. Muc nay se bo sung khi unit xong (hoac bao cao rieng).
+
+----------------------------------------------------------------
+8. QUYET DINH TU DUA RA
+----------------------------------------------------------------
+1. chay_trong_cgroup_bg + pidfile: $! cua bash & la wrapper user.slice; pid that ghi tu trong cgroup.
+2. Sua `wait` khong doi so trong session (treo cho collector).
+3. Phien thu 5 phut: ha min-cycles=10, min-recs=50, relax moc last (cua so 180s khong du 20 chu ky period=10) — chi cho THU; phien that giu >=20 / >=100.
+4. B4 dung stress-ng sau hieu chuan utime=6.05s; N4 payload 64 MiB.
+5. Khi driver FAIL B1-300s: khong tu sua tieu chi / khong chay lai them; viet buoc 7 theo so lieu co. nenphu da tu bat vi driver inactive.
+
+----------------------------------------------------------------
+9. VIEC NGUOI DUNG CAN LAM
+----------------------------------------------------------------
+1. Bao kien truc su de may 195 keo bang rsync (M6i-c):
+     validation/lab1c-20261107/
+     lab/nhan-tan-cong-lab1c.tsv
+     lab/nhan-tid-lab1c.tsv
+2. Cho hids-lab1c-nenphu xong (~02:43Z+150 phut ≈ 05:13Z) roi bo sung muc nen-phu / hoac giao nhiem vu tiep neu can xu ly B1-300s/N1-300s.
+
+----------------------------------------------------------------
+10. LOI CON TON TAI / VIEC TIEP
+----------------------------------------------------------------
+- B1-300s-0: cycles=19 < 20; moc nhan lech lon — driver dung theo quy tac.
+- N1-300s-0: chua chay.
+- nen-phu: dang chay, chua co bang kiem cuoi.
