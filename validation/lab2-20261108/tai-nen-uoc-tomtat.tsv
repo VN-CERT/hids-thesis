@@ -1,0 +1,7 @@
+run_id	lop	muc_tranh_chap	ban_ghi_tren_giay_tb	ghi_chu
+A2-0-c-20261108	A2	0	6755.655	tai truc tiep khong do luc chay; uoc tu rec/s + muc; muc=0 khong stress-ng
+A2-D1-8-c-20261108	A2	D1-8	6794.603	tai truc tiep khong do luc chay; uoc tu rec/s + muc; D1-8=8 cpu hog
+A2-D3-7-c-20261108	A2	D3-7	6405.169	tai truc tiep khong do luc chay; uoc tu rec/s + muc; D3-7=7 worker stream
+B2-0-c-20261108	B2	0	25435.683	tai truc tiep khong do luc chay; uoc tu rec/s + muc; muc=0 khong stress-ng
+B2-D1-8-c-20261108	B2	D1-8	18449.036	tai truc tiep khong do luc chay; uoc tu rec/s + muc; D1-8=8 cpu hog
+B2-D3-7-c-20261108	B2	D3-7	18760.581	tai truc tiep khong do luc chay; uoc tu rec/s + muc; D3-7=7 worker stream

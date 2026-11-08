@@ -97,6 +97,18 @@ ORACLE_REF=-1
 GHI_CHU="2.1;cgroup=nginx"
 CONG_CU="local"
 NHIP=""
+# mau tai nen moi 10s trong cua so nhan (khong dung collector/.bin)
+TAI_NEN_PID=""
+TOMTAT="$VAL/tai-nen-tomtat.tsv"
+python3 "$REPO/scripts/lab2_tai_nen_sample.py" \
+	--sess "$SESS" --run-id "$RUN_ID" --lop "$LOP" --muc "$LEVEL" \
+	--cg-nginx "$CG_NG" --cg-postgres "$CG_PG" \
+	--duration-s "$WIN_DUR" --interval-s 10 \
+	--tomtat "$TOMTAT" \
+	>>"$SESS/tai-nen-sample.log" 2>&1 &
+TAI_NEN_PID=$!
+echo "$TAI_NEN_PID" >"$SESS/tai-nen.pid"
+log "tai-nen sampler pid=$TAI_NEN_PID"
 
 start_bg() {
 	local pf=$1
@@ -207,6 +219,11 @@ ELAPSED=$((WIN_END))
 # sleep them neu can (tu sau WIN_END den TOTAL - da dung het WIN_DUR sau WIN_START)
 REST=$((TOTAL_S - WIN_END))
 ((REST > 0)) && sleep "$REST" || true
+
+# cho sampler tai-nen xong (khong kill collector/.bin)
+if [[ -n ${TAI_NEN_PID:-} ]]; then
+	wait "$TAI_NEN_PID" 2>/dev/null || true
+fi
 
 # dung lieu + collector
 [[ -n $LIEU_PID ]] && kill -TERM "$LIEU_PID" 2>/dev/null || true

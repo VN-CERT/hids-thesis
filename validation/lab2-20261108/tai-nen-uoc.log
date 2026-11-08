@@ -1,0 +1,8 @@
+A2-0-c-20261108	0	6755.655 rec/s
+A2-D1-8-c-20261108	D1-8	6794.603 rec/s
+A2-D3-7-c-20261108	D3-7	6405.169 rec/s
+B2-0-c-20261108	0	25435.683 rec/s
+B2-D1-8-c-20261108	D1-8	18449.036 rec/s
+B2-D3-7-c-20261108	D3-7	18760.581 rec/s
+wrote /root/collector/validation/lab2-20261108/tai-nen-uoc-tomtat.tsv
+EXIT=0
