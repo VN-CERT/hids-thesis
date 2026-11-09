@@ -227,3 +227,14 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 ## Việc đang chạy
 
 - (không)
+
+## Bước đang làm (LAB-2 pha 2) — driver đang chạy (2026-11-09)
+
+- Phụ lục 2.2 commit `ef07ee2`. Thu N-A2: **DAT**.
+- Unit `hids-lab2ss-driver` + `hids-lab2ss-gen`. Thư mục `validation/lab2-song-sinh-20261109/`.
+- Bước 6 khi người dùng báo "driver lab2 song sinh xong, làm bước 6".
+
+## Việc đang chạy
+
+- **hids-lab2ss-driver** — 9 phiên N-A2/N-B2/N-C2 × {0,D1-8,D3-7} — log `validation/lab2-song-sinh-20261109/driver.log`
+- **hids-lab2ss-gen** — generator benign
