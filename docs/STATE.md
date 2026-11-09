@@ -274,3 +274,11 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 
 - Kiểm số R051: A1 postgres f≈0.94 (CPI↓); C7 own_only muc_D3-7=0 @0.01; B3 RSS +21%; B6 x_inst 785→819 (4.34e6=x_arr).
 - Tag m6k. Việc đang chạy: không.
+
+## Cập nhật 2026-11-09 08:56 (buoc1 XONG)
+
+- Mốc: buoc1 — quy nguyên nhân báo động (R052).
+- Script `scripts/quy_nguyen_nhan.py`; chạy T² D @0.01 trên features_ghep lab1c.
+- (a) twin+nen MOI_TRUONG 0/7=0% — không; (b) B4 HANH_VI 17/17=100% — có → **TRƯỢT**.
+- B (nen@D1/D3)=0 cửa sổ trên đĩa. Đồng pha có peer (không thiếu quần thể).
+- Tag `buoc1`. Việc đang chạy: không. DỪNG.
