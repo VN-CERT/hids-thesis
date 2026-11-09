@@ -256,3 +256,21 @@ Cập nhật lần cuối: 2026-10-21 07:20 (giờ máy)
 - Analyze xong: 84 cửa sổ muc_0; top-20 đóng góp TB `x_inst_med` 96,4% (x_arr nhỏ; own_cv≈0).
 - Đọc thẳng khung nhiệm vụ: chiều tải (x_inst), không phải nhịp.
 - R049; tag m6i.9. Việc đang chạy: không.
+
+## Cập nhật 2026-11-09 06:42 (M6j-rsync)
+
+- Mốc: M6j-rsync — kéo LAB-2 pha 1 từ 201; chỉ rsync+kiểm; chưa trích/chấm.
+- Đang chạy: rsync `validation/lab2-20261108/` + `lab/nhan-*-lab2.tsv`.
+- Không đụng lab1/lab1c/features/score cũ.
+- status: `out/jobs/m6j-rsync.status`
+
+## Cập nhật 2026-11-09 06:43 (M6j-rsync XONG)
+
+- rsync 201→195: `validation/lab2-20261108/` 1.1G (15 .bin); `lab/nhan-*-lab2.tsv`.
+- 9/9 run_id có ≥1 tid. Chưa trích/chấm.
+- status=done `out/jobs/m6j-rsync.status`. Việc đang chạy: không. DỪNG.
+
+## Cập nhật 2026-11-09 07:45 (M6k XONG)
+
+- Kiểm số R051: A1 postgres f≈0.94 (CPI↓); C7 own_only muc_D3-7=0 @0.01; B3 RSS +21%; B6 x_inst 785→819 (4.34e6=x_arr).
+- Tag m6k. Việc đang chạy: không.
